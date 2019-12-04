@@ -7,7 +7,7 @@ ServiceInterface* ServicesFactory::getService(std::string service)
     else if (service == "/index/list")    return new IdxList;
     else if (service == "/index/get")     return new IdxDetail;
     else if (service == "/relation/get")  return new RelationDetail;
-    //else if (service == "/way/get")       return new WayDetail;
+    else if (service == "/way/get")       return new WayDetail;
     else if (service == "/svgMap.svg")        return new Svg;
     else if(service.find(".svg") != std::string::npos)
     {

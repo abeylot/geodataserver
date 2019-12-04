@@ -1,5 +1,5 @@
-#cc=g++ -s -O2 -Wall -std=c++11 -D_FILE_OFFSET_BITS=64
-cc=g++ -g -Wall -std=c++11 -D_FILE_OFFSET_BITS=64
+cc=g++ -s -O2 -Wall -std=c++11 -D_FILE_OFFSET_BITS=64
+#cc=g++ -g -Wall -std=c++11 -D_FILE_OFFSET_BITS=64
 
 
 headersCommon=CompiledDataManager.hpp \
@@ -15,7 +15,8 @@ GeoBox.hpp
 
 headersServer = services/Ping.hpp \
 services/RelationList.hpp \
-services/RelationList.hpp \
+services/RelationDetail.hpp \
+services/WayDetail.hpp \
 services/IdxList.hpp \
 services/IdxDetail.hpp \
 services/ServicesFactory.hpp \
@@ -37,6 +38,7 @@ CompiledDataManager.o
 objectsServer = Ping.o \
 RelationList.o \
 RelationDetail.o \
+WayDetail.o \
 IdxList.o \
 IdxDetail.o \
 HttpProtocol.o \
@@ -99,6 +101,9 @@ RelationList.o: services/RelationList.cpp services/RelationList.hpp $(headersCom
 
 RelationDetail.o: services/RelationDetail.cpp services/RelationDetail.hpp $(headersCommon) $(headersServer)
 	$(cc) -c services/RelationDetail.cpp -o RelationDetail.o
+
+WayDetail.o: services/WayDetail.cpp services/WayDetail.hpp $(headersCommon) $(headersServer)
+	$(cc) -c services/WayDetail.cpp -o WayDetail.o
 
 ServicesFactory.o: services/ServicesFactory.cpp services/ServicesFactory.hpp $(headersCommon) $(headersServer)
 	$(cc) -c services/ServicesFactory.cpp -o ServicesFactory.o

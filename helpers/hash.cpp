@@ -82,7 +82,7 @@ bool THashIntegerTable::removeIfExists(uint64_t key)
     return false;
 }
 
-inline bool THashIntegerTable::get(uint64_t key)
+bool THashIntegerTable::get(uint64_t key)
 {
     int hash;
     unsigned int i;

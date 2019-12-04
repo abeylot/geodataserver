@@ -4,7 +4,7 @@
 #include "Ping.hpp"
 #include "RelationList.hpp"
 #include "RelationDetail.hpp"
-//#include "WayDetail.hpp"
+#include "WayDetail.hpp"
 #include "IdxList.hpp"
 #include "IdxDetail.hpp"
 #include "Svg.hpp"

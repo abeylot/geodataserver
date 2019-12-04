@@ -2,6 +2,8 @@
 #define SVGRENDERER_HPP
 #include <string>
 #include <set>
+#include <deque>
+
 #include "../../CompiledDataManager.hpp"
 
 struct label_s
@@ -14,6 +16,7 @@ struct label_s
 	int64_t pos_x, pos_y;
 	double angle;
 	unsigned int fontsize;
+    //std::deque<GeoPoint> points;
 };
 
 class SvgRenderer

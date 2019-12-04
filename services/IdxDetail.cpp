@@ -7,17 +7,24 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
     Msg* rep = new Msg;
     encoder.build200Header(rep, "text/html");
     std::string name  = request->getRecord(2)->getNamedValue("name");
+    std::string start  = request->getRecord(2)->getNamedValue("start");
+    uint64_t istart = 0;
+    if (start != "") istart = atoll(start.c_str());
+    if(istart >= 1000)
+    {
+		resp += "<a href=\"get?name=" +name+ "&start="+std::to_string(istart - 1000)+"\"/> page up </a>\n";
+	}
+    uint64_t i = istart;
     for(IndexDesc* desc : *(mger.indexes))
     {
         if(desc->name == name )
         {
             fidx::FileIndex<IndexEntry,GeoBox>* idx = desc->idx;
             fidx::Record<IndexEntry, GeoBox> record;
-            uint64_t i = 0;
             //GeoIndex p;
             if(desc->type == "relation")
             {
-                while (idx->get(i, &record))
+                while (idx->get(i, &record) &&  (i < (istart + 1000)))
                 {
                     //GeoIndex p;
                     //mger.relationIndex->get(record.value, &p);
@@ -30,7 +37,7 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
                     std::string name = r->tags["name"];
                     std::string type = r->tags["type"];
                     resp += "name:" + name + " type:" + type;
-                    resp += std::to_string(i) + ":: pos :" + std::to_string(record.key.pos)+ ":: mask :" + std::to_string(record.key.maskLength)+"::"+std::to_string(record.key.zmMask)+":: id :" + std::to_string(record.value.id);
+                    resp += "<a href=\"/relation/get?id=" + std::to_string(r->id) + "\">"+ std::to_string(i) +"</a>:: pos :" + std::to_string(record.key.pos)+ ":: mask :" + std::to_string(record.key.maskLength)+"::"+std::to_string(record.key.zmMask)+":: id :" + std::to_string(record.value.id);
                     resp += "<br/>";
                     i++;
                     delete r;
@@ -38,11 +45,11 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
             }
             else if(desc->type == "node")
             {
-                while (idx->get(i, &record))
+                while (idx->get(i, &record) &&  (i < (istart + 1000)))
                 {
                     Point* p = mger.loadPoint(record.value.id);
                     resp += std::to_string(i) + ":: pos :" + std::to_string(record.key.pos)+ ":: mask :" + std::to_string(record.key.maskLength)+"::"+std::to_string(record.key.zmMask)+":: id :" + std::to_string(record.value.id);
-                    resp += "<br/>";
+                    resp += "::" + name +"<br/>";
                     /*for(std::pair<std::string, std::string> pair : p->tags)
                     {
                         resp += pair.first + ":" + pair.second + "<br/>";
@@ -53,9 +60,12 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
             }
             else
             {
-                while (idx->get(i, &record))
+                while (idx->get(i, &record) &&  (i < (istart + 1000)))
                 {
-                    resp += std::to_string(i) + ":: pos :" + std::to_string(record.key.pos)+ ":: mask :" + std::to_string(record.key.maskLength)+"::"+std::to_string(record.key.zmMask)+ ":: id :" + std::to_string(record.value.id);
+                    Way* r = mger.loadWay(record.value.id);
+                    std::string name = r->tags["name"];
+                    resp += "name:" + name ;
+                    resp += " <a href=\"/way/get?id=" + std::to_string(r->id) + "\">"+ std::to_string(i) +"</a>:: pos :" + std::to_string(record.key.pos)+ ":: mask :" + std::to_string(record.key.maskLength)+"::"+std::to_string(record.key.zmMask)+ ":: id :" + std::to_string(record.value.id);
                     resp +="<br/>";
                     i++;
                 }
@@ -63,6 +73,10 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
         }
 
     }
+    if(i == istart + 1000)
+    {
+		resp += "<a href=\"get?name=" +name+ "&start="+std::to_string(i)+"\"/> page down! </a>\n";
+	}
     resp += "</body></html>";
     encoder.addContent(rep,resp);
     return rep;

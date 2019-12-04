@@ -11,11 +11,32 @@
 std::string  RelationDetail::printRelation(Relation& r)
 {
     std::string res ="";
-    /*std::map<std::string, std::string>::iterator it;
-    for (it = r.tags.begin(); it != r.tags.end(); it++)
+    if(r.tags.data != NULL)
     {
-        res += it->first + "=" + it->second +"<br/>";
-    }*/
+        uint64_t used = 0;
+        char* tag;
+        char* value;
+
+        unsigned char tag_size;
+        unsigned char value_size;
+
+        while( used < r.tags.data_size)
+        {
+            tag_size = r.tags.data[used];
+            used++;
+            tag = r.tags.data + used;
+            used += tag_size;
+            value_size =  r.tags.data[used];
+            used++;
+            value = r.tags.data+used;
+            used += value_size;
+            res += std::string(tag, tag_size);
+            res += "=";
+            res += std::string(value, value_size);
+            res += "<br/>";
+        }
+    }
+
     return res;
 }
 
