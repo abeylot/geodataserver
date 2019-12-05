@@ -359,14 +359,59 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                     break;
                 } 
             }
-            double angle = abs(t->angle -v->angle);
-            double sinus = abs(sin(angle));
-            double dist = sqrt(dx*dx +dy*dy);
-            if(((dist - t->fontsize - v->fontsize) < t->fontsize*0.75*t->text.length()*sinus)&&((dist - t->fontsize - v->fontsize) < v->fontsize*0.75*v->text.length()*sinus))
+            //double angle = abs(t->angle -v->angle);
+            //double sinus = abs(sin(angle));
+            //double dist = sqrt(dx*dx +dy*dy);
+            double xa,xb,xc,xd,ya,yb,yc,yd;
+            double lt = t->fontsize*0.75*t->text.length();
+            double lv = v->fontsize*0.75*t->text.length();
+            
+            xa = v->pos_x + lv*(cos(v->angle));
+            ya = v->pos_y + lv*(sin(v->angle));
+            xb = v->pos_x - lv*(cos(v->angle));
+            yb = v->pos_y - lv*(sin(v->angle));
+            
+            xc = t->pos_x + lt*(cos(t->angle));
+            yc = t->pos_y + lt*(sin(t->angle));
+            xd = t->pos_x - lt*(cos(t->angle));
+            yd = t->pos_y - lt*(sin(t->angle));
+            
+            double xab = xb - xa;
+            double yab = yb - ya;
+            
+            double xac = xc - xa;
+            double yac = yc -ya;
+
+            double xad = xd - xa;
+            double yad = yd -ya;
+            
+            double pvectabac = (xab * yac) - (yab * xac);
+            double pvectabad = (xab * yad) - (yab * xad);
+            
+            bool diffsidecd = (pvectabac*pvectabad < 0);
+            
+            double xcd = xd - xc;
+            double ycd = yd - yc;
+            
+            double xca = -xac;
+            double yca = -yac;
+            
+            double xcb = xb -xc;
+            double ycb = yb - yc;
+            
+            double pvectcdca = (xcd*yca) - (ycd*xca);
+            double pvectcdcb = (xcd*ycb) - (ycd*xcb);
+            
+            bool diffsideab = (pvectcdca * pvectcdcb) < 0;  
+            
+            
+            
+            if(diffsideab && diffsidecd)
             {
                     to_show = false;
                     break;
             }
+            
 
         }
         if(to_show) to_print.push_back(*t);
@@ -461,7 +506,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
                 }
                 else
                 {
-                    if(((abs(x - oldx) > 2) || (abs(y - oldy) > 2)|| i == (myWay.pointsCount - 1))/*&&(x > -1*szx)&&(x < 2*szx)&&(y > -1*szy)&&(y < 2*szy)*/)
+                    if((x != oldx) || (y != oldy)|| i == (myWay.pointsCount - 1)/*&&(x > -1*szx)&&(x < 2*szx)&&(y > -1*szy)&&(y < 2*szy)*/)
                         result << "L" << trunc(x) << " " << trunc(y) << " ";
                     length += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
                 }
@@ -499,8 +544,8 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
                         double dfy = y - oldy;
                         if(dfx == 0) lbl.angle = M_PI / 2;
                         else lbl.angle = atan2(dfy , dfx);
-                        if(lbl.angle > M_PI / 2) lbl.angle -= M_PI;
-                        if(lbl.angle < -1 * M_PI / 2) lbl.angle += M_PI;
+                        //if(lbl.angle > M_PI / 2) lbl.angle -= M_PI;
+                        //if(lbl.angle < -1 * M_PI / 2) lbl.angle += M_PI;
                         break;
                     }
                 }
