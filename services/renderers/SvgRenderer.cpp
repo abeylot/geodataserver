@@ -185,7 +185,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             }
             else if (idxDesc->type == "way")
             {
-                Rectangle rect1 = rect*2.0;
+                Rectangle rect1 = rect*2;
                 if(idxDesc->idx->findLastLesser(g, start))
                 while(idxDesc->idx->get(start, &record) && (record.key <= maxGeoBox))
                 {
@@ -667,7 +667,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relati
     {
         for(Way* myWay : myRelation.ways)
         {
-            if(!(((myWay->rect)*(rect*2.0)).isValid())) continue;
+            if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
             label_s lbl;
             result += render(zIndex,lbl, idx, *myWay, rect, szx, szy, cl/*, texts*/);
         }
