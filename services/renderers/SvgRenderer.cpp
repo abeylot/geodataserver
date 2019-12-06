@@ -364,7 +364,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                     break;
                 } 
             }
-            //if((t->ref != "") && (v->ref != ""))
+            if((t->ref != "") && (v->ref != ""))
             {
             //double angle = abs(t->angle -v->angle);
             //double sinus = abs(sin(angle));
@@ -600,7 +600,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
         {
             if((name != "" ) && (textStyle != "") && cl->opened)
             {
-                if(name.length() < 6)
+                /*if(name.length() < 6)
                 {
                     lbl.text = name;
                     if(cl->width != "")
@@ -626,7 +626,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
                     }
 
                 }
-                else
+                else*/
                 {
                      if(cl->textWidth != "")
                      {

@@ -440,28 +440,28 @@
         </restriction-->
         <restriction zLevels="13,14,15">
             <condition closed="both" tagKey="highway">
-                <class value="stop"            zIndex="2000" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="16"/>
-                <class value="steps"           zIndex="2001" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="16"/>
-                <class value="path"            zIndex="2002" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="8" />
-                <class value="pedestrian"      zIndex="2003" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="10"/>
-                <class value="unclassified"    zIndex="2004" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="10"/>
-                <class value="cycleway"        zIndex="2005" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="5" />
-                <class value="residential"     zIndex="2006" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="10"/>
-                <class value="service"         zIndex="2007" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="10"/>
-                <class value="track"           zIndex="2008" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="10"/>
-                <class value="footway"         zIndex="2009" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="8" />
-                <class value="turning_circle"  zIndex="2010" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="10" />
-                <class value="living_street"   zIndex="2011" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="10" />
-                <class value="tertiary"        zIndex="2012" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="16" />
-                <class value="secondary"       zIndex="2013" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="20" textStyle="text-anchor:middle;fill:black;opacity:0.5;font-family:sans-serif; font-size:10px"/>
-                <class value="crossing"        zIndex="2014" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="16" />
-                <class value="primary"         zIndex="2015" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="20" textStyle="text-anchor:middle;fill:black;opacity:0.5;font-family:sans-serif; font-size:10px"/>
-                <class value="primary_link"    zIndex="2016" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="16" textStyle="text-anchor:middle;fill:black;opacity:0.5;font-family:sans-serif; font-size:10px"/>
-                <class value="bus_stop"        zIndex="2017" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="16" />
-                <class value="trunk"           zIndex="2018" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="16" textStyle="text-anchor:middle;fill:black;opacity:0.5;font-family:sans-serif; font-size:10px"/>
-                <class value="trunk_link"      zIndex="2019" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="16" textStyle="text-anchor:middle;fill:black;opacity:0.5;font-family:sans-serif; font-size:10px"/>
-                <class value="motorway"        zIndex="2020" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="20" textStyle="text-anchor:middle;fill:black;opacity:0.5;font-family:sans-serif; font-size:10px"/>
-                <class value="motorway_link"   zIndex="2021" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="16" textStyle="text-anchor:middle;fill:black;opacity:0.5;font-family:sans-serif; font-size:10px"/>
+                <class value="stop"            zIndex="2000" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="20" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:10px" textField="ref"/>
+                <class value="steps"           zIndex="2001" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="21" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:10px" textField="ref"/>
+                <class value="path"            zIndex="2002" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="22" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:10px" textField="ref"/>
+                <class value="pedestrian"      zIndex="2003" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="23" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:10px" textField="ref"/>
+                <class value="unclassified"    zIndex="2004" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="24" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:10px" textField="ref"/>
+                <class value="cycleway"        zIndex="2005" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="25" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:10px" textField="ref"/>
+                <class value="residential"     zIndex="2006" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="26" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:10px" textField="ref"/>
+                <class value="service"         zIndex="2007" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="27" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:10px" textField="ref"/>
+                <class value="track"           zIndex="2008" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="28" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:10px" textField="ref"/>
+                <class value="footway"         zIndex="2009" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="29" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:10px" textField="ref"/>
+                <class value="turning_circle"  zIndex="2010" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="30" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:10px" textField="ref"/>
+                <class value="living_street"   zIndex="2011" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="31" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:10px" textField="ref"/>
+                <class value="tertiary"        zIndex="2012" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="32" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:10px" textField="ref"/>
+                <class value="secondary"       zIndex="2013" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="33" textStyle="text-anchor:middle;fill:black;opacity:0.5;font-family:sans-serif; font-size:10px"/>
+                <class value="crossing"        zIndex="2014" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="34" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:12px" textField="ref"/>
+                <class value="primary"         zIndex="2015" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="35" textStyle="text-anchor:middle;fill:black;opacity:0.5;font-family:sans-serif; font-size:10px"/>
+                <class value="primary_link"    zIndex="2016" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="36" textStyle="text-anchor:middle;fill:black;opacity:0.5;font-family:sans-serif; font-size:10px"/>
+                <class value="bus_stop"        zIndex="2017" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="37" textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:12px" textField="ref"/>
+                <class value="trunk"           zIndex="2018" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="38" textStyle="text-anchor:middle;fill:black;opacity:0.5;font-family:sans-serif; font-size:10px"/>
+                <class value="trunk_link"      zIndex="2019" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="39" textStyle="text-anchor:middle;fill:black;opacity:0.5;font-family:sans-serif; font-size:10px"/>
+                <class value="motorway"        zIndex="2020" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="40" textStyle="text-anchor:middle;fill:black;opacity:0.5;font-family:sans-serif; font-size:10px"/>
+                <class value="motorway_link"   zIndex="2021" style="fill:none; stroke:lightgrey;stroke-linecap:round;" width="41" textStyle="text-anchor:middle;fill:black;opacity:0.5;font-family:sans-serif; font-size:10px"/>
             </condition>
             <condition tagKey="railway" closed="both">
                 <class value="rail"      textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="8"/>
@@ -498,12 +498,12 @@
         </restriction>
     </index>
     <index type="way" name="routesIdxLowRes">
-        <restriction zLevels="10.11.12">
+        <restriction zLevels="10,11,12">
             <condition tagKey="railway" closed="both">
                 <class value="default" zIndex="900" style="fill:none; stroke:ligthgray;stroke-linecap:round;stroke-width:1"/>
             </condition>
         </restriction>
-        <restriction zLevels="7,8">
+        <restriction zLevels="7">
             <condition closed="both" tagKey="highway">
                 <class value="motorway"         zIndex="2030" style="fill:none; stroke:red;stroke-linecap:round;stroke-width:1" />
                 <class value="motorway_link"         zIndex="2030" style="fill:none; stroke:red;stroke-linecap:round;stroke-width:1"  />
@@ -522,7 +522,7 @@
         </restriction>
         <restriction zLevels="11,12">
             <condition closed="both" tagKey="highway">
-                <class value="secondary"         zIndex="2030" style="fill:none; stroke:lightgrey;stroke-linecap:round;stroke-width:2"  textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:12px" textField="ref"/>
+                <class value="secondary"         zIndex="2030" style="fill:none; stroke:khaki;stroke-linecap:round;stroke-width:2"  textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:12px" textField="ref"/>
             </condition>
         </restriction>
     </index>
