@@ -364,7 +364,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                     break;
                 } 
             }
-            if((t->ref != "") && (v->ref != ""))
+            //if((t->ref != "") && (v->ref != ""))
             {
             //double angle = abs(t->angle -v->angle);
             //double sinus = abs(sin(angle));
