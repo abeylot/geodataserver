@@ -52,9 +52,10 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 
     std::cout << "zoom;" << zoom << "\n";
     uint32_t zmMask = 1LL << zoom;
-    std::string    result = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?> <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
-    result += "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 "+std::to_string(sizex)+" "+std::to_string(sizey)+"\">\n";
-    result += "<style>\n";
+    std::ostringstream result; 
+    result << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?> <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
+    result << "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 " << std::to_string(sizex) << " " << std::to_string(sizey) << "\">\n";
+    result << "<style>\n";
 	std::cout << "0";
 	uint32_t mask = 1LL << zoom;
     for (IndexDesc* idxDesc : *(mger->indexes))
@@ -65,19 +66,19 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             {
 				if( cl->mask & mask )
 				{
-				    result += cl->makeClass("c" + std::to_string(cl->rank), ppm);
+				    result << cl->makeClass("c" + std::to_string(cl->rank), ppm);
 				}
 			}
 		}
 	}    
-    result += "</style>\n";
-    result += "<rect width=\""+std::to_string(sizex + 1)+"\" height=\""+std::to_string(sizey + 1)+"\" fill=\"antiquewhite\"/>\n";
+    result << "</style>\n";
+    result << "<rect width=\"" << std::to_string(sizex + 1) << "\" height=\"" << std::to_string(sizey + 1) << "\" fill=\"antiquewhite\"/>\n";
     hh::THashIntegerTable relationHash(100000), wayHash(100000), nodeHash(100000);
     //std::set<std::string> texts;
     int zIndex;
 
-    Rectangle rect1 = rect*2.0;
-    GeoBoxSet gSet = makeGeoBoxSet(rect*2.0);
+    //Rectangle rect1 = rect*2.0;
+    GeoBoxSet gSet = makeGeoBoxSet(rect*4.0);
     short indexId;
     for(short i = 0; i < gSet.count; i++)
     {
@@ -89,8 +90,12 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
         GeoBox maxGeoBox;
         maxGeoBox = g;
 
-        uint64_t myMask = UINT64_C(0x1) << (mask);
-        maxGeoBox.pos = maxGeoBox.pos + myMask;
+        if(mask < 63) {
+            uint64_t myMask = UINT64_C(0x1) << (mask);
+            maxGeoBox.pos = maxGeoBox.pos + myMask;
+        } else {
+            maxGeoBox.pos=0xFFFFFFFFFFFFFFFF;
+        }
 
         fidx::Record<IndexEntry, GeoBox> record;
         uint64_t start;
@@ -105,7 +110,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                 //idxDesc->idx->findLastLesser(g, start);
                 while(idxDesc->idx->get(start, &record) && (record.key <= maxGeoBox))
                 {
-                    if((record.key.zmMask &  zmMask )&&((record.value.r * rect1).isValid()))
+                    if((record.key.zmMask &  zmMask )&&((record.value.r * rect).isValid()))
                     {
                         if( relationHash.addIfUnique(record.value.id*100 + indexId))
                         {
@@ -113,7 +118,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 
                             CssClass* cl = getCssClass(*idxDesc, *myRelation, zoom, record.key.zmMask & 0X100000LL);
                             label_s lbl;
-                            if(cl && (myRelation->rect * rect1).isValid() )
+                            if(cl /*&& (myRelation->rect * rect).isValid()*/ )
                             {
                                 tmp = render(zIndex, lbl, idxDesc, *myRelation,
                                                      rect,
@@ -152,14 +157,14 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                     {
                         if( relationHash.addIfUnique(record.value.id*100 +indexId))
                         {
-                            if((record.key.zmMask &  zmMask ) && ((record.value.r * rect1).isValid()))
+                            if((record.key.zmMask &  zmMask ) /*&& ((record.value.r * rect1).isValid())*/)
                             {
                                 Relation* myRelation = mger->loadRelation(record.value.id);
 
                                 CssClass* cl = getCssClass(*idxDesc, *myRelation, zoom, record.key.zmMask & 0X100000LL);
                                 label_s lbl;
 
-                                if(cl && (myRelation->rect * rect1).isValid())
+                                if(cl /*&& (myRelation->rect * rect1).isValid()*/)
                                 {
                                     tmp = render(zIndex, lbl, idxDesc,*myRelation,
                                                          rect,
@@ -189,7 +194,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                 if(idxDesc->idx->findLastLesser(g, start))
                 while(idxDesc->idx->get(start, &record) && (record.key <= maxGeoBox))
                 {
-                    if((record.key.zmMask &  zmMask ) && ((record.value.r * rect1).isValid()))
+                    if((record.key.zmMask &  zmMask ) /*&& ((record.value.r * rect1).isValid())*/)
                     {
                         if( wayHash.addIfUnique(record.value.id*100 + indexId))  //
                         {
@@ -231,7 +236,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                     if(idxDesc->idx->findLastLesser(maxGeoBox2, start))
                     while(idxDesc->idx->get(start++, &record) && (record.key <= maxGeoBox2))
                     {
-                        if((record.key.zmMask &  zmMask )&&((record.value.r * rect1).isValid()))
+                        if((record.key.zmMask &  zmMask )/*&&((record.value.r * rect1).isValid())*/)
                         {
                             if( wayHash.addIfUnique(record.value.id * 100 + indexId))
                             {
@@ -265,8 +270,8 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             }
         }
     }
-    rect1 = rect * 4;
-    gSet = makeGeoBoxSet(rect1);
+    //rect1 = rect * 4;
+    gSet = makeGeoBoxSet(rect * 4);
     for(short i = 0; i < gSet.count; i++)
     {
 
@@ -418,27 +423,50 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
         }
         if(to_show) to_print.push_back(*t);
     }
+
+    for(std::pair<int,std::string> tmp : resMap)
+    {
+        result << tmp.second;
+    }
+    //result += libs;
     for(auto v=to_print.begin(); v!=to_print.end(); ++v)
     {
         {
             if(v->ref == "")
-                libs += "<text text-anchor=\"middle\" dominant-baseline=\"central\" x=\""+std::to_string(v->pos_x)+"\" y=\""+std::to_string(v->pos_y)+"\" class=\"c"+std::to_string(v->style)+"\">"+v->text+"</text>\n";
+                result << "<text text-anchor=\"middle\" dominant-baseline=\"central\" x=\""
+                       << std::to_string(v->pos_x)
+                       << "\" y=\""
+                       << std::to_string(v->pos_y)
+                       << "\" class=\"c"
+                       << std::to_string(v->style)
+                       << "\">"
+                       << v->text+"</text>\n";
             else
             {
 //               libs += "<text text-anchor=\"middle\" dominant-baseline=\"central\" class=\"c"+std::to_string(v->style)+"\" style=\"font-size:" +std::to_string(v->fontsize)+ "px\"><textPath xlink:href=\"#W"+std::to_string(v->id)+"\" startOffset=\"50%\">"+v->text+"</textPath></text>\n";
-               libs += "<text text-anchor=\"middle\" dominant-baseline=\"central\" class=\"c"+std::to_string(v->style)+"\" style=\"font-size:" +std::to_string(v->fontsize)+ "px\" x=\""+std::to_string(v->pos_x)+"\" y=\""+std::to_string(v->pos_y)+"\" transform=\"rotate("+std::to_string(v->angle*180/M_PI)+","+std::to_string(v->pos_x)+","+std::to_string(v->pos_y)+")\">"+v->text+"</text>\n";
+               result << "<text text-anchor=\"middle\" dominant-baseline=\"central\" class=\"c"
+                      << std::to_string(v->style)
+                      << "\" style=\"font-size:"
+                      << std::to_string(v->fontsize)
+                      << "px\" x=\""+std::to_string(v->pos_x)
+                      << "\" y=\""+std::to_string(v->pos_y)
+                      << "\" transform=\"rotate("
+                      << std::to_string(v->angle*180/M_PI)
+                      << ","
+                      << std::to_string(v->pos_x)
+                      << ","
+                      << std::to_string(v->pos_y)
+                      << ")\">"
+                      << v->text
+                      << "</text>\n";
             }
 		}
     }
-
-    for(std::pair<int,std::string> tmp : resMap)
-    {
-        result += tmp.second;
-    }
-    result += libs;
-    if(tag != "") result += "<text style=\"font-size:10px\" x=\"0\" y=\"15\" >"+tag+"</text>\n";
-    result+="</svg>";
-    return result;
+    if(tag != "") result << "<text style=\"font-size:10px\" x=\"0\" y=\"15\" >"
+                         << tag
+                         << "</text>\n";
+    result << "</svg>";
+    return result.str();
 }
 
 std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& myWay, Rectangle rect,uint32_t szx, uint32_t szy, CssClass* cl)
@@ -465,6 +493,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
     std::string name = "";
     if((cl )/*&& ((myWay.rect)*rect).isValid()*/)
     {
+        bool draw = ((myWay.rect)*rect).isValid();
         uint64_t wayId = makeWayId();
         style = cl->style;
         std::string textStyle2;
@@ -480,7 +509,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
         name = myWay.tags[textField.c_str()];
         if(name == "" && textField != "name" ) name = myWay.tags["name"];
 
-        result << "<path  id=\"W" << myWay.id << "\" d=\"";
+        if(draw) result << "<path  id=\"W" << myWay.id << "\" d=\"";
         bool first = true;
         double xd,xf;
         double length = 0;
@@ -503,13 +532,13 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
             {
                 if(first)
                 {
-                    result << "M" << trunc(x) << " " << trunc(y)  << " ";
+                    if(draw)result << "M" << trunc(x) << " " << trunc(y)  << " ";
                     first = false;
                 }
                 else
                 {
                     if((x != oldx) || (y != oldy)|| i == (myWay.pointsCount - 1)/*&&(x > -1*szx)&&(x < 2*szx)&&(y > -1*szy)&&(y < 2*szy)*/)
-                        result << "L" << trunc(x) << " " << trunc(y) << " ";
+                        if(draw) result << "L" << trunc(x) << " " << trunc(y) << " ";
                     length += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
                 }
             }
@@ -555,7 +584,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
             }
         }
 
-        result << " \" class=\"c" << cl->rank << "\" />\n";
+        if(draw) result << " \" class=\"c" << cl->rank << "\" />\n";
         lbl.fontsize = 12;
         std::size_t found = cl->textStyle.find("font-size:");
         if(found != std::string::npos)
@@ -662,7 +691,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relati
     double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     std::string textField = "name";
     if(!(cl->textField == "")) textField = cl->textField;
-
+    bool draw = ((myRelation.rect)*rect).isValid();
     if(cl->opened)
     {
         for(Way* myWay : myRelation.ways)
@@ -677,40 +706,43 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relati
 
         style = cl->style;
         zIndex = cl->zIndex;
-        result += "<path  d=\"";
-        for(Line* l: myRelation.shape.lines)
+        if(draw)
         {
-            Rectangle r1 = rect*1.1;
-            l->crop(r1);
-            bool first = true;
-            int oldx = -1;
-            int oldy = -1;
-            int x=0;
-            int y=0;
-            for(unsigned int i = 0 ; i < l->pointsCount; i++)
+            result += "<path  d=\"";
+            for(Line* l: myRelation.shape.lines)
             {
-                int64_t xx = l->points[i].x;
-                int64_t yy = l->points[i].y;
-                oldx = x;
-                oldy = y;
-                x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-                y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-                if((x != oldx) || (y != oldy) || i == (l->pointsCount - 1))
+                Rectangle r1 = rect*1.1;
+                l->crop(r1);
+                bool first = true;
+                int oldx = -1;
+                int oldy = -1;
+                int x=0;
+                int y=0;
+                for(unsigned int i = 0 ; i < l->pointsCount; i++)
                 {
-                    if(first)
+                    int64_t xx = l->points[i].x;
+                    int64_t yy = l->points[i].y;
+                    oldx = x;
+                    oldy = y;
+                    x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+                    y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+                    if((x != oldx) || (y != oldy) || i == (l->pointsCount - 1))
                     {
-                        result += "M" + std::to_string(x) + " " + std::to_string(y) + " ";
-                        first = false;
-                    }
-                    else
-                    {
-                        result += "L" + std::to_string(x) + " " + std::to_string(y) + " ";
+                        if(first)
+                        {
+                            result += "M" + std::to_string(x) + " " + std::to_string(y) + " ";
+                            first = false;
+                        }
+                        else
+                        {
+                            result += "L" + std::to_string(x) + " " + std::to_string(y) + " ";
                         //length += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
+                        }
                     }
                 }
             }
+            result += " \" class=\"c"+std::to_string(cl->rank)+"\" />\n";
         }
-        result += " \" class=\"c"+std::to_string(cl->rank)+"\" />\n";
         if(cl->textStyle != "")
         {
             std::string textStyle ="";

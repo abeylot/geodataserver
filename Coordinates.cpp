@@ -23,7 +23,7 @@ uint32_t Coordinates::toNormalizedLon(const std::string& coord)
     uint32_t toCompare = 3600000000ULL;
     //uint32_t toCompare = 2250000000ULL;
     normalized = 1;
-    for (int i = 0; i < 31; i++ )
+    for (int i = 0; i < 32; i++ )
     {
         normalized <<= 1;
         if (intCoord > toCompare)
@@ -57,7 +57,7 @@ uint32_t Coordinates::toNormalizedLat(const std::string& coord)
     //if(intCoord == 2700000000ULL) intCoord = 2699999999ULL;
     uint32_t toCompare = 1800000000ULL;
     normalized = 1;
-    for (int i = 0; i < 31; i++ )
+    for (int i = 0; i < 32; i++ )
     {
         normalized <<= 1;
         if (intCoord > toCompare)
