@@ -22,18 +22,130 @@ bool compare(const label_s& l2, const label_s& l1)
 }
 
 
+template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rect)
+{
+    GeoBoxSet gSet = makeGeoBoxSet(rect*4.0);
+    hh::THashIntegerTable* hash = &nodeHash;;
+    if(idxDesc.type == "relation") hash = &relationHash;
+    else if(idxDesc.type == "relation") hash = &wayHash; 
+    int zIndex;
+    for(short i = 0; i < gSet.count; i++)
+    {
+        GeoBox g;
+        g = gSet.boxes[i];
+        short  mask = g.maskLength;
+
+        GeoBox maxGeoBox;
+        maxGeoBox = g;
+
+        if(mask < 63) {
+            uint64_t myMask = UINT64_C(0x1) << (mask);
+            maxGeoBox.pos = maxGeoBox.pos + myMask;
+        } else {
+            maxGeoBox.pos=0xFFFFFFFFFFFFFFFF;
+        }
+
+        fidx::Record<IndexEntry, GeoBox> record;
+        uint64_t start;
+        if(idxDesc.idx->findLastLesser(g, start))
+        while(idxDesc.idx->get(start, &record) && (record.key <= maxGeoBox))
+        {
+            if((record.key.zmMask &  zmMask )&&((record.value.r * (rect*2)).isValid()))
+            {
+                if( hash->addIfUnique(record.value.id*100 + indexId))
+                {
+                    zIndex = 0;
+                    ITEM* item = NULL;
+                    mger->load(item, record.value.id);
+                    CssClass* cl = getCssClass(idxDesc, *item, zoom, record.key.zmMask & 0X100000LL);
+                    label_s lbl;
+                    if(cl)
+                    {
+                        tmp = render(zIndex, lbl, &idxDesc, *item,
+                                                     rect,
+                                                     size_x,
+                                                     size_y,
+                                                     *cl
+                                                    );
+                        it = resMap.find(zIndex);
+                        if(it != resMap.end())
+                        {
+                            it->second += tmp;
+                        }
+                        else
+                        {
+                            resMap[zIndex] = tmp;
+                        }
+                        if((lbl.text.length() > 0) && (lbl.fontsize > 5))
+                            label_vector.push_back(lbl);
+                        }
+                        delete item;
+                }
+            }
+            start++;
+        }
+        mask = g.maskLength;
+        short max = 64;
+        if (max >= 64) max = 64;
+        while(mask++ < max )
+        {
+            GeoBox maxGeoBox2 = g;
+            maxGeoBox2.maskLength = mask;
+            uint64_t myMask = UINT64_C(0xFFFFFFFFFFFFFFFF) << mask;
+            maxGeoBox2.pos = maxGeoBox2.pos & myMask;
+            if(idxDesc.idx->findLastLesser(maxGeoBox2, start))
+            while(idxDesc.idx->get(start++, &record) && (record.key <= maxGeoBox2))
+            {
+                if( relationHash.addIfUnique(record.value.id*100 +indexId))
+                {
+                    if((record.key.zmMask &  zmMask ) && ((record.value.r * (rect *4) ).isValid()))
+                    {
+                        ITEM* item = NULL;
+                        mger->load(item, record.value.id);
+
+                        CssClass* cl = getCssClass(idxDesc, *item, zoom, record.key.zmMask & 0X100000LL);
+                        label_s lbl;
+
+                        if(cl /*&& (myRelation->rect * rect1).isValid()*/)
+                        {
+                            tmp = render(zIndex, lbl, &idxDesc,*item,
+                                         rect,
+                                         size_x,
+                                         size_y, *cl/*, texts*/);
+                            it = resMap.find(zIndex);
+                            if(it != resMap.end())
+                            {
+                                it->second += tmp;
+                            }
+                            else
+                            {
+                                resMap[zIndex] = tmp;
+                            }
+                            if((lbl.text.length() > 0) && (lbl.fontsize > 5))
+                                label_vector.push_back(lbl);
+                        }
+                        delete item;
+                    }
+                }
+            }
+        }
+    }    
+}
+
 
 std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t sizey, std::string tag)
 {
+    size_x = sizex;
+    size_y = sizey;
     std::string libs = "";
-    std::map<int,std::string> resMap;
-    std::map<int,std::string>::iterator it;
-    std::string tmp = "";
-    std::vector<label_s> label_vector;
-    resetWayId();
+    //std::map<int,std::string> resMap;
+    //std::map<int,std::string>::iterator it;
+    //std::string tmp = "";
+    //std::vector<label_s> label_vector;
+    int zIndex;
     double ppm = 50 * ((sizex * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     uint32_t msz = rect.x1 - rect.x0;
-    short zoom = 31;
+    zoom = 31;
     msz = msz >> 1;
     while(msz)
     {
@@ -51,12 +163,12 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     if(zoomLevel > 0) zoom = zoomLevel;
 
     std::cout << "zoom;" << zoom << "\n";
-    uint32_t zmMask = 1LL << zoom;
+    zmMask = 1LL << zoom;
     std::ostringstream result; 
     result << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?> <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
     result << "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 " << std::to_string(sizex) << " " << std::to_string(sizey) << "\">\n";
     result << "<style>\n";
-	std::cout << "0";
+	//std::cout << "0";
 	uint32_t mask = 1LL << zoom;
     for (IndexDesc* idxDesc : *(mger->indexes))
     {
@@ -73,266 +185,17 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 	}    
     result << "</style>\n";
     result << "<rect width=\"" << std::to_string(sizex + 1) << "\" height=\"" << std::to_string(sizey + 1) << "\" fill=\"antiquewhite\"/>\n";
-    hh::THashIntegerTable relationHash(100000), wayHash(100000), nodeHash(100000);
-    //std::set<std::string> texts;
-    int zIndex;
-
-    //Rectangle rect1 = rect*2.0;
-    GeoBoxSet gSet = makeGeoBoxSet(rect*4.0);
-    short indexId;
-    for(short i = 0; i < gSet.count; i++)
+    indexId = 0;
+    for (IndexDesc* idxDesc : *(mger->indexes))
     {
-        //std::cout << "count : " << std::to_string(i) << "\n";
-        GeoBox g;
-        g = gSet.boxes[i];
-        short  mask = g.maskLength;
-
-        GeoBox maxGeoBox;
-        maxGeoBox = g;
-
-        if(mask < 63) {
-            uint64_t myMask = UINT64_C(0x1) << (mask);
-            maxGeoBox.pos = maxGeoBox.pos + myMask;
-        } else {
-            maxGeoBox.pos=0xFFFFFFFFFFFFFFFF;
-        }
-
-        fidx::Record<IndexEntry, GeoBox> record;
-        uint64_t start;
-        indexId = 0;
-        for (IndexDesc* idxDesc : *(mger->indexes))
-        {
-            indexId++;
-            if(!(idxDesc->mask & zmMask)) continue;
-            if(idxDesc->type == "relation")
-            {
-                if(idxDesc->idx->findLastLesser(g, start))
-                //idxDesc->idx->findLastLesser(g, start);
-                while(idxDesc->idx->get(start, &record) && (record.key <= maxGeoBox))
-                {
-                    if((record.key.zmMask &  zmMask )&&((record.value.r * rect).isValid()))
-                    {
-                        if( relationHash.addIfUnique(record.value.id*100 + indexId))
-                        {
-                            Relation* myRelation = mger->loadRelation(record.value.id);
-
-                            CssClass* cl = getCssClass(*idxDesc, *myRelation, zoom, record.key.zmMask & 0X100000LL);
-                            label_s lbl;
-                            if(cl /*&& (myRelation->rect * rect).isValid()*/ )
-                            {
-                                tmp = render(zIndex, lbl, idxDesc, *myRelation,
-                                                     rect,
-                                                     sizex,
-                                                     sizey,
-                                                     cl//, texts
-                                                    );
-                                it = resMap.find(zIndex);
-                                if(it != resMap.end())
-                                {
-                                    it->second += tmp;
-                                }
-                                else
-                                {
-                                    resMap[zIndex] = tmp;
-                                }
-                                if((lbl.text.length() > 0) && (lbl.fontsize > 5))
-                                        label_vector.push_back(lbl);
-                            }
-                            delete myRelation;
-                        }
-                    }
-                    start++;
-                }
-                short mask = g.maskLength;
-                short max = 64;
-                if (max >= 64) max = 64;
-                while(mask++ < max )
-                {
-                    GeoBox maxGeoBox2 = g;
-                    maxGeoBox2.maskLength = mask;
-                    uint64_t myMask = UINT64_C(0xFFFFFFFFFFFFFFFF) << mask;
-                    maxGeoBox2.pos = maxGeoBox2.pos & myMask;
-                    if(idxDesc->idx->findLastLesser(maxGeoBox2, start))
-                    while(idxDesc->idx->get(start++, &record) && (record.key <= maxGeoBox2))
-                    {
-                        if( relationHash.addIfUnique(record.value.id*100 +indexId))
-                        {
-                            if((record.key.zmMask &  zmMask ) /*&& ((record.value.r * rect1).isValid())*/)
-                            {
-                                Relation* myRelation = mger->loadRelation(record.value.id);
-
-                                CssClass* cl = getCssClass(*idxDesc, *myRelation, zoom, record.key.zmMask & 0X100000LL);
-                                label_s lbl;
-
-                                if(cl /*&& (myRelation->rect * rect1).isValid()*/)
-                                {
-                                    tmp = render(zIndex, lbl, idxDesc,*myRelation,
-                                                         rect,
-                                                         sizex,
-                                                         sizey, cl/*, texts*/);
-                                    it = resMap.find(zIndex);
-                                    if(it != resMap.end())
-                                    {
-                                        it->second += tmp;
-                                    }
-                                    else
-                                    {
-                                        resMap[zIndex] = tmp;
-                                    }
-                                    if((lbl.text.length() > 0) && (lbl.fontsize > 5))
-                                        label_vector.push_back(lbl);
-                                }
-                                delete myRelation;
-                            }
-                        }
-                    }
-                }
-            }
-            else if (idxDesc->type == "way")
-            {
-                Rectangle rect1 = rect*2;
-                if(idxDesc->idx->findLastLesser(g, start))
-                while(idxDesc->idx->get(start, &record) && (record.key <= maxGeoBox))
-                {
-                    if((record.key.zmMask &  zmMask ) /*&& ((record.value.r * rect1).isValid())*/)
-                    {
-                        if( wayHash.addIfUnique(record.value.id*100 + indexId))  //
-                        {
-                            Way* myWay = mger->loadWay(record.value.id);
-                            CssClass* cl = getCssClass(*idxDesc, *myWay, zoom,  record.key.zmMask & 0X100000LL);
-                            if(cl && (myWay->rect * rect1).isValid())
-                            {
-                                label_s lbl;
-                                tmp = render(zIndex,lbl, idxDesc, *myWay,
-                                                rect,
-                                                sizex,
-                                                sizey, cl/*, texts*/);
-                                it = resMap.find(zIndex);
-                                if(it != resMap.end())
-                                {
-                                    it->second += tmp;
-                                }
-                                else
-                                {
-                                    resMap[zIndex] = tmp;
-                                }
-                                if((lbl.text.length() > 0) && (lbl.fontsize >= 5))
-                                    label_vector.push_back(lbl);
-                            }
-                            delete myWay;
-                        }
-                    }
-                    start++;
-                }
-                short mask = g.maskLength;
-                short max = 64;
-                if (max >= 64) max = 64;
-                while(mask++ < max)
-                {
-                    GeoBox maxGeoBox2 = g;
-                    maxGeoBox2.maskLength = mask;
-                    uint64_t myMask = UINT64_C(0xFFFFFFFFFFFFFFFF) << mask;
-                    maxGeoBox2.pos = maxGeoBox2.pos & myMask;
-                    if(idxDesc->idx->findLastLesser(maxGeoBox2, start))
-                    while(idxDesc->idx->get(start++, &record) && (record.key <= maxGeoBox2))
-                    {
-                        if((record.key.zmMask &  zmMask )/*&&((record.value.r * rect1).isValid())*/)
-                        {
-                            if( wayHash.addIfUnique(record.value.id * 100 + indexId))
-                            {
-                                Way* myWay = mger->loadWay(record.value.id);
-                                CssClass* cl = getCssClass(*idxDesc, *myWay, zoom, record.key.zmMask & 0X100000LL);
-
-                                if(cl && (myWay->rect * rect1).isValid())
-                                {
-                                    label_s lbl;
-                                    tmp = render(zIndex,lbl, idxDesc,*myWay,
-                                                    rect,
-                                                    sizex,
-                                                    sizey, cl/*, texts*/);
-                                    it = resMap.find(zIndex);
-                                    if(it != resMap.end())
-                                    {
-                                        it->second += tmp;
-                                    }
-                                    else
-                                    {
-                                        resMap[zIndex] = tmp;
-                                    }
-                                    if((lbl.text.length() > 0) && (lbl.fontsize > 5))
-                                        label_vector.push_back(lbl);
-                                }
-                                delete myWay;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    //rect1 = rect * 4;
-    gSet = makeGeoBoxSet(rect * 4);
-    for(short i = 0; i < gSet.count; i++)
-    {
-
-        GeoBox g;
-
-        g = gSet.boxes[i];
-        short  mask = g.maskLength;
-
-        GeoBox maxGeoBox;
-        maxGeoBox = g;
-
-        uint64_t myMask = UINT64_C(0x1) << (mask);
-        maxGeoBox.pos = maxGeoBox.pos + myMask;
-
-
-        fidx::Record<IndexEntry, GeoBox> record;
-        uint64_t start;
-        indexId = 0;
-        for (IndexDesc* idxDesc : *(mger->indexes))
-        {
-            indexId++;
-            if(!(idxDesc->mask & zmMask)) continue;
-            if (idxDesc->type == "node")
-            {
-                if(idxDesc->idx->findLastLesser(g, start))
-                while(idxDesc->idx->get(start, &record) && (record.key <= maxGeoBox))
-                {
-                    label_s label;
-                    if( nodeHash.addIfUnique(record.value.id*100 + indexId))
-                    {
-                        if(record.key.zmMask &  zmMask )
-                        {
-                            Point* myNode = mger->loadPoint(record.value.id);
-                            CssClass* cl = getCssClass(*idxDesc, *myNode, zoom,false);
-                            if(cl)
-                            {
-                                {
-                                    tmp = render(zIndex,label, idxDesc, *myNode,
-                                                     rect,
-                                                     sizex,
-                                                     sizey, cl);
-                                    it = resMap.find(zIndex);
-                                    if(it != resMap.end())
-                                    {
-                                        it->second += tmp;
-                                    }
-                                    else
-                                    {
-                                        resMap[zIndex] = tmp;
-                                    }
-                                    if((label.text.length() > 0) && (label.fontsize > 5))
-                                        label_vector.push_back(label);
-                                }
-                            }
-                            delete myNode;
-                        }
-                    }
-                    start++;
-                }
-            }
-        }
+        indexId++;
+        if(!(idxDesc->mask & zmMask)) continue;
+        if (idxDesc->type == "node")
+            iterate<Point>(*idxDesc, rect);
+        else if (idxDesc->type == "way")
+            iterate<Way>(*idxDesc, rect);
+        else if (idxDesc->type == "relation")
+            iterate<Relation>(*idxDesc, rect);
     }
 
     std::sort(label_vector.begin(), label_vector.end(),compare);
@@ -469,7 +332,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     return result.str();
 }
 
-std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& myWay, Rectangle rect,uint32_t szx, uint32_t szy, CssClass* cl)
+std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& myWay, Rectangle rect,uint32_t szx, uint32_t szy, CssClass& cl)
 {
     lbl.id = myWay.id + UINT64_C(0xA000000000000000);
     lbl.fontsize = 12;    
@@ -477,7 +340,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
     lbl.ref = "";    
     lbl.pos_x = lbl.angle = lbl.pos_y=0;
     lbl.style = 0;    
-    lbl.zindex = cl->zIndex;
+    lbl.zindex = cl.zIndex;
     std::ostringstream result;
     double oldx = -1;
     double oldy = -1;
@@ -491,21 +354,20 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
     std::string textStyle= "";
     double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     std::string name = "";
-    if((cl )/*&& ((myWay.rect)*rect).isValid()*/)
+    //if((cl )/*&& ((myWay.rect)*rect).isValid()*/)
     {
         bool draw = ((myWay.rect)*rect).isValid();
-        uint64_t wayId = makeWayId();
-        style = cl->style;
+        style = cl.style;
         std::string textStyle2;
-        textStyle = cl->textStyle;
-        if(cl->width.length()) width = std::stoi(cl->width);
-        if(cl->textWidth.length()) textWidth = std::stoi(cl->textWidth);
-        if(textWidth) textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl->textStyle;
+        textStyle = cl.textStyle;
+        if(cl.width.length()) width = std::stoi(cl.width);
+        if(cl.textWidth.length()) textWidth = std::stoi(cl.textWidth);
+        if(textWidth) textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
         if(width && ((width*ppm) <  0.25)) return "";
-        if(width) style ="stroke-width:"+ std::to_string(width*ppm)+";" + cl->style;
+        if(width) style ="stroke-width:"+ std::to_string(width*ppm)+";" + cl.style;
         std::string textField = "name";
-        if(cl->textField != "") textField = cl->textField;
-        zIndex = cl->zIndex;
+        if(cl.textField != "") textField = cl.textField;
+        zIndex = cl.zIndex;
         name = myWay.tags[textField.c_str()];
         if(name == "" && textField != "name" ) name = myWay.tags["name"];
 
@@ -584,12 +446,12 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
             }
         }
 
-        if(draw) result << " \" class=\"c" << cl->rank << "\" />\n";
+        if(draw) result << " \" class=\"c" << cl.rank << "\" />\n";
         lbl.fontsize = 12;
-        std::size_t found = cl->textStyle.find("font-size:");
+        std::size_t found = cl.textStyle.find("font-size:");
         if(found != std::string::npos)
         {
-            lbl.fontsize = atoi(cl->textStyle.c_str() + found + 10);
+            lbl.fontsize = atoi(cl.textStyle.c_str() + found + 10);
         }
         else
         {
@@ -598,7 +460,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
         
         if((textWidth*ppm >= 6) || (lbl.fontsize >= 6))
         {
-            if((name != "" ) && (textStyle != "") && cl->opened)
+            if((name != "" ) && (textStyle != "") && cl.opened)
             {
                 /*if(name.length() < 6)
                 {
@@ -628,46 +490,46 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
                 }
                 else*/
                 {
-                     if(cl->textWidth != "")
+                     if(cl.textWidth != "")
                      {
-                       textWidth = atoi(cl->textWidth.c_str());
+                       textWidth = atoi(cl.textWidth.c_str());
                        lbl.fontsize = textWidth*ppm;
                      }
                     unsigned int chars = 1.4*length / (lbl.fontsize);
                     if(name.length() < chars)
                     {
-                       lbl.zindex = cl->zIndex;
-                       lbl.style = cl->rank;
+                       lbl.zindex = cl.zIndex;
+                       lbl.style = cl.rank;
                        lbl.text=name;
 
                        
-                       lbl.ref = std::to_string(wayId);
-                       lbl.style = cl->rank;
+                       lbl.ref = std::to_string(myWay.id);
+                       lbl.style = cl.rank;
                        lbl.text=name;
                     }
                 }
             }
-            else if((name != "" ) && (textStyle != "") && !cl->opened)
+            else if((name != "" ) && (textStyle != "") && !cl.opened)
             {
-                if(cl->textWidth != "")
+                if(cl.textWidth != "")
                 {
-                    textWidth = atoi(cl->textWidth.c_str());
+                    textWidth = atoi(cl.textWidth.c_str());
                     lbl.fontsize = textWidth*ppm;
                 }
                 unsigned int chars = 1.4*szx*(myWay.rect.x1 - myWay.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
                 if(name.length() < chars)
                 {
-                style += ";stroke-width:" + std::to_string(atoi(cl->width.c_str())*ppm);
+                style += ";stroke-width:" + std::to_string(atoi(cl.width.c_str())*ppm);
 
                 int64_t xxx = myWay.rect.x0/2 + myWay.rect.x1/2;
                 int64_t yyy = myWay.rect.y0/2 + myWay.rect.y1/2;
 
-                lbl.zindex = cl->zIndex;
+                lbl.zindex = cl.zIndex;
                 int32_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
                 int32_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
                 lbl.pos_x = x;
                 lbl.pos_y = y;
-                lbl.style = cl->rank;
+                lbl.style = cl.rank;
                 lbl.text = name;
                 }
             }
@@ -677,7 +539,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
 }
 
 
-std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relation& myRelation,Rectangle rect,uint32_t szx, uint32_t szy, CssClass* cl)
+std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relation& myRelation,Rectangle rect,uint32_t szx, uint32_t szy, CssClass& cl)
 {
     lbl.id = myRelation.id  + UINT64_C(0xB000000000000000);;
     lbl.fontsize = 12;    
@@ -685,14 +547,14 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relati
     lbl.ref = "";    
     lbl.pos_x = lbl.pos_y = lbl.angle = 0;    
     lbl.style = 0;    
-    lbl.zindex = cl->zIndex;
+    lbl.zindex = cl.zIndex;
     std::string style= "";
     std::string result = "";
     double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     std::string textField = "name";
-    if(!(cl->textField == "")) textField = cl->textField;
+    if(!(cl.textField == "")) textField = cl.textField;
     bool draw = ((myRelation.rect)*rect).isValid();
-    if(cl->opened)
+    if(cl.opened)
     {
         for(Way* myWay : myRelation.ways)
         {
@@ -704,8 +566,8 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relati
     else
     {
 
-        style = cl->style;
-        zIndex = cl->zIndex;
+        style = cl.style;
+        zIndex = cl.zIndex;
         if(draw)
         {
             result += "<path  d=\"";
@@ -741,9 +603,9 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relati
                     }
                 }
             }
-            result += " \" class=\"c"+std::to_string(cl->rank)+"\" />\n";
+            result += " \" class=\"c"+std::to_string(cl.rank)+"\" />\n";
         }
-        if(cl->textStyle != "")
+        if(cl.textStyle != "")
         {
             std::string textStyle ="";
             int  textWidth;
@@ -752,26 +614,26 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relati
             if(name == "" && textField != "name" ) name = myRelation.tags["name"];
             if(name != "")
             {
-                if(cl->textWidth != "")
+                if(cl.textWidth != "")
                 {
-                    if ( cl->textWidth == "auto" )
+                    if ( cl.textWidth == "auto" )
                     {
                         int length = name.length();
                         if (length < 12) length = 12;
                         int64_t dxx = (myRelation.rect.x1 - myRelation.rect.x0);
                         uint32_t dx = (dxx)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
                         textWidth = (dx*1.5)/(2.0*length);
-                        textStyle ="font-size:"+ std::to_string((int)textWidth)+ "px;" + cl->textStyle;
+                        textStyle ="font-size:"+ std::to_string((int)textWidth)+ "px;" + cl.textStyle;
                     }
                     else
                     {
-                        textWidth = atoi(cl->textWidth.c_str());
-                        textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl->textStyle;
+                        textWidth = atoi(cl.textWidth.c_str());
+                        textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
                     }
                 }
                 else
                 {
-                    textStyle = cl->textStyle;
+                    textStyle = cl.textStyle;
                 }
                 unsigned int chars = 1.4*szx*(myRelation.rect.x1 - myRelation.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
                 if(name.length() < chars)
@@ -782,8 +644,8 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relati
                 int32_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
                 lbl.pos_x = x;
                 lbl.pos_y = y;
-                lbl.zindex = cl->zIndex;
-                lbl.style = cl->rank;
+                lbl.zindex = cl.zIndex;
+                lbl.style = cl.rank;
                 lbl.text = name;
                 }
             }
@@ -794,7 +656,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relati
 
 
 std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Point& myNode,
-                                    Rectangle rect, uint32_t szx, uint32_t szy, CssClass* cl)
+                                    Rectangle rect, uint32_t szx, uint32_t szy, CssClass& cl)
 {
 
     lbl.id = myNode.id  + UINT64_C(0xC000000000000000);
@@ -803,7 +665,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Point&
     lbl.ref = "";    
     lbl.pos_x = lbl.pos_y = lbl.angle = 0;    
     lbl.style = 0;    
-    lbl.zindex = cl->zIndex;
+    lbl.zindex = cl.zIndex;
     std::string result = "";
     int x,y;
     int textWidth=0;
@@ -812,34 +674,34 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Point&
     double ppm = 107 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     std::string name = "";
 
-    if(cl)
+    //if(cl)
     {
         std::string fieldName = "name";
-        if (cl->textField != "") fieldName = cl->textField;
+        if (cl.textField != "") fieldName = cl.textField;
         name = myNode.tags[fieldName.c_str()];
         if(name == "" && fieldName != "name" ) name = myNode.tags["name"];
         lbl.text = name;
-        style = cl->style;
+        style = cl.style;
         
-        std::size_t found = cl->textStyle.find("font-size:");
+        std::size_t found = cl.textStyle.find("font-size:");
         if(found != std::string::npos)
         {
-            lbl.fontsize = atoi(cl->textStyle.c_str() + found + 10);
+            lbl.fontsize = atoi(cl.textStyle.c_str() + found + 10);
         }
 
 
-        if(cl->textWidth != "")
+        if(cl.textWidth != "")
         {
-            style += ";stroke-width:" + std::to_string(atoi(cl->width.c_str())*ppm);
-            textWidth = atoi(cl->textWidth.c_str());
+            style += ";stroke-width:" + std::to_string(atoi(cl.width.c_str())*ppm);
+            textWidth = atoi(cl.textWidth.c_str());
             lbl.fontsize = textWidth*ppm;
-            textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl->textStyle;
+            textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
         }
         else
         {
-            textStyle = cl->textStyle;
+            textStyle = cl.textStyle;
         }
-        zIndex = cl->zIndex;
+        zIndex = cl.zIndex;
 
 
         if(name != "" )
@@ -850,7 +712,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Point&
             y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
             lbl.pos_x = x;
             lbl.pos_y = y;
-            lbl.style = cl->rank;
+            lbl.style = cl.rank;
         }
     }
     return result;

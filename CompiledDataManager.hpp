@@ -175,6 +175,22 @@ public :
     Relation* loadRelation(uint64_t id);
     Relation* loadRelationFast(uint64_t id);
     Relation* loadRelation(uint64_t id, short recurs);
+    
+
+    void load(Relation*& r, uint64_t id)
+    {
+        r = loadRelation(id, 3);
+    }
+
+    void load(Way*& w, uint64_t id)
+    {
+        w = loadWay(id);
+    }
+
+    void load(Point*& p, uint64_t id)
+    {
+        p =  loadPoint(id);
+    }
 
     void fillPoints(GeoPoint ** points, uint64_t& pointsCount, uint64_t start, uint64_t size);
 
