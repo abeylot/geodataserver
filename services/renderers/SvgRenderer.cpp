@@ -21,10 +21,40 @@ bool compare(const label_s& l2, const label_s& l1)
     return (&l1 > &l2);
 }
 
+#define MAX_TEXT_LEN 20
+#define MIN_TEXT_LEN 15
+
+std::string cutString(std::string text, int x, int dy)
+{
+	bool first = true;
+	if(text.length() < MAX_TEXT_LEN) return text; 
+	std::string result;
+	int iline = 0;
+	while(true)
+	{
+		if(text.length() < MAX_TEXT_LEN ) return result + "</tspan><tspan  x=\""+std::to_string(x)+"\" dy=\""+std::to_string(dy*iline)+"\">"+text+ "</tspan>";
+		if(!first) result += "</tspan>";
+		result += "<tspan  x=\""+std::to_string(x)+"\" dy=\""+std::to_string(dy*iline )+"\">";
+		size_t pos = text.find(' ', MIN_TEXT_LEN);
+		if(pos != std::string::npos)
+		{
+		    result += text.substr(0,pos);
+		    text = text.substr(pos);
+		}
+		else
+		{
+			result += text + "</tspan>";
+			return result;
+		}
+		first = false;
+		iline++;
+	}
+}	
+
 
 template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rect)
 {
-    GeoBoxSet gSet = makeGeoBoxSet(rect*4.0);
+    GeoBoxSet gSet = makeGeoBoxSet(rect*2.0);
     hh::THashIntegerTable* hash = &nodeHash;;
     if(idxDesc.type == "relation") hash = &relationHash;
     else if(idxDesc.type == "relation") hash = &wayHash; 
@@ -233,8 +263,15 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             //double sinus = abs(sin(angle));
             //double dist = sqrt(dx*dx +dy*dy);
             double xa,xb,xc,xd,ya,yb,yc,yd;
-            double lt = t->fontsize*0.75*t->text.length();
-            double lv = v->fontsize*0.75*t->text.length();
+            
+            int ilt = t->text.length();
+            int ilv = v->text.length();
+            
+            if(ilt > MAX_TEXT_LEN) ilt = MAX_TEXT_LEN;
+            if(ilv > MAX_TEXT_LEN) ilv = MAX_TEXT_LEN;
+            
+            double lt = t->fontsize*0.75*ilt;
+            double lv = v->fontsize*0.75*ilv;
             
             xa = v->pos_x + lv*(cos(v->angle));
             ya = v->pos_y + lv*(sin(v->angle));
@@ -303,7 +340,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                        << "\" class=\"c"
                        << std::to_string(v->style)
                        << "\">"
-                       << v->text+"</text>\n";
+                       << cutString(v->text, v->pos_x, v->fontsize)+"</text>\n";
             else
             {
 //               libs += "<text text-anchor=\"middle\" dominant-baseline=\"central\" class=\"c"+std::to_string(v->style)+"\" style=\"font-size:" +std::to_string(v->fontsize)+ "px\"><textPath xlink:href=\"#W"+std::to_string(v->id)+"\" startOffset=\"50%\">"+v->text+"</textPath></text>\n";
@@ -320,7 +357,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                       << ","
                       << std::to_string(v->pos_y)
                       << ")\">"
-                      << v->text
+                      << cutString(v->text, v->pos_x, v->fontsize)
                       << "</text>\n";
             }
 		}
