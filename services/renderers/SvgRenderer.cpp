@@ -18,7 +18,7 @@ bool compare(const label_s& l2, const label_s& l1)
     if(l2.zindex > l1.zindex) return true;
     if(l1.id < l2.id) return true;
     if(l2.id < l1.id) return false;
-    return (&l1 > &l2);
+    return (l1.text > l2.text);
 }
 
 #define MAX_TEXT_LEN 20
@@ -239,6 +239,12 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
         
         for(auto v = label_vector.begin(); v!=t; ++v)
         {
+            int ilt = t->text.length();
+            int ilv = v->text.length();
+            
+            if(ilt > MAX_TEXT_LEN) ilt = MAX_TEXT_LEN;
+            if(ilv > MAX_TEXT_LEN) ilv = MAX_TEXT_LEN;
+
             int dx = v->pos_x - t->pos_x;
             int dy = v->pos_y - t->pos_y;
             if(dx < 0) dx = -dx;
@@ -250,8 +256,8 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             }
             if((t->ref == "") && (v->ref == ""))
             {
-                if(((uint64_t)(dy << 1) < (t->fontsize*2 + v->fontsize*2))
-                  &&((uint64_t)(dx << 1) < (t->fontsize*1.5*t->text.length() + v->fontsize*1.5*v->text.length())))
+                if(((uint64_t)(dy << 1) < (t->fontsize + v->fontsize))
+                  &&((uint64_t)(dx << 1) < (t->fontsize*0.75*ilt + v->fontsize*0.75*ilv)))
                 {
                     to_show = false;
                     break;
@@ -264,11 +270,6 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             //double dist = sqrt(dx*dx +dy*dy);
             double xa,xb,xc,xd,ya,yb,yc,yd;
             
-            int ilt = t->text.length();
-            int ilv = v->text.length();
-            
-            if(ilt > MAX_TEXT_LEN) ilt = MAX_TEXT_LEN;
-            if(ilv > MAX_TEXT_LEN) ilv = MAX_TEXT_LEN;
             
             double lt = t->fontsize*0.75*ilt;
             double lv = v->fontsize*0.75*ilv;
