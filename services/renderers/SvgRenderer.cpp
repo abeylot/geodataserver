@@ -24,17 +24,45 @@ bool compare(const label_s& l2, const label_s& l1)
 #define MAX_TEXT_LEN 20
 #define MIN_TEXT_LEN 15
 
-std::string cutString(std::string text, int x, int dy)
+std::string cutString(std::string text, int x, int y, int dy)
 {
 	bool first = true;
 	if(text.length() < MAX_TEXT_LEN) return text; 
 	std::string result;
 	int iline = 0;
+    int ilines = 0;
+    std::string txt = text;
+    while(true)
+    {
+        ilines++;
+		if(txt.length() < MAX_TEXT_LEN )
+        {
+            break;
+        }
+		size_t pos = txt.find(' ', MIN_TEXT_LEN);
+		if(pos != std::string::npos)
+		{
+		    txt = txt.substr(pos);
+		}
+		else
+		{
+            break;
+		}
+    }
+    
+    int y0 = y - (dy*(ilines - 1)) / 2;
+
 	while(true)
 	{
-		if(text.length() < MAX_TEXT_LEN ) return result + "</tspan><tspan  x=\""+std::to_string(x)+"\" dy=\""+std::to_string(dy*iline)+"\">"+text+ "</tspan>";
-		if(!first) result += "</tspan>";
-		result += "<tspan  x=\""+std::to_string(x)+"\" dy=\""+std::to_string(dy*iline )+"\">";
+		if(text.length() < MAX_TEXT_LEN )
+        {
+            return result + "</tspan><tspan  x=\""+std::to_string(x)+"\" y=\""+std::to_string(y0 + dy*iline)+"\">"+text+ "</tspan>";
+        }
+		if(!first)
+        {
+            result += "</tspan>";
+        }
+		result += "<tspan  x=\""+std::to_string(x)+"\" y=\""+std::to_string(y0 + dy*iline )+"\">";
 		size_t pos = text.find(' ', MIN_TEXT_LEN);
 		if(pos != std::string::npos)
 		{
@@ -197,7 +225,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     std::ostringstream result; 
     result << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?> <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
     result << "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 " << std::to_string(sizex) << " " << std::to_string(sizey) << "\">\n";
-    result << "<style>\n";
+    result << "<style>\ntext,tspan{dominant-baseline:central;}";
 	//std::cout << "0";
 	uint32_t mask = 1LL << zoom;
     for (IndexDesc* idxDesc : *(mger->indexes))
@@ -334,18 +362,18 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     {
         {
             if(v->ref == "")
-                result << "<text text-anchor=\"middle\" dominant-baseline=\"central\" x=\""
+                result << "<text text-anchor=\"middle\" x=\""
                        << std::to_string(v->pos_x)
                        << "\" y=\""
                        << std::to_string(v->pos_y)
                        << "\" class=\"c"
                        << std::to_string(v->style)
                        << "\">"
-                       << cutString(v->text, v->pos_x, v->fontsize)+"</text>\n";
+                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)+"</text>\n";
             else
             {
 //               libs += "<text text-anchor=\"middle\" dominant-baseline=\"central\" class=\"c"+std::to_string(v->style)+"\" style=\"font-size:" +std::to_string(v->fontsize)+ "px\"><textPath xlink:href=\"#W"+std::to_string(v->id)+"\" startOffset=\"50%\">"+v->text+"</textPath></text>\n";
-               result << "<text text-anchor=\"middle\" dominant-baseline=\"central\" class=\"c"
+               result << "<text text-anchor=\"middle\" class=\"c"
                       << std::to_string(v->style)
                       << "\" style=\"font-size:"
                       << std::to_string(v->fontsize)
@@ -358,7 +386,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                       << ","
                       << std::to_string(v->pos_y)
                       << ")\">"
-                      << cutString(v->text, v->pos_x, v->fontsize)
+                      << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
                       << "</text>\n";
             }
 		}
