@@ -48,7 +48,8 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
                 while (idx->get(i, &record) &&  (i < (istart + 1000)))
                 {
                     Point* p = mger.loadPoint(record.value.id);
-                    resp += std::to_string(i) + ":: pos :" + std::to_string(record.key.pos)+ ":: mask :" + std::to_string(record.key.maskLength)+"::"+std::to_string(record.key.zmMask)+":: id :" + std::to_string(record.value.id);
+                    std::string name = p->tags["name"];
+                    resp += std::to_string(i) + ":: pos :" + std::to_string(record.key.pos)+ "::"+name+":: mask :" + std::to_string(record.key.maskLength)+"::"+std::to_string(record.key.zmMask)+":: id :" + std::to_string(record.value.id);
                     resp += "::" + name +"<br/>";
                     /*for(std::pair<std::string, std::string> pair : p->tags)
                     {

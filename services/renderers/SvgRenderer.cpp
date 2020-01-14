@@ -85,7 +85,7 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
     GeoBoxSet gSet = makeGeoBoxSet(rect*2.0);
     hh::THashIntegerTable* hash = &nodeHash;;
     if(idxDesc.type == "relation") hash = &relationHash;
-    else if(idxDesc.type == "relation") hash = &wayHash; 
+    else if(idxDesc.type == "way") hash = &wayHash; 
     int zIndex;
     for(short i = 0; i < gSet.count; i++)
     {
@@ -154,7 +154,7 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
             if(idxDesc.idx->findLastLesser(maxGeoBox2, start))
             while(idxDesc.idx->get(start++, &record) && (record.key <= maxGeoBox2))
             {
-                if( relationHash.addIfUnique(record.value.id*100 +indexId))
+                if( hash->addIfUnique(record.value.id*100 +indexId))
                 {
                     if((record.key.zmMask &  zmMask ) && ((record.value.r * (rect *4) ).isValid()))
                     {
@@ -225,7 +225,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     std::ostringstream result; 
     result << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?> <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
     result << "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 " << std::to_string(sizex) << " " << std::to_string(sizey) << "\">\n";
-    result << "<style>\ntext,tspan{dominant-baseline:central;}";
+    result << "<style>\ntext,tspan{dominant-baseline:central;text-anchor:middle;} path{fill:none;}";
 	//std::cout << "0";
 	uint32_t mask = 1LL << zoom;
     for (IndexDesc* idxDesc : *(mger->indexes))
@@ -362,7 +362,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     {
         {
             if(v->ref == "")
-                result << "<text text-anchor=\"middle\" x=\""
+                result << "<text  x=\""
                        << std::to_string(v->pos_x)
                        << "\" y=\""
                        << std::to_string(v->pos_y)
@@ -373,7 +373,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             else
             {
 //               libs += "<text text-anchor=\"middle\" dominant-baseline=\"central\" class=\"c"+std::to_string(v->style)+"\" style=\"font-size:" +std::to_string(v->fontsize)+ "px\"><textPath xlink:href=\"#W"+std::to_string(v->id)+"\" startOffset=\"50%\">"+v->text+"</textPath></text>\n";
-               result << "<text text-anchor=\"middle\" class=\"c"
+               result << "<text  class=\"c"
                       << std::to_string(v->style)
                       << "\" style=\"font-size:"
                       << std::to_string(v->fontsize)
@@ -388,6 +388,12 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                       << ")\">"
                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
                       << "</text>\n";
+               /*result << "<circle  "
+                      << " style=\"fill:red\" "
+                      << " cx=\""+std::to_string(v->pos_x)
+                      << "\" cy=\""+std::to_string(v->pos_y)
+                      << "\" r=\"1\" "
+                      << "/>";*/
             }
 		}
     }
@@ -400,6 +406,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 
 std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& myWay, Rectangle rect,uint32_t szx, uint32_t szy, CssClass& cl)
 {
+    Rectangle r1 = rect*1.5;
     lbl.id = myWay.id + UINT64_C(0xA000000000000000);
     lbl.fontsize = 12;    
     lbl.text = "";    
@@ -437,22 +444,91 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
         name = myWay.tags[textField.c_str()];
         if(name == "" && textField != "name" ) name = myWay.tags["name"];
 
-        if(draw) result << "<path  id=\"W" << myWay.id << "\" d=\"";
         bool first = true;
-        double xd,xf;
+        //double xd,xf;
         double length = 0;
         double halfLength = 0;
 
-        xd = myWay.points[0].x;
-        xf = myWay.points[myWay.pointsCount -1].x;
+        //xd = myWay.points[0].x;
+        //xf = myWay.points[myWay.pointsCount -1].x;
 
-        int j;
+        //int j;
         for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
         {
-            if(xf > xd) j = i;
-            else j=myWay.pointsCount - (i+1);
-            int64_t xx = myWay.points[j].x;
-            int64_t yy = myWay.points[j].y;
+            //if(xf > xd) j = i;
+            //else j=myWay.pointsCount - (i+1);
+            int64_t xx = myWay.points[i].x;
+            int64_t yy = myWay.points[i].y;
+            oldx = x;
+            oldy = y;
+            x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+            y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+            {
+                if(first)
+                {
+                    //if(draw)result << "M" << trunc(x) << " " << trunc(y)  << " ";
+                    first = false;
+                }
+                else
+                {
+                    if((x != oldx) || (y != oldy)|| i == (myWay.pointsCount - 1)/*&&(x > -1*szx)&&(x < 2*szx)&&(y > -1*szy)&&(y < 2*szy)*/)
+                        //if(draw) result << "L" << trunc(x) << " " << trunc(y) << " ";
+                    length += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
+                }
+            }
+        }
+
+        halfLength = length / 2;
+        double curLength = 0;
+        double ratio = 0;
+        first = true;
+        for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
+        {
+            //if(xf > xd) j = i;
+            //else j=myWay.pointsCount - (i+1);
+            int64_t xx = myWay.points[i].x;
+            int64_t yy = myWay.points[i].y;
+            oldx = x;
+            oldy = y;
+            x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+            y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+            {
+                if(!first)
+                {
+                    double oldLength = curLength;
+                    curLength += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
+                    if(curLength > halfLength)
+                    {
+                        ratio = (halfLength - oldLength)/(curLength - oldLength);
+                        lbl.pos_x = x * ratio + oldx * (1 - ratio);
+                        lbl.pos_y = y * ratio + oldy * (1 - ratio);
+                        double dfx = x - oldx;
+                        double dfy = y - oldy;
+                        if(dfx == 0) lbl.angle = M_PI / 2;
+                        else lbl.angle = atan2(dfy , dfx);
+                        if(lbl.angle > M_PI / 2) lbl.angle -= M_PI;
+                        if(lbl.angle < -1 * M_PI / 2) lbl.angle += M_PI;
+                        break;
+                    }
+                }
+                first = false;
+            }
+        }
+        myWay.crop(r1);
+        if(draw) result << "<path  id=\"W" << myWay.id << "\" d=\"";
+        first = true;
+        //double xd,xf;
+
+        //xd = myWay.points[0].x;
+        //xf = myWay.points[myWay.pointsCount -1].x;
+
+        //int j;
+        for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
+        {
+            //if(xf > xd) j = i;
+            //else j=myWay.pointsCount - (i+1);
+            int64_t xx = myWay.points[i].x;
+            int64_t yy = myWay.points[i].y;
             oldx = x;
             oldy = y;
             x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
@@ -467,48 +543,8 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
                 {
                     if((x != oldx) || (y != oldy)|| i == (myWay.pointsCount - 1)/*&&(x > -1*szx)&&(x < 2*szx)&&(y > -1*szy)&&(y < 2*szy)*/)
                         if(draw) result << "L" << trunc(x) << " " << trunc(y) << " ";
-                    length += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
+                    //length += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
                 }
-            }
-        }
-
-        halfLength = length / 2;
-        double curLength = 0;
-        double ratio = 0;
-        first = true;
-        for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
-        {
-            if(xf > xd) j = i;
-            else j=myWay.pointsCount - (i+1);
-            int64_t xx = myWay.points[j].x;
-            int64_t yy = myWay.points[j].y;
-            oldx = x;
-            oldy = y;
-            x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-            y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-            {
-                if(!first)
-                {
-                    double oldLength = curLength;
-                    curLength += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
-                    if(curLength < halfLength)
-                    {
-                    }
-                    else
-                    {
-                        ratio = (halfLength - oldLength)/(curLength - oldLength);
-                        lbl.pos_x = x * ratio + oldx * (1 - ratio);
-                        lbl.pos_y = y * ratio + oldy * (1 - ratio);
-                        double dfx = x - oldx;
-                        double dfy = y - oldy;
-                        if(dfx == 0) lbl.angle = M_PI / 2;
-                        else lbl.angle = atan2(dfy , dfx);
-                        //if(lbl.angle > M_PI / 2) lbl.angle -= M_PI;
-                        //if(lbl.angle < -1 * M_PI / 2) lbl.angle += M_PI;
-                        break;
-                    }
-                }
-                first = false;
             }
         }
 
@@ -641,35 +677,35 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relati
             {
                 Rectangle r1 = rect*1.1;
                 l->crop(r1);
-                bool first = true;
-                int oldx = -1;
-                int oldy = -1;
-                int x=0;
-                int y=0;
-                for(unsigned int i = 0 ; i < l->pointsCount; i++)
-                {
-                    int64_t xx = l->points[i].x;
-                    int64_t yy = l->points[i].y;
-                    oldx = x;
-                    oldy = y;
-                    x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-                    y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-                    if((x != oldx) || (y != oldy) || i == (l->pointsCount - 1))
+                    bool first = true;
+                    int oldx = -1;
+                    int oldy = -1;
+                    int x=0;
+                    int y=0;
+                    for(unsigned int i = 0 ; i < l->pointsCount; i++)
                     {
-                        if(first)
+                        int64_t xx = l->points[i].x;
+                        int64_t yy = l->points[i].y;
+                        oldx = x;
+                        oldy = y;
+                        x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+                        y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+                        if((x != oldx) || (y != oldy) || i == (l->pointsCount - 1))
                         {
-                            result += "M" + std::to_string(x) + " " + std::to_string(y) + " ";
-                            first = false;
-                        }
-                        else
-                        {
-                            result += "L" + std::to_string(x) + " " + std::to_string(y) + " ";
-                        //length += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
+                            if(first)
+                            {
+                                result += "M" + std::to_string(x) + " " + std::to_string(y) + " ";
+                                first = false;
+                            }
+                            else
+                            {
+                                result += "L" + std::to_string(x) + " " + std::to_string(y) + " ";
+                            //length += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
+                            }
                         }
                     }
-                }
             }
-            result += " \" class=\"c"+std::to_string(cl.rank)+"\" />\n";
+                    result += " \" class=\"c"+std::to_string(cl.rank)+"\" />\n";
         }
         if(cl.textStyle != "")
         {
