@@ -10,7 +10,21 @@
 #include <sstream>
 
 
-
+Shape* SvgRenderer::getShape(CssClass* c)
+{
+	auto it = shapes.find(c);
+	if(it == shapes.end())
+	{
+		Shape* s = new Shape;
+		shapes[c] = s;
+		return s;
+	}
+	else
+	{
+		return it->second;
+	}
+	
+}
 
 bool compare(const label_s& l2, const label_s& l1)
 {
@@ -21,8 +35,8 @@ bool compare(const label_s& l2, const label_s& l1)
     return (l1.text > l2.text);
 }
 
-#define MAX_TEXT_LEN 20
-#define MIN_TEXT_LEN 15
+#define MAX_TEXT_LEN 17
+#define MIN_TEXT_LEN 13
 
 std::string cutString(std::string text, int x, int y, int dy)
 {
@@ -83,10 +97,10 @@ std::string cutString(std::string text, int x, int y, int dy)
 template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rect)
 {
     GeoBoxSet gSet = makeGeoBoxSet(rect*2.0);
+    Shape myShape;
     hh::THashIntegerTable* hash = &nodeHash;;
     if(idxDesc.type == "relation") hash = &relationHash;
     else if(idxDesc.type == "way") hash = &wayHash; 
-    int zIndex;
     for(short i = 0; i < gSet.count; i++)
     {
         GeoBox g;
@@ -112,27 +126,27 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
             {
                 if( hash->addIfUnique(record.value.id*100 + indexId))
                 {
-                    zIndex = 0;
                     ITEM* item = NULL;
                     mger->load(item, record.value.id);
                     CssClass* cl = getCssClass(idxDesc, *item, zoom, record.key.zmMask & 0X100000LL);
                     label_s lbl;
                     if(cl)
                     {
-                        tmp = render(zIndex, lbl, &idxDesc, *item,
-                                                     rect,
-                                                     size_x,
-                                                     size_y,
-                                                     *cl
-                                                    );
-                        it = resMap.find(zIndex);
+                        tmp = render(lbl, *item,
+                                      rect,
+                                      size_x,
+                                      size_y,
+                                      *cl,
+                                      *getShape(cl)
+                                      );
+                        it = resMap.find(cl->zIndex);
                         if(it != resMap.end())
                         {
                             it->second += tmp;
                         }
                         else
                         {
-                            resMap[zIndex] = tmp;
+                            resMap[cl->zIndex] = tmp;
                         }
                         if((lbl.text.length() > 0) && (lbl.fontsize > 5))
                             label_vector.push_back(lbl);
@@ -166,18 +180,21 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
 
                         if(cl /*&& (myRelation->rect * rect1).isValid()*/)
                         {
-                            tmp = render(zIndex, lbl, &idxDesc,*item,
+                            tmp = render(lbl, *item,
                                          rect,
                                          size_x,
-                                         size_y, *cl/*, texts*/);
-                            it = resMap.find(zIndex);
+                                         size_y,
+                                         *cl,
+                                         *getShape(cl)
+                                         );
+                            it = resMap.find(cl->zIndex);
                             if(it != resMap.end())
                             {
                                 it->second += tmp;
                             }
                             else
                             {
-                                resMap[zIndex] = tmp;
+                                resMap[cl->zIndex] = tmp;
                             }
                             if((lbl.text.length() > 0) && (lbl.fontsize > 5))
                                 label_vector.push_back(lbl);
@@ -187,7 +204,29 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
                 }
             }
         }
-    }    
+    }
+    for(auto it : shapes)
+    {
+      //std::cout << "rendering shape \n";
+        tmp = renderShape(
+         rect,
+         size_x,
+         size_y,
+         * (it.first),
+         * (it.second)
+        );
+        delete it.second;
+        auto it2 = resMap.find(it.first->zIndex);
+        if(it2 != resMap.end())
+        {
+           it2->second += tmp;
+        }
+        else
+        {
+           resMap[it.first->zIndex] = tmp;
+        }
+	}
+	shapes.clear();
 }
 
 
@@ -200,7 +239,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     //std::map<int,std::string>::iterator it;
     //std::string tmp = "";
     //std::vector<label_s> label_vector;
-    int zIndex;
+    //int zIndex;
     double ppm = 50 * ((sizex * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     uint32_t msz = rect.x1 - rect.x0;
     zoom = 31;
@@ -235,7 +274,8 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             for(CssClass* cl : cd->classes)
             {
 				if( cl->mask & mask )
-				{
+				{   
+                    //result << "/*" << cl->tagValue << " " << cl->zIndex << "*/\n";
 				    result << cl->makeClass("c" + std::to_string(cl->rank), ppm);
 				}
 			}
@@ -355,6 +395,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 
     for(std::pair<int,std::string> tmp : resMap)
     {
+        //result << "<!-- zindex " << tmp.first << "-->\n"; 
         result << tmp.second;
     }
     //result += libs;
@@ -404,7 +445,59 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     return result.str();
 }
 
-std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& myWay, Rectangle rect,uint32_t szx, uint32_t szy, CssClass& cl)
+std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, CssClass& cl, Shape& s)
+{
+    std::ostringstream result;
+    double oldx = -1;
+    double oldy = -1;
+    double x=0;
+    double y=0;
+    std::string style="";
+
+    int width=0;
+
+    double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
+
+    if(cl.width.length()) width = std::stoi(cl.width);
+    if(width && ((width*ppm) <  0.25)) return "";
+    if(width) style ="stroke-width:"+ std::to_string(width*ppm)+";" + cl.style;
+ 
+
+    bool first = true;
+    if(s.lines.size() == 0) return "";
+    result << "<path  d=\"";
+    for(Line* l : s.lines)
+    {
+        first = true;
+        x=0; y=0;
+        for(unsigned int i = 0 ; i < l->pointsCount; i++)
+        {
+            int64_t xx = l->points[i].x;
+            int64_t yy = l->points[i].y;
+            oldx = x;
+            oldy = y;
+            x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+            y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+            {
+                if(first)
+                {
+                    result << "M" << trunc(x) << " " << trunc(y)  << " ";
+                    first = false;
+                }
+                else
+                {
+                    if((trunc(x) != trunc(oldx)) || (trunc(y) != trunc(oldy))|| i == (l->pointsCount - 1))
+                        result << "L" << trunc(x) << " " << trunc(y) << " ";
+                }
+            }
+        }
+	}
+    result << " \" class=\"c" << cl.rank << "\" />\n";
+    return result.str();
+}
+
+
+std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_t szx, uint32_t szy, CssClass& cl, Shape& s)
 {
     Rectangle r1 = rect*1.5;
     lbl.id = myWay.id + UINT64_C(0xA000000000000000);
@@ -440,7 +533,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
         if(width) style ="stroke-width:"+ std::to_string(width*ppm)+";" + cl.style;
         std::string textField = "name";
         if(cl.textField != "") textField = cl.textField;
-        zIndex = cl.zIndex;
+
         name = myWay.tags[textField.c_str()];
         if(name == "" && textField != "name" ) name = myWay.tags["name"];
 
@@ -515,40 +608,46 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
             }
         }
         myWay.crop(r1);
-        if(draw) result << "<path  id=\"W" << myWay.id << "\" d=\"";
-        first = true;
+        if(draw)
+        {
+            s.mergePoints(myWay.points, myWay.pointsCount);
+            //std::cout << "merging " << myWay.pointsCount << "points\n";
+        }
+        //if(draw) result << "<path  id=\"W" << myWay.id << "\" d=\"";
+        //first = true;
         //double xd,xf;
 
         //xd = myWay.points[0].x;
         //xf = myWay.points[myWay.pointsCount -1].x;
 
         //int j;
-        for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
-        {
+        //x=0; y=0;
+        //for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
+        //{
             //if(xf > xd) j = i;
             //else j=myWay.pointsCount - (i+1);
-            int64_t xx = myWay.points[i].x;
-            int64_t yy = myWay.points[i].y;
-            oldx = x;
-            oldy = y;
-            x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-            y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-            {
-                if(first)
-                {
-                    if(draw)result << "M" << trunc(x) << " " << trunc(y)  << " ";
-                    first = false;
-                }
-                else
-                {
-                    if((x != oldx) || (y != oldy)|| i == (myWay.pointsCount - 1)/*&&(x > -1*szx)&&(x < 2*szx)&&(y > -1*szy)&&(y < 2*szy)*/)
-                        if(draw) result << "L" << trunc(x) << " " << trunc(y) << " ";
-                    //length += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
-                }
-            }
-        }
+        //    int64_t xx = myWay.points[i].x;
+        //    int64_t yy = myWay.points[i].y;
+        //    oldx = x;
+        //    oldy = y;
+        //    x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+        //    y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+        //    {
+        //        if(first)
+        //        {
+        //            if(draw)result << "M" << trunc(x) << " " << trunc(y)  << " ";
+        //            first = false;
+        //        }
+        //        else
+        //        {
+        //            if((trunc(x) != trunc(oldx)) || (trunc(y) != trunc(oldy))|| i == (myWay.pointsCount - 1)/*&&(x > -1*szx)&&(x < 2*szx)&&(y > -1*szy)&&(y < 2*szy)*/)
+        //                if(draw) result << "L" << trunc(x) << " " << trunc(y) << " ";
+        //            //length += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
+        //        }
+        //    }
+        //}
 
-        if(draw) result << " \" class=\"c" << cl.rank << "\" />\n";
+        //if(draw) result << " \" class=\"c" << cl.rank << "\" />\n";
         lbl.fontsize = 12;
         std::size_t found = cl.textStyle.find("font-size:");
         if(found != std::string::npos)
@@ -641,7 +740,7 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Way& m
 }
 
 
-std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relation& myRelation,Rectangle rect,uint32_t szx, uint32_t szy, CssClass& cl)
+std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rect,uint32_t szx, uint32_t szy, CssClass& cl, Shape& s)
 {
     lbl.id = myRelation.id  + UINT64_C(0xB000000000000000);;
     lbl.fontsize = 12;    
@@ -662,14 +761,13 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relati
         {
             if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
             label_s lbl;
-            result += render(zIndex,lbl, idx, *myWay, rect, szx, szy, cl/*, texts*/);
+            result += render(lbl,*myWay, rect, szx, szy, cl, s);
         }
     }
     else
     {
 
         style = cl.style;
-        zIndex = cl.zIndex;
         if(draw)
         {
             result += "<path  d=\"";
@@ -757,8 +855,8 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Relati
 }
 
 
-std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Point& myNode,
-                                    Rectangle rect, uint32_t szx, uint32_t szy, CssClass& cl)
+std::string SvgRenderer::render(label_s& lbl, Point& myNode,
+                                    Rectangle rect, uint32_t szx, uint32_t szy, CssClass& cl, Shape& s)
 {
 
     lbl.id = myNode.id  + UINT64_C(0xC000000000000000);
@@ -803,7 +901,6 @@ std::string SvgRenderer::render(int& zIndex, label_s& lbl, IndexDesc* idx,Point&
         {
             textStyle = cl.textStyle;
         }
-        zIndex = cl.zIndex;
 
 
         if(name != "" )

@@ -34,6 +34,7 @@ private:
     std::map<int,std::string>::iterator it;
     std::string tmp = "";
     std::vector<label_s> label_vector;
+    std::map<CssClass*, Shape*> shapes;
 
     
 /*    inline uint32_t makeWayId() {
@@ -55,12 +56,14 @@ public:
     }
     
     std::string renderItems(Rectangle rect, uint32_t sizex, uint32_t sizey, std::string tag);
-    std::string render(int& zIndex, label_s& lbl, IndexDesc* idx, Way& myWay,     Rectangle rect, uint32_t sizex, uint32_t sizey, CssClass& cl);
-    std::string render(int& zIndex, label_s& lbl, IndexDesc* idx, Relation& myWay,Rectangle rect, uint32_t sizex, uint32_t sizey, CssClass& cl);
-    std::string render(int& zIndex, label_s& lbl, IndexDesc* idx, Point& myNode,  Rectangle rect,uint32_t  sizex, uint32_t sizey, CssClass& cl);
+    std::string render(label_s& lbl, Way& myWay,     Rectangle rect, uint32_t sizex, uint32_t sizey, CssClass& cl, Shape& s);
+    std::string render(label_s& lbl, Relation& myWay,Rectangle rect, uint32_t sizex, uint32_t sizey, CssClass& cl, Shape& s);
+    std::string render(label_s& lbl, Point& myNode,  Rectangle rect,uint32_t  sizex, uint32_t sizey, CssClass& cl, Shape& s);
+    std::string renderShape(Rectangle rect,uint32_t  sizex, uint32_t sizey, CssClass& cl, Shape& s);
     static CssClass* getCssClass(IndexDesc& idx, Relation& b, short zoom, bool closed);
     static CssClass* getCssClass(IndexDesc& idx, Point& b,    short zoom, bool closed);
     static CssClass* getCssClass(IndexDesc& idx, Way& b,      short zoom, bool closed);
+    Shape* getShape(CssClass* cssClass);
     template<class ITEM> void iterate(IndexDesc& idxDesc, Rectangle r);
 };
 

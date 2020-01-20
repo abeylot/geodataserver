@@ -335,7 +335,7 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
         std::string smallRes;
         def(res, smallRes);
         encoder.addContent(rep,smallRes);
-	if(_z < 10)
+	if(_z < 13)
         {
 	        out = fopen(filename, "w");
                 if(out != NULL)

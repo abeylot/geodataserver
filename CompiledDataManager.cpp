@@ -248,142 +248,230 @@ bool Line::isClosed()
 
 void Line::crop(Rectangle& r)
 {
-    if(!isClosed()) return;
-
-    uint64_t newPointsCount, i;
-    GeoPoint* newPoints;
-
-    newPoints = (GeoPoint*) malloc (pointsCount * sizeof(GeoPoint));
-    newPointsCount = 0;
-    i = 0;
-    while ((i < pointsCount)&&(pointsCount > 2))
+    if(points[0] == points[pointsCount - 1])
     {
-        bool discarded = false;
-        if(points[i].x < r.x0)
+        
+        uint64_t newPointsCount, i;
+        GeoPoint* newPoints;
+
+        newPoints = (GeoPoint*) malloc (pointsCount * sizeof(GeoPoint));
+        newPointsCount = 0;
+        i = 0;
+        while ((i < pointsCount)&&(pointsCount > 2))
         {
-            GeoPoint* prev;
-            GeoPoint* next;
-            if(i == 0) prev = &(points[pointsCount -1]);
-            else  prev = &(points[i - 1]);
-            if ( i == (pointsCount -1) ) next = &(points[0]);
-            else next = &(points[i + 1]);
+            bool discarded = false;
             if(points[i].x < r.x0)
             {
-                if((prev->x < r.x0)&&(next->x < r.x0))
+                GeoPoint* prev;
+                GeoPoint* next;
+                if(i == 0) prev = &(points[pointsCount -1]);
+                else  prev = &(points[i - 1]);
+                if ( i == (pointsCount -1) ) next = &(points[0]);
+                else next = &(points[i + 1]);
+                if(points[i].x < r.x0)
                 {
-                    discarded = true;
+                    if((prev->x < r.x0)&&(next->x < r.x0))
+                    {
+                        discarded = true;
+                    }
                 }
             }
+            if(!discarded)
+            {
+                memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
+                newPointsCount++;
+            }
+            i++;
         }
-        if(!discarded)
+
+        free(points);
+        points = newPoints;
+        pointsCount = newPointsCount;
+        newPoints = (GeoPoint*) malloc (pointsCount * sizeof(GeoPoint));
+        newPointsCount = 0;
+        i = 0;
+        while ((i < pointsCount)&&(pointsCount > 2))
         {
-            memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
-            newPointsCount++;
-        }
-        i++;
-    }
-    delete points;
-    points = newPoints;
-    pointsCount = newPointsCount;
-    newPoints = (GeoPoint*) malloc (pointsCount * sizeof(GeoPoint));
-    newPointsCount = 0;
-    i = 0;
-    while ((i < pointsCount)&&(pointsCount > 2))
-    {
-        bool discarded = false;
-        if(points[i].x > r.x1)
-        {
-            GeoPoint* prev;
-            GeoPoint* next;
-            if(i == 0) prev = &(points[pointsCount -1]);
-            else  prev = &(points[i - 1]);
-            if ( i == (pointsCount -1) ) next = &(points[0]);
-            else next = &(points[i + 1]);
+            bool discarded = false;
             if(points[i].x > r.x1)
             {
-                if((prev->x > r.x1)&&(next->x > r.x1))
+                GeoPoint* prev;
+                GeoPoint* next;
+                if(i == 0) prev = &(points[pointsCount -1]);
+                else  prev = &(points[i - 1]);
+                if ( i == (pointsCount -1) ) next = &(points[0]);
+                else next = &(points[i + 1]);
+                if(points[i].x > r.x1)
                 {
-                    discarded = true;
+                    if((prev->x > r.x1)&&(next->x > r.x1))
+                    {
+                        discarded = true;
+                    }
                 }
             }
+            if(!discarded)
+            {
+                memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
+                newPointsCount++;
+            }
+            i++;
         }
-        if(!discarded)
+        free(points);
+        points = newPoints;
+        pointsCount = newPointsCount;
+        newPoints = (GeoPoint*) malloc (pointsCount * sizeof(GeoPoint));
+        newPointsCount = 0;
+        i = 0;
+        while ((i < pointsCount)&&(pointsCount > 2))
         {
-            memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
-            newPointsCount++;
-        }
-        i++;
-    }
-    delete points;
-    points = newPoints;
-    pointsCount = newPointsCount;
-    newPoints = (GeoPoint*) malloc (pointsCount * sizeof(GeoPoint));
-    newPointsCount = 0;
-    i = 0;
-    while ((i < pointsCount)&&(pointsCount > 2))
-    {
-        bool discarded = false;
-        if(points[i].y < r.y0)
-        {
-            GeoPoint* prev;
-            GeoPoint* next;
-            if(i == 0) prev = &(points[pointsCount -1]);
-            else  prev = &(points[i - 1]);
-            if ( i == (pointsCount -1) ) next = &(points[0]);
-            else next = &(points[i + 1]);
+            bool discarded = false;
             if(points[i].y < r.y0)
             {
-                if((prev->y < r.y0)&&(next->y < r.y0))
+                GeoPoint* prev;
+                GeoPoint* next;
+                if(i == 0) prev = &(points[pointsCount -1]);
+                else  prev = &(points[i - 1]);
+                if ( i == (pointsCount -1) ) next = &(points[0]);
+                else next = &(points[i + 1]);
+                if(points[i].y < r.y0)
                 {
-                    discarded = true;
+                    if((prev->y < r.y0)&&(next->y < r.y0))
+                    {
+                        discarded = true;
+                    }
                 }
             }
+            if(!discarded)
+            {
+                memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
+                newPointsCount++;
+            }
+            i++;
         }
-        if(!discarded)
+        free(points);
+        points = newPoints;
+        pointsCount = newPointsCount;
+        newPoints = (GeoPoint*) malloc (pointsCount * sizeof(GeoPoint));
+        newPointsCount = 0;
+        i = 0;
+        while ((i < pointsCount)&&(pointsCount > 2))
         {
-            memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
-            newPointsCount++;
-        }
-        i++;
-    }
-    delete points;
-    points = newPoints;
-    pointsCount = newPointsCount;
-    newPoints = (GeoPoint*) malloc (pointsCount * sizeof(GeoPoint));
-    newPointsCount = 0;
-    i = 0;
-    while ((i < pointsCount)&&(pointsCount > 2))
-    {
-        bool discarded = false;
-        if(points[i].y > r.y1)
-        {
-            GeoPoint* prev;
-            GeoPoint* next;
-            if(i == 0) prev = &(points[pointsCount -1]);
-            else  prev = &(points[i - 1]);
-            if ( i == (pointsCount -1) ) next = &(points[0]);
-            else next = &(points[i + 1]);
+            bool discarded = false;
             if(points[i].y > r.y1)
             {
-                if((prev->y > r.y1)&&(next->y > r.y1))
+                GeoPoint* prev;
+                GeoPoint* next;
+                if(i == 0) prev = &(points[pointsCount -1]);
+                else  prev = &(points[i - 1]);
+                if ( i == (pointsCount -1) ) next = &(points[0]);
+                else next = &(points[i + 1]);
+                if(points[i].y > r.y1)
                 {
-                    discarded = true;
+                    if((prev->y > r.y1)&&(next->y > r.y1))
+                    {
+                        discarded = true;
+                    }
                 }
             }
+            if(!discarded)
+            {
+                memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
+                newPointsCount++;
+            }
+            i++;
         }
-        if(!discarded)
-        {
-            memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
-            newPointsCount++;
-        }
-        i++;
+        free(points);
+        points = newPoints;
+        pointsCount = newPointsCount;
+        
     }
-    delete points;
-    points = newPoints;
-    pointsCount = newPointsCount;
+    else
+    {
+        uint64_t i;
+        GeoPoint* newPoints;
+        uint64_t newPointsCount = 0;
+        bool discarded;
 
+        newPoints = (GeoPoint*) malloc (pointsCount * sizeof(GeoPoint));
+        newPoints[0] = points[0];
+        newPointsCount++;
+        for(i = 1; i < (pointsCount - 1); i++)
+        {
+            discarded = false;
+            if((points[i-1].x < r.x0)&&(points[i].x < r.x0)&&(points[i+1].x < r.x0)) discarded |= true;
+            if(!discarded)
+            {
+                newPoints[newPointsCount] = points[i];
+                newPointsCount++;
+            }
+        }
+        newPoints[newPointsCount] = points[pointsCount - 1];
+        newPointsCount++;
+        free(points);
+        points = newPoints;
+        pointsCount = newPointsCount;
+
+        newPointsCount = 0;
+        newPoints = (GeoPoint*) malloc (pointsCount * sizeof(GeoPoint));
+        newPoints[0] = points[0];
+        newPointsCount++;
+        for(i = 1; i < (pointsCount - 1); i++)
+        {
+            discarded = false;
+            if((points[i-1].x > r.x1)&&(points[i].x > r.x1)&&(points[i+1].x > r.x1)) discarded |= true;
+            if(!discarded)
+            {
+                newPoints[newPointsCount] = points[i];
+                newPointsCount++;
+            }
+        }
+        newPoints[newPointsCount] = points[pointsCount - 1];
+        newPointsCount++;
+        free(points);
+        points = newPoints;
+        pointsCount = newPointsCount;
+
+        newPointsCount = 0;
+        newPoints = (GeoPoint*) malloc (pointsCount * sizeof(GeoPoint));
+        newPoints[0] = points[0];
+        newPointsCount++;
+        for(i = 1; i < (pointsCount - 1); i++)
+        {
+            discarded = false;
+            if((points[i-1].y < r.y0)&&(points[i].y < r.y0)&&(points[i+1].y < r.y0)) discarded |= true;
+            if(!discarded)
+            {
+                newPoints[newPointsCount] = points[i];
+                newPointsCount++;
+            }
+        }
+        newPoints[newPointsCount] = points[pointsCount - 1];
+        newPointsCount++;
+        free(points);
+        points = newPoints;
+        pointsCount = newPointsCount;
+
+        newPointsCount = 0;
+        newPoints = (GeoPoint*) malloc (pointsCount * sizeof(GeoPoint));
+        newPoints[0] = points[0];
+        newPointsCount++;
+        for(i = 1; i < (pointsCount - 1); i++)
+        {
+            discarded = false;
+            if((points[i-1].y > r.y1)&&(points[i].y > r.y1)&&(points[i+1].y > r.y1)) discarded |= true;
+            if(!discarded)
+            {
+                newPoints[newPointsCount] = points[i];
+                newPointsCount++;
+            }
+        }
+        newPoints[newPointsCount] = points[pointsCount - 1];
+        newPointsCount++;
+        free(points);
+        points = newPoints;
+        pointsCount = newPointsCount;
+    }
 }
-
 void Way::crop(Rectangle& r)
 {
     if(points[0] == points[pointsCount - 1])
