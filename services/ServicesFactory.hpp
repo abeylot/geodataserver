@@ -13,7 +13,7 @@ class ServicesFactory
 {
 private:
 public:
-    static ServiceInterface* getService(std::string service);
+    static ServiceInterface* getService(std::string service,ParmsXmlVisitor& params);
     static void releaseService(ServiceInterface* service);
 };
 #endif

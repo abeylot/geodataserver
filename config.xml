@@ -3,6 +3,7 @@
     <parameter name="ServerPort"    value="8081"/>
     <parameter name="WriterThreads" value="25"/>
     <parameter name="ExecThreads"   value="4"/>
+    <parameter name="CacheLevel"   value="8"/>
 
     <shp_file name="../water-polygons-split-4326/water_polygons" tag="shape" value="ocean"/>
     <shp_file name="../ne_10m_admin_0_boundary_lines_land/ne_10m_admin_0_boundary_lines_land" tag="shape" value="frontier"/>
@@ -173,14 +174,14 @@
     <index type="way" name="placesIdxHighResWay">
         <restriction zLevels="14,15,16,17,18">
         <condition tagKey="place" closed="yes">
-                <class value="city"             zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:17px"/>
-                <class value="borough"             zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:16px"/>
-                <class value="town"             zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:15px"/>
-                <class value="suburb"             zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:14px"/>
-                <class value="village"          zIndex="5006" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:13px"/>
-                <class value="quarter"          zIndex="5006" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:12px"/>
-                <class value="hamlet"           zIndex="5005" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:11px"/>
-                <class value="locality"           zIndex="5005" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:11px"/>
+                <class value="city"              zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:17px"/>
+                <class value="borough"           zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:16px"/>
+                <class value="town"              zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:15px"/>
+                <class value="suburb"            zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:14px"/>
+                <class value="village"           zIndex="5006" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:13px"/>
+                <class value="quarter"           zIndex="5006" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:12px"/>
+                <class value="hamlet"            zIndex="5005" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:11px"/>
+                <class value="locality"          zIndex="5005" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:11px"/>
                 <class value="isolated_dwelling" zIndex="5005" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:11px"/>
                 <class value="farm"              zIndex="5005" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:11px"/>
         </condition>
@@ -196,14 +197,14 @@
     <index type="relation" name="placesIdxHighResRelation">
         <restriction zLevels="14,15,16,17,18">
         <condition tagKey="place" closed="yes">
-                <class value="city"             zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:17px"/>
-                <class value="borough"             zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:16px"/>
-                <class value="town"             zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:15px"/>
-                <class value="suburb"             zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:14px"/>
-                <class value="village"          zIndex="5006" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:13px"/>
-                <class value="quarter"          zIndex="5006" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:12px"/>
-                <class value="hamlet"           zIndex="5005" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:11px"/>
-                <class value="locality"           zIndex="5005" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:11px"/>
+                <class value="city"              zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:17px"/>
+                <class value="borough"           zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:16px"/>
+                <class value="town"              zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:15px"/>
+                <class value="suburb"            zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:14px"/>
+                <class value="village"           zIndex="5006" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:13px"/>
+                <class value="quarter"           zIndex="5006" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:12px"/>
+                <class value="hamlet"            zIndex="5005" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:11px"/>
+                <class value="locality"          zIndex="5005" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:11px"/>
                 <class value="isolated_dwelling" zIndex="5005" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:11px"/>
                 <class value="farm"              zIndex="5005" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:11px"/>
         </condition>
@@ -221,13 +222,13 @@
         <selector tagKey="place" tagValue="city"/>
         <restriction zLevels="3,4,5,6">
             <condition tagKey="capital" closed="both">
-                <class value="yes"             zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:10px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:10px"/>
                 <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:10px"/>
             </condition>
         </restriction>
         <restriction zLevels="7,8,9">
             <condition tagKey="capital" closed="both">
-                <class value="yes"             zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
                 <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:14px"/>
                 <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
                 <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:12px"/>
@@ -236,7 +237,7 @@
         </restriction>
         <restriction zLevels="10,11,12,13">
             <condition tagKey="capital" closed="both">
-                <class value="yes"             zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
                 <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:18px"/>
                 <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
                 <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:16px"/>
@@ -245,7 +246,7 @@
         </restriction>
         <restriction zLevels="14,15,16,17">
             <condition tagKey="capital" closed="both">
-                <class value="yes"             zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
                 <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:18px"/>
                 <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
                 <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:16px"/>
@@ -258,13 +259,13 @@
         <selector tagKey="place" tagValue="city"/>
         <restriction zLevels="3,4,5,6">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"             zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:10px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:10px"/>
                 <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:10px"/>
             </condition>
         </restriction>
         <restriction zLevels="7,8,9">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"             zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
                 <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:14px"/>
                 <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
                 <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:12px"/>
@@ -273,7 +274,7 @@
         </restriction>
         <restriction zLevels="10,11,12,13">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"             zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
                 <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:18px"/>
                 <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
                 <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:16px"/>
@@ -282,7 +283,7 @@
         </restriction>
         <restriction zLevels="14,15,16,17">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"             zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
                 <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:18px"/>
                 <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
                 <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:16px"/>
@@ -295,13 +296,13 @@
         <selector tagKey="place" tagValue="city"/>
         <restriction zLevels="3,4,5,6">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"             zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:10px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:10px"/>
                 <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:10px"/>
             </condition>
         </restriction>
         <restriction zLevels="7,8,9">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"             zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
                 <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:14px"/>
                 <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
                 <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:12px"/>
@@ -310,7 +311,7 @@
         </restriction>
         <restriction zLevels="10,11,12,13">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"             zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
                 <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:18px"/>
                 <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
                 <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:16px"/>
@@ -319,7 +320,7 @@
         </restriction>
         <restriction zLevels="14,15,16,17">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"             zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
                 <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:18px"/>
                 <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
                 <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:16px"/>
@@ -328,6 +329,47 @@
         </restriction>
     </index>
 
+
+    <index type="relation" name="relationLeisureIdx">
+        <restriction zLevels="13,14,15,16,17,18,19">
+            <condition tagKey="leisure" closed="yes">
+                <class value="dog_park"       zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="garden"         zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="golf_course"    zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="horse_riding"   zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="ice_rink"       zIndex="100" style="fill:lightgrey;fill-rule:evenodd;" textStyle="fill:blue;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="marina"         zIndex="100" style="fill:skyblue;fill-rule:evenodd;"   textStyle="fill:blue;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="miniature_golf" zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="nature_reserve" zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="park"           zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="pitch"          zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="sport_center"   zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:grey;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="stadium"        zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:grey;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="swinmming_pool" zIndex="100" style="fill:skyblue;fill-rule:evenodd;"   textStyle="fill:blue;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="track"        zIndex="100" style="fill:palegreen;fill-rule:evenodd;"   textStyle="fill:grey;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+            </condition>
+        </restriction>
+    </index>
+
+    <index type="way" name="wayLeisureIdx">
+        <restriction zLevels="13,14,15,16,17,18,19">
+            <condition tagKey="leisure" closed="yes">
+                <class value="dog_park"       zIndex="100" style="fill:palegreen;fill-rule:nonzero;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="garden"         zIndex="100" style="fill:palegreen;fill-rule:nonzero;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="golf_course"    zIndex="100" style="fill:palegreen;fill-rule:nonzero;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="horse_riding"   zIndex="100" style="fill:palegreen;fill-rule:nonzero;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="ice_rink"       zIndex="100" style="fill:lightgrey;fill-rule:nonzero;" textStyle="fill:blue;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="marina"         zIndex="100" style="fill:skyblue;  fill-rule:nonzero;" textStyle="fill:blue;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="miniature_golf" zIndex="100" style="fill:palegreen;fill-rule:nonzero;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="nature_reserve" zIndex="100" style="fill:palegreen;fill-rule:nonzero;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="park"           zIndex="100" style="fill:palegreen;fill-rule:nonzero;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="pitch"          zIndex="100" style="fill:palegreen;fill-rule:nonzero;" textStyle="fill:green;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="sport_center"   zIndex="100" style="fill:palegreen;fill-rule:nonzero;" textStyle="fill:grey;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="stadium"        zIndex="100" style="fill:palegreen;fill-rule:nonzero;" textStyle="fill:grey;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="swinmming_pool" zIndex="100" style="fill:skyblue;  fill-rule:nonzero;" textStyle="fill:blue;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+                <class value="track"        zIndex="100" style="fill:palegreen;  fill-rule:nonzero;" textStyle="fill:grey;opacity:0.3;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+            </condition>
+        </restriction>    </index>
 
 
     <index type="relation" name="relationLandUseIdxHighRes">
@@ -431,72 +473,72 @@
     <index type="way" name="wayLandUseIdxLowRes">
         <restriction zLevels="13,14,15,16,17,18,19">
             <condition tagKey="landuse" closed="yes">
-                <class value="residential"               zIndex="99" style="fill:whitesmoke;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="allotments"                zIndex="100" style="fill:whitesmoke;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="basin"                     zIndex="100" style="fill:skyblue;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="brownfield"                zIndex="100" style="fill:linen;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="cemetery"                  zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="commercial"                zIndex="100" style="fill:whitesmoke;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="conservation"              zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="construction"              zIndex="100" style="fill:whitesmoke;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="depot"                     zIndex="100" style="fill:whitesmoke;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="farmland"                  zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="farmyard"                  zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="forest"                    zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="garages"                   zIndex="100" style="fill:whitesmoke;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="grass"                     zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="greenfield"                zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="greenhouse_horticulture"   zIndex="100" style="fill:lightgreen;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="industrial"                zIndex="100" style="fill:whitesmoke;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="landfill"                  zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="meadow"                    zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="military"                  zIndex="100" style="fill:antiquewhite;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="orchard"                   zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="pasture"                   zIndex="100" style="fill:lightgreen;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="peat_cutting"                 zIndex="100" style="fill:tan;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="plant_nursery"             zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="port"                      zIndex="100" style="fill:paleturquoise;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="quary"                        zIndex="100" style="fill:linen;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="railway"                   zIndex="100" style="fill:whitesmoke;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="recreation_ground"         zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="religious"                 zIndex="100" style="fill:aliceblue;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="reservoir"                 zIndex="101" style="fill:skyblue;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="retail"                    zIndex="100" style="fill:whitesmoke;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="salt_pond"                 zIndex="101" style="fill:skyblue;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="village_green"             zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="vineyard"                  zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="quarry"                     zIndex="100" style="fill:linen;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="marina"                     zIndex="100" style="fill:;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="residential"               zIndex="99"  style="fill:whitesmoke;   fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="allotments"                zIndex="100" style="fill:whitesmoke;   fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="basin"                     zIndex="100" style="fill:skyblue;      fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="brownfield"                zIndex="100" style="fill:linen;        fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="cemetery"                  zIndex="100" style="fill:honeydew;     fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="commercial"                zIndex="100" style="fill:whitesmoke;   fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="conservation"              zIndex="100" style="fill:honeydew;     fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="construction"              zIndex="100" style="fill:whitesmoke;   fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="depot"                     zIndex="100" style="fill:whitesmoke;   fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="farmland"                  zIndex="100" style="fill:honeydew;     fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="farmyard"                  zIndex="100" style="fill:honeydew;     fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="forest"                    zIndex="100" style="fill:palegreen;    fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="garages"                   zIndex="100" style="fill:whitesmoke;   fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="grass"                     zIndex="100" style="fill:honeydew;     fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="greenfield"                zIndex="100" style="fill:honeydew;     fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="greenhouse_horticulture"   zIndex="100" style="fill:lightgreen;   fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="industrial"                zIndex="100" style="fill:whitesmoke;   fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="landfill"                  zIndex="100" style="fill:honeydew;     fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="meadow"                    zIndex="100" style="fill:honeydew;     fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="military"                  zIndex="100" style="fill:antiquewhite; fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="orchard"                   zIndex="100" style="fill:palegreen;    fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="pasture"                   zIndex="100" style="fill:lightgreen;   fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="peat_cutting"                 zIndex="100" style="fill:tan;       fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="plant_nursery"             zIndex="100" style="fill:honeydew;     fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="port"                      zIndex="100" style="fill:paleturquoise;fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="quary"                        zIndex="100" style="fill:linen;     fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="railway"                   zIndex="100" style="fill:whitesmoke;   fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="recreation_ground"         zIndex="100" style="fill:honeydew;     fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="religious"                 zIndex="100" style="fill:aliceblue;    fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="reservoir"                 zIndex="101" style="fill:skyblue;      fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="retail"                    zIndex="100" style="fill:whitesmoke;   fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="salt_pond"                 zIndex="101" style="fill:skyblue;      fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="village_green"             zIndex="100" style="fill:honeydew;     fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="vineyard"                  zIndex="100" style="fill:palegreen;    fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="quarry"                    zIndex="100" style="fill:linen;        fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="marina"                    zIndex="100" style="fill:skyblue;      fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
             </condition>
             <condition tagKey="natural" closed="yes">
-                <class value="reef"                      zIndex="100" style="fill:whitesmoke;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="wood"                      zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="scrub"                      zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="wetland"                     zIndex="101" style="fill:powderblue;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="grassland"                   zIndex="100" style="fill:powderblue;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="grass"                       zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="tree_row"                    zIndex="101" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="rock"                        zIndex="101" style="fill:whitesmoke;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="bare_rock"                zIndex="100" style="fill:whitesmoke;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="quarry"                    zIndex="100" style="fill:tan;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="dune"                        zIndex="100" style="fill:moccasin;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="heath"                      zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="sand"                      zIndex="100" style="fill:moccasin;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="beach"                      zIndex="100" style="fill:moccasin;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="tree"                      zIndex="100" style="fill:palegreen;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="scree"                      zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="land"                      zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="bay"                      zIndex="98"  style="fill:skyblue;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="glacier"                  zIndex="100" style="fill:lightcyan;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="fell"                      zIndex="100" style="fill:honeydew;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
-                <class value="stone"                      zIndex="100" style="fill:whitesmoke;fill-rule:evenodd;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-                <class value="water"                      zIndex="101" style="fill:skyblue;fill-rule:evenodd;" />    
+                <class value="reef"                     zIndex="100" style="fill:whitesmoke;fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="wood"                     zIndex="100" style="fill:palegreen; fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="scrub"                    zIndex="100" style="fill:honeydew;  fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="wetland"                  zIndex="101" style="fill:powderblue;fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="grassland"                zIndex="100" style="fill:powderblue;fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="grass"                    zIndex="100" style="fill:honeydew;  fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="tree_row"                 zIndex="101" style="fill:palegreen; fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="rock"                     zIndex="101" style="fill:whitesmoke;fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="bare_rock"                zIndex="100" style="fill:whitesmoke;fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="quarry"                   zIndex="100" style="fill:tan;       fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="dune"                     zIndex="100" style="fill:moccasin;  fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="heath"                    zIndex="100" style="fill:honeydew;  fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="sand"                     zIndex="100" style="fill:moccasin;  fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="beach"                    zIndex="100" style="fill:moccasin;  fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="tree"                     zIndex="100" style="fill:palegreen; fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="scree"                    zIndex="100" style="fill:honeydew;  fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="land"                     zIndex="100" style="fill:honeydew;  fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="bay"                      zIndex="98"  style="fill:skyblue;   fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="glacier"                  zIndex="100" style="fill:lightcyan; fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="fell"                     zIndex="100" style="fill:honeydew;  fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>    
+                <class value="stone"                    zIndex="100" style="fill:whitesmoke;fill-rule:nonzero;" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="water"                    zIndex="101" style="fill:skyblue;   fill-rule:nonzero;" />    
             </condition>
             <condition tagKey="waterway" closed="no">
                 <class value="default"                  zIndex="101" style="fill:none; stroke:skyblue; stroke-width:1;" textStyle="text-anchor:middle;fill:white;opacity:0.5; font-size:13px"/>
             </condition>
             <condition tagKey="waterway" closed="yes">
-                    <class value="default"                  zIndex="101" style="fill:skyblue;fill-rule:evenodd;" />
+                    <class value="default"                  zIndex="101" style="fill:skyblue;fill-rule:nonzero;" />
             </condition>
             <condition tagKey="route" closed="both">
                 <class value="bus"       textWidth="4" textStyle="fill:maroon;;opacity:0.3;font-family:sans-serif"      zIndex="2100" style="fill:none; stroke:maroon;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
@@ -508,10 +550,10 @@
     <index type="way" name="wayLandUseIdxMedRes">
         <restriction zLevels="8,9,10,11,12">
             <condition tagKey="waterway" closed="yes">
-                    <class value="default"                  zIndex="101" style="fill:skyblue;fill-rule:evenodd;"/>
+                    <class value="default"                  zIndex="101" style="fill:skyblue;fill-rule:nonzero;"/>
             </condition>
             <condition tagKey="natural" closed="yes">
-                <class value="water"                      zIndex="101" style="fill:skyblue;fill-rule:evenodd;" />    
+                <class value="water"                      zIndex="101" style="fill:skyblue;fill-rule:nonzero;" />    
             </condition>
         </restriction>
         <restriction zLevels="11,12">
@@ -557,12 +599,12 @@
     <index type="way" name="wayHistoricIdx">
         <restriction zLevels="16,17">
             <condition tagKey="historic"    closed="yes">
-                <class value="default" textField="addr:housenumber" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;font-size:13px" zIndex="2801" style="fill:mistyrose;opacity:0.3;fill-rule:evenodd;stroke:BurlyWood ;stroke-width:1"/>
+                <class value="default" textField="addr:housenumber" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;font-size:13px" zIndex="2801" style="fill:mistyrose;opacity:0.3;fill-rule:nonzero;stroke:BurlyWood ;stroke-width:1"/>
             </condition>
         </restriction>
         <restriction zLevels="18,19">
             <condition tagKey="historic"    closed="yes">
-                <class value="default" textField="addr:housenumber" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;font-size:13px" zIndex="2801" style="fill:mistyrose;opacity:0.3;fill-rule:evenodd;stroke:BurlyWood ;stroke-width:1"/>
+                <class value="default" textField="addr:housenumber" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;font-size:13px" zIndex="2801" style="fill:mistyrose;opacity:0.3;fill-rule:nonzer;stroke:BurlyWood ;stroke-width:1"/>
             </condition>
         </restriction>
     </index>
@@ -570,18 +612,18 @@
     <index type="way" name="wayBuildingIdx">
         <restriction zLevels="16,17">
             <condition tagKey="building" closed="yes">
-                    <class value="default"       zIndex="2900" style="fill:linen;fill-rule:evenodd;stroke:BurlyWood ;stroke-width:1" textField="addr:housenumber" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;font-size:12px"/> 
+                    <class value="default"       zIndex="2900" style="fill:linen;fill-rule:nonzero;stroke:BurlyWood ;stroke-width:1" textField="addr:housenumber" textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;font-size:12px"/> 
             </condition>
             <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;font-size:13px"     zIndex="2900" style="fill:linen;fill-rule:evenodd;stroke:BurlyWood ;stroke-width:1"/>
+                <class value="building"     textField="addr:housenumber"      textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;font-size:13px"     zIndex="2900" style="fill:linen;fill-rule:nonzero;stroke:BurlyWood ;stroke-width:1"/>
             </condition>
         </restriction>
         <restriction zLevels="18,19">
             <condition tagKey="building" closed="yes">
-                    <class value="default"       textField="addr:housenumber"    textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;font-size:13px"      zIndex="2900" style="fill:linen;fill-rule:evenodd;stroke:BurlyWood ;stroke-width:1"/>
+                    <class value="default"       textField="addr:housenumber"    textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;font-size:13px"      zIndex="2900" style="fill:linen;fill-rule:nonzero;stroke:BurlyWood ;stroke-width:1"/>
             </condition>
             <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;font-size:13px"     zIndex="2900" style="fill:linen;fill-rule:evenodd;stroke:BurlyWood ;stroke-width:1"/>
+                <class value="building"     textField="addr:housenumber"      textStyle="fill:maroon;opacity:0.3;font-family:sans-serif;font-size:13px"     zIndex="2900" style="fill:linen;fill-rule:nonzero;stroke:BurlyWood ;stroke-width:1"/>
             </condition>
         </restriction>
     </index>

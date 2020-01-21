@@ -1,6 +1,6 @@
 #include "ServicesFactory.hpp"
 #include <stdlib.h>
-ServiceInterface* ServicesFactory::getService(std::string service)
+ServiceInterface* ServicesFactory::getService(std::string service, ParmsXmlVisitor& params)
 {
     if(service == "/ping")                return new Ping;
     else if (service == "/relation/list") return new RelationList;
@@ -23,7 +23,7 @@ ServiceInterface* ServicesFactory::getService(std::string service)
         while(pos < service.length() && (*(c+pos) != '/')) pos++;
         if(pos < service.length()) y =  atoll(c+pos+1);
         std::cout << x <<":" << y << ";" << z << "\n";
-        return new Tile(z, x, y);
+        return new Tile(z, x, y, params.getNumParam("CacheLevel", 8));
 
     }
     else return NULL;

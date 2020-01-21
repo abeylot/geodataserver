@@ -9,7 +9,6 @@
  *
  *
  */
-const char identOfTCPConnection_cpp[] = "$Id: TcpConnection.cpp,v 1.6 2013/01/24 10:55:31 aby Exp $";
 #include <stdio.h>
 #include "TcpConnection.hpp"
 #include <netdb.h>

@@ -71,13 +71,13 @@ public:
             {
                 _FileDescr = sd;
                 _IsAlive = true;
-                //int flag = 1;
-                //setsockopt (_FileDescr, /* socket affected */
-                //            IPPROTO_TCP, /* set option at TCP level */
-                //            TCP_NODELAY, /* name of option */
-                //            (char *) &flag, /* the cast is historical
-                //                                         cruft */
-                //            sizeof ( int)); /* length of option value */
+                int flag = 1;
+                setsockopt (_FileDescr, /* socket affected */
+                            IPPROTO_TCP, /* set option at TCP level */
+                            TCP_NODELAY, /* name of option */
+                            (char *) &flag, /* the cast is historical
+                                                         cruft */
+                            sizeof ( int)); /* length of option value */
                 //printf("connection success \n");
             }
         }

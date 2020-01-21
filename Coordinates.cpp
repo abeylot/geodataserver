@@ -5,10 +5,18 @@ uint32_t Coordinates::toNormalizedLon(const std::string& coord)
 {
     size_t pos = coord.find(".");
     int signe = 1;
-    long long signedInt = atoll(coord.substr(0,pos).c_str());
+
+    long long signedInt;
+    if(pos == std::string::npos)  signedInt = atoll(coord.substr(0,pos).c_str());
+    else  signedInt = atoll(coord.c_str());
+    
     if (coord.at(0) == '-') signe = -1;
     uint32_t integerPart = 180 + signedInt;
-    std::string sDecimalPart = coord.substr(pos+1);
+
+    std::string sDecimalPart;
+    if(pos == std::string::npos) sDecimalPart = "";
+    else  sDecimalPart = coord.substr(pos+1);
+
     while(sDecimalPart.size() < 7) sDecimalPart += '0';
     uint32_t decimalPart = atol(sDecimalPart.c_str());
     uint64_t intCoord;
@@ -41,10 +49,18 @@ uint32_t Coordinates::toNormalizedLat(const std::string& coord)
 {
     size_t pos = coord.find(".");
     int signe = 1;
-    long long signedInt = atoll(coord.substr(0,pos).c_str());
+
+    long long signedInt;
+    if(pos == std::string::npos)  signedInt = atoll(coord.substr(0,pos).c_str());
+    else  signedInt = atoll(coord.c_str());
+
     if (coord.at(0) == '-') signe = -1;
     uint32_t integerPart = 90 - signedInt;
-    std::string sDecimalPart = coord.substr(pos+1);
+
+    std::string sDecimalPart;
+    if(pos == std::string::npos) sDecimalPart = "";
+    else  sDecimalPart = coord.substr(pos+1);
+
     while(sDecimalPart.size() < 7) sDecimalPart += '0';
     uint32_t decimalPart = atol(sDecimalPart.c_str());
     uint32_t intCoord;

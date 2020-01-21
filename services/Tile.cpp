@@ -335,7 +335,8 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
         std::string smallRes;
         def(res, smallRes);
         encoder.addContent(rep,smallRes);
-	if(_z < 13)
+        std::cout << "cache level " << _cachelevel << "\n";
+	if(_z <= _cachelevel)
         {
 	        out = fopen(filename, "w");
                 if(out != NULL)
