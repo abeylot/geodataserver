@@ -35,8 +35,8 @@ bool compare(const label_s& l2, const label_s& l1)
     return (l1.text > l2.text);
 }
 
-#define MAX_TEXT_LEN 17
-#define MIN_TEXT_LEN 13
+#define MAX_TEXT_LEN 18
+#define MIN_TEXT_LEN 6
 
 std::string cutString(std::string text, int x, int y, int dy)
 {
@@ -54,14 +54,15 @@ std::string cutString(std::string text, int x, int y, int dy)
             break;
         }
 		size_t pos = txt.find(' ', MIN_TEXT_LEN);
-		if(pos != std::string::npos)
+		if(pos == std::string::npos)
+		    pos = txt.find('/', MIN_TEXT_LEN);
+		if(pos == std::string::npos)
+		    pos = txt.find('-', MIN_TEXT_LEN);
+		if(pos == std::string::npos)
 		{
-		    txt = txt.substr(pos);
+			pos = MAX_TEXT_LEN;
 		}
-		else
-		{
-            break;
-		}
+        txt = txt.substr(pos);
     }
     
     int y0 = y - (dy*(ilines - 1)) / 2;
@@ -78,6 +79,10 @@ std::string cutString(std::string text, int x, int y, int dy)
         }
 		result += "<tspan  x=\""+std::to_string(x)+"\" y=\""+std::to_string(y0 + dy*iline )+"\">";
 		size_t pos = text.find(' ', MIN_TEXT_LEN);
+		if(pos == std::string::npos)
+		    pos = text.find('/', MIN_TEXT_LEN);
+		if(pos == std::string::npos)
+		    pos = text.find('-', MIN_TEXT_LEN);
 		if(pos != std::string::npos)
 		{
 		    result += text.substr(0,pos);

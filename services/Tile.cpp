@@ -305,7 +305,7 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
     size_t len;
     FILE* in;
     FILE* out;
-    if(_z < 13)
+    if(_z < _cachelevel)
     {
     	snprintf(filename,250,"cache/TILE_%ld_%ld_%ld.gz",_x,_y,_z);
         in = fopen(filename, "r");

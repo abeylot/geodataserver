@@ -120,7 +120,7 @@ public:
             for(c=buffer; c < (buffer + len) ; c++)
             {
                 done++;
-                if((done & 0xFFFFFF) == 0)
+                if((done & 0xFFFFFFF) == 0)
                 {
                     visitor.log(done);
                 }

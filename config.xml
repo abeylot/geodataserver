@@ -5,9 +5,9 @@
     <parameter name="ExecThreads"   value="4"/>
     <parameter name="CacheLevel"   value="8"/>
 
-    <shp_file name="../water-polygons-split-4326/water_polygons" tag="shape" value="ocean"/>
-    <shp_file name="../ne_10m_admin_0_boundary_lines_land/ne_10m_admin_0_boundary_lines_land" tag="shape" value="frontier"/>
-    <shp_file name="../ne_10m_lakes/ne_10m_lakes" tag="shape" value="lake"/>
+    <shp_file name="water-polygons-split-4326/water_polygons" tag="shape" value="ocean"/>
+    <shp_file name="ne_10m_admin_0_boundary_lines_land/ne_10m_admin_0_boundary_lines_land" tag="shape" value="frontier"/>
+    <shp_file name="ne_10m_lakes/ne_10m_lakes" tag="shape" value="lake"/>
 
     <index type="relation" name="oceanIdx">
     <restriction zLevels="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19">
@@ -39,16 +39,16 @@
     <index type="node" name="placesIdxLowRes">
         <restriction zLevels="5,6,7">
             <condition tagKey="place" closed="both">
-                <class value="country"        zIndex="5002"    textStyle="fill:grey;font-family:sans-serif;opacity:0.5;font-size:19px"/>
+                <class value="country"        zIndex="5002"    textStyle="fill:red;font-family:sans-serif;opacity:0.5;font-size:15px"/>
                 <class value="state"          zIndex="5001"    textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:13px"/>
             </condition>
         </restriction>
         <restriction zLevels="8">
             <condition tagKey="place" closed="both">
-                <class value="country"          zIndex="5010"    textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:19px"/>
-                <class value="state"            zIndex="5009"    textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:17px"/>
-                <class value="province"         zIndex="5008"    textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:15px"/>
-                <class value="district"         zIndex="5007"    textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="country"          zIndex="5010"    textStyle="fill:red;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="state"            zIndex="5009"    textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:14px"/>
+                <class value="province"         zIndex="5008"    textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="district"         zIndex="5007"    textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:12px"/>
                 <class value="county"           zIndex="5006"    textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:11px"/>
             </condition>
         </restriction>
@@ -74,17 +74,17 @@
     <index type="way" name="placesIdxLowResWay">
         <restriction zLevels="5,6,7">
             <condition tagKey="place" closed="yes">
-                <class value="country"        zIndex="5001"  style="fill:none"   textStyle="fill:grey;font-family:sans-serif;opacity:0.5;font-size:17px"/>
+                <class value="country"        zIndex="5001"  style="fill:none"   textStyle="fill:red;font-family:sans-serif;opacity:0.5;font-size:15px"/>
                 <class value="state"          zIndex="5000"  style="fill:none"  textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:13px"/>
             </condition>
         </restriction>
         <restriction zLevels="8">
             <condition tagKey="place" closed="yes">
-                <class value="country"          zIndex="5010"    style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:19px"/>
-                <class value="state"            zIndex="5009"    style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:17px"/>
-                <class value="province"         zIndex="5008"    style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:17x"/>
-                <class value="district"         zIndex="5007"    style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:15px"/>
-                <class value="county"           zIndex="5006"    style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="country"          zIndex="5010"    style="fill:none" textStyle="fill:red;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="state"            zIndex="5009"    style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:14px"/>
+                <class value="province"         zIndex="5008"    style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:13x"/>
+                <class value="district"         zIndex="5007"    style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:12px"/>
+                <class value="county"           zIndex="5006"    style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:11px"/>
             </condition>
         </restriction>
     </index>
@@ -93,14 +93,14 @@
     <index type="way" name="placesIdxMedResWay">
         <restriction zLevels="8,9">
             <condition tagKey="place" closed="yes">
-                <class value="city"             zIndex="5010" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
-                <class value="town"             zIndex="5009" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="city"             zIndex="5010" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="town"             zIndex="5009" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
             </condition>
         </restriction>
         <restriction zLevels="10,11,12,13,">
             <condition tagKey="place" closed="yes">
-                <class value="city"             zIndex="5008" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
-                <class value="town"             zIndex="5007" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="city"             zIndex="5008" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="town"             zIndex="5007" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:14px"/>
                 <class value="village"          zIndex="5006" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
             </condition>
         </restriction>
@@ -111,16 +111,16 @@
     <index type="relation" name="placesIdxLowResRelation">
         <restriction zLevels="5,6,7">
             <condition tagKey="place" closed="yes">
-                <class value="country"        zIndex="5001"     style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5;font-size:17px"/>
+                <class value="country"        zIndex="5001"     style="fill:none" textStyle="fill:red;font-family:sans-serif;opacity:0.5;font-size:15px"/>
                 <class value="state"          zIndex="5000"     style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:13px"/>
             </condition>
         </restriction>
         <restriction zLevels="8">
             <condition tagKey="place" closed="yes">
-                <class value="country"          zIndex="5010"    style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:19px"/>
-                <class value="state"            zIndex="5009"    style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:16px"/>
-                <class value="province"         zIndex="5008"    style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:16px"/>
-                <class value="district"         zIndex="5007"    style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="country"          zIndex="5010"    style="fill:none" textStyle="fill:red;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="state"            zIndex="5009"    style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:14px"/>
+                <class value="province"         zIndex="5008"    style="fill:none" textStyle="fill:grey;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="district"         zIndex="5007"    style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:12px"/>
                 <class value="county"           zIndex="5006"    style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:11px"/>
             </condition>
         </restriction>
@@ -129,19 +129,19 @@
     <index type="relation" name="placesIdxMedResRelation">
         <restriction zLevels="8">
             <condition tagKey="place" closed="yes">
-                <class value="city"             zIndex="5010" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
+                <class value="city"             zIndex="5010" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
             </condition>
         </restriction>
         <restriction zLevels="9">
             <condition tagKey="place" closed="yes">
-                <class value="city"             zIndex="5010" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
-                <class value="town"             zIndex="5009" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="city"             zIndex="5010" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="town"             zIndex="5009" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
             </condition>
         </restriction>
         <restriction zLevels="10,11,12,13">
             <condition tagKey="place" closed="yes">
-                <class value="city"             zIndex="5008" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
-                <class value="town"             zIndex="5007" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="city"             zIndex="5008" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="town"             zIndex="5007" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:14px"/>
                 <class value="village"          zIndex="5006" style="fill:none" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
             </condition>
         </restriction>
@@ -151,9 +151,9 @@
     <index type="node" name="placesIdxHighRes">
         <restriction zLevels="14,15,16,17,18">
         <condition tagKey="place" closed="both">
-                <class value="city"             zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:17px"/>
-                <class value="borough"             zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:16px"/>
-                <class value="town"             zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:15px"/>
+                <class value="city"             zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:15px"/>
+                <class value="borough"             zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:14px"/>
+                <class value="town"             zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:14px"/>
                 <class value="suburb"             zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:14px"/>
                 <class value="village"          zIndex="5006" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:13px"/>
                 <class value="quarter"          zIndex="5006" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:12px"/>
@@ -174,9 +174,9 @@
     <index type="way" name="placesIdxHighResWay">
         <restriction zLevels="14,15,16,17,18">
         <condition tagKey="place" closed="yes">
-                <class value="city"              zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:17px"/>
-                <class value="borough"           zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:16px"/>
-                <class value="town"              zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:15px"/>
+                <class value="city"              zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:15px"/>
+                <class value="borough"           zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:14px"/>
+                <class value="town"              zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:14px"/>
                 <class value="suburb"            zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:14px"/>
                 <class value="village"           zIndex="5006" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:13px"/>
                 <class value="quarter"           zIndex="5006" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:12px"/>
@@ -197,9 +197,9 @@
     <index type="relation" name="placesIdxHighResRelation">
         <restriction zLevels="14,15,16,17,18">
         <condition tagKey="place" closed="yes">
-                <class value="city"              zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:17px"/>
-                <class value="borough"           zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:16px"/>
-                <class value="town"              zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:15px"/>
+                <class value="city"              zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:15px"/>
+                <class value="borough"           zIndex="5008" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:14px"/>
+                <class value="town"              zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:14px"/>
                 <class value="suburb"            zIndex="5007" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:14px"/>
                 <class value="village"           zIndex="5006" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:13px"/>
                 <class value="quarter"           zIndex="5006" textStyle="fill:black;font-family:sans-serif;opacity:0.3; font-size:12px"/>
@@ -237,20 +237,20 @@
         </restriction>
         <restriction zLevels="10,11,12,13">
             <condition tagKey="capital" closed="both">
-                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
-                <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:18px"/>
-                <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
-                <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:16px"/>
-                <class value="4"             zIndex="9996" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:14px"/>
+                <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:12px"/>
+                <class value="4"             zIndex="9996" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:11px"/>
             </condition>
         </restriction>
         <restriction zLevels="14,15,16,17">
             <condition tagKey="capital" closed="both">
-                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
-                <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:18px"/>
-                <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
-                <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:16px"/>
-                <class value="4"             zIndex="9996" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:14px"/>
+                <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:12px"/>
+                <class value="4"             zIndex="9996" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:11px"/>
             </condition>
         </restriction>
     </index>
@@ -274,19 +274,19 @@
         </restriction>
         <restriction zLevels="10,11,12,13">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
-                <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:18px"/>
-                <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
-                <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:16px"/>
-                <class value="4"             zIndex="9996" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:14px"/>
+                <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:12px"/>
+                <class value="4"             zIndex="9996" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:11px"/>
             </condition>
         </restriction>
         <restriction zLevels="14,15,16,17">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
-                <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:18px"/>
-                <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
-                <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:16px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:14px"/>
+                <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:12px"/>
                 <class value="4"             zIndex="9996" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
             </condition>
         </restriction>
@@ -311,20 +311,20 @@
         </restriction>
         <restriction zLevels="10,11,12,13">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
-                <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:18px"/>
-                <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
-                <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:16px"/>
-                <class value="4"             zIndex="9996" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:14px"/>
+                <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:12px"/>
+                <class value="4"             zIndex="9996" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:11px"/>
             </condition>
         </restriction>
         <restriction zLevels="14,15,16,17">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:19px"/>
-                <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:18px"/>
-                <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:17px"/>
-                <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:16px"/>
-                <class value="4"             zIndex="9996" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="yes"           zIndex="10000" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+                <class value="1"             zIndex="9999" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:14px"/>
+                <class value="2"             zIndex="9998" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+                <class value="3"             zIndex="9997" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:12px"/>
+                <class value="4"             zIndex="9996" textStyle="fill:black;font-family:sans-serif;opacity:0.5; font-size:11px"/>
             </condition>
         </restriction>
     </index>
@@ -731,11 +731,11 @@
         </restriction-->
         <restriction zLevels="8,9,10,11,12">
             <condition closed="both" tagKey="highway">
-                <class value="motorway"         zIndex="2030" style="fill:none; stroke:red;stroke-linecap:round;stroke-width:2" textStyle="fill:black;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:17px" textField="ref"/>
+                <class value="motorway"         zIndex="2030" style="fill:none; stroke:red;stroke-linecap:round;stroke-width:2" textStyle="fill:black;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px" textField="ref"/>
                 <class value="motorway_link"         zIndex="2030" style="fill:none; stroke:red;stroke-linecap:round;stroke-width:2"  />
-                <class value="trunk"         zIndex="2030" style="fill:none; stroke:red;stroke-linecap:round;stroke-width:2"  textStyle="fill:black;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:15px" textField="ref"/>
+                <class value="trunk"         zIndex="2030" style="fill:none; stroke:red;stroke-linecap:round;stroke-width:2"  textStyle="fill:black;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:12px" textField="ref"/>
                 <class value="trunk_link"         zIndex="2030" style="fill:none; stroke:red;stroke-linecap:round;stroke-width:2" />
-                <class value="primary"         zIndex="2030" style="fill:none; stroke:orange;stroke-linecap:round;stroke-width:2"  textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px" textField="ref"/>
+                <class value="primary"         zIndex="2030" style="fill:none; stroke:orange;stroke-linecap:round;stroke-width:2"  textStyle="fill:brown;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px" textField="ref"/>
                 <class value="primary_link"         zIndex="2030" style="fill:none; stroke:orange;stroke-linecap:round;stroke-width:2"  />
 
             </condition>
