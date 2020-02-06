@@ -51,7 +51,7 @@ Msg.o \
 TcpListener.o \
 TcpConnection.o
 
-libs=-lpthread  -lboost_system -lboost_thread -lboost_atomic -lz -latomic
+libs=-lpthread  -lboost_system -lboost_thread -lboost_filesystem -lboost_atomic -lz -latomic
 
 all: renumber compile index geoserver
 

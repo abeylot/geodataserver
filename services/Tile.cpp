@@ -7,6 +7,8 @@
 #include <iostream>
 #include "zlib.h"
 #include "assert.h"
+#include <boost/filesystem.hpp>
+using namespace boost::filesystem;
 #define CHUNK 0x4000
 //#include "renderers/ClcArea.hpp"
 
@@ -328,6 +330,10 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
         fclose(in);
         encoder.addContent(rep,res);
     }else{	
+		std::string dir1 = "cache/" + std::to_string(_z);
+		std::string dir2 = dir1 + "/" + std::to_string(_x);
+
+
     	SvgRenderer rdr(&mger,_z);
         std::string tag = "";
         res = rdr.renderItems(rect,szx,szy,tag);
@@ -338,6 +344,18 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
         std::cout << "cache level " << _cachelevel << "\n";
 	if(_z <= _cachelevel)
         {
+			boost::filesystem::path p1(dir1);
+			boost::filesystem::path p2(dir2);
+
+			if(! boost::filesystem::exists(p1))
+			{
+				boost::filesystem::create_directory(p1);
+			}
+
+			if(! boost::filesystem::exists(p2))
+			{
+				boost::filesystem::create_directory(p2);
+			}
 	        out = fopen(filename, "w");
                 if(out != NULL)
                 {
