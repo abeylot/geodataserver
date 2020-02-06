@@ -35,6 +35,7 @@ private:
     std::string tmp = "";
     std::vector<label_s> label_vector;
     std::map<CssClass*, Shape*> shapes;
+    std::set<std::string> cssClasses;
 
     
 /*    inline uint32_t makeWayId() {

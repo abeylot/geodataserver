@@ -305,9 +305,9 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
     size_t len;
     FILE* in;
     FILE* out;
-    if(_z < _cachelevel)
+    if(_z <= _cachelevel)
     {
-    	snprintf(filename,250,"cache/TILE_%ld_%ld_%ld.gz",_x,_y,_z);
+    	snprintf(filename,250,"cache/%ld/%ld/%ld.gz",_z,_x,_y);
         in = fopen(filename, "r");
         if(in != NULL)
         {
@@ -346,6 +346,10 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
                     def(res, out);
                     fclose(out);
                 }
+                else
+                {
+					printf("UNABLE TO CACHE %s !\n", filename);
+				}
         }
     }
     return rep;

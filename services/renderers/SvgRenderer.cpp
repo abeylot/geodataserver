@@ -237,6 +237,7 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
 
 std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t sizey, std::string tag)
 {
+	cssClasses.clear();
     size_x = sizex;
     size_y = sizey;
     std::string libs = "";
@@ -266,28 +267,16 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 
     std::cout << "zoom;" << zoom << "\n";
     zmMask = 1LL << zoom;
+
     std::ostringstream result; 
+    std::ostringstream texts; 
+
     result << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?> <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
     result << "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 " << std::to_string(sizex) << " " << std::to_string(sizey) << "\">\n";
     result << "<style>\ntext,tspan{dominant-baseline:central;text-anchor:middle;} path{fill:none;}";
 	//std::cout << "0";
-	uint32_t mask = 1LL << zoom;
-    for (IndexDesc* idxDesc : *(mger->indexes))
-    {
-        for (Condition* cd : idxDesc->conditions)
-        {
-            for(CssClass* cl : cd->classes)
-            {
-				if( cl->mask & mask )
-				{   
-                    //result << "/*" << cl->tagValue << " " << cl->zIndex << "*/\n";
-				    result << cl->makeClass("c" + std::to_string(cl->rank), ppm);
-				}
-			}
-		}
-	}    
-    result << "</style>\n";
-    result << "<rect width=\"" << std::to_string(sizex + 1) << "\" height=\"" << std::to_string(sizey + 1) << "\" fill=\"antiquewhite\"/>\n";
+	//uint32_t mask = 1LL << zoom;
+
     indexId = 0;
     for (IndexDesc* idxDesc : *(mger->indexes))
     {
@@ -398,17 +387,18 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
         if(to_show) to_print.push_back(*t);
     }
 
-    for(std::pair<int,std::string> tmp : resMap)
-    {
+    //for(std::pair<int,std::string> tmp : resMap)
+    //{
         //result << "<!-- zindex " << tmp.first << "-->\n"; 
-        result << tmp.second;
-    }
+        //result << tmp.second;
+    //}
     //result += libs;
     for(auto v=to_print.begin(); v!=to_print.end(); ++v)
     {
         {
             if(v->ref == "")
-                result << "<text  x=\""
+            {
+                texts << "<text  x=\""
                        << std::to_string(v->pos_x)
                        << "\" y=\""
                        << std::to_string(v->pos_y)
@@ -416,10 +406,12 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                        << std::to_string(v->style)
                        << "\">"
                        << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)+"</text>\n";
+                       cssClasses.insert("c"+std::to_string(v->style));
+            }
             else
             {
 //               libs += "<text text-anchor=\"middle\" dominant-baseline=\"central\" class=\"c"+std::to_string(v->style)+"\" style=\"font-size:" +std::to_string(v->fontsize)+ "px\"><textPath xlink:href=\"#W"+std::to_string(v->id)+"\" startOffset=\"50%\">"+v->text+"</textPath></text>\n";
-               result << "<text  class=\"c"
+               texts << "<text  class=\"c"
                       << std::to_string(v->style)
                       << "\" style=\"font-size:"
                       << std::to_string(v->fontsize)
@@ -434,6 +426,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                       << ")\">"
                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
                       << "</text>\n";
+                      cssClasses.insert("c"+std::to_string(v->style));
                /*result << "<circle  "
                       << " style=\"fill:red\" "
                       << " cx=\""+std::to_string(v->pos_x)
@@ -443,6 +436,34 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             }
 		}
     }
+
+
+
+
+    for (IndexDesc* idxDesc : *(mger->indexes))
+    {
+        for (Condition* cd : idxDesc->conditions)
+        {
+            for(CssClass* cl : cd->classes)
+            {
+				if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
+				{   
+                    //result << "/*" << cl->tagValue << " " << cl->zIndex << "*/\n";
+				    result << cl->makeClass("c" + std::to_string(cl->rank), ppm);
+				}
+			}
+		}
+	}    
+    result << "</style>\n";
+    result << "<rect width=\"" << std::to_string(sizex + 1) << "\" height=\"" << std::to_string(sizey + 1) << "\" fill=\"antiquewhite\"/>\n";
+
+
+    for(std::pair<int,std::string> tmp : resMap)
+    {
+        //result << "<!-- zindex " << tmp.first << "-->\n"; 
+        result << tmp.second;
+    }
+    result << texts.str();
     if(tag != "") result << "<text style=\"font-size:10px\" x=\"0\" y=\"15\" >"
                          << tag
                          << "</text>\n";
@@ -498,6 +519,7 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
         }
 	}
     result << " \" class=\"c" << cl.rank << "\" />\n";
+    cssClasses.insert("c"+std::to_string(cl.rank));
     return result.str();
 }
 
@@ -809,6 +831,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                     }
             }
                     result += " \" class=\"c"+std::to_string(cl.rank)+"\" />\n";
+                    cssClasses.insert("c"+std::to_string(cl.rank));
         }
         if(cl.textStyle != "")
         {
