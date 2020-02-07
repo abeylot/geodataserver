@@ -10,10 +10,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 // IMPORTANT KEY et ITEM doivent être des types 'triviaux'
 // i.e. entier, double, char ou structure et tableaux de ces types.
@@ -162,33 +158,29 @@ public:
     void swap(uint64_t item1, uint64_t item2)
     {
         Record<ITEM,KEY> rec1, rec2;
-        //fseeko(pFile, item1 * recSize, SEEK_SET);
-        //uint64_t count = fread((char*)&rec1, recSize, 1, pFile);
-        uint64_t count = pread64(fileno(pFile),(char*)&rec1, recSize, item1 * recSize);
+        fseeko(pFile, item1 * recSize, SEEK_SET);
+        uint64_t count = fread((char*)&rec1, recSize, 1, pFile);
         if(count == 0)
         {
             std::cerr << "read error \n";
             return;
         }
-        //fseeko(pFile, item2 * recSize, SEEK_SET);
-        //count = fread((char*)&rec2, recSize, 1, pFile);
-        count = pread64(fileno(pFile), (char*)&rec2, recSize, item2 * recSize);
+        fseeko(pFile, item2 * recSize, SEEK_SET);
+        count = fread((char*)&rec2, recSize, 1, pFile);
         if(count == 0)
         {
             std::cerr << "read error \n";
             return;
         }
-        //fseeko(pFile, item1 * recSize, SEEK_SET);
-        //count = fwrite((char*)&rec2, recSize, 1, pFile);
-        count = pwrite64(fileno(pFile), (char*)&rec2, recSize, item1 * recSize);
+        fseeko(pFile, item1 * recSize, SEEK_SET);
+        count = fwrite((char*)&rec2, recSize, 1, pFile);
         if(count == 0)
         {
             std::cerr << "write error \n";
             return;
         }
-        //fseeko(pFile, item2 * recSize, SEEK_SET);
-        //count = fwrite((char*)&rec1, recSize, 1, pFile);
-        count = pwrite64(fileno(pFile), (char*)&rec1, recSize, item2 * recSize);
+        fseeko(pFile, item2 * recSize, SEEK_SET);
+        count = fwrite((char*)&rec1, recSize, 1, pFile);
         if(count == 0)
         {
             std::cerr << "write error \n";
@@ -250,16 +242,14 @@ public:
         if((end - begin) < (3ULL*buffer_size))
         {
             std::cout << "enough memory, performing qsort \n";
-            //fseeko(pFile, begin * recSize, SEEK_SET);
+            fseeko(pFile, begin * recSize, SEEK_SET);
             std::cout << "read data \n";
-            //count = fread((char*)sort_buffer, recSize, count, pFile);
-            count = pread64(fileno(pFile), (char*)sort_buffer, recSize * count, begin * recSize);
+            count = fread((char*)sort_buffer, recSize, count, pFile);
             std::cout << "sort data \n";
             std::qsort(&sort_buffer[0], count,recSize,fileIndexComp<ITEM,KEY>);
-            //fseeko(pFile, begin * recSize, SEEK_SET);
+            fseeko(pFile, begin * recSize, SEEK_SET);
             std::cout << "write data \n";
-            //count = fwrite((char*)sort_buffer, recSize, count, pFile);
-            count = pwrite64(fileno(pFile),(char*)sort_buffer, recSize * count, begin * recSize);
+            count = fwrite((char*)sort_buffer, recSize, count, pFile);
             sortedSize += count;
             std::cerr << "*** *** *** *** sorted " << sortedSize << " out of " << fileSize << "\n";
             return;
@@ -286,9 +276,8 @@ public:
             uint64_t toRead = buffer_size;
             std::cout << "reading " << toRead << "items from file \n";
             if(toRead > autresCount) toRead = autresCount;
-            //fseeko(pFile, (end - (toRead  + plusGrandsCount)) * recSize, SEEK_SET);
-            //uint64_t count = fread((char*)autres, recSize, toRead, pFile);
-            uint64_t count = pread64(fileno(pFile), (char*)autres, recSize * toRead,(end - (toRead  + plusGrandsCount)) * recSize );
+            fseeko(pFile, (end - (toRead  + plusGrandsCount)) * recSize, SEEK_SET);
+            uint64_t count = fread((char*)autres, recSize, toRead, pFile);
             if(!count)
             {
                 std::cerr << "File error 1!\n";
@@ -318,8 +307,8 @@ public:
             if(plusGrandsBufferCount)
             {
                 std::cout << plusGrandsBufferCount << " items where bigger writing them to file\n";
-                //fseeko(pFile, (end - (plusGrandsCount + plusGrandsBufferCount - 1)) * recSize, SEEK_SET);
-                count = pwrite(fileno(pFile), (char*)plusGrands, recSize * plusGrandsBufferCount, (end - (plusGrandsCount + plusGrandsBufferCount - 1)) * recSize);
+                fseeko(pFile, (end - (plusGrandsCount + plusGrandsBufferCount - 1)) * recSize, SEEK_SET);
+                count = fwrite((char*)plusGrands, recSize, plusGrandsBufferCount, pFile);
                 if(!count) std::cerr << "File error 2!\n";
             }
             plusGrandsCount += plusGrandsBufferCount;
@@ -327,24 +316,21 @@ public:
             if(autresCount  < plusPetitsBufferCount)
             {
                 std::cout << " cache " << autresCount << " items \n";
-                //fseeko(pFile, (begin + plusPetitsCount) * recSize, SEEK_SET);
-                //uint64_t count = fread((char*)autres, recSize, autresCount, pFile);
-                uint64_t count = pread64(fileno(pFile), (char*)autres, recSize * autresCount, (begin + plusPetitsCount) * recSize);
+                fseeko(pFile, (begin + plusPetitsCount) * recSize, SEEK_SET);
+                uint64_t count = fread((char*)autres, recSize, autresCount, pFile);
                 if(plusPetitsBufferCount)
                 {
                     std:: cout << "write smallers \n";
-                    //fseeko(pFile, (begin + plusPetitsCount) * recSize, SEEK_SET);
-                    //count = fwrite((char*)plusPetits, recSize, plusPetitsBufferCount, pFile);
-                    count = pwrite64(fileno(pFile),(char*)plusPetits, recSize * plusPetitsBufferCount, (begin + plusPetitsCount) * recSize);
+                    fseeko(pFile, (begin + plusPetitsCount) * recSize, SEEK_SET);
+                    count = fwrite((char*)plusPetits, recSize, plusPetitsBufferCount, pFile);
                     if(!count) std::cerr << "File error 3!\n";
                     plusPetitsCount += plusPetitsBufferCount;
                 }
                 if(autresCount)
                 {
                     std:: cout << "write cached \n";
-                    //fseeko(pFile, (begin+plusPetitsCount) * recSize, SEEK_SET);
-                    //count = fwrite((char*)autres, recSize, autresCount, pFile);
-                    count = pwrite64(fileno(pFile), (char*)autres, recSize * autresCount, (begin+plusPetitsCount) * recSize);
+                    fseeko(pFile, (begin+plusPetitsCount) * recSize, SEEK_SET);
+                    count = fwrite((char*)autres, recSize, autresCount, pFile);
                     if(!count) std::cerr << "File error 4!\n";
                 }
 
@@ -355,31 +341,27 @@ public:
                 {
 
                     std::cout << " cache " << plusPetitsCount << " items \n";
-                    //fseeko(fileno(pFile), (begin + plusPetitsCount) * recSize, SEEK_SET);
-                    //uint64_t count = fread((char*)autres, recSize, plusPetitsBufferCount, pFile);
-                    uint64_t count = pread64(fileno(pFile), (char*)autres, recSize * plusPetitsBufferCount, (begin + plusPetitsCount) * recSize);
+                    fseeko(pFile, (begin + plusPetitsCount) * recSize, SEEK_SET);
+                    uint64_t count = fread((char*)autres, recSize, plusPetitsBufferCount, pFile);
                     if(!count) std::cerr << "File error 5!\n";
 
                     std:: cout << "write smallers \n";
-                    //fseeko(fileno(pFile), (begin + plusPetitsCount) * recSize, SEEK_SET);
-                    //count = fwrite((char*)plusPetits, recSize, plusPetitsBufferCount, pFile);
-                    count = pwrite64(fileno(pFile), (char*)plusPetits, recSize * plusPetitsBufferCount, (begin + plusPetitsCount) * recSize);
+                    fseeko(pFile, (begin + plusPetitsCount) * recSize, SEEK_SET);
+                    count = fwrite((char*)plusPetits, recSize, plusPetitsBufferCount, pFile);
                     if(!count) std::cerr << "File error 6!\n";
 
                     plusPetitsCount += plusPetitsBufferCount;
 
                     std:: cout << "write cached \n";
-                    //fseeko(fileno(pFile), (end - (plusGrandsCount + plusPetitsBufferCount)) * recSize, SEEK_SET);
-                    //count = fwrite((char*)autres, recSize, plusPetitsBufferCount, pFile);
-                    count = pwrite64(fileno(pFile), (char*)autres, recSize * plusPetitsBufferCount, (end - (plusGrandsCount + plusPetitsBufferCount)) * recSize);
+                    fseeko(pFile, (end - (plusGrandsCount + plusPetitsBufferCount)) * recSize, SEEK_SET);
+                    count = fwrite((char*)autres, recSize, plusPetitsBufferCount, pFile);
                     if(!count) std::cerr << "File error 7!\n";
                 }
             }
             //xxx
-            //fseeko(pFile, (end  - (plusGrandsCount)) * recSize, SEEK_SET);
+            fseeko(pFile, (end  - (plusGrandsCount)) * recSize, SEEK_SET);
             std:: cout << "write pivot at the right place \n";
-            //count = fwrite((char*)&pivot, recSize, 1, pFile);
-            count = pwrite64(fileno(pFile), (char*)&pivot, recSize, (end  - (plusGrandsCount)) * recSize);
+            count = fwrite((char*)&pivot, recSize, 1, pFile);
 
         }
         if(!count) std::cerr << "File error 8!\n";
@@ -432,9 +414,8 @@ public:
         {
             return false;
         }
-        //fseeko(pFile, pos*recSize, SEEK_SET);
-        //uint64_t count = fread(result, recSize, 1, pFile);
-        uint64_t count = pread64(fileno(pFile), result, recSize, pos*recSize);
+        fseeko(pFile, pos*recSize, SEEK_SET);
+        uint64_t count = fread(result, recSize, 1, pFile);
         if(count)
         {
             return true;
@@ -644,9 +625,8 @@ public:
         {
             return false;
         }
-        //fseeko(pFile, pos*recSize, SEEK_SET);
-        //uint64_t count = fread(result, recSize, 1, pFile);
-        uint64_t count = pread64(fileno(pFile), result, recSize, pos*recSize);
+        fseeko(pFile, pos*recSize, SEEK_SET);
+        uint64_t count = fread(result, recSize, 1, pFile);
         if(count)
         {
             return true;
@@ -713,9 +693,8 @@ public:
     {
         if(count == 0) return NULL;
         ITEM* result = (ITEM*) malloc(sizeof(ITEM)*count);
-        //fseeko(pFile, start*recSize, SEEK_SET);
-        //count = fread(result, recSize, count, pFile);
-        count = fread64(fileno(pFile), result, recSize * count, start*recSize);
+        fseeko(pFile, start*recSize, SEEK_SET);
+        count = fread(result, recSize, count, pFile);
         return result;
     }
 /**
@@ -820,9 +799,8 @@ public:
     {
         if(count == 0) return NULL;
         char* result = (char*) malloc(count);
-        //fseeko(pFile, start, SEEK_SET);
-        //count = fread(result, 1, count, pFile);
-        count = pread64(fileno(pFile), result, count, start);
+        fseeko(pFile, start, SEEK_SET);
+        count = fread(result, 1, count, pFile);
         return result;
     }
 /**
