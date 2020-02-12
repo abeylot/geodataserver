@@ -10,6 +10,204 @@
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <unistd.h>
+#ifdef __linux__
+struct GeoFile
+{
+    int fh;
+    std::string name;
+    void open(std::string fname, bool create)
+    {
+        name = fname;
+        if(create)
+        {
+            fh = open64(name.c_str(),O_CREAT|O_TRUNC|O_RDWR, S_IWUSR);
+        } else {
+            fh = open64(name.c_str(),O_RDONLY);
+        }
+        if (fh < 0)
+        {
+            std::cerr << "Unable to open file : " << name << std::endl;
+            exit(1);
+        }
+    }
+    
+    virtual ~GeoFile(){close(fh);}
+    
+    void owrite(char* buffer, uint64_t offset, uint64_t length)
+    {
+        uint64_t got = 0;
+        while(length)
+        {
+            int64_t count = pwrite64(fh, &buffer[got], length, offset+got);
+            if(count <= 0)
+            {
+                std::cerr << "Unable to write file : " << name << std::endl;
+                exit(1);
+            } else {
+                length -= count;
+                got += count; 
+            }
+        }
+    }
+
+    void oread(char* buffer, uint64_t offset, uint64_t length)
+    {
+        uint64_t got = 0;
+        while(length)
+        {
+            int64_t count = pread64(fh, &buffer[got], length, offset+got);
+            if(count <= 0)
+            {
+                std::cerr << "Unable to read file : " << name << std::endl;
+                exit(1);
+            } else {
+                length -= count;
+                got += count; 
+            }
+        }
+    }
+    
+    void append(char* buffer, uint64_t length)
+    {
+        int64_t len = lseek64(fh, 0, SEEK_END);
+        if( len < 0 )
+        {
+            std::cerr << "Unable to seek file : " << name << std::endl;
+            exit(1);
+        }
+        
+        uint64_t got = 0;
+        while(length)
+        {
+            int64_t count = write(fh, &buffer[got], length);
+            if(count <= 0)
+            {
+                std::cerr << "Unable to write file : " << name << std::endl;
+                exit(1);
+            } else {
+                length -= count;
+                got += count; 
+            }
+        }
+    }
+    
+    uint64_t length()
+    {
+        int64_t len = lseek64(fh, 0, SEEK_END);
+        if( len < 0 )
+        {
+            std::cerr << "Unable to seek file : " << name << std::endl;
+            exit(1);
+        }
+        
+        return len;
+    }
+};  
+#else
+struct GeoFile
+{
+    FILE* fh;
+    std::string name;
+    void open(std::string fname, bool create)
+    {
+        name = fname;
+        if(create)
+        {
+            fh = fopen(name.c_str(),"wb+");
+        } else {
+            fh = fopen64 (name.c_str(),"rb");
+        }
+        if (fh == NULL)
+        {
+            std::cerr << "Unable to open file : " << name << std::endl;
+            exit(1);
+        }
+    }
+    
+    virtual ~GeoFile(){fclose(fh);}
+    
+    void owrite(char* buffer, uint64_t offset, uint64_t length)
+    {
+        uint64_t got = 0;
+        if(fseeko(fh, offset, SEEK_SET))
+        {
+            std::cerr << "Unable to seek file : " << name << std::endl;
+            exit(1);
+        }
+        while(length)
+        {
+            int64_t count = fwrite(buffer + got, 1, length, fh);
+            if(count <= 0)
+            {
+                std::cerr << "Unable to write file : " << name << std::endl;
+                exit(1);
+            } else {
+                length -= count;
+                got += count; 
+            }
+        }
+    }
+
+    void oread(char* buffer, uint64_t offset, uint64_t length)
+    {
+        uint64_t got = 0;
+        if(fseeko(fh, offset, SEEK_SET))
+        {
+            std::cerr << "Unable to seek file : " << name << std::endl;
+            exit(1);
+        }
+        while(length)
+        {
+            int64_t count = fread(buffer + got, 1, length, fh);
+            if(count <= 0)
+            {
+                std::cerr << "Unable to read file : " << name << std::endl;
+                exit(1);
+            } else {
+                length -= count;
+                got += count; 
+            }
+        }
+    }
+    
+    void append(char* buffer, uint64_t length)
+    {
+        uint64_t got = 0;
+        if(fseeko(fh, 0, SEEK_END))
+        {
+            std::cerr << "Unable to seek file : " << name << std::endl;
+            exit(1);
+        }
+        while(length)
+        {
+            int64_t count = fwrite(buffer + got, 1, length, fh);
+            if(count <= 0)
+            {
+                std::cerr << "Unable to write file : " << name << std::endl;
+                exit(1);
+            } else {
+                length -= count;
+                got += count; 
+            }
+        }
+    }
+    
+    uint64_t length()
+    {
+        if(fseeko(fh, 0, SEEK_END))
+        {
+            std::cerr << "Unable to seek file : " << name << std::endl;
+            exit(1);
+        }
+        
+        return ftello(fh);
+    }
+};  
+#endif
 
 // IMPORTANT KEY et ITEM doivent être des types 'triviaux'
 // i.e. entier, double, char ou structure et tableaux de ces types.
@@ -21,6 +219,7 @@ namespace fidx
   * @tparam ITEM item to store.
   * @tparam KEY  key of index.
   */
+
 template <class ITEM,class KEY> struct Record
 {
     KEY key;
@@ -64,7 +263,8 @@ private:
     std::unordered_map<uint64_t, Record<ITEM, KEY>> cache;
 public:
     uint64_t fileSize;
-    FILE * pFile;
+    //FILE * pFile;
+    GeoFile pFile;
     /**
      * @brief Construct a new File Index object.
      * 
@@ -73,23 +273,16 @@ public:
      */
     FileIndex(std::string filename_, bool replace) : filename(filename_)
     {
-	std::cout << "file name : " << this->filename << ":" << filename << "\n";
+	    std::cout << "file name : " << this->filename << ":" << filename << "\n";
+
+        pFile.open(filename, replace);
         buffer = NULL;
-        if(!replace) {
-            pFile = fopen64 (filename.c_str(),"rb");
-	    if(pFile == NULL) exit(1);
-	}
-        else pFile = NULL;
-        if(pFile == NULL)
-        {
-            //buffer = new Record<ITEM,KEY>[2ULL*FILEINDEX_SORTBUFFERSIZE];
-            buffer = new Record<ITEM,KEY>[FILEINDEX_RAWFLUSHSIZE];
-            pFile = fopen(filename.c_str(),"wb+");
-        }
+        if (replace)  buffer = new Record<ITEM,KEY>[FILEINDEX_RAWFLUSHSIZE];
+    //        pFile.open(filename.c_str(),O_RDONLY);
+    //        pFile = open64(filename.c_str(),O_CREAT|O_TRUNC|O_RDWR, S_IWUSR);
         bufferCount = 0;
         recSize = sizeof(Record<ITEM,KEY>);
-        fseeko(pFile, 0, SEEK_END);
-        fileSize = ftello(pFile)/recSize;
+        fileSize = pFile.length()/recSize;
 
     }
 
@@ -99,7 +292,6 @@ public:
      */
     virtual ~FileIndex()
     {
-        fclose(pFile);
         if(buffer != NULL) delete[] buffer;
     }
 
@@ -123,20 +315,6 @@ public:
 
     }
 
-    /*void appendRaw(KEY key, ITEM item)
-    {
-        Record<ITEM,KEY> record;
-        record.key = key;
-        record.value = item;
-        buffer[bufferCount] = record;
-        bufferCount ++;
-        if (bufferCount == FILEINDEX_RAWFLUSHSIZE)
-        {
-            fwrite(&buffer[0], recSize, bufferCount, pFile);
-            bufferCount = 0;
-        }
-
-    }*/
 
 /**
  * @brief flush index file to disk.
@@ -144,10 +322,9 @@ public:
  */
     void flush()
     {
-        fseeko(pFile, 0, SEEK_END);
-        fwrite(&buffer[0], recSize, bufferCount, pFile);
+        pFile.append((char*)&buffer[0], recSize * bufferCount);
         bufferCount = 0;
-        fileSize = ftello(pFile)/recSize;
+        fileSize = pFile.length()/recSize;
     }
 /**
  * @brief swap items in index
@@ -158,46 +335,11 @@ public:
     void swap(uint64_t item1, uint64_t item2)
     {
         Record<ITEM,KEY> rec1, rec2;
-        fseeko(pFile, item1 * recSize, SEEK_SET);
-        uint64_t count = fread((char*)&rec1, recSize, 1, pFile);
-        if(count == 0)
-        {
-            std::cerr << "read error \n";
-            return;
-        }
-        fseeko(pFile, item2 * recSize, SEEK_SET);
-        count = fread((char*)&rec2, recSize, 1, pFile);
-        if(count == 0)
-        {
-            std::cerr << "read error \n";
-            return;
-        }
-        fseeko(pFile, item1 * recSize, SEEK_SET);
-        count = fwrite((char*)&rec2, recSize, 1, pFile);
-        if(count == 0)
-        {
-            std::cerr << "write error \n";
-            return;
-        }
-        fseeko(pFile, item2 * recSize, SEEK_SET);
-        count = fwrite((char*)&rec1, recSize, 1, pFile);
-        if(count == 0)
-        {
-            std::cerr << "write error \n";
-            return;
-        }
-
+        pFile.oread((char*)&rec1, item1 * recSize, recSize);
+        pFile.oread((char*)&rec2, item2 * recSize, recSize);
+        pFile.owrite((char*)&rec2, item1 * recSize, recSize);
+        pFile.owrite((char*)&rec1, item2 * recSize, recSize);
     }
-
-    /*void coutFile(FILE *p) {
-    	char outb[10000];
-    	memset(outb,0,10000);
-    	uint64_t fpos = ftell(p);
-    	fseek(p,0,SEEK_SET);
-    	fread(outb,1,10000,p);
-    	fseek(p,fpos,SEEK_SET);
-    	std::cerr <<"___\n"<< outb;
-    }*/
 
     /**
      * @brief sort index
@@ -209,7 +351,7 @@ public:
         std::cerr << "sorting  " << fileSize << " elements \n";
         if(!fileSize) return;
         sortedSize = 0;
-        uint64_t buffer_size = 1000000000ULL;
+        uint64_t buffer_size = 0xFFFFFFFFULL / (3*recSize);
         Record<ITEM,KEY>* sort_buffer = NULL;
         while(sort_buffer == NULL)
         {
@@ -227,7 +369,7 @@ public:
     }
 
     /**
-     * @brief soert idex part.
+     * @brief sort index part.
      * 
      * @param begin 
      * @param end 
@@ -242,14 +384,16 @@ public:
         if((end - begin) < (3ULL*buffer_size))
         {
             std::cout << "enough memory, performing qsort \n";
-            fseeko(pFile, begin * recSize, SEEK_SET);
+            //fseeko(pFile, begin * recSize, SEEK_SET);
             std::cout << "read data \n";
-            count = fread((char*)sort_buffer, recSize, count, pFile);
+            //count = fread((char*)sort_buffer, recSize, count, pFile);
+            pFile.oread((char*)sort_buffer, begin * recSize, recSize * count);
             std::cout << "sort data \n";
-            std::qsort(&sort_buffer[0], count,recSize,fileIndexComp<ITEM,KEY>);
-            fseeko(pFile, begin * recSize, SEEK_SET);
+            std::qsort(&sort_buffer[0], count, recSize,fileIndexComp<ITEM,KEY>);
+            //fseeko(pFile, begin * recSize, SEEK_SET);
             std::cout << "write data \n";
-            count = fwrite((char*)sort_buffer, recSize, count, pFile);
+            //count = fwrite((char*)sort_buffer, recSize, count, pFile);
+            pFile.owrite((char*)sort_buffer, begin * recSize, recSize * count );
             sortedSize += count;
             std::cerr << "*** *** *** *** sorted " << sortedSize << " out of " << fileSize << "\n";
             return;
@@ -276,12 +420,9 @@ public:
             uint64_t toRead = buffer_size;
             std::cout << "reading " << toRead << "items from file \n";
             if(toRead > autresCount) toRead = autresCount;
-            fseeko(pFile, (end - (toRead  + plusGrandsCount)) * recSize, SEEK_SET);
-            uint64_t count = fread((char*)autres, recSize, toRead, pFile);
-            if(!count)
-            {
-                std::cerr << "File error 1!\n";
-            }
+            //fseeko(pFile, (end - (toRead  + plusGrandsCount)) * recSize, SEEK_SET);
+            //uint64_t count = fread((char*)autres, recSize, toRead, pFile);
+            pFile.oread((char*)autres, (end - (toRead  + plusGrandsCount)) * recSize, recSize * toRead );
             autresBufferCount = toRead;
             plusPetitsBufferCount = 0;
             plusGrandsBufferCount = 0;
@@ -307,31 +448,24 @@ public:
             if(plusGrandsBufferCount)
             {
                 std::cout << plusGrandsBufferCount << " items where bigger writing them to file\n";
-                fseeko(pFile, (end - (plusGrandsCount + plusGrandsBufferCount - 1)) * recSize, SEEK_SET);
-                count = fwrite((char*)plusGrands, recSize, plusGrandsBufferCount, pFile);
-                if(!count) std::cerr << "File error 2!\n";
+                pFile.owrite((char*)plusGrands, (end - (plusGrandsCount + plusGrandsBufferCount - 1)) * recSize, recSize * plusGrandsBufferCount);
             }
             plusGrandsCount += plusGrandsBufferCount;
             std::cout << plusPetitsBufferCount << " items where smaller writing them to file\n";
             if(autresCount  < plusPetitsBufferCount)
             {
                 std::cout << " cache " << autresCount << " items \n";
-                fseeko(pFile, (begin + plusPetitsCount) * recSize, SEEK_SET);
-                uint64_t count = fread((char*)autres, recSize, autresCount, pFile);
+                pFile.oread((char*)autres, (begin + plusPetitsCount) * recSize, recSize * autresCount);
                 if(plusPetitsBufferCount)
                 {
                     std:: cout << "write smallers \n";
-                    fseeko(pFile, (begin + plusPetitsCount) * recSize, SEEK_SET);
-                    count = fwrite((char*)plusPetits, recSize, plusPetitsBufferCount, pFile);
-                    if(!count) std::cerr << "File error 3!\n";
+                    pFile.owrite((char*)plusPetits, (begin + plusPetitsCount) * recSize, recSize * plusPetitsBufferCount);
                     plusPetitsCount += plusPetitsBufferCount;
                 }
                 if(autresCount)
                 {
                     std:: cout << "write cached \n";
-                    fseeko(pFile, (begin+plusPetitsCount) * recSize, SEEK_SET);
-                    count = fwrite((char*)autres, recSize, autresCount, pFile);
-                    if(!count) std::cerr << "File error 4!\n";
+                    pFile.owrite((char*)autres, (begin+plusPetitsCount) * recSize, recSize * autresCount);
                 }
 
             }
@@ -341,30 +475,18 @@ public:
                 {
 
                     std::cout << " cache " << plusPetitsCount << " items \n";
-                    fseeko(pFile, (begin + plusPetitsCount) * recSize, SEEK_SET);
-                    uint64_t count = fread((char*)autres, recSize, plusPetitsBufferCount, pFile);
-                    if(!count) std::cerr << "File error 5!\n";
-
+                    pFile.oread((char*)autres, (begin + plusPetitsCount) * recSize, recSize * plusPetitsBufferCount);
                     std:: cout << "write smallers \n";
-                    fseeko(pFile, (begin + plusPetitsCount) * recSize, SEEK_SET);
-                    count = fwrite((char*)plusPetits, recSize, plusPetitsBufferCount, pFile);
-                    if(!count) std::cerr << "File error 6!\n";
-
+                    pFile.owrite((char*)plusPetits, (begin + plusPetitsCount) * recSize, recSize * plusPetitsBufferCount);
                     plusPetitsCount += plusPetitsBufferCount;
-
                     std:: cout << "write cached \n";
-                    fseeko(pFile, (end - (plusGrandsCount + plusPetitsBufferCount)) * recSize, SEEK_SET);
-                    count = fwrite((char*)autres, recSize, plusPetitsBufferCount, pFile);
-                    if(!count) std::cerr << "File error 7!\n";
+                    pFile.owrite((char*)autres, (end - (plusGrandsCount + plusPetitsBufferCount)) * recSize, recSize * plusPetitsBufferCount);
                 }
             }
-            //xxx
-            fseeko(pFile, (end  - (plusGrandsCount)) * recSize, SEEK_SET);
             std:: cout << "write pivot at the right place \n";
-            count = fwrite((char*)&pivot, recSize, 1, pFile);
+            pFile.owrite((char*)&pivot, (end  - (plusGrandsCount)) * recSize, recSize);
 
         }
-        if(!count) std::cerr << "File error 8!\n";
         sortedSize++;
         std::cerr << "*** *** *** *** sorted " << sortedSize << " out of " << fileSize << "\n";
         if(plusGrandsCount > 1) sort(end - (plusGrandsCount - 1), end, sort_buffer, buffer_size);
@@ -414,16 +536,10 @@ public:
         {
             return false;
         }
-        fseeko(pFile, pos*recSize, SEEK_SET);
-        uint64_t count = fread(result, recSize, 1, pFile);
-        if(count)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        //fseeko(pFile, pos*recSize, SEEK_SET);
+        //uint64_t count = fread(result, recSize, 1, pFile);
+        pFile.oread((char*)result, pos*recSize, recSize);
+        return true;
     }
 
 /**
@@ -553,7 +669,8 @@ template<class ITEM> class FileRawIndex
 {
 private:
     std::string filename;
-    FILE * pFile;
+    //FILE * pFile;
+    GeoFile  pFile;
     ITEM *buffer;
     unsigned long bufferCount;
     uint64_t recSize;
@@ -568,19 +685,14 @@ public:
      */
     FileRawIndex(std::string filename, bool replace) : filename(filename)
     {
-        buffer = new ITEM[FILEINDEX_RAWFLUSHSIZE];
-        if(!replace)
-            pFile = fopen64 (filename.c_str(),"rb");
-        else pFile = NULL;
-        if(pFile == NULL)
-        {
-            pFile = fopen(filename.c_str(),"wb+");
-        }
+	    std::cout << "file name : " << this->filename << ":" << filename << "\n";
+
+        pFile.open(filename, replace);
+        buffer = NULL;
+        if (replace)  buffer = new ITEM[FILEINDEX_RAWFLUSHSIZE];
         bufferCount = 0;
-        itemCount = 0;
         recSize = sizeof(ITEM);
-        fseeko(pFile, 0, SEEK_END);
-        fileSize = ftello(pFile)/recSize;
+        fileSize = pFile.length()/recSize;
 
     }
     /**
@@ -589,8 +701,7 @@ public:
      */
     virtual ~FileRawIndex()
     {
-        fclose(pFile);
-        delete[] buffer;
+        if(buffer != NULL) delete[] buffer;
     }
 /**
  * @brief append record.
@@ -614,9 +725,12 @@ public:
  */
     void flush()
     {
-        fwrite(&buffer[0], recSize, bufferCount, pFile);
+        pFile.append((char*)&buffer[0], recSize * bufferCount);
         bufferCount = 0;
-        fileSize = ftello(pFile)/recSize;
+        //fileSize = ftello(pFile)/recSize;
+        //fileSize = ltell64(pFile)/recSize;
+        fileSize = pFile.length()/recSize;
+
     }
 
     bool  get(uint64_t pos, ITEM* result )
@@ -625,16 +739,8 @@ public:
         {
             return false;
         }
-        fseeko(pFile, pos*recSize, SEEK_SET);
-        uint64_t count = fread(result, recSize, 1, pFile);
-        if(count)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        pFile.oread((char*)result, pos*recSize, recSize);
+        return true;
     }
 
     uint64_t getSize()
@@ -652,7 +758,8 @@ template<class ITEM> class FileRawData
 {
 public:
     uint64_t startPos;
-    FILE* pFile;
+    //FILE* pFile;
+    GeoFile pFile;
     ITEM* buffer;
     uint64_t bufferCount;
     uint64_t itemCount;
@@ -668,19 +775,19 @@ public:
  */
     FileRawData(std::string filename, bool replace)
     {
-        buffer = new ITEM[FILEINDEX_RAWFLUSHSIZE];
-        if(!replace)
-            pFile = fopen64 (filename.c_str(),"rb");
-        else pFile = NULL;
-        if(pFile == NULL)
-        {
-            pFile = fopen(filename.c_str(),"wb+");
-        }
+	    std::cout << "file name : " <<  filename << "\n";
+
+        pFile.open(filename, replace);
+        buffer = NULL;
+        if (replace)  buffer = new ITEM[FILEINDEX_RAWFLUSHSIZE];
         bufferCount = 0;
-        itemCount = 0;
         recSize = sizeof(ITEM);
-        fseeko(pFile, 0, SEEK_END);
-        fileSize = ftello(pFile)/recSize;
+        fileSize = pFile.length()/recSize;
+
+    }
+    virtual ~FileRawData()
+    {
+        if(buffer != NULL) delete[] buffer;
     }
 /**
  * @brief Get data.
@@ -693,8 +800,7 @@ public:
     {
         if(count == 0) return NULL;
         ITEM* result = (ITEM*) malloc(sizeof(ITEM)*count);
-        fseeko(pFile, start*recSize, SEEK_SET);
-        count = fread(result, recSize, count, pFile);
+        pFile.oread((char*)result, start * recSize, recSize * count);
         return result;
     }
 /**
@@ -728,9 +834,12 @@ public:
  */
     void flush()
     {
-        fwrite(&buffer[0], recSize, bufferCount, pFile);
+        //fwrite(&buffer[0], recSize, bufferCount, pFile);
+        pFile.append((char*)&buffer[0], recSize * bufferCount);
         bufferCount = 0;
-        fileSize = ftello(pFile)/recSize;
+        //fileSize = ftello(pFile)/recSize;
+        //fileSize = tell64(pFile)/recSize;
+        fileSize = pFile.length()/recSize;
     }
 /**
  * @brief revert buffer.
@@ -761,7 +870,8 @@ template<class ITEM> class FileRawVarData
 {
 public:
     uint64_t startPos;
-    FILE* pFile;
+    //FILE* pFile;
+    GeoFile pFile;
     char* buffer;
     uint64_t bufferCount;
     uint64_t itemCount;
@@ -775,17 +885,18 @@ public:
  */
     FileRawVarData(std::string filename, bool replace)
     {
-        buffer = new char[FILEINDEX_RAWFLUSHSIZE];
-        if(!replace)
-            pFile = fopen64 (filename.c_str(),"rb");
-        else pFile = NULL;
-        if(pFile == NULL)
-        {
-            pFile = fopen(filename.c_str(),"wb+");
-        }
+        if(replace) buffer = new char[FILEINDEX_RAWFLUSHSIZE];
+        else buffer = NULL;
+        
+        pFile.open(filename, replace);
         bufferCount = 0;
         itemCount = 0;
-        fseeko(pFile, 0, SEEK_END);
+
+    }
+    
+    virtual ~FileRawVarData()
+    {
+        if(buffer != NULL) delete[] buffer;
     }
 
 /**
@@ -799,8 +910,9 @@ public:
     {
         if(count == 0) return NULL;
         char* result = (char*) malloc(count);
-        fseeko(pFile, start, SEEK_SET);
-        count = fread(result, 1, count, pFile);
+        //fseeko(pFile, start, SEEK_SET);
+        //count = fread(result, 1, count, pFile);
+        pFile.oread(result, start,  count);
         return result;
     }
 /**
@@ -840,7 +952,7 @@ public:
  */
     void flush()
     {
-        fwrite(buffer, 1, bufferCount, pFile);
+        pFile.append(buffer,bufferCount);
         bufferCount = 0;
     }
 
