@@ -83,6 +83,11 @@ int main(int argc, char *argv[])
                                             //std::cerr << "check " << sel->tagKey << " " << sel->tagValue << "\n";
                                             kept = kept && ( r->tags[sel->tagKey.c_str()] == sel->tagValue );
                                         }
+                                        for(Selector* sel : d->excludeSelectors)
+                                        {
+                                            //std::cerr << "check " << sel->tagKey << " " << sel->tagValue << "\n";
+                                            kept = kept && !( r->tags[sel->tagKey.c_str()] == sel->tagValue );
+                                        }
                                         if(kept) zmMask = zmMask | cl->mask;
                                     }
                                 }
@@ -157,6 +162,11 @@ int main(int argc, char *argv[])
                                             //std::cerr << "check " << sel->tagKey << " " << sel->tagValue << "\n";
                                             kept = kept && ( w->tags[sel->tagKey.c_str()] == sel->tagValue );
                                         }
+                                        for(Selector* sel : d->excludeSelectors)
+                                        {
+                                            //std::cerr << "check " << sel->tagKey << " " << sel->tagValue << "\n";
+                                            kept = kept && !( w->tags[sel->tagKey.c_str()] == sel->tagValue );
+                                        }
                                         if(kept) zmMask = zmMask | cl->mask;
                                     }
                                 }
@@ -228,6 +238,11 @@ int main(int argc, char *argv[])
                                         {
                                             //std::cerr << "check " << sel->tagKey << " " << sel->tagValue << "\n";
                                             kept = kept && ( p->tags[sel->tagKey.c_str()] == sel->tagValue );
+                                        }
+                                        for(Selector* sel : d->excludeSelectors)
+                                        {
+                                            //std::cerr << "check " << sel->tagKey << " " << sel->tagValue << "\n";
+                                            kept = kept && !( p->tags[sel->tagKey.c_str()] == sel->tagValue );
                                         }
                                         if(kept) zmMask = zmMask | cl->mask;
                                 }

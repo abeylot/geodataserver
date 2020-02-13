@@ -78,6 +78,7 @@ struct IndexDesc
     std::string name;
     std::vector<Condition*> conditions;
     std::vector<Selector*> selectors;
+    std::vector<Selector*> excludeSelectors;
     fidx::FileIndex<IndexEntry,GeoBox>* idx;
     uint32_t mask;
 };
@@ -173,7 +174,15 @@ struct XmlVisitor
             cdt->opened = opened;
             cdt->closed = closed;
         }
-        if (b->baliseName == "selector")
+        if (b->baliseName == "exclude")
+        {
+            Selector* sel = new Selector;
+            (*idxList)[idxList->size() - 1]->excludeSelectors.push_back(sel);
+            sel->tagKey = b->keyValues["tagKey"];
+            sel->tagValue = b->keyValues["tagValue"];
+            //std::cerr << "found selector for : " << sel->tagKey << " " << sel->tagValue << "\n";
+        }
+        if (b->baliseName == "select")
         {
             Selector* sel = new Selector;
             (*idxList)[idxList->size() - 1]->selectors.push_back(sel);

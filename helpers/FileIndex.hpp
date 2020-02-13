@@ -10,14 +10,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
+
+#ifdef __linux__
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <unistd.h>
-#ifdef __linux__
 struct GeoFile
 {
-    int fh;
+    int fh = -1;
     std::string name;
     void open(std::string fname, bool create)
     {
@@ -35,7 +36,7 @@ struct GeoFile
         }
     }
     
-    virtual ~GeoFile(){close(fh);}
+    virtual ~GeoFile(){if(fh >=0) close(fh);}
     
     void owrite(char* buffer, uint64_t offset, uint64_t length)
     {
@@ -110,7 +111,7 @@ struct GeoFile
 #else
 struct GeoFile
 {
-    FILE* fh;
+    FILE* fh = -1;
     std::string name;
     void open(std::string fname, bool create)
     {
@@ -128,7 +129,7 @@ struct GeoFile
         }
     }
     
-    virtual ~GeoFile(){fclose(fh);}
+    virtual ~GeoFile(){if(fh >=0) close(fh);}
     
     void owrite(char* buffer, uint64_t offset, uint64_t length)
     {
