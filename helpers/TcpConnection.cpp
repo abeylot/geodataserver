@@ -1,9 +1,6 @@
 /*
  * TcpConnection.cpp
  *
- *  Created on: 19 aug 2011
- *      Author: Alain Beylot
- *
  *
  *  This file describes tcp connection
  *
@@ -81,7 +78,6 @@ void TcpConnection::abort( void )
 {
     if( _FileDescr )
     {
-        //usleep(1000000);
         shutdown(_FileDescr, 0);
         close( _FileDescr );
     }

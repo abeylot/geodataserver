@@ -145,7 +145,6 @@ struct XmlVisitor
     }
     void log(uint64_t done)
     {
-        //std::cerr << " done " << (done >> 20ULL) << "Mio.\t relations " << relid << "\tways " << wayid << "\tnodes " << nodid<< "\r" << std::flush;
     }
 
     void startTag(std::vector<SeqBalise*> tagStack, SeqBalise* b)

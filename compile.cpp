@@ -49,7 +49,6 @@ struct dbf_header
     {
         nbr_of_records = tmp[0] + tmp[1] * 0xFF + tmp[2] * 0xFFFF + tmp[3]*0xFFFF;
     }
-    //std::cout << nbr_of_records << " records \n";
     if(fread(tmp, 2, 1, f) != 1)
     {
        return -1;
@@ -83,7 +82,6 @@ struct dbf_header
    }
    int read_record(FILE* f, FileRawVarData<GeoString>*  baliseTags)
    {
-       //std::cout << "<record";
        char del;
        if(fread(&del, 1, 1, f)!=1) return -1;
        for(unsigned int i = 0; i < field_count; i++)
@@ -99,14 +97,12 @@ struct dbf_header
            memset (value2,0,1024);
            if(index2 >= index)
               memcpy(value2, value + index, (index2 - index + 1));
-           //std::cout << " " << field_descriptors[i].name << "=\"" << value2 << "\"";
             GeoString s;
             s.value = field_descriptors[i].name ;
             baliseTags->append(s);
             s.value = value2;
             baliseTags->append(s);
        }
-       //std::cout << "/>\n";
        return 0;
    }
 };
@@ -206,8 +202,6 @@ struct XmlVisitor
     uint64_t wayid;
     uint64_t nodid;
 
-    //size_t wayPointsLastPos, wayPointsPos;
-    //FILE *wayPoints;
     FileRawData<GeoPoint>*  wayPoints;
     FileRawData<GeoMember>* relMembers;
     FileRawVarData<GeoString>*  baliseTags;
@@ -409,13 +403,13 @@ struct XmlVisitor
     FILE* dbf = fopen(filename_dbf.c_str(),"r");
     if(dbf == NULL)
     {
-       std::cout << "dbf file missinf \n";
+       std::cerr << "dbf file missing \n";
        return;
     } 
     
     if(shp == NULL)
     {
-       std::cout << "shp file missinf \n";
+       std::cerr << "shp file missing \n";
        return;
     } 
     
@@ -424,15 +418,12 @@ struct XmlVisitor
 
 
     dbf_header dbfheader;
-    if(dbfheader.read(dbf) != 0) std::cout << "error while reading dbf file !\n";;
+    if(dbfheader.read(dbf) != 0) std::cerr << "error while reading dbf file !\n";;
 
 
 
     if(len > 0)
     {
-        //std::cout << "file code is : " << getUnsignedInteger32(header, true) << "\n";
-        //std::cout << "file length is : " << getUnsignedInteger32(header + 24, true) << "\n";
-        //std::cout << "file shapes type is : " << getUnsignedInteger32(header + 32, false) << "\n";
         while(fread(recordheader, 8, 1, shp) > 0)
         {
             uint32_t recordnumber = getUnsignedInteger32(recordheader, true); 		
@@ -530,22 +521,6 @@ struct XmlVisitor
 
 int main(int argc, char *argv[])
 {
-    //XmlFilterVisitor f;
-    //FILE* conf = fopen("./config.xml","r");
-    //XmlFileParser<XmlFilterVisitor>::parseXmlFile(conf,f);
-    //fclose(conf);
-    //cerr << "node tags\n";
-    /*for(std::string s : nodeTags) {
-       cerr << s <<  "\n";
-    }
-    cerr << "way tags\n";
-    for(std::string s : wayTags) {
-       cerr << s <<  "\n";
-    }
-    cerr << "relation tags\n";
-    for(std::string s : relationTags) {
-       cerr << s <<  "\n";
-    }*/
     XmlVisitor v;
     XmlFileParser<XmlVisitor>::parseXmlFile(stdin,v);
     ShpVisitor v2;

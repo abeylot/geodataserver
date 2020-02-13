@@ -36,7 +36,6 @@ bool THashIntegerTable::addIfUnique(uint64_t key)
         cellsCounter[hash]++;
         cells[hash][cellsCounter[hash] - 1] = key;
         itemCount++;
-        //if(cellsCounter[hash] > 1) collisions++;
         return true;
     }
     return false;
@@ -86,8 +85,6 @@ bool THashIntegerTable::get(uint64_t key)
 {
     int hash;
     unsigned int i;
-//bool found;
-//found = false;
     hash = hashMe(key) % cellsCount;
     if (cells[hash] != NULL)
     {

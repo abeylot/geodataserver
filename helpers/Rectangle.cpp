@@ -66,10 +66,6 @@ Rectangle operator*(Rectangle const& a, double const& b)
     result.y0 = y0;
     result.y1 = y1;
     
-    //result.x0 = meanx - difx;
-    //result.x1 = meanx + difx;
-    //result.y0 = meany - dify;
-    //result.y1 = meany + dify;
     
     return result;
 }

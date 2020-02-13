@@ -1,15 +1,11 @@
 /*
  * File:   HttpEncoder.cpp
- * Author: ABeylot
  *
- * Created on 3 décembre 2012, 09:34
  */
 
 #include <sstream>
 
 #include "HttpEncoder.hpp"
-//#include "ISession.hpp"
-const char HttpEncoder_cpp[] = "$Id: HttpEncoder.cpp,v 1.8 2013/09/27 09:03:42 aby Exp $";
 
 
 HttpEncoder::HttpEncoder()
@@ -26,17 +22,9 @@ Msg* HttpEncoder::encode(std::string* in)
     Msg* res = new Msg;
     if(*in == "") return res;
     printf("[%s]\n",in->c_str());
-    //int iMyIdent = __sync_fetch_and_add(&iIdent,1);
     Record *rcd = new Record();
     Record *rcdParms = new Record();
     res->addRecord(rcd);
-    /*rcd->addBlock(MsgEncoder::sRecordTypeMsgHeader);
-
-    std::stringstream strSt;
-    strSt << iIdent;
-
-    std::string sBlock = Msg::tags_.getTag(Interfaces::IMsgTags::MsgContext) + "=" + strSt.str();
-    rcd->addBlock(sBlock);*/
 
     std::string sHead="";
     std::string sBody="";
@@ -69,7 +57,6 @@ Msg* HttpEncoder::encode(std::string* in)
         size_t lSep = parameterString.find(" ");
         if(lSep != std::string::npos) parameterString = parameterString.substr(0,lSep);
         size_t jSep;
-        //size_t kSep;
         do
         {
             jSep = parameterString.find("&");
@@ -84,7 +71,6 @@ Msg* HttpEncoder::encode(std::string* in)
                 parameterString = parameterString.substr(jSep+1);
             }
             rcdParms->addBlock(myParm);
-            //kSep = jSep;
         }
         while (jSep != std::string::npos);
     }
@@ -92,7 +78,6 @@ Msg* HttpEncoder::encode(std::string* in)
     method = sLine.substr(0,iSep);
     std::string sBlock = "Method=" + method;
     rcd->addBlock(sBlock);
-    //logDebug("adding %s",sBlock.c_str());
 
 
     // add URL to first record.
@@ -108,13 +93,11 @@ Msg* HttpEncoder::encode(std::string* in)
         iUrlEnd = sLine.size();
     }
     rcd->addBlock(sBlock);
-    //logDebug("adding %s",sBlock.c_str());
 
     // add Http Version to first record
     std::string sVersion = sLine.substr(iUrlEnd,sLine.length()-(iUrlEnd));
     sBlock = "HTTPVersion=" + sVersion;
     rcd->addBlock(sBlock);
-    //logDebug("adding %s",sBlock.c_str());
 
 
     // add tags
@@ -134,7 +117,6 @@ Msg* HttpEncoder::encode(std::string* in)
 
     // get data
     Record* rcdBody = new Record();
-    //rcd->addBlock(MsgEncoder::sRecordTypeRow);
     if(rcd->getNamedValue("content-type") == "application/x-www-form-urlencoded")
     {
         iDone = 0;
@@ -160,10 +142,8 @@ Msg* HttpEncoder::encode(std::string* in)
     res->addRecord(rcdBody);
     res->addRecord(rcdParms);
 
-    //logDebug("adding %s",sBody.c_str());
     return res;
 
-    //res->addRecord(rcdParms);
 }
 
 std::string* HttpEncoder::decode(Msg* outMsg) const
@@ -263,7 +243,6 @@ void HttpEncoder::addContent(Msg* msg,const std::string &content)
 {
     if(msg->getRecordCount() != 1)
     {
-        //logError("Invalid addContent usage in HttpEncoder.");
         return;
     }
     Record* rcd = new Record;

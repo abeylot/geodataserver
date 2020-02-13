@@ -26,10 +26,8 @@ uint32_t Coordinates::toNormalizedLon(const std::string& coord)
         intCoord = ( integerPart) * 10000000 + decimalPart;
 
     uint32_t normalized = 0;
-    //if(intCoord == 3600000000ULL) intCoord = 3599999999ULL;
-    //if(intCoord == 4500000000ULL) intCoord = 4499999999ULL;
+
     uint32_t toCompare = 3600000000ULL;
-    //uint32_t toCompare = 2250000000ULL;
     normalized = 1;
     for (int i = 0; i < 32; i++ )
     {
@@ -70,7 +68,6 @@ uint32_t Coordinates::toNormalizedLat(const std::string& coord)
         intCoord = (integerPart)* 10000000 + decimalPart;
 
     uint32_t normalized = 0;
-    //if(intCoord == 2700000000ULL) intCoord = 2699999999ULL;
     uint32_t toCompare = 1800000000ULL;
     normalized = 1;
     for (int i = 0; i < 32; i++ )
@@ -159,10 +156,3 @@ uint32_t Coordinates::fromHex(const std::string& s)
     return result;
 }
 
-/*int main() {
-    uint32_t test = Coordinates::toNormalizedCoords("90.0000000");
-    std::cout << test <<"\n";
-    test = Coordinates::toNormalizedCoords("45.0000000");
-    std::cout << test << "\n" << Coordinates::toHex(test) << "\n" << Coordinates::fromHex(Coordinates::toHex(1234567)) << "\n";
-    return 0;
-}*/

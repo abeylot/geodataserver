@@ -10,7 +10,6 @@
 #include <boost/filesystem.hpp>
 using namespace boost::filesystem;
 #define CHUNK 0x4000
-//#include "renderers/ClcArea.hpp"
 
 int def(std::string& source, FILE* dest)
 {
@@ -24,7 +23,6 @@ int def(std::string& source, FILE* dest)
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
-    //ret = deflateInit(&strm, Z_DEFAULT_COMPRESSION);
     ret = deflateInit2(&strm,
                        Z_DEFAULT_COMPRESSION,
                        Z_DEFLATED,
@@ -126,10 +124,6 @@ int def(std::string& source, std::string& dest)
 			pos = length;
 			do_stop = true; 			
 		} 
-        /*if (ferror(source)) {
-            (void)deflateEnd(&strm);
-            return Z_ERRNO;
-        }*/
         flush = do_stop ? Z_FINISH : Z_NO_FLUSH;
         strm.next_in = in;
 
@@ -141,11 +135,6 @@ int def(std::string& source, std::string& dest)
             ret = deflate(&strm, flush);    /* no bad return value */
             assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
             have = CHUNK - strm.avail_out;
-            //dest.append(out,have);
-            //if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
-            //    (void)inflateEnd(&strm);
-            //    return Z_ERRNO;
-            //
             dest.append((const char*)out, have);
             //}
         } while (strm.avail_out == 0);
@@ -214,10 +203,6 @@ int inf(FILE *source, std::string& dest)
             }
             have = CHUNK - strm.avail_out;
            dest.append((char *)out,have);
-           /*if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
-                (void)inflateEnd(&strm);
-                return Z_ERRNO;
-            }*/
         } while (strm.avail_out == 0);
 
         /* done when inflate() says it's done */
@@ -247,11 +232,6 @@ double tiley2lat(int y, int z)
 Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
 {
     char filename[250];
-    /*std::string sLon1 = request->getRecord(2)->getNamedValue("longitude1");
-    std::string sLat1 = request->getRecord(2)->getNamedValue("lattitude1");
-
-    std::string sLon2 = request->getRecord(2)->getNamedValue("longitude2");
-    std::string sLat2 = request->getRecord(2)->getNamedValue("lattitude2");*/
 
     double lon1, lon2, lat1, lat2;
 
@@ -278,20 +258,6 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
     std::cout << lon1 << "::" << lat1 << "::" << lon2 << "::" << lat2 << "\n";
     std::cout << rect.x0 << "::" << rect.y0 << "::" << rect.x1 << "::" << rect.y1 << "\n";
 
-
-    /*uint32_t meany = (rect.y0 >> 1) + (rect.y1  >> 1);
-    double angle = PI * ((meany *1.0) / (1.0 * UINT32_MAX));
-    double ratio = 	( 2.0* sin(angle)*(rect.x1 - rect.x0))/(1.0*(rect.y1 - rect.y0));
-    if (ratio < 0) ratio *= -1;
-
-
-    if(ratio > 1) {
-    		szx = 256;
-    	    szy = 256.0 / ratio;
-    } else {
-    		szy = 256;
-    	    szx = 256.0 * ratio;
-    }*/
 
     uint32_t szx, szy;
     szx = szy = 256;
@@ -359,8 +325,6 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
 	        out = fopen(filename, "w");
                 if(out != NULL)
                 {
-                     /*len=fwrite(res.c_str(),res.length(),1,out);
-                     fclose(out);*/
                     def(res, out);
                     fclose(out);
                 }

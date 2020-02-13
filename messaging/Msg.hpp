@@ -80,7 +80,6 @@ public:
             delete Records[i];
         }
         Records.clear();
-        //if (socket) delete socket;
     }
 
     void setConnection(TcpConnection* s)

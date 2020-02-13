@@ -78,8 +78,6 @@ Relation* CompiledDataManager::loadRelation(uint64_t id, short recurs)
 
 Relation* CompiledDataManager::loadRelationFast(uint64_t id)
 {
-    //recurs --;
-    //if (recurs < 1) return NULL;
     GeoIndex record;
     bool found = relationIndex->get(id,&record);
     if(found)
@@ -88,7 +86,6 @@ Relation* CompiledDataManager::loadRelationFast(uint64_t id)
         r->rect.x0 = r->rect.x1 = UINT32_C(0xFFFFFFFF);
         r->rect.y0 = r->rect.y1 = UINT32_C(0xFFFFFFFF);
         fillTags(r->tags,record.tstart,record.tsize);
-        //fillLinkedItems(*r,record.mstart,record.msize, recurs);
         return r;
     }
     else return NULL;
@@ -104,33 +101,14 @@ void CompiledDataManager::fillTags(Tags& tags, uint64_t start, uint64_t size)
 {
     tags.data = baliseTags->getData(start, size);
     tags.data_size = size;
-    /*size_t used = 0;
-    while( used < size)
-    {
-        unsigned char s = (unsigned char) buffer[used];
-        used ++;
-        std::string tag = std::string(buffer+used, s);
-        used += s;
-        s = (unsigned char) buffer[used];
-        used++;
-        std::string value = std::string(buffer+used, s);
-        used += s;
-        tags[tag] = value;
-    }*/
-    //free(buffer);
 }
 
 void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t size, short recurs)
 {
     GeoMember* buffer = relMembers->getData(start,size);
-    //Way* lastWay = NULL;
     Way* newWay = NULL;
-    //bool isClosed = false;
-    //GeoPoint* first = NULL;
-    //GeoPoint* last = NULL;
     Point* newPoint;
     Relation* newRel;
-    //int openWays = 0;
     for(uint64_t i = 0; i < size; i++)
     {
         switch(buffer[i].type)
@@ -140,7 +118,6 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
             if(newPoint)
             {
                 r.points.push_back(newPoint);
-                //r.rect.addPoint(newPoint->x, newPoint->y);
             }
             break;
         case BaliseType::way:
@@ -148,50 +125,6 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
             if(newWay)
             {
                 r.shape.mergePoints(newWay->points, newWay->pointsCount);
-                /*isClosed = (newWay->points[0] == newWay->points[newWay->pointsCount -1]);
-
-                if(!isClosed && lastWay == NULL) {// ouverture d'une boucle
-                	openWays++;
-                	lastWay = newWay;
-                	first = &(newWay->points[0]);
-                	last = &(newWay->points[newWay->pointsCount -1]);
-                } else if (isClosed) { // ajout boucle simple
-                	lastWay = NULL;
-                }else if ((*first ==  newWay->points[newWay->pointsCount -1])// fermeture boucle
-                			&&(*last == newWay->points[0])) {
-                	openWays--;
-                	lastWay = NULL;
-                	first = NULL;
-                	last = NULL;
-                } else if ((*last ==  newWay->points[newWay->pointsCount -1])
-                			&&(*first == newWay->points[0])) { //fermeture boucle avec inversion
-                	openWays--;
-                	lastWay = NULL;
-                	first = NULL;
-                	last = NULL;
-                	fidx::FileRawData<GeoPoint>::revert(newWay->points, newWay->pointsCount);
-                } else if (*last == newWay->points[0]) { // poursuite boucle
-                	lastWay = newWay;
-                	last = &(newWay->points[newWay->pointsCount -1]);
-                } else if (*last == newWay->points[newWay->pointsCount -1]) { // poursuite boucle avec inversion
-                	lastWay = newWay;
-                	fidx::FileRawData<GeoPoint>::revert(newWay->points, newWay->pointsCount);
-                	last = &(newWay->points[newWay->pointsCount -1]);
-                } else if ((lastWay != NULL)&&(*first == newWay->points[0])) {//first way must be reverted
-                	fidx::FileRawData<GeoPoint>::revert(lastWay->points, lastWay->pointsCount);
-                	first = &(lastWay->points[0]);
-                	last = &(newWay->points[newWay->pointsCount -1]);
-                } else 	if ((lastWay != NULL)&&(*first == newWay->points[newWay->pointsCount -1])) { // revert both
-                	fidx::FileRawData<GeoPoint>::revert(newWay->points, newWay->pointsCount);
-                	fidx::FileRawData<GeoPoint>::revert(lastWay->points, lastWay->pointsCount);
-                	first = &(lastWay->points[0]);
-                	last = &(newWay->points[newWay->pointsCount -1]);
-                } else {//ne se rattache pas
-                	openWays ++;
-                	lastWay = newWay;
-                	first = &(newWay->points[0]);
-                	last = &(newWay->points[newWay->pointsCount -1]);
-                }*/
                 r.ways.push_back(newWay);
                 r.rect = r.rect + newWay->rect;
             }
@@ -727,7 +660,6 @@ bool Line::mergePoints (GeoPoint* points, uint64_t pointsCount)
             memcpy(this->points + this->pointsCount, points, pointsCount *sizeof(GeoPoint));
             fidx::FileRawData<GeoPoint>::revert(this->points+this->pointsCount,pointsCount );
             this->pointsCount += pointsCount;
-            //std::cout << " merged c\n";
             return true;
         }
         else if (this->points[0] == points[pointsCount - 1])
@@ -737,7 +669,6 @@ bool Line::mergePoints (GeoPoint* points, uint64_t pointsCount)
             memcpy(this->points + this->pointsCount, points, pointsCount *sizeof(GeoPoint));
             fidx::FileRawData<GeoPoint>::revert(this->points+this->pointsCount,pointsCount );
             this->pointsCount += pointsCount ;
-            //std::cout << " merged d\n";
             return true;
         }
     }
@@ -747,7 +678,6 @@ bool Line::mergePoints (GeoPoint* points, uint64_t pointsCount)
 
 void Shape::mergePoints(GeoPoint* points, uint64_t pointsCount)
 {
-    //std::cout << " merging " << pointsCount << "\n";
     bool merged = false;
     unsigned int i = 0;
     for(i = 0; i < lines.size(); i++)
@@ -761,7 +691,6 @@ void Shape::mergePoints(GeoPoint* points, uint64_t pointsCount)
     }
     if(!merged)
     {
-        //std::cout << " new line \n";
         GeoPoint* newPoints = (GeoPoint*) malloc(pointsCount*sizeof(GeoPoint));
         memcpy(newPoints, points, pointsCount*sizeof(GeoPoint));
         Line* l = new Line();

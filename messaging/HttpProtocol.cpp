@@ -3,7 +3,6 @@
 #include <exception>
 #include <unistd.h>
 
-const char identOfHttpProtocol_cpp[] = "$Id: HttpProtocol.cpp,v 1.9 2013/10/02 14:53:13 aby Exp $";
 
 HttpProtocol::HttpProtocol()
 {
@@ -15,33 +14,6 @@ HttpProtocol::~HttpProtocol()
 
 int64_t HttpProtocol::putMessage(std::string& message, TcpConnection* s)
 {
-   /* int64_t toSend = message.length();
-    std::cout << toSend << "\n";
-    int64_t sent = 0;
-    int retryCount = 100;
-    int64_t rc;
-    rc = 1;
-    char* buff = message.c_str();
-    std::cout << "start send\n" ;
-    while((rc > 0) && (toSend > 0) && retryCount)
-    {
-        try
-        {
-            rc = s->write(message.substr(sent, 50000000).c_str(), toSend);
-            toSend -= rc;
-            sent  += rc;
-            if(rc) retryCount = 24;
-            std::cout << toSend << "\n" ;
-            if (toSend > 0) usleep(10000);
-        }
-        catch (const std::exception& e)
-        {
-            std::cout << e.what() << "\n";
-            usleep(10000);
-            retryCount --;
-            rc = 1;
-        }
-    }*/
     std::cout << "end send\n" ;
     return s->write(message.c_str(), message.length());
 }

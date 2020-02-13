@@ -1,5 +1,3 @@
-//0123456789012345678901234/56789select
-#define MAIN
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -1,8 +1,7 @@
 /*
  * TcpListener.hpp
  *
- *  Created on: 18 aug 2011
- *      Author: Alain Beylot
+
  *
  *
  *  This file describes tcp listener

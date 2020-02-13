@@ -67,37 +67,11 @@ public:
 
 struct SeqBalise
 {
-//  static std::vector<SeqBalise*> tagStack;
     std::string baliseName;
     std::map<std::string,std::string> keyValues;
     uint64_t start;
     uint64_t size;
 };
-/*
-class SelectContext {
-    public:
-    int state = STATE_UNKNOWN;
-    int previous_state = STATE_UNKNOWN;
-    char attrName[1024];
-    unsigned int attrNameLength;
-    char attrValue[1024];
-    SeqBalise* curBalise;
-    unsigned int attrValueLength;
-    short skip = 0;
-    SelectContext() {
-        state = STATE_UNKNOWN;
-        previous_state = STATE_UNKNOWN;
-        attrNameLength=0;
-        attrValueLength=0;
-        curBalise = NULL;
-        skip = 0;
-    }
-};
-
-#ifdef MAIN
-//std::vector<SeqBalise*> SeqBalise::tagStack;
-#endif
-*/
 
 template<class VISITOR> class XmlFileParser
 {

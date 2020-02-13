@@ -17,7 +17,6 @@ struct label_s
 	int64_t pos_x, pos_y;
 	double angle;
 	unsigned int fontsize;
-    //std::deque<GeoPoint> points;
 };
 
 class SvgRenderer
@@ -38,12 +37,7 @@ private:
     std::set<std::string> cssClasses;
 
     
-/*    inline uint32_t makeWayId() {
-        return wayId++;
-    }
-    inline void resetWayId() {
-        wayId = 0;
-    }*/
+
 public:
     SvgRenderer(CompiledDataManager* m) : relationHash(10000), wayHash(10000), nodeHash(1000)
     {

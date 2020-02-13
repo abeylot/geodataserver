@@ -364,12 +364,7 @@ GeoBox makeGeoBox(Rectangle rect)
         if((sz >> pos) == UINT32_C(0)) break;
     }
 
-//	pos++;
-    //pos *=2;
-
-    //uint32_t mask = UINT32_C(1) << pos;
     uint64_t mask64 = UINT64_C(0XFFFFFFFFFFFFFFFF) << pos << pos;
-    //uint64_t mask64 = UINT64_C(0XFFFFFFFFFFFFFFFF) << 8;
 
 
     result.maskLength = 2*pos;

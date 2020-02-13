@@ -1,9 +1,6 @@
 /*
  * TcpConnection.hpp
  *
- *  Created on: 19 aug 2011
- *      Author: Alain Beylot
- *
  *
  *  This file describes tcp connection
  *
@@ -78,7 +75,6 @@ public:
                             (char *) &flag, /* the cast is historical
                                                          cruft */
                             sizeof ( int)); /* length of option value */
-                //printf("connection success \n");
             }
         }
 
@@ -96,14 +92,6 @@ public:
         _FileDescr = fileDescr;
         _IsAlive = true;
 
-        //int flag = 1;
-        //setsockopt (_FileDescr, /* socket affected */
-        //            IPPROTO_TCP, /* set option at TCP level */
-        //            TCP_NODELAY, /* name of option */
-        //            (char *) &flag, /* the cast is historical
-        //                                                 cruft */
-        //            sizeof ( int)); /* length of option value */
-        //setTimeoutValue (10);
     }
 
     /** \brief sends data in TcpConnection

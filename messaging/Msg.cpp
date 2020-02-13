@@ -1,12 +1,5 @@
 /*
  * Msg.cpp
- *
- *  Created on: 18 aug 2011
- *      Author: Alain Beylot
- *
- *
- *
- *
  */
 
 
@@ -14,7 +7,6 @@
 #include "Msg.hpp"
 
 
-const char identOfMsg_cpp[] = "$Id: Msg.cpp,v 1.23 2013/10/08 08:06:54 aby Exp $";
 
 #include <string>
 #include <vector>
@@ -30,7 +22,6 @@ void Record::addBlock(const char* c, uint64_t length)
         Blocks.reserve(((size/RCD_INITIAL_SIZE)+1)*RCD_INITIAL_SIZE);
     }
     Blocks.push_back(std::string(c,length));
-    //printf("add block %s \n", c);
     size++;
 
 }
@@ -42,7 +33,6 @@ void Record::addBlock( const std::string& str)
     {
         Blocks.reserve(((size/RCD_INITIAL_SIZE)+1)*RCD_INITIAL_SIZE);
     }
-    //printf("add block %s \n", str.c_str());
     Blocks.push_back(str);
     size++;
 }
@@ -112,9 +102,6 @@ void Msg::addRecord(Record* r)
 Msg*  Msg::duplicate() const
 {
     Msg* res = new Msg;
-    //Record* rowHeader = NULL;
-    //Record* rcd = NULL;
-    //Record* rcd2 = NULL;
     int max_i = getRecordCount();
     for(int i = 0 ; i < max_i; i++)
     {

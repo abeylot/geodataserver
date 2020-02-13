@@ -1,9 +1,6 @@
 /*
  * TcpConnector.cpp
  *
- *  Created on: 19 aug 2011
- *      Author: Alain Beylot
- *
  *
  *  This file describes tcp connector
  *
@@ -17,12 +14,8 @@ const char identOfTCPConnector_cpp[] = "$Id: TcpListener.cpp,v 1.3 2013/01/14 15
 
 
 
-//#include <fcntl.h>
-//#include <net/if.h>
 #include <netdb.h>
 #include <unistd.h>
-//#include <stropts.h>
-//#include <sys/ioctl.h>
 
 
 #include <sys/types.h>
