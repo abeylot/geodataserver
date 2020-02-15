@@ -127,6 +127,7 @@ struct ParmsXmlVisitor
 struct XmlVisitor
 {
     std::vector<IndexDesc*>* idxList;
+    std::map<std::string, std::string> shortcuts;
     int clRank;
     bool closed,opened,ccre;
     std::string root;
@@ -149,6 +150,10 @@ struct XmlVisitor
 
     void startTag(std::vector<SeqBalise*> tagStack, SeqBalise* b)
     {
+        if (b->baliseName == "style")
+        {
+            shortcuts[b->keyValues["ref"]] = b->keyValues["value"];
+        }
         if (b->baliseName == "index")
         {
             IndexDesc* idx = new IndexDesc;
@@ -197,8 +202,22 @@ struct XmlVisitor
             cdt->tagValue = b->keyValues["value"];
             cdt->className = (b->keyValues["name"]);
             cdt->style = (b->keyValues["style"]);
+            if(cdt->style.length() > 1 && cdt->style.at(0) == '#')
+            {
+                if(shortcuts.find(cdt->style.substr(1)) != shortcuts.end())
+                {
+                    cdt->style = shortcuts[cdt->style.substr(1)];
+                }
+            }
             cdt->width = (b->keyValues["width"]);
             cdt->textStyle = (b->keyValues["textStyle"]);
+            if(cdt->textStyle.length() > 1 && cdt->textStyle.at(0) == '#')
+            {
+                if(shortcuts.find(cdt->textStyle.substr(1)) != shortcuts.end())
+                {
+                    cdt->textStyle = shortcuts[cdt->textStyle.substr(1)];
+                }
+            }
             cdt->textField = (b->keyValues["textField"]);
             cdt->textWidth = (b->keyValues["textWidth"]);
             cdt->zIndex = atoi(b->keyValues["zIndex"].c_str());
