@@ -33,7 +33,6 @@ int main(int argc, char *argv[])
 
     for(uint64_t i=0; i < mger.relationIndex->getSize(); i++)
     {
-//		uint32_t zmMask = 0;
         r = mger.loadRelation(i);
         if(!r) continue;
 
@@ -78,13 +77,11 @@ int main(int argc, char *argv[])
                                         kept = true;
                                         for(Selector* sel : d->selectors)
                                         {
-                                            //std::cerr << "check " << sel->tagKey << " " << sel->tagValue << "\n";
-                                            kept = kept && ( r->tags[sel->tagKey.c_str()] == sel->tagValue );
+                                            kept = kept && ((sel->tagValue == "*")||( r->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
                                         for(Selector* sel : d->excludeSelectors)
                                         {
-                                            //std::cerr << "check " << sel->tagKey << " " << sel->tagValue << "\n";
-                                            kept = kept && !( r->tags[sel->tagKey.c_str()] == sel->tagValue );
+                                            kept = kept && !((sel->tagValue == "*")||( r->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
                                         if(kept) zmMask = zmMask | cl->mask;
                                     }
@@ -112,7 +109,6 @@ int main(int argc, char *argv[])
 
     for(uint64_t i=0; i < mger.wayIndex->getSize(); i++)
     {
-//		uint32_t zmMask = 0;
         w = mger.loadWay(i);
         if(!w) continue;
         bool closed = false;
@@ -157,12 +153,10 @@ int main(int argc, char *argv[])
                                         kept = true;
                                         for(Selector* sel : d->selectors)
                                         {
-                                            //std::cerr << "check " << sel->tagKey << " " << sel->tagValue << "\n";
                                             kept = kept && ( w->tags[sel->tagKey.c_str()] == sel->tagValue );
                                         }
                                         for(Selector* sel : d->excludeSelectors)
                                         {
-                                            //std::cerr << "check " << sel->tagKey << " " << sel->tagValue << "\n";
                                             kept = kept && !( w->tags[sel->tagKey.c_str()] == sel->tagValue );
                                         }
                                         if(kept) zmMask = zmMask | cl->mask;
@@ -190,7 +184,6 @@ int main(int argc, char *argv[])
     }
     for(uint64_t i=0; i < mger.nodeIndex->getSize(); i++)
     {
-        //	uint32_t zmMask = 0;
         if ((i &  0xFFFFF) == 0)
             std::cout << "\rpoint " << i << '/' << mger.nodeIndex->getSize() << "  " << std::flush;
 
@@ -234,12 +227,10 @@ int main(int argc, char *argv[])
                                         kept = true;
                                         for(Selector* sel : d->selectors)
                                         {
-                                            //std::cerr << "check " << sel->tagKey << " " << sel->tagValue << "\n";
                                             kept = kept && ( p->tags[sel->tagKey.c_str()] == sel->tagValue );
                                         }
                                         for(Selector* sel : d->excludeSelectors)
                                         {
-                                            //std::cerr << "check " << sel->tagKey << " " << sel->tagValue << "\n";
                                             kept = kept && !( p->tags[sel->tagKey.c_str()] == sel->tagValue );
                                         }
                                         if(kept) zmMask = zmMask | cl->mask;

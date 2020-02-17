@@ -1,4 +1,3 @@
-#define MAIN
 #include <map>
 #include <vector>
 #include "helpers/Sequence.hpp"
@@ -73,7 +72,6 @@ struct dbf_header
         if(fread(&field_descriptors[count].field_length, 1, 1, f)!=1) return -1;
         if(fread(&field_descriptors[count].field_decimal_count, 1, 1, f)!=1) return -1;
         if(fread(tmp2, 14, 1, f)!=1) return -1;
-        //std::cout << "<field name= \"" << field_descriptors[count].name << "\" type=\"" <<  field_descriptors[count].field_type << "\" length =\"" << (int)field_descriptors[count].field_length << "\"/>\n";
         count++;
         if(fread(tmp, 1, 1, f) != 1) return -1;
     } 
@@ -161,9 +159,6 @@ double getDouble(unsigned char* c)
     uint64_t decalage = 1023;	
     double result = 1.0 + mant/(double)(0b10000000000000000000000000000000000000000000000000000);
     if (sign) result *= -1;
-    //std::cout << "sign : " << sign << "\n";
-    //std::cout << "exp : " << exp << "\n";
-    //std::cout << "mant : " << mant << "\n";
     while (exp > decalage) { result *= 2; exp--; }
     while (exp < decalage) { result /= 2; exp++; }
     return result;
@@ -312,7 +307,8 @@ struct XmlVisitor
                 }
                 else
                 {
-                    //std::cerr << "data inconsistent !\n";
+                    std::cerr << "data inconsistent !\n";
+                    exit(1);
                 }
 
             }
@@ -327,7 +323,8 @@ struct XmlVisitor
                 }
                 else
                 {
-                    //std::cerr << "data inconsistent !\n";
+                    std::cerr << "data inconsistent !\n";
+                    exit(1);
                 }
             }
             else if(b->keyValues["type"] == "relation")
@@ -341,7 +338,8 @@ struct XmlVisitor
                 }
                 else
                 {
-                    //std::cerr << "data inconsistent !\n";
+                    std::cerr << "data inconsistent !\n";
+                    exit(1);
                 }
             }
             if(m.id != UINT64_C(0xFFFFFFFFFFFFFFFF))
@@ -429,12 +427,10 @@ struct XmlVisitor
             uint32_t recordnumber = getUnsignedInteger32(recordheader, true); 		
             uint32_t recordlength = getUnsignedInteger32(recordheader + 4, true);
             if((recordnumber & 0xFF) == 0) std::cout << "record n° : " <<  recordnumber << "\n";
-            //std::cout << "record length : " <<  recordlength << "\n";
             unsigned char* recordcontent = (unsigned char*) malloc(recordlength*2);
             uint64_t len = fread(recordcontent,2, recordlength, shp);
             if(len == 0) std::cerr << "read error !\n";
             uint64_t shapetype = getUnsignedInteger32(recordcontent, false);
-            //std::cout << "record type is : " << shapetype << "\n";
             if(shapetype == 5 || shapetype == 3)
             {
 
@@ -451,7 +447,6 @@ struct XmlVisitor
 
                 uint64_t numparts  = getUnsignedInteger32(recordcontent + 36, false);
                 uint64_t numpoints = getUnsignedInteger32(recordcontent + 40, false);
-                //std::cout << "parts : " << numparts << " points : " << numpoints << "\n";
                 for(uint64_t i = 0; i < numparts; i++)
                 {
 
@@ -460,7 +455,6 @@ struct XmlVisitor
                     uint64_t firstindex = getUnsignedInteger32(recordcontent + (44 + 4*i), false);
                     uint64_t lastindex = numpoints;
                     if(i != (numparts - 1)) lastindex = getUnsignedInteger32(recordcontent + (48 + 4*i), false);
-                    //std::cout << "part point index " << numpoints << " points \n";
                     for(unsigned int j = firstindex; j < lastindex; j++)
                     {
                         double x,y;
@@ -475,7 +469,6 @@ struct XmlVisitor
                         { 
                             x = getDouble(recordcontent + offset);
                             y = getDouble(recordcontent + offset + 8);
-                        //std::cout << "x : " << x << " y : " << y << "\n";
                         }
                         GeoPoint p;
                         

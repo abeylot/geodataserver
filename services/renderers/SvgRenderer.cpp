@@ -259,7 +259,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 
     if(zoomLevel > 0) zoom = zoomLevel;
 
-    std::cout << "zoom;" << zoom << "\n";
+    //std::cout << "zoom;" << zoom << "\n";
     zmMask = 1LL << zoom;
 
     std::ostringstream result; 

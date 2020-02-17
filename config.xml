@@ -11,15 +11,15 @@
 
     <!-- areas -->
     <style ref="water"            value="fill:skyblue;fill-rule:evenodd;"/>
-    <style ref="grass"            value="fill:honeydew;fill-rule:evenodd;"/>
-    <style ref="forest"           value="fill:palegreen;fill-rule:evenodd;"/>
+    <style ref="grass"            value="fill:#AAFFAA;fill-rule:evenodd;"/>
+    <style ref="forest"           value="fill:#99DD99;fill-rule:evenodd;"/>
     <style ref="ice"              value="fill:lightgrey;fill-rule:evenodd;"/>
     <style ref="concrete"         value="fill:whitesmoke;fill-rule:evenodd;"/>
     <style ref="stone"            value="fill:silver;fill-rule:evenodd;"/>
     <style ref="sand"             value="fill:moccasin;fill-rule:evenodd;"/>
     <style ref="mud"              value="fill:#CCEEFF;fill-rule:evenodd;"/>
     <style ref="building"         value="fill:linen;opacity:0.7;fill-rule:evenodd;stroke:BurlyWood ;stroke-width:1"/>
-    <style ref="historicBuilding" value="fill:mistyrose;opacity:0.7;fill-rule:evenodd;stroke:BurlyWood ;stroke-width:1"/>
+    <style ref="historicBuilding" value="fill:mistyrose;opacity:0.7;fill-rule:evenodd;stroke:grey ;stroke-width:1"/>
     <style ref="zone"             value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:5,5"/>
     
     
@@ -53,10 +53,10 @@
     <style ref="townName"        value="fill:black;font-family:sans-serif;opacity:0.5; font-size:13px"/>
     <style ref="villageName"     value="fill:black;font-family:sans-serif;opacity:0.5; font-size:11px"/>
     
-    <style ref="houseNumber"     value="fill:maroon;opacity:0.3;font-family:sans-serif; font-size:13px"/>
+    <style ref="houseNumber"     value="fill:maroon;opacity:0.5;font-family:sans-serif; font-size:13px"/>
     <style ref="roadName"        value="fill:black;font-family:sans-serif;opacity:0.5;font-size:10px"/>
 
-    <style ref="riverName"       value="fill:white;opacity:0.3;font-family:sans-serif; font-size:13px"/>
+    <style ref="riverName"       value="fill:white;opacity:0.5;font-family:sans-serif; font-size:13px"/>
     <style ref="ferryLineName"   value="fill:darkblue;;opacity:0.5;font-family:sans-serif"/>
     
 
@@ -616,20 +616,29 @@
 
 
     <index type="relation" name="relationHistoricIdx">
+        <exclude tagKey="location" tagValue="underground"/>
+        <select tagKey="historic" tagValue="*"/>
         <restriction zLevels="16,17">
-            <condition tagKey="historic"    closed="yes">
-                <class value="default" textField="addr:housenumber" textStyle="#houseNumber" zIndex="2801" style="#building"/>
+            <condition tagKey="building" closed="yes">
+                <class value="default" zIndex="2900" textField="addr:housenumber"      textStyle="#houseNumber" style="#historicBuilding"/>
+            </condition>
+            <condition tagKey="type"    closed="yes">
+                <class value="building" textField="addr:housenumber"  textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
             </condition>
         </restriction>
         <restriction zLevels="18,19">
-            <condition tagKey="historic"    closed="yes">
-                <class value="default" textField="addr:housenumber" textStyle="#houseNumber" zIndex="2801" style="#building"/>
+            <condition tagKey="building" closed="yes">
+                <class value="default" textField="addr:housenumber"  textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
+            </condition>
+            <condition tagKey="type"    closed="yes">
+                <class value="building" textField="addr:housenumber"  textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
             </condition>
         </restriction>
     </index>
 
     <index type="relation" name="relationLBuildingIdx">
         <exclude tagKey="location" tagValue="underground"/>
+        <exclude tagKey="historic" tagValue="*"/>
         <restriction zLevels="16,17">
             <condition tagKey="building" closed="yes">
                 <class value="default" zIndex="2900" textField="addr:housenumber"      textStyle="#houseNumber" style="#building"/>
@@ -649,19 +658,28 @@
     </index>
 
     <index type="way" name="wayHistoricIdx">
+        <select tagKey="historic" tagValue="*"/>
+        <exclude tagKey="location" tagValue="underground"/>
         <restriction zLevels="16,17">
-            <condition tagKey="historic"    closed="yes">
-                <class value="default" textField="addr:housenumber" textStyle="#houseNumber" zIndex="2801" style="#historicBuilding"/>
+            <condition tagKey="building" closed="yes">
+                    <class value="default"       zIndex="2900" style="#historicBuilding" textField="addr:housenumber" textStyle="#houseNumber"/> 
+            </condition>
+            <condition tagKey="type" closed="yes">
+                <class value="building"     textField="addr:housenumber"      textStyle="#houseNumber"     zIndex="2900" style="#historicBuilding"/>
             </condition>
         </restriction>
         <restriction zLevels="18,19">
-            <condition tagKey="historic"    closed="yes">
-                <class value="default" textField="addr:housenumber" textStyle="#houseNumber" zIndex="2801" style="#historicBuilding"/>
+            <condition tagKey="building" closed="yes">
+                    <class value="default"       textField="addr:housenumber"    textStyle="#houseNumber"      zIndex="2900" style="#historicBuilding"/>
+            </condition>
+            <condition tagKey="type" closed="yes">
+                <class value="building"     textField="addr:housenumber"      textStyle="#houseNumber"     zIndex="2900" style="#historicBuilding"/>
             </condition>
         </restriction>
     </index>
 
     <index type="way" name="wayBuildingIdx">
+        <exclude tagKey="historic" tagValue="*"/>
         <exclude tagKey="location" tagValue="underground"/>
         <restriction zLevels="16,17">
             <condition tagKey="building" closed="yes">

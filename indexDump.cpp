@@ -21,8 +21,6 @@ void measureBalise(Balise &b, uint32_t& minx, uint32_t& miny, uint32_t& maxx, ui
 {
     if(b.baliseName == BALISENAME_NODESHORT)
     {
-        //uint32_t x = Coordinates::fromHex(b.keyValues["lon"]);
-        //uint32_t y = Coordinates::fromHex(b.keyValues["lat"]);
         uint32_t x = b.x0;
         uint32_t y = b.y0;
         if (x > maxx) maxx = x;

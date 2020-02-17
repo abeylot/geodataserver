@@ -14,7 +14,6 @@ HttpProtocol::~HttpProtocol()
 
 int64_t HttpProtocol::putMessage(std::string& message, TcpConnection* s)
 {
-    std::cout << "end send\n" ;
     return s->write(message.c_str(), message.length());
 }
 

@@ -1,5 +1,3 @@
-//g++ -lboost_system -lboost_thread -lboost_atomic -std=c++11 testBoostQueue2.cpp
-#define MAIN
 #include <boost/thread/thread.hpp>
 #include <boost/asio/signal_set.hpp>
 #include <boost/lockfree/queue.hpp>

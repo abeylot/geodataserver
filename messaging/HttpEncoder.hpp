@@ -1,13 +1,9 @@
 /*
  * File:   HttpEncoder.hpp
- * Author: ABeylot
- *
- * Created on 3 décembre 2012, 09:34
  */
 
 #include <string>
 #include "Msg.hpp"
-//#include "ISession.hpp"
 
 #ifndef HTTPENCODER_HPP
 #define HTTPENCODER_HPP

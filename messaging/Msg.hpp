@@ -1,12 +1,6 @@
 /*
  * Msg.hpp
  *
- *  Created on: 18 aug 2011
- *      Author: Alain Beylot
- *
- *
- *
- *
  */
 #ifndef Msg_hpp
 #define Msg_hpp

@@ -347,9 +347,7 @@ short compareGeoBox(GeoBox const* a, GeoBox const* b)
 GeoBox makeGeoBox(Rectangle rect)
 {
     GeoBox result;
-    //rect = rect * 2;
     result.maskLength = 0;
-    //uint64_t pos1 = mergeBits(rect.x0, rect.y0);
     uint32_t szx,szy,sz;
     if(rect.x0 > rect.x1) szx = rect.x0 - rect.x1;
     else szx = rect.x1 - rect.x0;
