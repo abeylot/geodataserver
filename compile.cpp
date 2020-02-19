@@ -307,8 +307,8 @@ struct XmlVisitor
                 }
                 else
                 {
-                    std::cerr << "data inconsistent !\n";
-                    exit(1);
+                   // std::cerr << "data inconsistent !\n";
+                   // exit(1);
                 }
 
             }
@@ -323,8 +323,8 @@ struct XmlVisitor
                 }
                 else
                 {
-                    std::cerr << "data inconsistent !\n";
-                    exit(1);
+                   // std::cerr << "data inconsistent !\n";
+                   // exit(1);
                 }
             }
             else if(b->keyValues["type"] == "relation")
@@ -338,8 +338,8 @@ struct XmlVisitor
                 }
                 else
                 {
-                    std::cerr << "data inconsistent !\n";
-                    exit(1);
+                    //std::cerr << "data inconsistent !\n";
+                    //exit(1);
                 }
             }
             if(m.id != UINT64_C(0xFFFFFFFFFFFFFFFF))
