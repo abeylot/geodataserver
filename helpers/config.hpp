@@ -14,6 +14,8 @@ struct CssClass
     std::string textStyle;
     std::string textWidth;
     std::string textField;
+    std::string symbol;
+    
     int zIndex;
     int rank;
     uint32_t mask;
@@ -127,11 +129,14 @@ struct ParmsXmlVisitor
 struct XmlVisitor
 {
     std::vector<IndexDesc*>* idxList;
+    std::map<std::string, std::string> symbols;
     std::map<std::string, std::string> shortcuts;
     int clRank;
-    bool closed,opened,ccre;
+    bool closed,opened,ccre,symbol;
     std::string root;
     uint32_t mask, idxMask;
+    std::string symbolId="";
+    std::string symbolStr="";
 
     XmlVisitor(std::vector<IndexDesc*>& indexList, bool create, std::string rt)
     {
@@ -139,6 +144,8 @@ struct XmlVisitor
         ccre = create;
         root = rt;
 		clRank=0;
+        symbolId="";
+        symbolStr="";
     }
 
     ~XmlVisitor()
@@ -150,6 +157,21 @@ struct XmlVisitor
 
     void startTag(std::vector<SeqBalise*> tagStack, SeqBalise* b)
     {
+        if (b->baliseName == "symbol")
+        {
+            //shortcuts[b->keyValues["ref"]] = b->keyValues["value"];
+            symbolId = b->keyValues["id"];
+            symbolStr = "";
+        }
+        if(symbolId != "")
+        {
+                symbolStr += "<" + b->baliseName + " ";
+                for(auto it = b->keyValues.begin(); it != b->keyValues.end(); it++)
+                {
+                    symbolStr += " " + it->first + "=\"" + it->second + "\" ";
+                }
+                symbolStr += ">";
+        }
         if (b->baliseName == "style")
         {
             shortcuts[b->keyValues["ref"]] = b->keyValues["value"];
@@ -218,6 +240,7 @@ struct XmlVisitor
                     cdt->textStyle = shortcuts[cdt->textStyle.substr(1)];
                 }
             }
+            cdt->symbol = (b->keyValues["symbol"]);
             cdt->textField = (b->keyValues["textField"]);
             cdt->textWidth = (b->keyValues["textWidth"]);
             cdt->zIndex = atoi(b->keyValues["zIndex"].c_str());
@@ -247,6 +270,16 @@ struct XmlVisitor
 
     void endTag(std::vector<SeqBalise*> tagStack, SeqBalise* b)
     {
+        if ( symbolId != "")
+        {
+            symbolStr += "</" + b->baliseName + ">";
+        }
+        if (b->baliseName == "symbol")
+        {
+            symbols[symbolId] = symbolStr;
+            std::cout << symbolId << " -> " << symbolStr << "\n";
+            symbolId = "";
+        }
         if (b->baliseName == "restriction")
         {
             mask= 0XFFF;

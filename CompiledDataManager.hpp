@@ -146,10 +146,12 @@ public :
     fidx::FileRawIndex<GeoPointIndex> *nodeIndex;
 
     std::vector<IndexDesc*>* indexes;
+    std::map<std::string, std::string>* symbols;
 
-    CompiledDataManager(std::string name,std::vector<IndexDesc*>* conf )
+    CompiledDataManager(std::string name,std::vector<IndexDesc*>* conf, std::map<std::string, std::string>* symbs = NULL)
     {
         indexes = conf;
+        symbols = symbs;
 
         nodeIndex = new fidx::FileRawIndex<GeoPointIndex>((name + "/nodeIndex").c_str(),false);
         wayIndex = new fidx::FileRawIndex<GeoWayIndex>((name + "/wayIndex").c_str(),false);

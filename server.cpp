@@ -138,13 +138,15 @@ template<typename MSG> struct Exec
     HttpProtocol p;
     HttpEncoder encoder;
     std::vector<IndexDesc*>* idxList;
-    Exec(boost::lockfree::queue<MSG*>* inqueue,boost::lockfree::queue<MSG*>* outqueue, std::string file,uint microSleep,std::vector<IndexDesc*>* idxL ) : inqueue(inqueue), outqueue(outqueue), file(file), microSleep(microSleep)
+    std::map<std::string, std::string>* symbols;
+    Exec(boost::lockfree::queue<MSG*>* inqueue,boost::lockfree::queue<MSG*>* outqueue, std::string file,uint microSleep,std::vector<IndexDesc*>* idxL, std::map<std::string, std::string>* symbs ) : inqueue(inqueue), outqueue(outqueue), file(file), microSleep(microSleep)
     {
         idxList = idxL;
+        symbols = symbs;
     }
     int operator()()
     {
-        CompiledDataManager mger(file, idxList);
+        CompiledDataManager mger(file, idxList, symbols);
         MSG* m;
         while(!boost::this_thread::interruption_requested())
         {
@@ -214,11 +216,13 @@ int main(int argc, char *argv[])
     fclose(config);
 
     std::vector<IndexDesc*>* indexes = new std::vector<IndexDesc*>[params.getNumParam("ExecThreads", 5)];
+    std::map<std::string, std::string>* symbols = new std::map<std::string, std::string>[params.getNumParam("ExecThreads", 5)];
     for(int i = 0; i < params.getNumParam("ExecThreads", 5); i++)
     {
         XmlVisitor v(indexes[i], false, std::string(argv[1]));
         config = fopen((std::string(argv[1]) + "/config.xml").c_str(),"r");
         XmlFileParser<XmlVisitor>::parseXmlFile(config,v);
+        symbols[i] = v.symbols;
         fclose(config);
     }
 
@@ -235,7 +239,7 @@ int main(int argc, char *argv[])
     std::cout << "launching " << params.getNumParam("ExecThreads", 5) << " Exec threads \n";
     for(int i=0; i < params.getNumParam("ExecThreads", 5); i++)
     {
-        Exec<Msg> exec(&myInQueue, &myOutQueue, argv[1], microSleep, /*&index*/ &(indexes[i]));
+        Exec<Msg> exec(&myInQueue, &myOutQueue, argv[1], microSleep, /*&index*/ &(indexes[i]), &(symbols[i]));
         microSleep *= 2;
         g.create_thread(exec);
     }

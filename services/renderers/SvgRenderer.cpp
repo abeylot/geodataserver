@@ -431,6 +431,25 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 		}
 	}    
     result << "</style>\n";
+    
+    for (IndexDesc* idxDesc : *(mger->indexes))
+    {
+        for (Condition* cd : idxDesc->conditions)
+        {
+            for(CssClass* cl : cd->classes)
+            {
+				if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
+				{
+                    if (cl->symbol != "")
+                    {
+                        if(mger->symbols->find(cl->symbol) != mger->symbols->end())
+                            result << (*(mger->symbols))[cl->symbol];
+                    }   
+				}
+			}
+		}
+	} 
+    
     result << "<rect width=\"" << std::to_string(sizex + 1) << "\" height=\"" << std::to_string(sizey + 1) << "\" fill=\"antiquewhite\"/>\n";
 
 
@@ -801,7 +820,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
     double ppm = 107 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     std::string name = "";
 
-    //if(cl)
+    if(cl.textStyle != "")
     {
         std::string fieldName = "name";
         if (cl.textField != "") fieldName = cl.textField;
@@ -840,6 +859,14 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
             lbl.pos_y = y;
             lbl.style = cl.rank;
         }
+    }
+    if(cl.symbol != "")
+    {
+        int64_t xxx = myNode.x;
+        int64_t yyy = myNode.y;
+        x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+        y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+        result += "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" + std::to_string(x) + "\"  y=\"" +std::to_string(y) + "\" />";
     }
     return result;
 }
