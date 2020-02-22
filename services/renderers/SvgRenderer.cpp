@@ -438,7 +438,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
         {
             for(CssClass* cl : cd->classes)
             {
-				if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
+				if( cssClasses.find("sym#"+cl->symbol) != cssClasses.end())
 				{
                     if (cl->symbol != "")
                     {
@@ -867,6 +867,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
         result += "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" + std::to_string(x) + "\"  y=\"" +std::to_string(y) + "\" />";
+        cssClasses.insert("sym#"+cl.symbol);
     }
     return result;
 }
