@@ -541,133 +541,130 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     std::string textStyle= "";
     double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     std::string name = "";
+
+    bool draw = ((myWay.rect)*rect).isValid();
+    style = cl.style;
+    std::string textStyle2;
+    textStyle = cl.textStyle;
+    if(cl.width.length()) width = std::stoi(cl.width);
+    if(cl.textWidth.length()) textWidth = std::stoi(cl.textWidth);
+    if(textWidth) textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
+    if(width && ((width*ppm) <  0.25)) return "";
+    if(width) style ="stroke-width:"+ std::to_string(width*ppm)+";" + cl.style;
+    std::string textField = "name";
+    if(cl.textField != "") textField = cl.textField;
+    name = myWay.tags[textField.c_str()];
+    if(name == "" && textField != "name" ) name = myWay.tags["name"];
+    bool first = true;
+    double length = 0;
+    double halfLength = 0;
+    for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
     {
-        bool draw = ((myWay.rect)*rect).isValid();
-        style = cl.style;
-        std::string textStyle2;
-        textStyle = cl.textStyle;
-        if(cl.width.length()) width = std::stoi(cl.width);
-        if(cl.textWidth.length()) textWidth = std::stoi(cl.textWidth);
-        if(textWidth) textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
-        if(width && ((width*ppm) <  0.25)) return "";
-        if(width) style ="stroke-width:"+ std::to_string(width*ppm)+";" + cl.style;
-        std::string textField = "name";
-        if(cl.textField != "") textField = cl.textField;
-
-        name = myWay.tags[textField.c_str()];
-        if(name == "" && textField != "name" ) name = myWay.tags["name"];
-
-        bool first = true;
-        double length = 0;
-        double halfLength = 0;
-
-        for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
+        int64_t xx = myWay.points[i].x;
+        int64_t yy = myWay.points[i].y;
+        oldx = x;
+        oldy = y;
+        x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+        y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
         {
-            int64_t xx = myWay.points[i].x;
-            int64_t yy = myWay.points[i].y;
-            oldx = x;
-            oldy = y;
-            x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-            y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+            if(first)
             {
-                if(first)
-                {
-                    first = false;
-                }
-                else
-                {
-                    if((x != oldx) || (y != oldy)|| i == (myWay.pointsCount - 1)/*&&(x > -1*szx)&&(x < 2*szx)&&(y > -1*szy)&&(y < 2*szy)*/)
-                    length += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
-                }
-            }
-        }
-
-        halfLength = length / 2;
-        double curLength = 0;
-        double ratio = 0;
-        first = true;
-        for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
-        {
-            int64_t xx = myWay.points[i].x;
-            int64_t yy = myWay.points[i].y;
-            oldx = x;
-            oldy = y;
-            x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-            y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-            {
-                if(!first)
-                {
-                    double oldLength = curLength;
-                    curLength += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
-                    if(curLength > halfLength)
-                    {
-                        ratio = (halfLength - oldLength)/(curLength - oldLength);
-                        lbl.pos_x = x * ratio + oldx * (1 - ratio);
-                        lbl.pos_y = y * ratio + oldy * (1 - ratio);
-                        double dfx = x - oldx;
-                        double dfy = y - oldy;
-                        if(dfx == 0) lbl.angle = M_PI / 2;
-                        else lbl.angle = atan2(dfy , dfx);
-                        if(lbl.angle > M_PI / 2) lbl.angle -= M_PI;
-                        if(lbl.angle < -1 * M_PI / 2) lbl.angle += M_PI;
-                        break;
-                    }
-                }
                 first = false;
             }
-        }
-        myWay.crop(r1);
-        if(draw)
-        {
-            s.mergePoints(myWay.points, myWay.pointsCount);
-        }
-        lbl.fontsize = 12;
-        std::size_t found = cl.textStyle.find("font-size:");
-        if(found != std::string::npos)
-        {
-            lbl.fontsize = atoi(cl.textStyle.c_str() + found + 10);
-        }
-        else
-        {
-            lbl.fontsize = 0;
-        }
-        
-        if((textWidth*ppm >= 6) || (lbl.fontsize >= 6))
-        {
-            if((name != "" ) && (textStyle != "") && cl.opened)
+            else
             {
+                if((x != oldx) || (y != oldy)|| i == (myWay.pointsCount - 1)/*&&(x > -1*szx)&&(x < 2*szx)&&(y > -1*szy)&&(y < 2*szy)*/)
+                length += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
+            }
+        }
+    }
+
+    halfLength = length / 2;
+    double curLength = 0;
+    double ratio = 0;
+    first = true;
+
+    for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
+    {
+        int64_t xx = myWay.points[i].x;
+        int64_t yy = myWay.points[i].y;
+        oldx = x;
+        oldy = y;
+        x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+        y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+        {
+            if(!first)
+            {
+                double oldLength = curLength;
+                curLength += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
+                if(curLength > halfLength)
                 {
-                     if(cl.textWidth != "")
-                     {
-                       textWidth = atoi(cl.textWidth.c_str());
-                       lbl.fontsize = textWidth*ppm;
-                     }
-                    unsigned int chars = 1.4*length / (lbl.fontsize);
-                    if(name.length() < chars)
-                    {
+                    ratio = (halfLength - oldLength)/(curLength - oldLength);
+                    lbl.pos_x = x * ratio + oldx * (1 - ratio);
+                    lbl.pos_y = y * ratio + oldy * (1 - ratio);
+                    double dfx = x - oldx;
+                    double dfy = y - oldy;
+                    if(dfx == 0) lbl.angle = M_PI / 2;
+                    else lbl.angle = atan2(dfy , dfx);
+                    if(lbl.angle > M_PI / 2) lbl.angle -= M_PI;
+                    if(lbl.angle < -1 * M_PI / 2) lbl.angle += M_PI;
+                    break;
+                }
+            }
+            first = false;
+        }
+    }
+    //myWay.crop(r1);
+    if(draw)
+    {
+        myWay.crop(r1);
+        s.mergePoints(myWay.points, myWay.pointsCount);
+    }
+    lbl.fontsize = 12;
+    std::size_t found = cl.textStyle.find("font-size:");
+    if(found != std::string::npos)
+    {
+        lbl.fontsize = atoi(cl.textStyle.c_str() + found + 10);
+    }
+    else
+    {
+       lbl.fontsize = 0;
+    }
+        
+    if((textWidth*ppm >= 6) || (lbl.fontsize >= 6))
+    {
+        if((name != "" ) && (textStyle != "") && cl.opened)
+        {
+            {
+                 if(cl.textWidth != "")
+                 {
+                     textWidth = atoi(cl.textWidth.c_str());
+                     lbl.fontsize = textWidth*ppm;
+                 }
+                 unsigned int chars = 1.4*length / (lbl.fontsize);
+                 if(name.length() < chars)
+                 {
                        lbl.zindex = cl.zIndex;
                        lbl.style = cl.rank;
                        lbl.text=name;
-
                        
                        lbl.ref = std::to_string(myWay.id);
                        lbl.style = cl.rank;
                        lbl.text=name;
-                    }
-                }
+                 }
             }
-            else if((name != "" ) && (textStyle != "") && !cl.opened)
+        }
+        else if((name != "" ) && (textStyle != "") && !cl.opened)
+        {
+            if(cl.textWidth != "")
             {
-                if(cl.textWidth != "")
-                {
-                    textWidth = atoi(cl.textWidth.c_str());
-                    lbl.fontsize = textWidth*ppm;
-                }
-                unsigned int chars = 1.4*szx*(myWay.rect.x1 - myWay.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
-                if(name.length() < chars)
-                {
+                textWidth = atoi(cl.textWidth.c_str());
+                lbl.fontsize = textWidth*ppm;
+            }
+            unsigned int chars = 1.4*szx*(myWay.rect.x1 - myWay.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
+            if(name.length() < chars)
+            {
                 style += ";stroke-width:" + std::to_string(atoi(cl.width.c_str())*ppm);
-
                 int64_t xxx = myWay.rect.x0/2 + myWay.rect.x1/2;
                 int64_t yyy = myWay.rect.y0/2 + myWay.rect.y1/2;
 
@@ -678,10 +675,21 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 lbl.pos_y = y;
                 lbl.style = cl.rank;
                 lbl.text = name;
-                }
             }
         }
     }
+    
+    
+    if(cl.symbol != "")
+    {
+        int64_t xxx = (myWay.rect.x0 + myWay.rect.x1) / 2;
+        int64_t yyy = (myWay.rect.y0 + myWay.rect.y1) /2;
+        x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+        y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+        result << "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" + std::to_string(x) + "\"  y=\"" +std::to_string(y) + "\" />";
+        cssClasses.insert("sym#"+cl.symbol);
+    }
+
     return result.str();
 }
 
@@ -701,26 +709,29 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
     std::string textField = "name";
     if(!(cl.textField == "")) textField = cl.textField;
     bool draw = ((myRelation.rect)*rect).isValid();
-    if(cl.opened)
+    
+    if(cl.style != "")
     {
-        for(Way* myWay : myRelation.ways)
-        {
-            if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
-            label_s lbl;
-            result += render(lbl,*myWay, rect, szx, szy, cl, s);
-        }
-    }
-    else
-    {
-
-        style = cl.style;
-        if(draw)
-        {
-            result += "<path  d=\"";
-            for(Line* l: myRelation.shape.lines)
-            {
-                Rectangle r1 = rect*1.1;
-                l->crop(r1);
+    
+		if(cl.opened)
+		{
+			for(Way* myWay : myRelation.ways)
+			{
+				if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
+				label_s lbl;
+				result += render(lbl,*myWay, rect, szx, szy, cl, s);
+			}
+		}
+		else
+		{
+			style = cl.style;
+			if(draw)
+			{
+				result += "<path  d=\"";
+				for(Line* l: myRelation.shape.lines)
+				{
+					Rectangle r1 = rect*1.1;
+					l->crop(r1);
                     bool first = true;
                     int oldx = -1;
                     int oldy = -1;
@@ -747,43 +758,45 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                             }
                         }
                     }
-            }
-                    result += " \" class=\"c"+std::to_string(cl.rank)+"\" />\n";
-                    cssClasses.insert("c"+std::to_string(cl.rank));
-        }
-        if(cl.textStyle != "")
+				}
+                result += " \" class=\"c"+std::to_string(cl.rank)+"\" />\n";
+                cssClasses.insert("c"+std::to_string(cl.rank));
+			}
+		}
+	}
+    if(cl.textStyle != "")
+    {
+        std::string textStyle ="";
+        int  textWidth;
+        std::string name = "";
+        name = myRelation.tags[textField.c_str()];
+        if(name == "" && textField != "name" ) name = myRelation.tags["name"];
+        if(name != "")
         {
-            std::string textStyle ="";
-            int  textWidth;
-            std::string name = "";
-            name = myRelation.tags[textField.c_str()];
-            if(name == "" && textField != "name" ) name = myRelation.tags["name"];
-            if(name != "")
+            if(cl.textWidth != "")
             {
-                if(cl.textWidth != "")
+                if ( cl.textWidth == "auto" )
                 {
-                    if ( cl.textWidth == "auto" )
-                    {
-                        int length = name.length();
-                        if (length < 12) length = 12;
-                        int64_t dxx = (myRelation.rect.x1 - myRelation.rect.x0);
-                        uint32_t dx = (dxx)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-                        textWidth = (dx*1.5)/(2.0*length);
-                        textStyle ="font-size:"+ std::to_string((int)textWidth)+ "px;" + cl.textStyle;
-                    }
-                    else
-                    {
-                        textWidth = atoi(cl.textWidth.c_str());
-                        textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
-                    }
+                    int length = name.length();
+                    if (length < 12) length = 12;
+                    int64_t dxx = (myRelation.rect.x1 - myRelation.rect.x0);
+                    uint32_t dx = (dxx)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+                    textWidth = (dx*1.5)/(2.0*length);
+                    textStyle ="font-size:"+ std::to_string((int)textWidth)+ "px;" + cl.textStyle;
                 }
                 else
                 {
-                    textStyle = cl.textStyle;
+                    textWidth = atoi(cl.textWidth.c_str());
+                    textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
                 }
-                unsigned int chars = 1.4*szx*(myRelation.rect.x1 - myRelation.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
-                if(name.length() < chars)
-                {
+            }
+            else
+            {
+                textStyle = cl.textStyle;
+            }
+            unsigned int chars = 1.4*szx*(myRelation.rect.x1 - myRelation.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
+            if(name.length() < chars)
+            {
                 int64_t xxx = (myRelation.rect.x0/2 + myRelation.rect.x1/2);
                 int64_t yyy = (myRelation.rect.y0/2 + myRelation.rect.y1/2);
                 int32_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
@@ -793,10 +806,20 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                 lbl.zindex = cl.zIndex;
                 lbl.style = cl.rank;
                 lbl.text = name;
-                }
             }
         }
     }
+    
+    if(cl.symbol != "")
+    {
+        int64_t xxx = (myRelation.rect.x0 + myRelation.rect.x1) / 2;
+        int64_t yyy = (myRelation.rect.y0 + myRelation.rect.y1) /2;
+        int64_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+        int64_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+        result += "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" + std::to_string(x) + "\"  y=\"" +std::to_string(y) + "\" />";
+        cssClasses.insert("sym#"+cl.symbol);
+    }
+
     return result;
 }
 
