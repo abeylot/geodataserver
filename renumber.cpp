@@ -51,6 +51,9 @@ struct XmlVisitor
     void startTag(const std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
     }
+    void stringNode(const std::vector<SeqBalise*>& tagStack, std::string& s)
+    {
+    }
     void endTag(const std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
         if (b->baliseName == BALISENAME_RELATION)

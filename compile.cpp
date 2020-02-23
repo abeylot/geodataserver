@@ -131,6 +131,10 @@ struct ShpVisitor
     void endTag(std::vector<SeqBalise*> tagStack, SeqBalise* b)
     {
     }
+    
+    void stringNode(const std::vector<SeqBalise*>& tagStack, std::string& s)
+    {
+	}
 };
 
 
@@ -254,6 +258,10 @@ struct XmlVisitor
     {
         std::cerr << " done " << (done >> UINT64_C(20)) << "Mio.\t relations " << relationIndex->itemCount << "\tways " << wayIndex->itemCount << "\tnodes " << nodeIndex->itemCount<< "\n" << std::flush;
     }
+
+    void stringNode(const std::vector<SeqBalise*>& tagStack, std::string& s)
+    {
+	}
 
     void startTag(const std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {

@@ -132,7 +132,7 @@ private:
         static unsigned int attrValueLen = 0;
         static unsigned int baliseNameLen = 0;
         static SeqBalise* curBalise;
-
+        static std::string stringNode = "";
 
 
         static short skip = 0;
@@ -161,6 +161,8 @@ private:
                 state = STATE_TAGEND;
                 curBalise = tagStack->back();
                 tagStack->pop_back();
+                visitor.stringNode(*tagStack, stringNode);
+                stringNode = "";
                 visitor.endTag(*tagStack, curBalise);
                 delete(curBalise);
                 skip = 1;
@@ -170,6 +172,14 @@ private:
                 state = STATE_TAGNAME;
                 curBalise = new SeqBalise;
                 baliseNameLen = 0;
+                //stringName="";
+                visitor.stringNode(*tagStack, stringNode);
+                stringNode="";
+            }
+	        else
+            {
+                 stringNode += sq.c[0];
+                 //std::cout << " -----[" << stringNode << "]\n";
             }
             break;
 
@@ -246,6 +256,7 @@ private:
                     visitor.startTag(*tagStack, curBalise);
                     visitor.endTag(*tagStack, curBalise);
                     delete(curBalise);
+                    skip=1;
                 }
             }
             else if (sq.check(EQUALS))

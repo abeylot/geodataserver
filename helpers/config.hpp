@@ -101,6 +101,10 @@ struct ParmsXmlVisitor
     {
     }
 
+    void stringNode(std::vector<SeqBalise*> tagStack, std::string& s)
+    {
+    }
+
     long long getNumParam(std::string key, long long defaultValue)
     {
         if(parameters.count(key)) return atoll(parameters[key].c_str());
@@ -289,6 +293,16 @@ struct XmlVisitor
             idxList->back()->mask = idxMask;
         }
     }
+
+    void stringNode(std::vector<SeqBalise*> tagStack, std::string& s)
+    {
+		if(symbolId != "")
+		{
+			symbolStr += s;
+			std::cout << "[" << s << "]\n";
+		}
+    }
+
 
 };
 #endif
