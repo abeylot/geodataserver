@@ -21,6 +21,7 @@
     <style ref="building"         value="fill:linen;opacity:0.7;fill-rule:evenodd;stroke:BurlyWood ;stroke-width:1"/>
     <style ref="historicBuilding" value="fill:mistyrose;opacity:0.7;fill-rule:evenodd;stroke:grey ;stroke-width:1"/>
     <style ref="zone"             value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:5,5"/>
+    <style ref="parking"          value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:1,5"/>
     
     
 
@@ -33,6 +34,8 @@
     <style ref="treeLineL"  value="fill:none;stroke:#99DD99; stroke-width:32; stroke-dasharray:0.1,32;stroke-linecap:round;opacity:0.7;"/>
     
     <style ref="road"       value="fill:none; stroke:lightgrey;stroke-linecap:round;"/>
+    <style ref="path"       value="fill:none; stroke:lightgrey;stroke-linecap:butt; stroke-dasharray:5,2; stroke-width:2"/>
+    <style ref="stairs"     value="fill:none; stroke:lightgrey;stroke-linecap:butt; stroke-dasharray:2,2; stroke-width:2"/>
     <style ref="redRoad"    value="fill:none; stroke:red;stroke-linecap:round;stroke-width:2"/>
     <style ref="orangeRoad" value="fill:none; stroke:orange;stroke-linecap:round;stroke-width:2"/>
 
@@ -77,9 +80,9 @@
         <circle  cx="16"  cy="16"  r="16"  style="fill:#99DD99;opacity:0.7;" />
     </symbol>
 
-    <symbol id="parking" width="26" height="26" transform="translate(-13 -13)" >
-        <circle  cx="13"  cy="13"  r="13"  style="fill:#000099;opacity:0.2;" />
-        <text x="13" y="13" style="fill:white;opacity:0.9;font-family:sans-serif;font-weight:bold;font-size:13px">P</text>
+    <symbol id="parking" width="16" height="16" transform="translate(-8 -8)" >
+        <circle  cx="8"  cy="8"  r="8"  style="fill:#000099;opacity:0.2;" />
+        <text x="8" y="8" style="fill:white;opacity:0.9;font-family:sans-serif;font-weight:bold;font-size:13px">P</text>
     </symbol>
 
 
@@ -834,15 +837,15 @@
         <restriction zLevels="13,14,15">
             <condition closed="both" tagKey="highway">
                 <class value="stop"            zIndex="2000" style="#road" width="20" textStyle="#roadName" textField="ref"/>
-                <class value="steps"           zIndex="2001" style="#road" width="21" textStyle="#roadName" textField="ref"/>
+                <class value="steps"           zIndex="2001" style="#road" width="10" textStyle="#roadName" textField="ref"/>
                 <class value="path"            zIndex="2002" style="#road" width="22" textStyle="#roadName" textField="ref"/>
-                <class value="footway"         zIndex="2003" style="#road" width="22" textStyle="#roadName" textField="ref"/>
-                <class value="pedestrian"      zIndex="2004" style="#road" width="23" textStyle="#roadName" textField="ref"/>
+                <class value="footway"         zIndex="2003" style="#road" width="18" textStyle="#roadName" textField="ref"/>
+                <class value="pedestrian"      zIndex="2004" style="#road" width="18" textStyle="#roadName" textField="ref"/>
                 <class value="unclassified"    zIndex="2005" style="#road" width="24" textStyle="#roadName" textField="ref"/>
                 <class value="cycleway"        zIndex="2006" style="#road" width="25" textStyle="#roadName" textField="ref"/>
                 <class value="residential"     zIndex="2007" style="#road" width="26" textStyle="#roadName" textField="ref"/>
                 <class value="service"         zIndex="2008" style="#road" width="27" textStyle="#roadName" textField="ref"/>
-                <class value="track"           zIndex="2009" style="#road" width="28" textStyle="#roadName" textField="ref"/>
+                <class value="track"           zIndex="2009" style="#road" width="20" textStyle="#roadName" textField="ref"/>
                 <class value="turning_circle"  zIndex="2010" style="#road" width="30" textStyle="#roadName" textField="ref"/>
                 <class value="living_street"   zIndex="2011" style="#road" width="31" textStyle="#roadName" textField="ref"/>
                 <class value="tertiary"        zIndex="2012" style="#road" width="32" textStyle="#roadName" textField="ref"/>
@@ -863,10 +866,10 @@
         <restriction zLevels="16,17,18,19">
             <condition closed="both" tagKey="highway">
                 <class value="stop"            zIndex="2000" style="#road" width="16" textStyle="#roadName"/>
-                <class value="steps"           zIndex="2001" style="#road" width="16" textStyle="#roadName"/>
-                <class value="footway"         zIndex="2001" style="#road" width="8"  textStyle="#roadName"/>
-                <class value="path"            zIndex="2002" style="#road" width="8"  textStyle="#roadName"/>
-                <class value="pedestrian"      zIndex="2003" style="#road" width="10" textStyle="#roadName"/>
+                <class value="steps"           zIndex="2001" style="#stairs" width="5" textStyle="#roadName"/>
+                <class value="footway"         zIndex="2001" style="#path" width="5" textStyle="#roadName"/>
+                <class value="path"            zIndex="2002" style="#path" width="5" textStyle="#roadName"/>
+                <class value="pedestrian"      zIndex="2003" style="#path" width="5" textStyle="#roadName"/>
                 <class value="unclassified"    zIndex="2004" style="#road" width="10" textStyle="#roadName"/>
                 <class value="cycleway"        zIndex="2005" style="#road" width="5"  textStyle="#roadName"/>
                 <class value="residential"     zIndex="2006" style="#road" width="10" textStyle="#roadName"/>
@@ -918,6 +921,24 @@
       <restriction zLevels="17,18,19">
       <condition closed="both" tagKey="amenity">
            <class value="parking"  zIndex="50001" symbol="parking" />
+           <class value="parking_entrance"  zIndex="50001" symbol="parking"/>
+      </condition>
+      </restriction>
+   </index>
+
+   <index type="way" name="parkingWayIdx">
+      <restriction zLevels="17,18,19">
+      <condition closed="yes" tagKey="amenity">
+           <class value="parking"  zIndex="50001" style="#parking" symbol="parking" />
+           <class value="parking_entrance"  zIndex="50001" symbol="parking"/>
+      </condition>
+      </restriction>
+   </index>
+
+   <index type="relation" name="parkingRelationIdx">
+      <restriction zLevels="17,18,19">
+      <condition closed="yes" tagKey="amenity">
+           <class value="parking"  zIndex="50001" style="#parking" symbol="parking" />
            <class value="parking_entrance"  zIndex="50001" symbol="parking"/>
       </condition>
       </restriction>
