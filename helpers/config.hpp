@@ -43,13 +43,16 @@ struct CssClass
 		}
 		return result;
 	}
-	std::string makeClass(std::string clName, double ppm)
+	std::string makeClass(std::string clName, double ppm, bool evenOdd)
 	{
 		std::string result = "";
 		std::string tStyle = makeTextStyle(ppm);
 		std::string oStyle = makeStyle(ppm);
+		std::string fillRule="fill-rule:";
+		/*if(evenOdd) fillRule +="evenodd;";
+		else*/ fillRule += "nonzero;";
 		if(tStyle != "") result += "text." + clName +  "{" + tStyle + "}\n";
-		if(oStyle != "") result += "path." + clName +  "{" + oStyle + "}\n";
+		if(oStyle != "") result += "path." + clName +  "{" +fillRule + oStyle + "}\n";
 		return result;
 	}
 };
@@ -89,7 +92,7 @@ struct ParmsXmlVisitor
 {
     std::map<std::string, std::string> parameters;
     void log(uint64_t done){};
-    void startTag(std::vector<SeqBalise*> tagStack, SeqBalise* b)
+    void startTag(std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
         if (b->baliseName == "parameter")
         {
@@ -97,11 +100,11 @@ struct ParmsXmlVisitor
         }
 
     }
-    void endTag(std::vector<SeqBalise*> tagStack, SeqBalise* b)
+    void endTag(std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
     }
 
-    void stringNode(std::vector<SeqBalise*> tagStack, std::string& s)
+    void stringNode(std::vector<SeqBalise*>& tagStack, std::string& s)
     {
     }
 
@@ -159,7 +162,7 @@ struct XmlVisitor
     {
     }
 
-    void startTag(std::vector<SeqBalise*> tagStack, SeqBalise* b)
+    void startTag(std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
         if (b->baliseName == "symbol")
         {
@@ -272,7 +275,7 @@ struct XmlVisitor
         }
     }
 
-    void endTag(std::vector<SeqBalise*> tagStack, SeqBalise* b)
+    void endTag(std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
         if ( symbolId != "")
         {
@@ -294,7 +297,7 @@ struct XmlVisitor
         }
     }
 
-    void stringNode(std::vector<SeqBalise*> tagStack, std::string& s)
+    void stringNode(std::vector<SeqBalise*>& tagStack, std::string& s)
     {
 		if(symbolId != "")
 		{

@@ -424,8 +424,8 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             for(CssClass* cl : cd->classes)
             {
 				if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
-				{   
-				    result << cl->makeClass("c" + std::to_string(cl->rank), ppm);
+				{    
+				    result << cl->makeClass("c" + std::to_string(cl->rank), ppm, (idxDesc->type == "relation"));
 				}
 			}
 		}

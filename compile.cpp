@@ -120,7 +120,7 @@ struct ShpVisitor
 {
     std::vector<shp_file> shpFiles;
     void log(uint64_t done){};
-    void startTag(std::vector<SeqBalise*> tagStack, SeqBalise* b)
+    void startTag(std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
         if (b->baliseName == "shp_file")
         {
@@ -128,7 +128,7 @@ struct ShpVisitor
         }
 
     }
-    void endTag(std::vector<SeqBalise*> tagStack, SeqBalise* b)
+    void endTag(std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
     }
     
