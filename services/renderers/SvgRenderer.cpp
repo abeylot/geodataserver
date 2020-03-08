@@ -101,11 +101,28 @@ std::string cutString(std::string text, int x, int y, int dy)
 
 template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rect)
 {
-    GeoBoxSet gSet = makeGeoBoxSet(rect*2.0);
+    GeoBoxSet gSet;
     Shape myShape;
-    hh::THashIntegerTable* hash = &nodeHash;;
-    if(idxDesc.type == "relation") hash = &relationHash;
-    else if(idxDesc.type == "way") hash = &wayHash; 
+    hh::THashIntegerTable* hash = &nodeHash;
+    Rectangle rect2;
+    if(idxDesc.type == "relation")
+    {
+		 hash = &relationHash;
+	     gSet = makeGeoBoxSet(rect*1.1);
+	     rect2 = rect*1.1;
+	}	
+    else if(idxDesc.type == "way")
+    {
+		 hash = &wayHash;
+	     gSet = makeGeoBoxSet(rect*1.1);
+	     rect2 = rect*1.1;
+	}
+    else
+    {
+		 hash = &nodeHash;
+	     gSet = makeGeoBoxSet(rect*3);
+	     rect2 = rect*3;
+	} 
     for(short i = 0; i < gSet.count; i++)
     {
         GeoBox g;
@@ -127,7 +144,7 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
         if(idxDesc.idx->findLastLesser(g, start))
         while(idxDesc.idx->get(start, &record) && (record.key <= maxGeoBox))
         {
-            if((record.key.zmMask &  zmMask )&&((record.value.r * (rect*2)).isValid()))
+            if((record.key.zmMask &  zmMask )&&((record.value.r * (rect2)).isValid()))
             {
                 if( hash->addIfUnique(record.value.id*100 + indexId))
                 {
@@ -175,7 +192,7 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
             {
                 if( hash->addIfUnique(record.value.id*100 +indexId))
                 {
-                    if((record.key.zmMask &  zmMask ) && ((record.value.r * (rect *4) ).isValid()))
+                    if((record.key.zmMask &  zmMask ) && ((record.value.r * (rect2) ).isValid()))
                     {
                         ITEM* item = NULL;
                         mger->load(item, record.value.id);
