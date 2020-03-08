@@ -330,7 +330,7 @@
 
    <index type="node" name="capitalsNodeIdx">
         <select tagKey="place" tagValue="city"/>
-        <restriction zLevels="3,4,5,6">
+        <restriction zLevels="4,5,6">
             <condition tagKey="capital" closed="both">
                 <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
                 <class value="1"             zIndex="9999" textStyle="#subCapitalName"/>
@@ -367,7 +367,7 @@
 
    <index type="way" name="capitalsWayIdx">
         <select tagKey="place" tagValue="city"/>
-        <restriction zLevels="3,4,5,6">
+        <restriction zLevels="4,5,6">
             <condition tagKey="capital" closed="yes">
                 <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
                 <class value="1"             zIndex="9999" textStyle="#capitalName"/>
@@ -404,7 +404,7 @@
 
    <index type="relation" name="capitalsRelationIdx">
         <select tagKey="place" tagValue="city"/>
-        <restriction zLevels="3,4,5,6">
+        <restriction zLevels="4,5,6">
             <condition tagKey="capital" closed="yes">
                 <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
                 <class value="1"             zIndex="9999" textStyle="#capitalName"/>
@@ -448,7 +448,7 @@
                 <class value="golf_course"    zIndex="100" style="#grass" textStyle="#greenAreaName"/>
                 <class value="horse_riding"   zIndex="100" style="#grass" textStyle="#greenAreaName"/>
                 <class value="ice_rink"       zIndex="100" style="#ice"   textStyle="#blueAreaName"/>
-                <class value="marina"         zIndex="100" style="#water" textStyle="#blueAreaName"/>
+                <class value="marina"         zIndex="100" style="#zone" textStyle="#blueAreaName"/>
                 <class value="miniature_golf" zIndex="100" style="#grass" textStyle="#greenAreaName"/>
                 <class value="nature_reserve" zIndex="101" style="#zone"  textStyle="#greenAreaName"/>
                 <class value="park"           zIndex="100" style="#grass" textStyle="#greenAreaName"/>
@@ -469,9 +469,9 @@
                 <class value="golf_course"    zIndex="100" style="#grass" textStyle="#greenAreaName"/>
                 <class value="horse_riding"   zIndex="100" style="#grass" textStyle="#greenAreaName"/>
                 <class value="ice_rink"       zIndex="100" style="#ice"   textStyle="#blueAreaName"/>
-                <class value="marina"         zIndex="100" style="#water" textStyle="#blueAreaName"/>
+                <class value="marina"         zIndex="100" style="#zone" textStyle="#blueAreaName"/>
                 <class value="miniature_golf" zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="nature_reserve" zIndex="100" style="#grass" textStyle="#greenAreaName"/>
+                <class value="nature_reserve" zIndex="100" style="#zone" textStyle="#greenAreaName"/>
                 <class value="park"           zIndex="100" style="#grass" textStyle="#greenAreaName"/>
                 <class value="pitch"          zIndex="100" style="#grass" textStyle="#greenAreaName"/>
                 <class value="sport_center"   zIndex="100" style="#grass" textStyle="#greyAreaName"/>
@@ -509,7 +509,7 @@
                 <class value="pasture"                   zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
                 <class value="peat_cutting"              zIndex="100" style="grass"     textStyle="#maroonAreaName"/>    
                 <class value="plant_nursery"             zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>    
-                <class value="port"                      zIndex="100" style="#water"    textStyle="#maroonAreaName"/>
+                <class value="port"                      zIndex="100" style="#water" textStyle="#maroonAreaName"/>
                 <class value="quary"                     zIndex="100" style="#stone"    textStyle="#maroonAreaName"/>    
                 <class value="railway"                   zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
                 <class value="recreation_ground"         zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
@@ -520,7 +520,7 @@
                 <class value="village_green"             zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
                 <class value="vineyard"                  zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>    
                 <class value="quarry"                    zIndex="100" style="#stone"    textStyle="#maroonAreaName"/>    
-                <class value="marina"                    zIndex="100" style="#water"    textStyle="#maroonAreaName"/>
+                <class value="marina"                    zIndex="100" style="#zone"    textStyle="#maroonAreaName"/>
             </condition>
             <condition tagKey="natural" closed="yes">
                 <class value="reef"                      zIndex="100" style="#stone" textStyle="#maroonAreaName"/>    
@@ -633,7 +633,7 @@
                 <class value="village_green"             zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
                 <class value="vineyard"                  zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>    
                 <class value="quarry"                    zIndex="100" style="#stone"    textStyle="#maroonAreaName"/>    
-                <class value="marina"                    zIndex="100" style="#water"    textStyle="#maroonAreaName"/>
+                <class value="marina"                    zIndex="100" style="#zone"    textStyle="#maroonAreaName"/>
             </condition>
             <condition tagKey="natural" closed="yes">
                 <class value="reef"                     zIndex="100" style="#stone"  textStyle="#maroonAreaName"/>    
