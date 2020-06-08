@@ -36,7 +36,12 @@ int main(int argc, char *argv[])
         r = mger.loadRelation(i);
         if(!r) continue;
 
-        if(r->tags.data == NULL) {delete r; continue;}
+        if(r->tags.data == NULL) {
+            delete r;
+            if ((i &  0xF) == 0)
+                std::cout << "\rrelation " << i << '/' << mger.relationIndex->getSize() << "--" << std::flush;
+            continue;
+        }
 
         uint64_t used = 0;
         char* tag;

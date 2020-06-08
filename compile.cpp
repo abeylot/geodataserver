@@ -201,6 +201,10 @@ struct XmlVisitor
     uint64_t wayid;
     uint64_t nodid;
 
+    bool isRel = false;;
+    bool isWay = false;
+    bool isNod = false;
+
     FileRawData<GeoPoint>*  wayPoints;
     FileRawData<GeoMember>* relMembers;
     FileRawVarData<GeoString>*  baliseTags;
@@ -265,7 +269,7 @@ struct XmlVisitor
 
     void startTag(const std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
-        if (b->baliseName == BALISENAME_TAG)
+        if ((b->baliseName == BALISENAME_TAG)&&(isNod || isWay || isRel))
         {
             GeoString s;
             s.value = b->keyValues["k"];
@@ -277,6 +281,7 @@ struct XmlVisitor
         {
             curBalise = BaliseType::point;
             baliseTags->startBatch();
+            isNod = true;
         }
         else if (b->baliseName == BALISENAME_ND)
         {
@@ -296,6 +301,7 @@ struct XmlVisitor
             curBalise = BaliseType::way;
             wayPoints->startBatch();
             baliseTags->startBatch();
+            isWay = true;
         }
         else if (b->baliseName == BALISENAME_MEMBER)
         {
@@ -336,7 +342,7 @@ struct XmlVisitor
                 }
             }
             else if(b->keyValues["type"] == "relation")
-            {
+            {   
                 m.type = relation;
                 fidx::Record<uint64_t, uint64_t> recp;
                 bool res = relationIdIndex->find(ref, &recp);
@@ -355,6 +361,7 @@ struct XmlVisitor
         }
         else if (b->baliseName == BALISENAME_RELATION)
         {
+            isRel = true;
             curBalise = BaliseType::relation;
             baliseTags->startBatch();
             relMembers->startBatch();
@@ -368,6 +375,7 @@ struct XmlVisitor
         }
         else if (b->baliseName == BALISENAME_NODE)
         {
+            isNod = false;
             GeoPointIndex nodeRecord;
             nodeRecord.x = Coordinates::toNormalizedLon(b->keyValues["lon"]);
             nodeRecord.y = Coordinates::toNormalizedLat(b->keyValues["lat"]);
@@ -380,6 +388,7 @@ struct XmlVisitor
         }
         else if (b->baliseName == BALISENAME_WAY)
         {
+            isWay = false;
             GeoWayIndex wayRecord;
             wayRecord.pstart = wayPoints->startCount;
             wayRecord.psize = wayPoints->itemCount  - wayPoints->startCount;
@@ -392,6 +401,7 @@ struct XmlVisitor
         }
         else if (b->baliseName == BALISENAME_RELATION)
         {
+            isRel = false;
             GeoIndex relationRecord;
             relationRecord.tstart = baliseTags->startCount;
             relationRecord.tsize = baliseTags->itemCount  - baliseTags->startCount;
