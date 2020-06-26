@@ -35,19 +35,38 @@ private:
     std::vector<label_s> label_vector;
     std::map<CssClass*, Shape*> shapes;
     std::set<std::string> cssClasses;
-
+    std::string _locale;
+    char _locales[32][2];
+    unsigned char _nb_locales = 0; 
     
 
 public:
-    SvgRenderer(CompiledDataManager* m) : relationHash(10000), wayHash(10000), nodeHash(1000)
+    SvgRenderer(CompiledDataManager* m, std::string locale) : relationHash(10000), wayHash(10000), nodeHash(1000)
     {
         mger = m;
         zoomLevel = -1;
+        _locale = locale;
+        unsigned int i = 0;
+        while(2*i < _locale.size())
+        {
+            _locales[i][0] = _locale[2*i];
+            _locales[i][1] = _locale[2*i + 1];
+            _nb_locales ++ ;
+        }
     }
-    SvgRenderer(CompiledDataManager* m, short z) : relationHash(10000), wayHash(10000), nodeHash(1000)
+    SvgRenderer(CompiledDataManager* m, short z, std::string locale) : relationHash(10000), wayHash(10000), nodeHash(1000)
     {
         mger = m;
         zoomLevel = z;
+        _locale = locale;
+        unsigned int i = 0;
+        while(2*i < _locale.size())
+        {
+            _locales[i][0] = _locale[2*i];
+            _locales[i][1] = _locale[2*i + 1];
+            _nb_locales ++ ;
+            i++;
+        }
     }
     
     std::string renderItems(Rectangle rect, uint32_t sizex, uint32_t sizey, std::string tag);

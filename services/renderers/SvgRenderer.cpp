@@ -570,8 +570,21 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     if(width) style ="stroke-width:"+ std::to_string(width*ppm)+";" + cl.style;
     std::string textField = "name";
     if(cl.textField != "") textField = cl.textField;
-    name = myWay.tags[textField.c_str()];
-    if(name == "" && textField != "name" ) name = myWay.tags["name"];
+    if(textField != "name")
+    {
+        name = myWay.tags[textField.c_str()];
+    }
+    if((name == "") || (textField == "name") )
+    {
+        for ( unsigned int i = 0 ; i < _nb_locales; i++)
+        {
+            std::string tmp = std::string("name:") + std::string(_locales[i],2);
+            name = myWay.tags[tmp.c_str()];
+            if (name != "") break;
+            
+        }
+        if(name == "") name = myWay.tags["name"];
+    }
     bool first = true;
     double length = 0;
     double halfLength = 0;
@@ -786,8 +799,21 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
         std::string textStyle ="";
         int  textWidth;
         std::string name = "";
-        name = myRelation.tags[textField.c_str()];
-        if(name == "" && textField != "name" ) name = myRelation.tags["name"];
+        if(textField != "name")
+        {
+            name = myRelation.tags[textField.c_str()];
+        }
+        if(name == "" || textField != "name")
+        {
+            for ( unsigned int i = 0 ; i < _nb_locales; i++)
+            {
+                std::string tmp = std::string("name:") + std::string(_locales[i],2);
+                name = myRelation.tags[tmp.c_str()];
+                if (name != "") break;
+            
+            }
+            if(name == "") name = myRelation.tags["name"];
+        }
         if(name != "")
         {
             if(cl.textWidth != "")
@@ -865,7 +891,23 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         std::string fieldName = "name";
         if (cl.textField != "") fieldName = cl.textField;
         name = myNode.tags[fieldName.c_str()];
-        if(name == "" && fieldName != "name" ) name = myNode.tags["name"];
+        
+        if(fieldName != "name")
+        {
+            name = myNode.tags[fieldName.c_str()];
+        }
+        if((name == "") || (fieldName == "name") )
+        {
+            for ( unsigned int i = 0 ; i < _nb_locales; i++)
+            {
+                std::string tmp = std::string("name:") + std::string(_locales[i],2);
+                name = myNode.tags[tmp.c_str()];
+                if (name != "") break;
+            
+            }
+            if(name == "") name = myNode.tags["name"];
+        }
+        
         lbl.text = name;
         style = cl.style;
         
