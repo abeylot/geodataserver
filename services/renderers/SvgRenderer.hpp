@@ -60,10 +60,10 @@ public:
         zoomLevel = z;
         _locale = locale;
         unsigned int i = 0;
-        while(2*i < _locale.size())
+        while(3*i < _locale.size())
         {
-            _locales[i][0] = _locale[2*i];
-            _locales[i][1] = _locale[2*i + 1];
+            _locales[i][0] = _locale[3*i];
+            _locales[i][1] = _locale[1*i + 1];
             _nb_locales ++ ;
             i++;
         }
