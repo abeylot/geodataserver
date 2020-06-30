@@ -28,7 +28,7 @@ rm relationIdIndex
 $GEOBIN/index .
 
 mkdir cache
-rm -rf ne_110m_admin_0_boundary_lines_land
+rm -rf ne_10m_admin_0_boundary_lines_land
 rm -rf ne_10m_lakes
 rm -rf water-polygons-split-4326
 
