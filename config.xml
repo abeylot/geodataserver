@@ -2,12 +2,13 @@
 
     <parameter name="ServerPort"    value="8081"/>
     <parameter name="WriterThreads" value="25"/>
-    <parameter name="ExecThreads"   value="4"/>
-    <parameter name="CacheLevel"   value="11"/>
+    <parameter name="ExecThreads"   value="5"/>
+    <parameter name="CacheLevel"    value="11"/>
+    <parameter name="locale"        value="fr;en"/>
 
-    <shp_file name="../water-polygons-split-4326/water_polygons" tag="shape" value="ocean"/>
-    <shp_file name="../ne_10m_admin_0_boundary_lines_land/ne_10m_admin_0_boundary_lines_land" tag="shape" value="frontier"/>
-    <shp_file name="../ne_10m_lakes/ne_10m_lakes" tag="shape" value="lake"/>
+    <shp_file name="water-polygons-split-4326/water_polygons" tag="shape" value="ocean"/>
+    <shp_file name="ne_10m_admin_0_boundary_lines_land/ne_10m_admin_0_boundary_lines_land" tag="shape" value="frontier"/>
+    <shp_file name="ne_10m_lakes/ne_10m_lakes" tag="shape" value="lake"/>
 
     <!-- areas -->
     <style ref="water"            value="fill:skyblue;"/>
@@ -330,7 +331,7 @@
 
    <index type="node" name="capitalsNodeIdx">
         <select tagKey="place" tagValue="city"/>
-        <restriction zLevels="4,5,6">
+        <restriction zLevels="3,4,5,6">
             <condition tagKey="capital" closed="both">
                 <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
                 <class value="1"             zIndex="9999" textStyle="#subCapitalName"/>
@@ -367,7 +368,7 @@
 
    <index type="way" name="capitalsWayIdx">
         <select tagKey="place" tagValue="city"/>
-        <restriction zLevels="4,5,6">
+        <restriction zLevels="3,4,5,6">
             <condition tagKey="capital" closed="yes">
                 <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
                 <class value="1"             zIndex="9999" textStyle="#capitalName"/>
@@ -404,7 +405,7 @@
 
    <index type="relation" name="capitalsRelationIdx">
         <select tagKey="place" tagValue="city"/>
-        <restriction zLevels="4,5,6">
+        <restriction zLevels="3,4,5,6">
             <condition tagKey="capital" closed="yes">
                 <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
                 <class value="1"             zIndex="9999" textStyle="#capitalName"/>
