@@ -1,6 +1,7 @@
 #include "Coordinates.hpp"
 #include <iostream>
 #include <stdlib.h>
+#include <math.h>
 uint32_t Coordinates::toNormalizedLon(const std::string& coord)
 {
     size_t pos = coord.find(".");
@@ -45,29 +46,22 @@ uint32_t Coordinates::toNormalizedLon(const std::string& coord)
 
 uint32_t Coordinates::toNormalizedLat(const std::string& coord)
 {
-    size_t pos = coord.find(".");
-    int signe = 1;
+    double angle = atof(coord.c_str());
 
-    long long signedInt;
-    if(pos == std::string::npos)  signedInt = atoll(coord.substr(0,pos).c_str());
-    else  signedInt = atoll(coord.c_str());
-
-    if (coord.at(0) == '-') signe = -1;
-    uint32_t integerPart = 90 - signedInt;
-
-    std::string sDecimalPart;
-    if(pos == std::string::npos) sDecimalPart = "";
-    else  sDecimalPart = coord.substr(pos+1);
-
-    while(sDecimalPart.size() < 7) sDecimalPart += '0';
-    uint32_t decimalPart = atol(sDecimalPart.c_str());
-    uint32_t intCoord;
-    if(signe == 1)
-        intCoord = (integerPart) * 10000000 - decimalPart;
-    else
-        intCoord = (integerPart)* 10000000 + decimalPart;
-
+    double angleRadians  =  angle * M_PI / 180.0;
+    bool signe = false;
+    if(angleRadians < 0) {
+        angleRadians  = -1.0 * angleRadians;
+        signe = true;
+    }
+    
+    double dist = log(tan((angleRadians/2.0 + M_PI/4.0)));
+    
     uint32_t normalized = 0;
+    
+    if(signe) normalized = 0b1000000000000000000000000000000  * (1 + dist/(2.5 * M_PI));
+    else normalized =       0b1000000000000000000000000000000 * (1 - dist/(2.5 * M_PI));
+    /*
     uint32_t toCompare = 1800000000ULL;
     normalized = 1;
     for (int i = 0; i < 32; i++ )
@@ -80,6 +74,7 @@ uint32_t Coordinates::toNormalizedLat(const std::string& coord)
         }
         toCompare >>= 1;
     }
+    */
     return normalized;
 }
 
