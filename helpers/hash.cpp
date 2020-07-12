@@ -66,7 +66,7 @@ bool THashIntegerTable::removeIfExists(uint64_t key)
             }
             if(cellsCounter[hash] > 1)
             {
-                cells[hash] = (uint64_t*) realloc(cells[hash],sizeof(int64_t)*(cellsCounter[hash] -1));
+                cells[hash] = (uint64_t*) realloc(cells[hash],sizeof(uint64_t)*(cellsCounter[hash] -1));
             }
             else
             {
@@ -102,7 +102,7 @@ bool THashIntegerTable::get(uint64_t key)
 THashIntegerTable::THashIntegerTable(int aCellsCount)
 {
     cellsCount = aCellsCount;
-    cells = (uint64_t**) malloc(cellsCount * sizeof(int*));
+    cells = (uint64_t**) malloc(cellsCount * sizeof(uint64_t*));
     memset(cells,0,cellsCount * sizeof(uint64_t*));
     cellsCounter = (uint64_t*) malloc(cellsCount * sizeof(uint64_t));
     memset (cellsCounter,0,cellsCount * sizeof(uint64_t));

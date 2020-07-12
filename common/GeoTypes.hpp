@@ -113,5 +113,5 @@ struct GeoPointNumberIndex
     uint32_t x;
     uint32_t y;
 };
-#pragma pack ()
+#pragma pack (pop)
 #endif
