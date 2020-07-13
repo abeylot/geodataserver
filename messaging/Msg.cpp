@@ -45,7 +45,6 @@ const std::string* Record::getBlock(uint64_t i) const
 
 std::string Record::getNamedValue(const std::string& key) const
 {
-    std::string result;
     uint64_t len = key.size() + 1;
     std::string test = key +  "=";
     for (uint64_t i=0; i<size; i++)

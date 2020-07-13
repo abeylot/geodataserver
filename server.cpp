@@ -27,7 +27,7 @@
 
 struct Listener
 {
-    Listener(boost::lockfree::queue<TcpConnection*>* queue) : queue(queue)
+  explicit  Listener(boost::lockfree::queue<TcpConnection*>* queue) : queue(queue)
     {
     }
 
@@ -99,7 +99,7 @@ template<typename MSG> struct Writer
 {
     HttpProtocol p;
     HttpEncoder encoder;
-    Writer(boost::lockfree::queue<MSG*>* queue) :  queue(queue)
+    explicit Writer(boost::lockfree::queue<MSG*>* queue) :  queue(queue)
     {
     }
     int operator()()

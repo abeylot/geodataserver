@@ -41,11 +41,15 @@ private:
     
 
 public:
-    SvgRenderer(CompiledDataManager* m, std::string locale) : relationHash(10000), wayHash(10000), nodeHash(1000)
+    SvgRenderer(CompiledDataManager* m, std::string locale) : relationHash(10000), wayHash(10000), nodeHash(1000), _locale(locale)
     {
         mger = m;
+        zoom = 0;
+        size_x = 0;
+        size_y = 0;
         zoomLevel = -1;
-        _locale = locale;
+        zmMask = 0;
+        indexId = 0;
         unsigned int i = 0;
         while(2*i < _locale.size())
         {
@@ -54,11 +58,16 @@ public:
             _nb_locales ++ ;
         }
     }
-    SvgRenderer(CompiledDataManager* m, short z, std::string locale) : relationHash(10000), wayHash(10000), nodeHash(1000)
+    SvgRenderer(CompiledDataManager* m, short z, std::string locale) : relationHash(10000), wayHash(10000), nodeHash(1000), _locale(locale)
     {
+        zoom = 0;
+        size_x = 0;
+        size_y = 0;
+        zmMask = 0;
+        indexId = 0;
+        
         mger = m;
         zoomLevel = z;
-        _locale = locale;
         unsigned int i = 0;
         while(3*i < _locale.size())
         {

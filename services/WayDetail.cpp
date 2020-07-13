@@ -11,14 +11,16 @@ std::string WayDetail::printWay(Way& r)
     if(r.tags.data != NULL)
     {
         uint64_t used = 0;
-        char* tag;
-        char* value;
-
-        unsigned char tag_size;
-        unsigned char value_size;
 
         while( used < r.tags.data_size)
         {
+
+            char* tag = NULL;
+            char* value = NULL;
+
+            unsigned char tag_size = 0;
+            unsigned char value_size = 0;
+
             tag_size = r.tags.data[used];
             used++;
             tag = r.tags.data + used;

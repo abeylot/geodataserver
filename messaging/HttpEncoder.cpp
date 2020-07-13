@@ -213,7 +213,7 @@ std::string HttpEncoder::getMessageID(Msg* msg) const
 }
 
 
-void HttpEncoder::build200Header(Msg* msg,const std::string contentType)
+void HttpEncoder::build200Header(Msg* msg,const std::string& contentType)
 {
     Record* rcd = new Record;
     msg->addRecord(rcd);

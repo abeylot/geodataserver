@@ -14,13 +14,12 @@ private:
     unsigned int _cachelevel;
     std::string _locale;
 public:
-    Tile(long z, long x, long y, unsigned int cachelevel, std::string locale)
+    Tile(long z, long x, long y, unsigned int cachelevel, std::string locale):_locale(locale)
     {
         _x = x;
         _y = y;
         _z = z;
         _cachelevel = cachelevel;
-        _locale = locale;
     }
     Msg* processRequest(Msg* request, CompiledDataManager& mger);
 };

@@ -142,17 +142,19 @@ struct XmlVisitor
     bool closed,opened,ccre,symbol;
     std::string root;
     uint32_t mask, idxMask;
-    std::string symbolId="";
+    std::string symbolId;
     std::string symbolStr="";
 
-    XmlVisitor(std::vector<IndexDesc*>& indexList, bool create, std::string rt)
+    XmlVisitor(std::vector<IndexDesc*>& indexList, bool create, std::string rt):root(rt), symbolId(""),symbolStr("")
     {
         idxList = &indexList;
         ccre = create;
-        root = rt;
-		clRank=0;
-        symbolId="";
-        symbolStr="";
+        clRank=0;
+        opened = false;
+        closed = false;
+        symbol = false;
+        mask = 0;
+        idxMask = 0;
     }
 
     ~XmlVisitor()

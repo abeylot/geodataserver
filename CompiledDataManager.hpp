@@ -19,15 +19,16 @@ struct Tags
     {
         if(data == NULL) return "";
         uint64_t used = 0;
-        char* tag;
-        char* value;
-
-        unsigned char tag_size;
-        unsigned char value_size;
         uint64_t len = strlen(my_tag);
 
         while( used < data_size)
         {
+            char* tag = NULL;
+            char* value = NULL;
+
+            unsigned char tag_size = 0;
+            unsigned char value_size = 0;
+            
             tag_size = (unsigned char) data[used];
             used++;
             tag = data + used;

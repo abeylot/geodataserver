@@ -79,12 +79,12 @@ int main(int argc, char *argv[])
                         {
                             if (c->keyValues["k"] == cd->tagKey)
                             {
-                                bool kept =false;
                                 for(CssClass* cl : cd->classes)
                                 {
+                                    //bool kept =false;
                                     if (cl->tagValue == c->keyValues["v"])
                                     {
-                                        kept = true;
+                                        //kept = true;
                                         GeoBoxSet g = getGeoBoxSet(*b);
                                         for(int j = 0; j < g.count; j++)
                                         {
@@ -105,10 +105,10 @@ int main(int argc, char *argv[])
             std::cout << "\rrelation " << i << '/' << mger.relationIndex->getSize() << "  " << std::flush;
         delete b;
     }
-    uint64_t count = 0;
+    //uint64_t count = 0;
     for(uint64_t i=0; i < mger.wayIndex->getSize(); i++)
     {
-        bool keepBuilding, keepClc;
+        //bool keepBuilding, keepClc;
         ctx.maskLength = -1;
         GeoIndex r;
         bool found = mger.wayIndex->get(i,&r);
@@ -129,12 +129,12 @@ int main(int argc, char *argv[])
                                     &&((closed && cd->closed)||((!closed) && !(cd->closed)))
                                )
                             {
-                                bool kept =false;
+                                //bool kept =false;
                                 for(CssClass* cl : cd->classes)
                                 {
                                     if (cl->tagValue ==c->keyValues["v"])
                                     {
-                                        kept = true;
+                                        //kept = true;
                                         GeoBoxSet g = getGeoBoxSet(*b);
                                         for(int j = 0; j < g.count; j++)
                                         {

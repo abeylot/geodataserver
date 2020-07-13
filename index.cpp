@@ -44,14 +44,18 @@ int main(int argc, char *argv[])
         }
 
         uint64_t used = 0;
-        char* tag;
-        char* value;
-
-        unsigned char tag_size;
-        unsigned char value_size;
 
         while( used < r->tags.data_size)
         {
+
+            char* tag = NULL;
+            char* value = NULL;
+
+            unsigned char tag_size = 0;
+            unsigned char value_size = 0;
+
+
+
             tag_size = (unsigned char) r->tags.data[used];
             used++;
             tag = r->tags.data + used;
@@ -121,14 +125,15 @@ int main(int argc, char *argv[])
         if(w->tags.data == NULL) {delete w; continue;}
 
         uint64_t used = 0;
-        char* tag;
-        char* value;
-
-        unsigned char tag_size;
-        unsigned char value_size;
-
         while( used < w->tags.data_size)
         {
+
+            char* tag = NULL;
+            char* value = NULL;
+
+            unsigned char tag_size = 0;
+            unsigned char value_size = 0;
+
             tag_size = (unsigned char) w->tags.data[used];
             used++;
             tag = w->tags.data + used;
@@ -197,14 +202,16 @@ int main(int argc, char *argv[])
         if(p->tags.data == NULL) { delete p; continue; }
 
         uint64_t used = 0;
-        char* tag;
-        char* value;
-
-        unsigned char tag_size;
-        unsigned char value_size;
 
         while( used < p->tags.data_size)
         {
+
+            char* tag = NULL;
+            char* value = NULL;
+    
+            unsigned char tag_size = 0;
+            unsigned char value_size = 0;
+
             tag_size = (unsigned char) p->tags.data[used];
             used++;
             tag = p->tags.data + used;

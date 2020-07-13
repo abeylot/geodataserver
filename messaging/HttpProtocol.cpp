@@ -20,16 +20,16 @@ int64_t HttpProtocol::putMessage(std::string& message, TcpConnection* s)
 int64_t HttpProtocol::getMessage(std::string& message,TcpConnection* s)
 {
     uint64_t rcv = 0;
-    int64_t rc = 0;
 
     message = "";
-    char buff[64000];
     size_t iFound = std::string::npos;
-    bool complete = false;
-    uint64_t iContentLength = 0;
 
     try
     {
+        char buff[64000];
+        int64_t rc = 0;
+        bool complete = false;
+        uint64_t iContentLength = 0;
         while ((rc >= 0) && (!complete) && s->isAlive())
         {
             rc = s->read(buff,64000);

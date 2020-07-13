@@ -180,7 +180,7 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
         }
         mask = g.maskLength;
         short max = 64;
-        if (max >= 64) max = 64;
+        //if (max >= 64) max = 64;
         while(mask++ < max )
         {
             GeoBox maxGeoBox2 = g;
@@ -487,9 +487,7 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
     std::ostringstream result;
     double oldx = -1;
     double oldy = -1;
-    double x=0;
-    double y=0;
-    std::string style="";
+    //std::string style="";
 
     int width=0;
 
@@ -497,15 +495,16 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
 
     if(cl.width.length()) width = std::stoi(cl.width);
     if(width && ((width*ppm) <  0.25)) return "";
-    if(width) style ="stroke-width:"+ std::to_string(width*ppm)+";" + cl.style;
+    //if(width) style ="stroke-width:"+ std::to_string(width*ppm)+";" + cl.style;
  
 
-    bool first = true;
     if(s.lines.size() == 0) return "";
     result << "<path  d=\"";
     for(Line* l : s.lines)
     {
-        first = true;
+        bool first = true;
+        double x=0;
+        double y=0;
         x=0; y=0;
         for(unsigned int i = 0 ; i < l->pointsCount; i++)
         {
@@ -554,15 +553,13 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
 
     int width=0;
     int textWidth=0;
-    std::string style= "";
-    std::string textStyle= "";
     double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     std::string name = "";
 
     bool draw = ((myWay.rect)*rect).isValid();
-    style = cl.style;
+    std::string style = cl.style;
     std::string textStyle2;
-    textStyle = cl.textStyle;
+    std::string textStyle = cl.textStyle;
     if(cl.width.length()) width = std::stoi(cl.width);
     if(cl.textWidth.length()) textWidth = std::stoi(cl.textWidth);
     if(textWidth) textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
@@ -733,9 +730,9 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
     lbl.pos_x = lbl.pos_y = lbl.angle = 0;    
     lbl.style = 0;    
     lbl.zindex = cl.zIndex;
-    std::string style= "";
+    //std::string style= "";
     std::string result = "";
-    double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
+    //double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     std::string textField = "name";
     if(!(cl.textField == "")) textField = cl.textField;
     bool draw = ((myRelation.rect)*rect).isValid();
@@ -754,7 +751,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 		}
 		else
 		{
-			style = cl.style;
+			//style = cl.style;
 			if(draw)
 			{
 				result += "<path  d=\"";
@@ -763,16 +760,14 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 					Rectangle r1 = rect*1.1;
 					l->crop(r1);
                     bool first = true;
-                    int oldx = -1;
-                    int oldy = -1;
                     int x=0;
                     int y=0;
                     for(unsigned int i = 0 ; i < l->pointsCount; i++)
                     {
                         int64_t xx = l->points[i].x;
                         int64_t yy = l->points[i].y;
-                        oldx = x;
-                        oldy = y;
+                        int oldx = x;
+                        int oldy = y;
                         x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
                         y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
                         if((x != oldx) || (y != oldy) || i == (l->pointsCount - 1))
@@ -796,8 +791,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 	}
     if(cl.textStyle != "")
     {
-        std::string textStyle ="";
-        int  textWidth;
+        //std::string textStyle ="";
         std::string name = "";
         if(textField != "name")
         {
@@ -820,22 +814,22 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
             {
                 if ( cl.textWidth == "auto" )
                 {
-                    int length = name.length();
-                    if (length < 12) length = 12;
-                    int64_t dxx = (myRelation.rect.x1 - myRelation.rect.x0);
-                    uint32_t dx = (dxx)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-                    textWidth = (dx*1.5)/(2.0*length);
-                    textStyle ="font-size:"+ std::to_string((int)textWidth)+ "px;" + cl.textStyle;
+                    //int length = name.length();
+                    //if (length < 12) length = 12;
+                    //int64_t dxx = (myRelation.rect.x1 - myRelation.rect.x0);
+                    //uint32_t dx = (dxx)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+                    //int textWidth = (dx*1.5)/(2.0*length);
+                    //textStyle ="font-size:"+ std::to_string((int)textWidth)+ "px;" + cl.textStyle;
                 }
                 else
                 {
-                    textWidth = atoi(cl.textWidth.c_str());
-                    textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
+                    //int textWidth = atoi(cl.textWidth.c_str());
+                    //textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
                 }
             }
             else
             {
-                textStyle = cl.textStyle;
+                //textStyle = cl.textStyle;
             }
             unsigned int chars = 1.4*szx*(myRelation.rect.x1 - myRelation.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
             if(name.length() < chars)
@@ -880,9 +874,8 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
     lbl.zindex = cl.zIndex;
     std::string result = "";
     int x,y;
-    int textWidth=0;
-    std::string style= "";
-    std::string textStyle= "";
+    //std::string style= "";
+    //std::string textStyle= "";
     double ppm = 107 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     std::string name = "";
 
@@ -909,7 +902,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         }
         
         lbl.text = name;
-        style = cl.style;
+        //style = cl.style;
         
         std::size_t found = cl.textStyle.find("font-size:");
         if(found != std::string::npos)
@@ -920,14 +913,14 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
 
         if(cl.textWidth != "")
         {
-            style += ";stroke-width:" + std::to_string(atoi(cl.width.c_str())*ppm);
-            textWidth = atoi(cl.textWidth.c_str());
+            //style += ";stroke-width:" + std::to_string(atoi(cl.width.c_str())*ppm);
+            int textWidth = atoi(cl.textWidth.c_str());
             lbl.fontsize = textWidth*ppm;
-            textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
+            //textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
         }
         else
         {
-            textStyle = cl.textStyle;
+            //textStyle = cl.textStyle;
         }
 
 

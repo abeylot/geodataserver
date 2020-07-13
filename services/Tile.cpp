@@ -263,16 +263,14 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
     szx = szy = 256;
 
 
-    std::string resp = "";
+    //std::string resp = "";
 
     Msg* rep = new Msg;
     HttpEncoder encoder;
     encoder.build200Header(rep, "image/svg+xml");
     std::string res = "";
     bool filefound = false;
-    size_t len;
     FILE* in;
-    FILE* out;
     if(_z <= _cachelevel)
     {
     	snprintf(filename,250,"cache/%ld/%ld/%ld.gz",_z,_x,_y);
@@ -283,6 +281,7 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
 			rep->getRecord(0)->addBlock("HTTPEncoding=gzip");
 			//inf(in, res);
 		char buffer[4097];
+        size_t len = 0;
 		while( (len = fread(buffer,1,4096,in)) )
                 {	buffer[len] = 0;
 			res.append(buffer, len);
@@ -322,7 +321,7 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
 			{
 				boost::filesystem::create_directory(p2);
 			}
-	        out = fopen(filename, "w");
+            FILE* out = fopen(filename, "w");
                 if(out != NULL)
                 {
                     def(res, out);
