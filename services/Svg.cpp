@@ -43,7 +43,7 @@ Msg* Svg::processRequest(Msg* request, CompiledDataManager& mger)
     }
 
 
-    //std::string resp = "";
+    std::string resp = "";
 
     Msg* rep = new Msg;
     HttpEncoder encoder;

@@ -106,8 +106,6 @@ THashIntegerTable::THashIntegerTable(int aCellsCount)
     memset(cells,0,cellsCount * sizeof(uint64_t*));
     cellsCounter = (uint64_t*) malloc(cellsCount * sizeof(uint64_t));
     memset (cellsCounter,0,cellsCount * sizeof(uint64_t));
-    itemCount = 0;
-    collisions = 0;
 }
 
 THashIntegerTable::~THashIntegerTable()
