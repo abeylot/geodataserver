@@ -129,7 +129,7 @@ struct GeoFile
         }
     }
     
-    virtual ~GeoFile(){if(fh >=0) close(fh);}
+    virtual ~GeoFile(){if(fh !=0) close(fh);}
     
     void owrite(char* buffer, uint64_t offset, uint64_t length)
     {
@@ -284,7 +284,7 @@ public:
         bufferCount = 0;
         recSize = sizeof(Record<ITEM,KEY>);
         fileSize = pFile.length()/recSize;
-
+        sortedSize = 0;
     }
 
     /**
@@ -410,14 +410,14 @@ public:
         Record<ITEM,KEY>* autres = sort_buffer + 2ULL*buffer_size;
         Record<ITEM,KEY> pivot;
         get(end, &pivot);
-        uint64_t plusPetitsBufferCount=0;
-        uint64_t plusGrandsBufferCount=0;
-        uint64_t autresBufferCount=0;
         uint64_t autresCount = end - begin;
         uint64_t plusGrandsCount = 0;
         uint64_t plusPetitsCount = 0;
         while(autresCount > 0)
         {
+            uint64_t plusPetitsBufferCount=0;
+            uint64_t plusGrandsBufferCount=0;
+            uint64_t autresBufferCount=0;
             uint64_t toRead = buffer_size;
             std::cout << "reading " << toRead << "items from file \n";
             if(toRead > autresCount) toRead = autresCount;
@@ -694,7 +694,7 @@ public:
         bufferCount = 0;
         recSize = sizeof(ITEM);
         fileSize = pFile.length()/recSize;
-
+        itemCount = 0;
     }
     /**
      * @brief Destroy the File Raw Index object
@@ -784,6 +784,9 @@ public:
         bufferCount = 0;
         recSize = sizeof(ITEM);
         fileSize = pFile.length()/recSize;
+        startPos = 0;
+        itemCount = 0;
+        startCount = 0;
 
     }
     virtual ~FileRawData()
@@ -892,7 +895,8 @@ public:
         pFile.open(filename, replace);
         bufferCount = 0;
         itemCount = 0;
-
+        startCount = 0;
+        startPos = 0;
     }
     
     virtual ~FileRawVarData()
