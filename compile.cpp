@@ -18,7 +18,7 @@ struct field_descriptor
     char field_type;
     unsigned char field_length;
     unsigned char field_decimal_count;
-    unsigned char mdx_field;
+    //unsigned char mdx_field;
 };
 
 struct dbf_header

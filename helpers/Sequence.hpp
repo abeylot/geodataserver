@@ -148,6 +148,7 @@ private:
         case STATE_UNKNOWN:
             if(sq.check(COMMENT_BEGIN))
             {
+                previous_state = state;
                 state = STATE_COMMENT;
                 skip = 3;
             }

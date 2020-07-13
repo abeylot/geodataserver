@@ -15,7 +15,7 @@ public :
     bool addIfUnique(uint64_t key);
     bool removeIfExists(uint64_t key);
     bool get(uint64_t key);
-    THashIntegerTable(int aCellsCount);
+    explicit THashIntegerTable(int aCellsCount);
     virtual ~THashIntegerTable();
     uint64_t** cells;
     uint64_t* cellsCounter;

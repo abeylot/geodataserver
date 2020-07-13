@@ -87,7 +87,7 @@ public:
      * \return a new connection
      *
      */
-    TcpConnection (int fileDescr)
+    explicit TcpConnection (int fileDescr)
     {
         _FileDescr = fileDescr;
         _IsAlive = true;
@@ -150,10 +150,10 @@ private:
     int _TimeOut;
 public:
 
-    TcpClientConnector (std::string host, int port, int timeOut = 1000)
+    TcpClientConnector (std::string host, int port, int timeOut = 1000):_Host(host)
     {
         _Port = port;
-        _Host = host;
+        //_Host = host;
         _TimeOut = timeOut; //seconds
     }
 
