@@ -713,7 +713,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         int64_t yyy = (myWay.rect.y0 + myWay.rect.y1) /2;
         x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        result << "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" + std::to_string(x) + "\"  y=\"" +std::to_string(y) + "\" />";
+        result << "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" + std::to_string(trunc(x)) + "\"  y=\"" +std::to_string(trunc(y)) + "\" />";
         cssClasses.insert("sym#"+cl.symbol);
     }
 
@@ -774,12 +774,12 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                         {
                             if(first)
                             {
-                                result += "M" + std::to_string(x) + " " + std::to_string(y) + " ";
+                                result += "M" + std::to_string(trunc(x)) + " " + std::to_string(trunc(y)) + " ";
                                 first = false;
                             }
                             else
                             {
-                                result += "L" + std::to_string(x) + " " + std::to_string(y) + " ";
+                                result += "L" + std::to_string(trunc(x)) + " " + std::to_string(trunc(y)) + " ";
                             }
                         }
                     }
@@ -941,7 +941,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         int64_t yyy = myNode.y;
         x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        result += "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" + std::to_string(x) + "\"  y=\"" +std::to_string(y) + "\" />";
+        result += "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" + std::to_string(trunc(x)) + "\"  y=\"" +std::to_string(trunc(y)) + "\" />";
         cssClasses.insert("sym#"+cl.symbol);
     }
     return result;
