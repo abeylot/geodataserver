@@ -1,4 +1,4 @@
-export GEOBIN=/home/expand/geodataserver
+export GEOBIN=/home/aby/sources/geodataserver
 export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.bz2 
 #planet.openstreetmap.org/planet/planet-latest.osm.bz2
 

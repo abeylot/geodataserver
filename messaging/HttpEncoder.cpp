@@ -122,7 +122,7 @@ Msg* HttpEncoder::encode(std::string* in)
         iDone = 0;
         while((iSep = sBody.find("&",iDone)) != std::string::npos)
         {
-            unsigned int iSep2 = sBody.find("=");
+            size_t iSep2 = sBody.find("=");
             if(iSep2 != std::string::npos)
             {
                 sBlock = sBody.substr(0,iSep);

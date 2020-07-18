@@ -6,7 +6,6 @@
  *
  *
  */
-const char identOfTCPConnector_cpp[] = "$Id: TcpListener.cpp,v 1.3 2013/01/14 15:50:30 aby Exp $";
 
 
 

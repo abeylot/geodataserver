@@ -1,4 +1,4 @@
-#CC=clang++ --analyze -analyzer-output=text
+#CC=clang++ --analyze 
 CC=g++
 cc=$(CC) -s -O2 -Wall -std=c++11 -D_FILE_OFFSET_BITS=64
 #cc=$(CC) -g -Wall -std=c++11 -D_FILE_OFFSET_BITS=64
