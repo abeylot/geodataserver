@@ -10,15 +10,26 @@
     <shp_file name="ne_10m_admin_0_boundary_lines_land/ne_10m_admin_0_boundary_lines_land" tag="shape" value="frontier"/>
     <shp_file name="ne_10m_lakes/ne_10m_lakes" tag="shape" value="lake"/>
 
+
+    <!-- patterns -->
+    
+    <pattern id="mudPattern" 
+             width="16" height="16"
+             patternUnits="userSpaceOnUse"
+             >
+             <rect x="0" y="0" width="16" height="16" fill="#AAFFAA"/>
+             <circle cx="8" cy="8" r="2" stroke-width="0" fill="skyblue" />
+    </pattern>    
+
     <!-- areas -->
     <style ref="water"            value="fill:skyblue;"/>
     <style ref="grass"            value="fill:#AAFFAA;"/>
     <style ref="forest"           value="fill:#99DD99;"/>
     <style ref="ice"              value="fill:lightgrey;"/>
     <style ref="concrete"         value="fill:whitesmoke;"/>
-    <style ref="stone"            value="fill:silver;"/>
+    <style ref="stone"            value="fill:silver;opacity:0.5"/>
     <style ref="sand"             value="fill:moccasin;"/>
-    <style ref="mud"              value="fill:#CCEEFF;"/>
+    <style ref="mud"              value="fill:url(#mudPattern);opacity:0.5"/>
     <style ref="building"         value="fill:linen;opacity:0.7;stroke:BurlyWood ;stroke-width:1"/>
     <style ref="historicBuilding" value="fill:mistyrose;opacity:0.7;stroke:grey ;stroke-width:1"/>
     <style ref="zone"             value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:5,5"/>

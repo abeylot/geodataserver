@@ -15,6 +15,7 @@ struct CssClass
     std::string textWidth;
     std::string textField;
     std::string symbol;
+    std::string pattern;
     
     int zIndex;
     int rank;
@@ -137,13 +138,19 @@ struct XmlVisitor
 {
     std::vector<IndexDesc*>* idxList;
     std::map<std::string, std::string> symbols;
+    std::map<std::string, std::string> patterns;
     std::map<std::string, std::string> shortcuts;
     int clRank;
-    bool closed,opened,ccre,symbol;
+    bool closed,opened,ccre,symbol,pattern;
     std::string root;
     uint32_t mask, idxMask;
     std::string symbolId;
     std::string symbolStr="";
+    
+    
+    std::string patternId;
+    std::string patternStr="";
+
 
     XmlVisitor(std::vector<IndexDesc*>& indexList, bool create, std::string rt):root(rt), symbolId(""),symbolStr("")
     {
@@ -153,6 +160,7 @@ struct XmlVisitor
         opened = false;
         closed = false;
         symbol = false;
+        pattern = false;
         mask = 0;
         idxMask = 0;
     }
@@ -180,6 +188,21 @@ struct XmlVisitor
                     symbolStr += " " + it->first + "=\"" + it->second + "\" ";
                 }
                 symbolStr += ">";
+        }
+        if (b->baliseName == "pattern")
+        {
+            //shortcuts[b->keyValues["ref"]] = b->keyValues["value"];
+            patternId = b->keyValues["id"];
+            patternStr = "";
+        }
+        if(patternId != "")
+        {
+                patternStr += "<" + b->baliseName + " ";
+                for(auto it = b->keyValues.begin(); it != b->keyValues.end(); it++)
+                {
+                    patternStr += " " + it->first + "=\"" + it->second + "\" ";
+                }
+                patternStr += ">";
         }
         if (b->baliseName == "style")
         {
@@ -288,6 +311,16 @@ struct XmlVisitor
             symbols[symbolId] = symbolStr;
             std::cout << symbolId << " -> " << symbolStr << "\n";
             symbolId = "";
+        }
+        if ( patternId != "")
+        {
+            patternStr += "</" + b->baliseName + ">";
+        }
+        if (b->baliseName == "pattern")
+        {
+            patterns[symbolId] = patternStr;
+            std::cout << symbolId << " -> " << symbolStr << "\n";
+            patternId = "";
         }
         if (b->baliseName == "restriction")
         {

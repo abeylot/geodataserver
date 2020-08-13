@@ -148,12 +148,13 @@ public :
 
     std::vector<IndexDesc*>* indexes;
     std::map<std::string, std::string>* symbols;
+    std::map<std::string, std::string>* patterns;
 
-    CompiledDataManager(std::string name,std::vector<IndexDesc*>* conf, std::map<std::string, std::string>* symbs = NULL)
+    CompiledDataManager(std::string name,std::vector<IndexDesc*>* conf, std::map<std::string, std::string>* symbs = NULL, std::map<std::string, std::string>* patts = NULL)
     {
         indexes = conf;
         symbols = symbs;
-
+        patterns = patts;
         nodeIndex = new fidx::FileRawIndex<GeoPointIndex>((name + "/nodeIndex").c_str(),false);
         wayIndex = new fidx::FileRawIndex<GeoWayIndex>((name + "/wayIndex").c_str(),false);
         relationIndex = new fidx::FileRawIndex<GeoIndex>((name + "/relationIndex").c_str(),false);

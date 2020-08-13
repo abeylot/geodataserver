@@ -139,14 +139,16 @@ template<typename MSG> struct Exec
     HttpEncoder encoder;
     std::vector<IndexDesc*>* idxList;
     std::map<std::string, std::string>* symbols;
-    Exec(boost::lockfree::queue<MSG*>* inqueue,boost::lockfree::queue<MSG*>* outqueue, std::string file,uint microSleep,std::vector<IndexDesc*>* idxL, std::map<std::string, std::string>* symbs ) : inqueue(inqueue), outqueue(outqueue), file(file), microSleep(microSleep)
+    std::map<std::string, std::string>* patterns;
+    Exec(boost::lockfree::queue<MSG*>* inqueue,boost::lockfree::queue<MSG*>* outqueue, std::string file,uint microSleep,std::vector<IndexDesc*>* idxL, std::map<std::string, std::string>* symbs, std::map<std::string, std::string>* patts ) : inqueue(inqueue), outqueue(outqueue), file(file), microSleep(microSleep)
     {
         idxList = idxL;
         symbols = symbs;
+        patterns = patts;
     }
     int operator()()
     {
-        CompiledDataManager mger(file, idxList, symbols);
+        CompiledDataManager mger(file, idxList, symbols, patterns);
         MSG* m;
         while(!boost::this_thread::interruption_requested())
         {
@@ -217,12 +219,14 @@ int main(int argc, char *argv[])
 
     std::vector<IndexDesc*>* indexes = new std::vector<IndexDesc*>[params.getNumParam("ExecThreads", 5)];
     std::map<std::string, std::string>* symbols = new std::map<std::string, std::string>[params.getNumParam("ExecThreads", 5)];
+    std::map<std::string, std::string>* patterns = new std::map<std::string, std::string>[params.getNumParam("ExecThreads", 5)];
     for(int i = 0; i < params.getNumParam("ExecThreads", 5); i++)
     {
         XmlVisitor v(indexes[i], false, std::string(argv[1]));
         config = fopen((std::string(argv[1]) + "/config.xml").c_str(),"r");
         XmlFileParser<XmlVisitor>::parseXmlFile(config,v);
         symbols[i] = v.symbols;
+        patterns[i] = v.patterns;
         fclose(config);
     }
 
@@ -239,7 +243,7 @@ int main(int argc, char *argv[])
     std::cout << "launching " << params.getNumParam("ExecThreads", 5) << " Exec threads \n";
     for(int i=0; i < params.getNumParam("ExecThreads", 5); i++)
     {
-        Exec<Msg> exec(&myInQueue, &myOutQueue, argv[1], microSleep, /*&index*/ &(indexes[i]), &(symbols[i]));
+        Exec<Msg> exec(&myInQueue, &myOutQueue, argv[1], microSleep, /*&index*/ &(indexes[i]), &(symbols[i]), &(patterns[i]));
         microSleep *= 2;
         g.create_thread(exec);
     }
