@@ -13,12 +13,13 @@
 
     <!-- patterns -->
     
-    <pattern id="mudPattern" 
-             width="16" height="16"
-             patternUnits="userSpaceOnUse"
-             >
+    <pattern id="mudPattern" width="16" height="16" patternUnits="userSpaceOnUse" >
              <rect x="0" y="0" width="16" height="16" fill="#AAFFAA"/>
              <circle cx="8" cy="8" r="2" stroke-width="0" fill="skyblue" />
+    </pattern>
+
+    <pattern id="reefPattern" width="8" height="8" patternUnits="userSpaceOnUse" >
+             <circle cx="4" cy="4" r="2" stroke-width="0" fill="darkgrey" />
     </pattern>    
 
     <!-- areas -->
@@ -27,7 +28,8 @@
     <style ref="forest"           value="fill:#99DD99;"/>
     <style ref="ice"              value="fill:lightgrey;"/>
     <style ref="concrete"         value="fill:whitesmoke;"/>
-    <style ref="stone"            value="fill:silver;opacity:0.5"/>
+    <style ref="stone"            value="fill:url(#reefPattern)"/>
+    <style ref="reef"             value="fill:url(#reefPattern)"/>
     <style ref="sand"             value="fill:moccasin;"/>
     <style ref="mud"              value="fill:url(#mudPattern);opacity:0.5"/>
     <style ref="building"         value="fill:linen;opacity:0.7;stroke:BurlyWood ;stroke-width:1"/>
@@ -71,15 +73,19 @@
     <style ref="townName"        value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:13px"/>
     <style ref="villageName"     value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:11px"/>
     
-    <style ref="houseNumber"     value="fill:maroon;opacity:0.5;font-family:sans-serif; font-size:13px"/>
+    <style ref="houseNumber"     value="fill:maroon;opacity:0.5;font-family:sans-serif; font-size:10px"/>
     <style ref="roadName"        value="fill:black;font-family:sans-serif;opacity:0.5;font-size:10px"/>
     <style ref="amenityName"     value="fill:blue;font-family:sans-serif;opacity:0.2;font-size:10px"/>
 
-    <style ref="riverName"       value="fill:white;opacity:0.5;font-family:sans-serif; font-size:13px"/>
+    <style ref="riverName"       value="fill:darkblue;opacity:0.5;font-family:sans-serif; font-size:10px"/>
     <style ref="ferryLineName"   value="fill:darkblue;;opacity:0.5;font-family:sans-serif"/>
     
 
     <!-- Symbols -->
+
+    <symbol id="stone" width="16" height="16" transform="translate(-8 -8)">
+        <circle  cx="8"  cy="8"  r="8"  style="fill:darkgrey;opacity:0.7;" />
+    </symbol>
 
     <symbol id="treeS" width="8" height="8" transform="translate(-4 -4)">
         <circle  cx="4"  cy="4"  r="4"  style="fill:#99DD99;opacity:0.7;" />
@@ -138,6 +144,11 @@
         <restriction zLevels="19">
             <condition tagKey="natural" closed="both">
                 <class value="tree"        zIndex="50002"  symbol="treeB" />
+            </condition>
+        </restriction>
+        <restriction zLevels="17,18,19">
+            <condition tagKey="natural" closed="both">
+                <class value="stone"    zIndex="50002"  symbol="stone" />
             </condition>
         </restriction>
     </index>
@@ -272,7 +283,7 @@
         </restriction>
         <condition tagKey="addr:housenumber" closed="both">
             <restriction zLevels="17,18,19">
-                <class value="default" textField="addr:housenumber" textStyle="#houseNumber" zIndex="900" style="#building"/>
+                <class value="default" textField="addr:housenumber" textStyle="#houseNumber" zIndex="100" style="#building"/>
             </restriction>
         </condition>
         <restriction zLevels="17,18,19,">
@@ -528,14 +539,14 @@
                 <class value="religious"                 zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
                 <class value="reservoir"                 zIndex="101" style="#water"    textStyle="#maroonAreaName"/>
                 <class value="retail"                    zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="salt_pond"                 zIndex="101" style="#water"    textStyle="#maroonAreaName"/>
+                <class value="salt_pond"                 zIndex="101" style="#mud"      textStyle="#maroonAreaName"/>
                 <class value="village_green"             zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
                 <class value="vineyard"                  zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>    
                 <class value="quarry"                    zIndex="100" style="#stone"    textStyle="#maroonAreaName"/>    
                 <class value="marina"                    zIndex="100" style="#zone"    textStyle="#maroonAreaName"/>
             </condition>
             <condition tagKey="natural" closed="yes">
-                <class value="reef"                      zIndex="100" style="#stone" textStyle="#maroonAreaName"/>    
+                <class value="reef"                      zIndex="100" style="#reef"   textStyle="#maroonAreaName"/>    
                 <class value="wood"                      zIndex="100" style="#forest" textStyle="#maroonAreaName"/>    
                 <class value="scrub"                     zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
                 <class value="wetland"                   zIndex="101" style="#mud"    textStyle="#maroonAreaName"/>    
@@ -552,7 +563,6 @@
                 <class value="tree"                      zIndex="100" style="#forest" textStyle="#maroonAreaName"/>    
                 <class value="scree"                     zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
                 <class value="land"                      zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
-                <class value="bay"                       zIndex="98"  style="#water"  textStyle="#maroonAreaName"/>    
                 <class value="glacier"                   zIndex="100" style="#ice"    textStyle="#maroonAreaName"/>    
                 <class value="fell"                      zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
                 <class value="stone"                     zIndex="100" style="#stone"  textStyle="#maroonAreaName"/>
@@ -600,7 +610,7 @@
         </restriction>
         <restriction zLevels="11,12">
             <condition tagKey="waterway" closed="no">
-                <class value="default"                  zIndex="101" style="#waterLine" textStyle="#riverName"/>
+                <class value="default"                  zIndex="101" style="#waterLine" />
             </condition>
         </restriction>
     </index>
@@ -641,14 +651,14 @@
                 <class value="religious"                 zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
                 <class value="reservoir"                 zIndex="101" style="#water"    textStyle="#maroonAreaName"/>
                 <class value="retail"                    zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="salt_pond"                 zIndex="101" style="#water"    textStyle="#maroonAreaName"/>
+                <class value="salt_pond"                 zIndex="101" style="#mud"     textStyle="#maroonAreaName"/>
                 <class value="village_green"             zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
                 <class value="vineyard"                  zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>    
                 <class value="quarry"                    zIndex="100" style="#stone"    textStyle="#maroonAreaName"/>    
                 <class value="marina"                    zIndex="100" style="#zone"    textStyle="#maroonAreaName"/>
             </condition>
             <condition tagKey="natural" closed="yes">
-                <class value="reef"                     zIndex="100" style="#stone"  textStyle="#maroonAreaName"/>    
+                <class value="reef"                     zIndex="100" style="#reef"  textStyle="#maroonAreaName"/>    
                 <class value="wood"                     zIndex="100" style="#forest" textStyle="#maroonAreaName"/>    
                 <class value="scrub"                    zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
                 <class value="wetland"                  zIndex="101" style="#mud"    textStyle="#maroonAreaName"/>    
@@ -665,7 +675,6 @@
                 <class value="tree"                     zIndex="100" style="#forest" textStyle="#maroonAreaName"/>    
                 <class value="scree"                    zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
                 <class value="land"                     zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
-                <class value="bay"                      zIndex="98"  style="#water"  textStyle="#maroonAreaName"/>    
                 <class value="glacier"                  zIndex="100" style="#ice"    textStyle="#maroonAreaName"/>    
                 <class value="fell"                     zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
                 <class value="stone"                    zIndex="100" style="#stone"  textStyle="#maroonAreaName"/>
@@ -702,15 +711,15 @@
     <index type="way" name="wayLandUseIdxMedRes">
         <restriction zLevels="8,9,10,11,12">
             <condition tagKey="waterway" closed="yes">
-                    <class value="default"                  zIndex="101" style="#water" textStyle="#riverName"/>
+                    <class value="default"                  zIndex="101" style="#water" />
             </condition>
             <condition tagKey="natural" closed="yes">
-                <class value="water"                      zIndex="101" style="#water" textStyle="#riverName"/>    
+                <class value="water"                      zIndex="101" style="#water" />    
             </condition>
         </restriction>
         <restriction zLevels="11,12">
             <condition tagKey="waterway" closed="no">
-                <class value="default"                  zIndex="101" style="#waterLine" textStyle="#riverName"/>
+                <class value="default"                  zIndex="101" style="#waterLine" />
             </condition>
         </restriction>
     </index>
