@@ -46,7 +46,8 @@ struct CssClass
 	}
 	std::string makeClass(std::string clName, double ppm, bool evenOdd)
 	{
-		std::string result = "";
+		//std::string result = "";
+		std::string result = "/*" + tagValue + "*/\n";
 		std::string tStyle = makeTextStyle(ppm);
 		std::string oStyle = makeStyle(ppm);
 		std::string fillRule="fill-rule:";
@@ -318,7 +319,7 @@ struct XmlVisitor
         }
         if (b->baliseName == "pattern")
         {
-            patterns[symbolId] = patternStr;
+            patterns[patternId] = patternStr;
             std::cout << symbolId << " -> " << symbolStr << "\n";
             patternId = "";
         }

@@ -413,6 +413,14 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                        << std::to_string(v->pos_y)
                        << "\" class=\"c"
                        << std::to_string(v->style)
+                       << "\" style=\"stroke-width:4; stroke:white;opacity:0.5\">"
+                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)+"</text>\n";
+                texts << "<text  x=\""
+                       << std::to_string(v->pos_x)
+                       << "\" y=\""
+                       << std::to_string(v->pos_y)
+                       << "\" class=\"c"
+                       << std::to_string(v->style)
                        << "\">"
                        << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)+"</text>\n";
                        cssClasses.insert("c"+std::to_string(v->style));
@@ -420,6 +428,22 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             else
             {
 //               libs += "<text text-anchor=\"middle\" dominant-baseline=\"central\" class=\"c"+std::to_string(v->style)+"\" style=\"font-size:" +std::to_string(v->fontsize)+ "px\"><textPath xlink:href=\"#W"+std::to_string(v->id)+"\" startOffset=\"50%\">"+v->text+"</textPath></text>\n";
+               texts << "<text  class=\"c"
+                      << std::to_string(v->style)
+                      << "\" style=\"font-size:"
+                      << std::to_string(v->fontsize)
+                      << "px; stroke-width:4; stroke:white;opacity:0.5\" x=\""+std::to_string(v->pos_x)
+                      << "\" y=\""+std::to_string(v->pos_y)
+                      << "\" transform=\"rotate("
+                      << std::to_string(v->angle*180/M_PI)
+                      << ","
+                      << std::to_string(v->pos_x)
+                      << ","
+                      << std::to_string(v->pos_y)
+                      << ")\" >"
+                      << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
+                      << "</text>\n";
+
                texts << "<text  class=\"c"
                       << std::to_string(v->style)
                       << "\" style=\"font-size:"
