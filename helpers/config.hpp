@@ -18,6 +18,7 @@ struct CssClass
     std::string pattern;
     
     int zIndex;
+    int textZIndex;
     int rank;
     uint32_t mask;
     bool closed;
@@ -277,6 +278,7 @@ struct XmlVisitor
             cdt->textField = (b->keyValues["textField"]);
             cdt->textWidth = (b->keyValues["textWidth"]);
             cdt->zIndex = atoi(b->keyValues["zIndex"].c_str());
+            cdt->textZIndex = atoi(b->keyValues["textZIndex"].c_str());
             cdt->mask = mask;
             cdt->rank = clRank++;
             idxMask = idxMask | mask;

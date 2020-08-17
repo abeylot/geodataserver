@@ -28,8 +28,8 @@ Shape* SvgRenderer::getShape(CssClass* c)
 
 bool compare(const label_s& l2, const label_s& l1)
 {
-    if(l1.zindex > l2.zindex) return false;
-    if(l2.zindex > l1.zindex) return true;
+    if(l1.zindex < l2.zindex) return false;
+    if(l2.zindex < l1.zindex) return true;
     if(l1.id < l2.id) return true;
     if(l2.id < l1.id) return false;
     return (l1.text > l2.text);
@@ -284,7 +284,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 
     result << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?> <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
     result << "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 " << std::to_string(sizex) << " " << std::to_string(sizey) << "\">\n";
-    result << "<def>";
+    result << "<defs>";
     
     for( auto pattern : *(mger->patterns))
     {
@@ -293,7 +293,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             result << pattern.second;
         //}
     }
-    result << "</def>";    result << "<style>\ntext,tspan{dominant-baseline:central;text-anchor:middle;} path{fill:none;}";
+    result << "</defs>";    result << "<style>\ntext,tspan{dominant-baseline:central;text-anchor:middle;} path{fill:none;}";
 
     indexId = 0;
     for (IndexDesc* idxDesc : *(mger->indexes))

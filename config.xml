@@ -116,7 +116,7 @@
     <index type="relation" name="lakeIdx">
     <restriction zLevels="0,1,2,3,4,5,6,7,8,9,10,11,12">
             <condition tagKey="shape" closed="yes">
-                <class value="lake"        zIndex="1" style="#water"/>
+                <class value="lake"        zIndex="1"  style="#water"/>
             </condition>
         </restriction>
     </index>
@@ -124,7 +124,7 @@
     <index type="relation" name="frontierIdx">
     <restriction zLevels="0,1,2,3,4,5,6,7,8,9,10,11,12">
             <condition tagKey="shape" closed="both">
-                <class value="frontier"     zIndex="1" style="#frontier"/>
+                <class value="frontier"     zIndex="1"  style="#frontier"/>
             </condition>
         </restriction>
     </index>
@@ -157,17 +157,17 @@
     <index type="node" name="placesIdxLowRes">
         <restriction zLevels="5,6,7">
             <condition tagKey="place" closed="both">
-                <class value="country"        zIndex="5002"    textStyle="#countryName"/>
-                <class value="state"          zIndex="5001"    textStyle="#stateName"/>
+                <class value="country"        zIndex="5002"    textZIndex="20" textStyle="#countryName"/>
+                <class value="state"          zIndex="5001"    textZIndex="30" textStyle="#stateName"/>
             </condition>
         </restriction>
         <restriction zLevels="8">
             <condition tagKey="place" closed="both">
-                <class value="country"          zIndex="5010"    textStyle="#countryName"/>
-                <class value="state"            zIndex="5009"    textStyle="#stateName"/>
-                <class value="province"         zIndex="5008"    textStyle="#provinceName"/>
-                <class value="district"         zIndex="5007"    textStyle="#districtName"/>
-                <class value="county"           zIndex="5006"    textStyle="#countyName"/>
+                <class value="country"          zIndex="5010"    textZIndex="20" textStyle="#countryName"/>
+                <class value="state"            zIndex="5009"    textZIndex="30" textStyle="#stateName"/>
+                <class value="province"         zIndex="5008"    textZIndex="40" textStyle="#provinceName"/>
+                <class value="district"         zIndex="5007"    textZIndex="50" textStyle="#districtName"/>
+                <class value="county"           zIndex="5006"    textZIndex="60" textStyle="#countyName"/>
             </condition>
         </restriction>
     </index>
@@ -175,15 +175,15 @@
     <index type="node" name="placesIdxMedRes">
         <restriction zLevels="6,7,8">
             <condition tagKey="place" closed="both">
-                <class value="city"             zIndex="5à10" textStyle="#cityName" />
-                <class value="town"             zIndex="5009" textStyle="#townName" />
+                <class value="city"             zIndex="5010" textZIndex="40" textStyle="#cityName" />
+                <class value="town"             zIndex="5009" textZIndex="30" textStyle="#townName" />
             </condition>
         </restriction>
         <restriction zLevels="9,10,11,12,13">
             <condition tagKey="place" closed="both">
-                <class value="city"             zIndex="5008" textStyle="#cityName" />
-                <class value="town"             zIndex="5007" textStyle="#townName" />
-                <class value="village"          zIndex="5006" textStyle="#villageName"/>
+                <class value="city"             zIndex="5008" textZIndex="40" textStyle="#cityName" />
+                <class value="town"             zIndex="5007" textZIndex="30" textStyle="#townName" />
+                <class value="village"          zIndex="5006" textZIndex="30" textStyle="#villageName"/>
             </condition>
         </restriction>
     </index>
@@ -192,17 +192,17 @@
     <index type="way" name="placesIdxLowResWay">
         <restriction zLevels="5,6,7">
             <condition tagKey="place" closed="yes">
-                <class value="country"        zIndex="5001"  style="fill:none"   textStyle="#countryName"/>
-                <class value="state"          zIndex="5000"  style="fill:none"   textStyle="#stateName"/>
+                <class value="country"        zIndex="5001"  style="fill:none"   textZIndex="40" textStyle="#countryName"/>
+                <class value="state"          zIndex="5000"  style="fill:none"   textZIndex="30" textStyle="#stateName"/>
             </condition>
         </restriction>
         <restriction zLevels="8">
             <condition tagKey="place" closed="yes">
-                <class value="country"          zIndex="5010"    style="fill:none" textStyle="#countryName"/>
-                <class value="state"            zIndex="5009"    style="fill:none" textStyle="#stateName"/>
-                <class value="province"         zIndex="5008"    style="fill:none" textStyle="#provinceName"/>
-                <class value="district"         zIndex="5007"    style="fill:none" textStyle="#districtName"/>
-                <class value="county"           zIndex="5006"    style="fill:none" textStyle="#countyName"/>
+                <class value="country"          zIndex="5010"    style="fill:none" textZIndex="40" textStyle="#countryName"/>
+                <class value="state"            zIndex="5009"    style="fill:none" textZIndex="30" textStyle="#stateName"/>
+                <class value="province"         zIndex="5008"    style="fill:none" textZIndex="20" textStyle="#provinceName"/>
+                <class value="district"         zIndex="5007"    style="fill:none" textZIndex="10" textStyle="#districtName"/>
+                <class value="county"           zIndex="5006"    style="fill:none" textZIndex="5"  textStyle="#countyName"/>
             </condition>
         </restriction>
     </index>
@@ -211,15 +211,15 @@
     <index type="way" name="placesIdxMedResWay">
         <restriction zLevels="8,9">
             <condition tagKey="place" closed="yes">
-                <class value="city"             zIndex="5010" style="fill:none" textStyle="#cityName" />
-                <class value="town"             zIndex="5009" style="fill:none" textStyle="#townName" />
+                <class value="city"             zIndex="5010" style="fill:none" textZIndex="40" textStyle="#cityName" />
+                <class value="town"             zIndex="5009" style="fill:none" textZIndex="30" textStyle="#townName" />
             </condition>
         </restriction>
         <restriction zLevels="10,11,12,13,">
             <condition tagKey="place" closed="yes">
-                <class value="city"             zIndex="5008" style="fill:none" textStyle="#cityName"/>
-                <class value="town"             zIndex="5007" style="fill:none" textStyle="#townName"/>
-                <class value="village"          zIndex="5006" style="fill:none" textStyle="#villageName"/>
+                <class value="city"             zIndex="5008" style="fill:none" textZIndex="40" textStyle="#cityName"/>
+                <class value="town"             zIndex="5007" style="fill:none" textZIndex="30" textStyle="#townName"/>
+                <class value="village"          zIndex="5006" style="fill:none" textZIndex="20" textStyle="#villageName"/>
             </condition>
         </restriction>
     </index>
@@ -229,17 +229,17 @@
     <index type="relation" name="placesIdxLowResRelation">
         <restriction zLevels="5,6,7">
             <condition tagKey="place" closed="yes">
-                <class value="country"        zIndex="5001"     style="fill:none" textStyle="#countryName"/>
-                <class value="state"          zIndex="5000"     style="fill:none" textStyle="#stateName"/>
+                <class value="country"        zIndex="5001"     style="fill:none" textZIndex="40" textStyle="#countryName"/>
+                <class value="state"          zIndex="5000"     style="fill:none" textZIndex="30" textStyle="#stateName"/>
             </condition>
         </restriction>
         <restriction zLevels="8">
             <condition tagKey="place" closed="yes">
-                <class value="country"          zIndex="5010"    style="fill:none" textStyle="#countryName"/>
-                <class value="state"            zIndex="5009"    style="fill:none" textStyle="#stateName"/>
-                <class value="province"         zIndex="5008"    style="fill:none" textStyle="#provinceName"/>
-                <class value="district"         zIndex="5007"    style="fill:none" textStyle="#districtName"/>
-                <class value="county"           zIndex="5006"    style="fill:none" textStyle="#countyName"/>
+                <class value="country"          zIndex="5010"    style="fill:none" textZIndex="40" textStyle="#countryName"/>
+                <class value="state"            zIndex="5009"    style="fill:none" textZIndex="30" textStyle="#stateName"/>
+                <class value="province"         zIndex="5008"    style="fill:none" textZIndex="20" textStyle="#provinceName"/>
+                <class value="district"         zIndex="5007"    style="fill:none" textZIndex="10" textStyle="#districtName"/>
+                <class value="county"           zIndex="5006"    style="fill:none" textZIndex="5" textStyle="#countyName"/>
             </condition>
         </restriction>
     </index>
@@ -252,15 +252,15 @@
         </restriction>
         <restriction zLevels="9">
             <condition tagKey="place" closed="yes">
-                <class value="city"             zIndex="5010" style="fill:none" textStyle="#cityName"/>
-                <class value="town"             zIndex="5009" style="fill:none" textStyle="#townName"/>
+                <class value="city"             zIndex="5010" style="fill:none" textZIndex="40" textStyle="#cityName"/>
+                <class value="town"             zIndex="5009" style="fill:none" textZIndex="30" textStyle="#townName"/>
             </condition>
         </restriction>
         <restriction zLevels="10,11,12,13">
             <condition tagKey="place" closed="yes">
-                <class value="city"             zIndex="5008" style="fill:none" textStyle="#cityName"/>
-                <class value="town"             zIndex="5007" style="fill:none" textStyle="#townName"/>
-                <class value="village"          zIndex="5006" style="fill:none" textStyle="#villageName"/>
+                <class value="city"             zIndex="5008" style="fill:none" textZIndex="40" textStyle="#cityName"/>
+                <class value="town"             zIndex="5007" style="fill:none" textZIndex="30" textStyle="#townName"/>
+                <class value="village"          zIndex="5006" style="fill:none" textZIndex="20" textStyle="#villageName"/>
             </condition>
         </restriction>
     </index>
@@ -269,26 +269,26 @@
     <index type="node" name="placesIdxHighRes">
         <restriction zLevels="14,15,16,17,18">
         <condition tagKey="place" closed="both">
-                <class value="city"              zIndex="5008" textStyle="#cityName"/>
-                <class value="borough"           zIndex="5008" textStyle="#townName"/>
-                <class value="town"              zIndex="5007" textStyle="#townName"/>
-                <class value="suburb"            zIndex="5007" textStyle="#townName"/>
-                <class value="village"           zIndex="5006" textStyle="#villageName"/>
-                <class value="quarter"           zIndex="5006" textStyle="#villageName"/>
-                <class value="hamlet"            zIndex="5005" textStyle="#villageName"/>
-                <class value="locality"          zIndex="5005" textStyle="#villageName"/>
-                <class value="isolated_dwelling" zIndex="5005" textStyle="#villageName"/>
-                <class value="farm"              zIndex="5005" textStyle="#villageName"/>
+                <class value="city"              zIndex="5008" textZIndex="40" textStyle="#cityName"/>
+                <class value="borough"           zIndex="5008" textZIndex="30" textStyle="#townName"/>
+                <class value="town"              zIndex="5007" textZIndex="20" textStyle="#townName"/>
+                <class value="suburb"            zIndex="5007" textZIndex="10" textStyle="#townName"/>
+                <class value="village"           zIndex="5006" textZIndex="9" textStyle="#villageName"/>
+                <class value="quarter"           zIndex="5006" textZIndex="8" textStyle="#villageName"/>
+                <class value="hamlet"            zIndex="5005" textZIndex="7" textStyle="#villageName"/>
+                <class value="locality"          zIndex="5005" textZIndex="6" textStyle="#villageName"/>
+                <class value="isolated_dwelling" zIndex="5005" textZIndex="5" textStyle="#villageName"/>
+                <class value="farm"              zIndex="5005" textZIndex="4" textStyle="#villageName"/>
         </condition>
         </restriction>
         <condition tagKey="addr:housenumber" closed="both">
             <restriction zLevels="17,18,19">
-                <class value="default" textField="addr:housenumber" textStyle="#houseNumber" zIndex="100" style="#building"/>
+                <class value="default" textField="addr:housenumber" textZIndex="0" textStyle="#houseNumber" zIndex="100" style="#building"/>
             </restriction>
         </condition>
         <restriction zLevels="17,18,19,">
             <condition tagKey="place" closed="both">
-                <class value="square"          zIndex="5006" style="fill:none" textStyle="#roadName"/>
+                <class value="square"          zIndex="5006" style="fill:none" textZIndex="40" textStyle="#roadName"/>
             </condition>
         </restriction>
     </index> 
@@ -297,26 +297,26 @@
     <index type="way" name="placesIdxHighResWay">
         <restriction zLevels="14,15,16,17,18">
         <condition tagKey="place" closed="yes">
-                <class value="city"              zIndex="5008" textStyle="#cityName"/>
-                <class value="borough"           zIndex="5008" textStyle="#townName"/>
-                <class value="town"              zIndex="5007" textStyle="#townName"/>
-                <class value="suburb"            zIndex="5007" textStyle="#townName"/>
-                <class value="village"           zIndex="5006" textStyle="#villageName"/>
-                <class value="quarter"           zIndex="5006" textStyle="#villageName"/>
-                <class value="hamlet"            zIndex="5005" textStyle="#villageName"/>
-                <class value="locality"          zIndex="5005" textStyle="#villageName"/>
-                <class value="isolated_dwelling" zIndex="5005" textStyle="#villageName"/>
-                <class value="farm"              zIndex="5005" textStyle="#villageName"/>
+                <class value="city"              zIndex="5008" textZIndex="40" textStyle="#cityName"/>
+                <class value="borough"           zIndex="5008" textZIndex="30" textStyle="#townName"/>
+                <class value="town"              zIndex="5007" textZIndex="20" textStyle="#townName"/>
+                <class value="suburb"            zIndex="5007" textZIndex="10" textStyle="#townName"/>
+                <class value="village"           zIndex="5006" textZIndex="9" textStyle="#villageName"/>
+                <class value="quarter"           zIndex="5006" textZIndex="8" textStyle="#villageName"/>
+                <class value="hamlet"            zIndex="5005" textZIndex="7" textStyle="#villageName"/>
+                <class value="locality"          zIndex="5005" textZIndex="6" textStyle="#villageName"/>
+                <class value="isolated_dwelling" zIndex="5005" textZIndex="5" textStyle="#villageName"/>
+                <class value="farm"              zIndex="5005" textZIndex="4" textStyle="#villageName"/>
         </condition>
         </restriction>
         <condition tagKey="addr:housenumber" closed="yes">
             <restriction zLevels="17,18,19">
-                <class value="default" textField="addr:housenumber" textStyle="#houseNumber" zIndex="900" style="#building"/>
+                <class value="default" textField="addr:housenumber" textZIndex="0" textStyle="#houseNumber" zIndex="900" style="#building"/>
             </restriction>
         </condition>
         <restriction zLevels="17,18,19,">
             <condition tagKey="place" closed="yes">
-                <class value="square"          zIndex="5006" style="fill:none" textStyle="#roadName"/>
+                <class value="square"          zIndex="5006" style="fill:none" textZIndex="40" textStyle="#roadName"/>
             </condition>
         </restriction>
     </index> 
@@ -325,26 +325,26 @@
     <index type="relation" name="placesIdxHighResRelation">
         <restriction zLevels="14,15,16,17,18">
         <condition tagKey="place" closed="yes">
-                <class value="city"              zIndex="5008" textStyle="#cityName"/>
-                <class value="borough"           zIndex="5008" textStyle="#townName"/>
-                <class value="town"              zIndex="5007" textStyle="#townName"/>
-                <class value="suburb"            zIndex="5007" textStyle="#townName"/>
-                <class value="village"           zIndex="5006" textStyle="#villageName"/>
-                <class value="quarter"           zIndex="5006" textStyle="#villageName"/>
-                <class value="hamlet"            zIndex="5005" textStyle="#villageName"/>
-                <class value="locality"          zIndex="5005" textStyle="#villageName"/>
-                <class value="isolated_dwelling" zIndex="5005" textStyle="#villageName"/>
-                <class value="farm"              zIndex="5005" textStyle="#villageName"/>
+                <class value="city"              zIndex="5008" textZIndex="40" textStyle="#cityName"/>
+                <class value="borough"           zIndex="5008" textZIndex="30" textStyle="#townName"/>
+                <class value="town"              zIndex="5007" textZIndex="20" textStyle="#townName"/>
+                <class value="suburb"            zIndex="5007" textZIndex="10" textStyle="#townName"/>
+                <class value="village"           zIndex="5006" textZIndex="9" textStyle="#villageName"/>
+                <class value="quarter"           zIndex="5006" textZIndex="8" textStyle="#villageName"/>
+                <class value="hamlet"            zIndex="5005" textZIndex="7" textStyle="#villageName"/>
+                <class value="locality"          zIndex="5005" textZIndex="6" textStyle="#villageName"/>
+                <class value="isolated_dwelling" zIndex="5005" textZIndex="5" textStyle="#villageName"/>
+                <class value="farm"              zIndex="5005" textZIndex="4" textStyle="#villageName"/>
         </condition>
         </restriction>
         <condition tagKey="addr:housenumber" closed="yes">
             <restriction zLevels="17,18,19">
-                <class value="default" textField="addr:housenumber" textStyle="#houseNumber" zIndex="900" style="#building"/>
+                <class value="default" textField="addr:housenumber" textZIndex="0" textStyle="#houseNumber" zIndex="900" style="#building"/>
             </restriction>
         </condition>
         <restriction zLevels="17,18,19,">
             <condition tagKey="place" closed="yes">
-                <class value="square"          zIndex="5006" style="fill:none" textStyle="#roadName"/>
+                <class value="square"          zIndex="5006" style="fill:none" textZIndex="40" textStyle="#roadName"/>
             </condition>
         </restriction>
     </index> 
@@ -355,35 +355,35 @@
         <select tagKey="place" tagValue="city"/>
         <restriction zLevels="3,4,5,6">
             <condition tagKey="capital" closed="both">
-                <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="30" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="7,8,9">
             <condition tagKey="capital" closed="both">
-                <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="37"  textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="10,11,12,13">
             <condition tagKey="capital" closed="both">
-                <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="37" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="14,15,16,17">
             <condition tagKey="capital" closed="both">
-                <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="40" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="39" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="38" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
     </index>
@@ -392,35 +392,35 @@
         <select tagKey="place" tagValue="city"/>
         <restriction zLevels="3,4,5,6">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999" textStyle="#capitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="7,8,9">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="37" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="10,11,12,13">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="37" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="14,15,16,17">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="37" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
     </index>
@@ -429,35 +429,35 @@
         <select tagKey="place" tagValue="city"/>
         <restriction zLevels="3,4,5,6">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999" textStyle="#capitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="7,8,9">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="37" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="10,11,12,13">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="37" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="14,15,16,17">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="37" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
     </index>
@@ -466,20 +466,20 @@
     <index type="relation" name="relationLeisureIdx">
         <restriction zLevels="13,14,15,16,17,18,19">
             <condition tagKey="leisure" closed="yes">
-                <class value="dog_park"       zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="garden"         zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="golf_course"    zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="horse_riding"   zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="ice_rink"       zIndex="100" style="#ice"   textStyle="#blueAreaName"/>
-                <class value="marina"         zIndex="100" style="#zone" textStyle="#blueAreaName"/>
-                <class value="miniature_golf" zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="nature_reserve" zIndex="101" style="#zone"  textStyle="#greenAreaName"/>
-                <class value="park"           zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="pitch"          zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="sport_center"   zIndex="100" style="#grass" textStyle="#greyAreaName"/>
-                <class value="stadium"        zIndex="100" style="#grass" textStyle="#greyAreaName"/>
-                <class value="swinmming_pool" zIndex="100" style="#water" textStyle="#blueAreaName"/>
-                <class value="track"          zIndex="100" style="#grass" textStyle="#greyAreaName"/>
+                <class value="dog_park"       zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="garden"         zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="golf_course"    zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="horse_riding"   zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="ice_rink"       zIndex="100" style="#ice"   textZIndex="20" textStyle="#blueAreaName"/>
+                <class value="marina"         zIndex="100" style="#zone"  textZIndex="20" textStyle="#blueAreaName"/>
+                <class value="miniature_golf" zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="nature_reserve" zIndex="101" style="#zone"  textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="park"           zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="pitch"          zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="sport_center"   zIndex="100" style="#grass" textZIndex="20" textStyle="#greyAreaName"/>
+                <class value="stadium"        zIndex="100" style="#grass" textZIndex="20" textStyle="#greyAreaName"/>
+                <class value="swinmming_pool" zIndex="100" style="#water" textZIndex="20" textStyle="#blueAreaName"/>
+                <class value="track"          zIndex="100" style="#grass" textZIndex="20" textStyle="#greyAreaName"/>
             </condition>
         </restriction>
     </index>
@@ -487,20 +487,20 @@
     <index type="way" name="wayLeisureIdx">
         <restriction zLevels="13,14,15,16,17,18,19">
             <condition tagKey="leisure" closed="yes">
-                <class value="dog_park"       zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="garden"         zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="golf_course"    zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="horse_riding"   zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="ice_rink"       zIndex="100" style="#ice"   textStyle="#blueAreaName"/>
-                <class value="marina"         zIndex="100" style="#zone" textStyle="#blueAreaName"/>
-                <class value="miniature_golf" zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="nature_reserve" zIndex="100" style="#zone" textStyle="#greenAreaName"/>
-                <class value="park"           zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="pitch"          zIndex="100" style="#grass" textStyle="#greenAreaName"/>
-                <class value="sport_center"   zIndex="100" style="#grass" textStyle="#greyAreaName"/>
-                <class value="stadium"        zIndex="100" style="#grass" textStyle="#greyAreaName"/>
-                <class value="swinmming_pool" zIndex="100" style="#water" textStyle="#blueAreaName"/>
-                <class value="track"          zIndex="100" style="#grass" textStyle="#greyAreaName"/>
+                <class value="dog_park"       zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="garden"         zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="golf_course"    zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="horse_riding"   zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="ice_rink"       zIndex="100" style="#ice"   textZIndex="20" textStyle="#blueAreaName"/>
+                <class value="marina"         zIndex="100" style="#zone"  textZIndex="20" textStyle="#blueAreaName"/>
+                <class value="miniature_golf" zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="nature_reserve" zIndex="100" style="#zone"  textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="park"           zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="pitch"          zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
+                <class value="sport_center"   zIndex="100" style="#grass" textZIndex="20" textStyle="#greyAreaName"/>
+                <class value="stadium"        zIndex="100" style="#grass" textZIndex="20" textStyle="#greyAreaName"/>
+                <class value="swinmming_pool" zIndex="100" style="#water" textZIndex="20" textStyle="#blueAreaName"/>
+                <class value="track"          zIndex="100" style="#grass" textZIndex="20" textStyle="#greyAreaName"/>
             </condition>
         </restriction>    </index>
 
@@ -508,78 +508,78 @@
     <index type="relation" name="relationLandUseIdxHighRes">
         <restriction zLevels="13,14,15,16,17,18,19">
             <condition tagKey="landuse" closed="yes">
-                <class value="residential"               zIndex="99"  style="#concrete" textStyle="#maroonAreaName" />
-                <class value="allotments"                zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="basin"                     zIndex="100" style="#water"    textStyle="#maroonAreaName"/>
-                <class value="brownfield"                zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="cemetery"                  zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="commercial"                zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="conservation"              zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="construction"              zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="depot"                     zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="farmland"                  zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="farmyard"                  zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="forest"                    zIndex="100" style="#forest"   textStyle="#maroonAreaName"/>
-                <class value="garages"                   zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="grass"                     zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="greenfield"                zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="greenhouse_horticulture"   zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="industrial"                zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="landfill"                  zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="meadow"                    zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="military"                  zIndex="101" style="#zone"     textStyle="#maroonAreaName"/>
-                <class value="orchard"                   zIndex="100" style="#forest"   textStyle="#maroonAreaName"/>
-                <class value="pasture"                   zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="peat_cutting"              zIndex="100" style="grass"     textStyle="#maroonAreaName"/>    
-                <class value="plant_nursery"             zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>    
-                <class value="port"                      zIndex="100" style="#water" textStyle="#maroonAreaName"/>
-                <class value="quary"                     zIndex="100" style="#stone"    textStyle="#maroonAreaName"/>    
-                <class value="railway"                   zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="recreation_ground"         zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="religious"                 zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="reservoir"                 zIndex="101" style="#water"    textStyle="#maroonAreaName"/>
-                <class value="retail"                    zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="salt_pond"                 zIndex="101" style="#mud"      textStyle="#maroonAreaName"/>
-                <class value="village_green"             zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="vineyard"                  zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>    
-                <class value="quarry"                    zIndex="100" style="#stone"    textStyle="#maroonAreaName"/>    
-                <class value="marina"                    zIndex="100" style="#zone"    textStyle="#maroonAreaName"/>
+                <class value="residential"               zIndex="99"  style="#concrete" textZIndex="20" textStyle="#maroonAreaName" />
+                <class value="allotments"                zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="basin"                     zIndex="100" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="brownfield"                zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="cemetery"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="commercial"                zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="conservation"              zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="construction"              zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="depot"                     zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="farmland"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="farmyard"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="forest"                    zIndex="100" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="garages"                   zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="grass"                     zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="greenfield"                zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="greenhouse_horticulture"   zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="industrial"                zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="landfill"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="meadow"                    zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="military"                  zIndex="101" style="#zone"     textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="orchard"                   zIndex="100" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="pasture"                   zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="peat_cutting"              zIndex="100" style="grass"     textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="plant_nursery"             zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="port"                      zIndex="100" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="quary"                     zIndex="100" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="railway"                   zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="recreation_ground"         zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="religious"                 zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="reservoir"                 zIndex="101" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="retail"                    zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="salt_pond"                 zIndex="101" style="#mud"      textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="village_green"             zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="vineyard"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="quarry"                    zIndex="100" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="marina"                    zIndex="100" style="#zone"     textZIndex="20" textStyle="#maroonAreaName"/>
             </condition>
             <condition tagKey="natural" closed="yes">
-                <class value="reef"                      zIndex="100" style="#reef"   textStyle="#maroonAreaName"/>    
-                <class value="wood"                      zIndex="100" style="#forest" textStyle="#maroonAreaName"/>    
-                <class value="scrub"                     zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
-                <class value="wetland"                   zIndex="101" style="#mud"    textStyle="#maroonAreaName"/>    
-                <class value="grassland"                 zIndex="100" style="#mud"    textStyle="#maroonAreaName"/>    
-                <class value="grass"                     zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
-                <class value="tree_row"                  zIndex="50001" style="#forest" textStyle="#maroonAreaName"/>    
-                <class value="rock"                      zIndex="101" style="#stone"  textStyle="#maroonAreaName"/>    
-                <class value="bare_rock"                 zIndex="100" style="#stone"  textStyle="#maroonAreaName"/>    
-                <class value="quarry"                    zIndex="100" style="#stone"  textStyle="#maroonAreaName"/>    
-                <class value="dune"                      zIndex="100" style="#sand"   textStyle="#maroonAreaName"/>    
-                <class value="heath"                     zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
-                <class value="sand"                      zIndex="100" style="#sand"   textStyle="#maroonAreaName"/>    
-                <class value="beach"                     zIndex="100" style="#sand"   textStyle="#maroonAreaName"/>    
-                <class value="tree"                      zIndex="100" style="#forest" textStyle="#maroonAreaName"/>    
-                <class value="scree"                     zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
-                <class value="land"                      zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
-                <class value="glacier"                   zIndex="100" style="#ice"    textStyle="#maroonAreaName"/>    
-                <class value="fell"                      zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
-                <class value="stone"                     zIndex="100" style="#stone"  textStyle="#maroonAreaName"/>
+                <class value="reef"                      zIndex="100" style="#reef"     textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="wood"                      zIndex="100" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="scrub"                     zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="wetland"                   zIndex="101" style="#mud"      textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="grassland"                 zIndex="100" style="#mud"      textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="grass"                     zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="tree_row"                  zIndex="50001" style="#forest" textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="rock"                      zIndex="101" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="bare_rock"                 zIndex="100" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="quarry"                    zIndex="100" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="dune"                      zIndex="100" style="#sand"     textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="heath"                     zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="sand"                      zIndex="100" style="#sand"     textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="beach"                     zIndex="100" style="#sand"     textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="tree"                      zIndex="100" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="scree"                     zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="land"                      zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="glacier"                   zIndex="100" style="#ice"      textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="fell"                      zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="stone"                     zIndex="100" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="water"                     zIndex="101" style="#water"/>    
             </condition>
             <condition tagKey="waterway" closed="yes">
-                <class value="default"                  zIndex="101" style="#water" textStyle="#riverName"/>
+                <class value="default"                  zIndex="101" style="#water" textZIndex="25" textStyle="#riverName"/>
             </condition>
             <condition tagKey="waterway" closed="no">
-                <class value="default"                  zIndex="101" style="#waterLine" textStyle="#riverName"/>
+                <class value="default"                  zIndex="101" style="#waterLine" textZIndex="25" textStyle="#riverName"/>
             </condition>
             <condition tagKey="type" closed="yes">
-                <class value="waterway"                  zIndex="101" style="#water" />
+                <class value="waterway"                  zIndex="101" textZIndex="25" style="#water" />
             </condition>
             <condition tagKey="route" closed="both">
                 <!--class value="bus"      textWidth="4" textStyle="fill:red;font-family:sans-serif"      zIndex="2100" style="fill:none; stroke:green;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/-->
-                <class value="ferry"       textWidth="4" textStyle="#ferryLineName"      zIndex="2100" style="#ferryLine"/>
+                <class value="ferry"       textWidth="4" textStyle="#ferryLineName"      zIndex="2100" textZIndex="26" style="#ferryLine"/>
             </condition>
         </restriction>
         <restriction zLevels="17">
@@ -620,75 +620,75 @@
     <index type="way" name="wayLandUseIdxLowRes">
         <restriction zLevels="13,14,15,16,17,18,19">
             <condition tagKey="landuse" closed="yes">
-                <class value="residential"               zIndex="99"  style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="allotments"                zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="basin"                     zIndex="100" style="#water"    textStyle="#maroonAreaName"/>
-                <class value="brownfield"                zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="cemetery"                  zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="commercial"                zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="conservation"              zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="construction"              zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="depot"                     zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="farmland"                  zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="farmyard"                  zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="forest"                    zIndex="100" style="#forest"   textStyle="#maroonAreaName"/>
-                <class value="garages"                   zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="grass"                     zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="greenfield"                zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="greenhouse_horticulture"   zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="industrial"                zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="landfill"                  zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="meadow"                    zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="military"                  zIndex="101" style="#zone"     textStyle="#maroonAreaName"/>
-                <class value="orchard"                   zIndex="100" style="#forest"   textStyle="#maroonAreaName"/>
-                <class value="pasture"                   zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="peat_cutting"              zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>    
-                <class value="plant_nursery"             zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>    
-                <class value="port"                      zIndex="100" style="#water"    textStyle="#maroonAreaName"/>
-                <class value="quary"                     zIndex="100" style="#stone"    textStyle="#maroonAreaName"/>    
-                <class value="railway"                   zIndex="100" style="#sand"     textStyle="#maroonAreaName"/>
-                <class value="recreation_ground"         zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="religious"                 zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="reservoir"                 zIndex="101" style="#water"    textStyle="#maroonAreaName"/>
-                <class value="retail"                    zIndex="100" style="#concrete" textStyle="#maroonAreaName"/>
-                <class value="salt_pond"                 zIndex="101" style="#mud"     textStyle="#maroonAreaName"/>
-                <class value="village_green"             zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>
-                <class value="vineyard"                  zIndex="100" style="#grass"    textStyle="#maroonAreaName"/>    
-                <class value="quarry"                    zIndex="100" style="#stone"    textStyle="#maroonAreaName"/>    
-                <class value="marina"                    zIndex="100" style="#zone"    textStyle="#maroonAreaName"/>
+                <class value="residential"               zIndex="99"  style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="allotments"                zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="basin"                     zIndex="100" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="brownfield"                zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="cemetery"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="commercial"                zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="conservation"              zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="construction"              zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="depot"                     zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="farmland"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="farmyard"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="forest"                    zIndex="100" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="garages"                   zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="grass"                     zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="greenfield"                zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="greenhouse_horticulture"   zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="industrial"                zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="landfill"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="meadow"                    zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="military"                  zIndex="101" style="#zone"     textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="orchard"                   zIndex="100" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="pasture"                   zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="peat_cutting"              zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="plant_nursery"             zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="port"                      zIndex="100" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="quary"                     zIndex="100" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="railway"                   zIndex="100" style="#sand"     textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="recreation_ground"         zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="religious"                 zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="reservoir"                 zIndex="101" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="retail"                    zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="salt_pond"                 zIndex="101" style="#mud"      textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="village_green"             zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="vineyard"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="quarry"                    zIndex="100" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="marina"                    zIndex="100" style="#zone"     textZIndex="20" textStyle="#maroonAreaName"/>
             </condition>
             <condition tagKey="natural" closed="yes">
-                <class value="reef"                     zIndex="100" style="#reef"  textStyle="#maroonAreaName"/>    
-                <class value="wood"                     zIndex="100" style="#forest" textStyle="#maroonAreaName"/>    
-                <class value="scrub"                    zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
-                <class value="wetland"                  zIndex="101" style="#mud"    textStyle="#maroonAreaName"/>    
-                <class value="grassland"                zIndex="100" style="#mud"    textStyle="#maroonAreaName"/>    
-                <class value="grass"                    zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
-                <class value="tree_row"                 zIndex="50001" style="#forest" textStyle="#maroonAreaName"/>    
-                <class value="rock"                     zIndex="101" style="#stone"  textStyle="#maroonAreaName"/>    
-                <class value="bare_rock"                zIndex="100" style="#stone"  textStyle="#maroonAreaName"/>    
-                <class value="quarry"                   zIndex="100" style="#stone"  textStyle="#maroonAreaName"/>    
-                <class value="dune"                     zIndex="100" style="#sand"   textStyle="#maroonAreaName"/>    
-                <class value="heath"                    zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
-                <class value="sand"                     zIndex="100" style="#sand"   textStyle="#maroonAreaName"/>    
-                <class value="beach"                    zIndex="100" style="#sand"   textStyle="#maroonAreaName"/>    
-                <class value="tree"                     zIndex="100" style="#forest" textStyle="#maroonAreaName"/>    
-                <class value="scree"                    zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
-                <class value="land"                     zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
-                <class value="glacier"                  zIndex="100" style="#ice"    textStyle="#maroonAreaName"/>    
-                <class value="fell"                     zIndex="100" style="#grass"  textStyle="#maroonAreaName"/>    
-                <class value="stone"                    zIndex="100" style="#stone"  textStyle="#maroonAreaName"/>
-                <class value="water"                    zIndex="101" style="#water"  textStyle="#riverName"/>    
+                <class value="reef"                     zIndex="100" style="#reef"   textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="wood"                     zIndex="100" style="#forest" textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="scrub"                    zIndex="100" style="#grass"  textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="wetland"                  zIndex="101" style="#mud"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="grassland"                zIndex="100" style="#mud"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="grass"                    zIndex="100" style="#grass"  textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="tree_row"                 zIndex="50001" style="#forest" textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="rock"                     zIndex="101" style="#stone"  textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="bare_rock"                zIndex="100" style="#stone"  textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="quarry"                   zIndex="100" style="#stone"  textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="dune"                     zIndex="100" style="#sand"   textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="heath"                    zIndex="100" style="#grass"  textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="sand"                     zIndex="100" style="#sand"   textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="beach"                    zIndex="100" style="#sand"   textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="tree"                     zIndex="100" style="#forest" textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="scree"                    zIndex="100" style="#grass"  textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="land"                     zIndex="100" style="#grass"  textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="glacier"                  zIndex="100" style="#ice"    textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="fell"                     zIndex="100" style="#grass"  textZIndex="20" textStyle="#maroonAreaName"/>    
+                <class value="stone"                    zIndex="100" style="#stone"  textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="water"                    zIndex="101" style="#water"  textZIndex="20" textStyle="#riverName"/>    
             </condition>
             <condition tagKey="waterway" closed="no">
-                <class value="default"                  zIndex="101" style="#waterLine" textStyle="#riverName"/>
+                <class value="default"                  zIndex="101" style="#waterLine" textZIndex="20" textStyle="#riverName"/>
             </condition>
             <condition tagKey="waterway" closed="yes">
                     <class value="default"                  zIndex="101" style="#water" />
             </condition>
             <condition tagKey="route" closed="both">
-                <class value="bus"       textWidth="4" textStyle="fill:maroon;;opacity:0.3;font-family:sans-serif"      zIndex="2100" style="fill:none; stroke:maroon;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
-                <class value="ferry"       textWidth="4" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif"   zIndex="2100" style="#ferryLine"/>
+                <class value="bus"       textWidth="4" textZIndex="21" textStyle="fill:maroon;;opacity:0.3;font-family:sans-serif"      zIndex="2100" style="fill:none; stroke:maroon;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
+                <class value="ferry"       textWidth="4" textZIndex="21" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif"   zIndex="2100" style="#ferryLine"/>
             </condition>
         </restriction>
         <restriction zLevels="17">
@@ -730,18 +730,18 @@
         <select tagKey="heritage" tagValue="*"/>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                <class value="default" zIndex="2900" textField="addr:housenumber"      textStyle="#houseNumber" style="#historicBuilding"/>
+                <class value="default" zIndex="2900" textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber" style="#historicBuilding"/>
             </condition>
             <condition tagKey="type"    closed="yes">
-                <class value="building" textField="addr:housenumber"  textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
+                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
             </condition>
         </restriction>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                <class value="default" textField="addr:housenumber"  textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
+                <class value="default" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
             </condition>
             <condition tagKey="type"    closed="yes">
-                <class value="building" textField="addr:housenumber"  textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
+                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
             </condition>
         </restriction>
     </index>
@@ -752,18 +752,18 @@
         <select tagKey="historic" tagValue="*"/>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                <class value="default" zIndex="2900" textField="addr:housenumber"      textStyle="#houseNumber" style="#historicBuilding"/>
+                <class value="default" zIndex="2900" textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber" style="#historicBuilding"/>
             </condition>
             <condition tagKey="type"    closed="yes">
-                <class value="building" textField="addr:housenumber"  textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
+                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
             </condition>
         </restriction>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                <class value="default" textField="addr:housenumber"  textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
+                <class value="default" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
             </condition>
             <condition tagKey="type"    closed="yes">
-                <class value="building" textField="addr:housenumber"  textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
+                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
             </condition>
         </restriction>
     </index>
@@ -774,18 +774,18 @@
         <exclude tagKey="heritage" tagValue="*"/>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                <class value="default" zIndex="2900" textField="addr:housenumber"      textStyle="#houseNumber" style="#building"/>
+                <class value="default" zIndex="2900" textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber" style="#building"/>
             </condition>
             <condition tagKey="type"    closed="yes">
-                <class value="building" textField="addr:housenumber"  textStyle="#houseNumber" zIndex="2900" style="#building"/>
+                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#building"/>
             </condition>
         </restriction>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                <class value="default" textField="addr:housenumber"  textStyle="#houseNumber" zIndex="2900" style="#building"/>
+                <class value="default" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#building"/>
             </condition>
             <condition tagKey="type"    closed="yes">
-                <class value="building" textField="addr:housenumber"  textStyle="#houseNumber" zIndex="2900" style="#building"/>
+                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#building"/>
             </condition>
         </restriction>
     </index>
@@ -796,18 +796,18 @@
         <exclude tagKey="heritage" tagValue="*"/>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                    <class value="default"       zIndex="2900" style="#historicBuilding" textField="addr:housenumber" textStyle="#houseNumber"/> 
+                    <class value="default"       zIndex="2900" style="#historicBuilding" textZIndex="0" textField="addr:housenumber" textStyle="#houseNumber"/> 
             </condition>
             <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textStyle="#houseNumber"     zIndex="2900" style="#historicBuilding"/>
+                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2900" style="#historicBuilding"/>
             </condition>
         </restriction>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                    <class value="default"       textField="addr:housenumber"    textStyle="#houseNumber"      zIndex="2900" style="#historicBuilding"/>
+                    <class value="default"       textField="addr:housenumber"    textZIndex="0" textStyle="#houseNumber"      zIndex="2900" style="#historicBuilding"/>
             </condition>
             <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textStyle="#houseNumber"     zIndex="2900" style="#historicBuilding"/>
+                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2900" style="#historicBuilding"/>
             </condition>
         </restriction>
     </index>
@@ -817,18 +817,18 @@
         <select tagKey="heritage" tagValue="*"/>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                    <class value="default"       zIndex="2900" style="#historicBuilding" textField="addr:housenumber" textStyle="#houseNumber"/> 
+                    <class value="default"       zIndex="2900" style="#historicBuilding" textField="addr:housenumber" textZIndex="0" textStyle="#houseNumber"/> 
             </condition>
             <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textStyle="#houseNumber"     zIndex="2900" style="#historicBuilding"/>
+                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2900" style="#historicBuilding"/>
             </condition>
         </restriction>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                    <class value="default"       textField="addr:housenumber"    textStyle="#houseNumber"      zIndex="2900" style="#historicBuilding"/>
+                    <class value="default"       textField="addr:housenumber"    textZIndex="0" textStyle="#houseNumber"      zIndex="2900" style="#historicBuilding"/>
             </condition>
             <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textStyle="#houseNumber"     zIndex="2900" style="#historicBuilding"/>
+                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2900" style="#historicBuilding"/>
             </condition>
         </restriction>
     </index>
@@ -838,18 +838,18 @@
         <exclude tagKey="location" tagValue="underground"/>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                    <class value="default"       zIndex="2900" style="#building" textField="addr:housenumber" textStyle="#houseNumber"/> 
+                    <class value="default"       zIndex="2900" style="#building" textZIndex="0" textField="addr:housenumber" textStyle="#houseNumber"/> 
             </condition>
             <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textStyle="#houseNumber"     zIndex="2900" style="#building"/>
+                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2900" style="#building"/>
             </condition>
         </restriction>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                    <class value="default"       textField="addr:housenumber"    textStyle="#houseNumber"      zIndex="2900" style="#building"/>
+                    <class value="default"       textField="addr:housenumber"    textZIndex="0" textStyle="#houseNumber"      zIndex="2900" style="#building"/>
             </condition>
             <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textStyle="#houseNumber"     zIndex="2900" style="#building"/>
+                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2900" style="#building"/>
             </condition>
         </restriction>
     </index>
@@ -858,60 +858,60 @@
 
         <restriction zLevels="13,14,15">
             <condition closed="both" tagKey="highway">
-                <class value="stop"            zIndex="2000" style="#road" width="20" textStyle="#roadName" textField="ref"/>
-                <class value="steps"           zIndex="2001" style="#road" width="10" textStyle="#roadName" textField="ref"/>
-                <class value="path"            zIndex="2002" style="#road" width="22" textStyle="#roadName" textField="ref"/>
-                <class value="footway"         zIndex="2003" style="#road" width="18" textStyle="#roadName" textField="ref"/>
-                <class value="pedestrian"      zIndex="2004" style="#road" width="18" textStyle="#roadName" textField="ref"/>
-                <class value="unclassified"    zIndex="2005" style="#road" width="24" textStyle="#roadName" textField="ref"/>
-                <class value="cycleway"        zIndex="2006" style="#road" width="25" textStyle="#roadName" textField="ref"/>
-                <class value="residential"     zIndex="2007" style="#road" width="26" textStyle="#roadName" textField="ref"/>
-                <class value="service"         zIndex="2008" style="#road" width="27" textStyle="#roadName" textField="ref"/>
-                <class value="track"           zIndex="2009" style="#road" width="20" textStyle="#roadName" textField="ref"/>
-                <class value="turning_circle"  zIndex="2010" style="#road" width="30" textStyle="#roadName" textField="ref"/>
-                <class value="living_street"   zIndex="2011" style="#road" width="31" textStyle="#roadName" textField="ref"/>
-                <class value="tertiary"        zIndex="2012" style="#road" width="32" textStyle="#roadName" textField="ref"/>
-                <class value="secondary"       zIndex="2013" style="#road" width="33" textStyle="#roadName"/>
-                <class value="crossing"        zIndex="2014" style="#road" width="34" textStyle="#roadName" textField="ref"/>
-                <class value="primary"         zIndex="2015" style="#road" width="35" textStyle="#roadName"/>
-                <class value="primary_link"    zIndex="2016" style="#road" width="36" textStyle="#roadName"/>
-                <class value="bus_stop"        zIndex="2017" style="#road" width="37" textStyle="#roadName" textField="ref"/>
-                <class value="trunk"           zIndex="2018" style="#road" width="38" textStyle="#roadName"/>
-                <class value="trunk_link"      zIndex="2019" style="#road" width="39" textStyle="#roadName"/>
-                <class value="motorway"        zIndex="2020" style="#road" width="40" textStyle="#roadName"/>
-                <class value="motorway_link"   zIndex="2021" style="#road" width="41" textStyle="#roadName"/>
+                <class value="stop"            zIndex="2000" style="#road" width="20" textZIndex="21" textStyle="#roadName" textField="ref"/>
+                <class value="steps"           zIndex="2001" style="#road" width="10" textZIndex="21" textStyle="#roadName" textField="ref"/>
+                <class value="path"            zIndex="2002" style="#road" width="22" textZIndex="21" textStyle="#roadName" textField="ref"/>
+                <class value="footway"         zIndex="2003" style="#road" width="18" textZIndex="21" textStyle="#roadName" textField="ref"/>
+                <class value="pedestrian"      zIndex="2004" style="#road" width="18" textZIndex="22" textStyle="#roadName" textField="ref"/>
+                <class value="unclassified"    zIndex="2005" style="#road" width="24" textZIndex="22" textStyle="#roadName" textField="ref"/>
+                <class value="cycleway"        zIndex="2006" style="#road" width="25" textZIndex="23" textStyle="#roadName" textField="ref"/>
+                <class value="residential"     zIndex="2007" style="#road" width="26" textZIndex="24" textStyle="#roadName" textField="ref"/>
+                <class value="service"         zIndex="2008" style="#road" width="27" textZIndex="25" textStyle="#roadName" textField="ref"/>
+                <class value="track"           zIndex="2009" style="#road" width="20" textZIndex="26" textStyle="#roadName" textField="ref"/>
+                <class value="turning_circle"  zIndex="2010" style="#road" width="30" textZIndex="27" textStyle="#roadName" textField="ref"/>
+                <class value="living_street"   zIndex="2011" style="#road" width="31" textZIndex="28" textStyle="#roadName" textField="ref"/>
+                <class value="tertiary"        zIndex="2012" style="#road" width="32" textZIndex="29" textStyle="#roadName" textField="ref"/>
+                <class value="secondary"       zIndex="2013" style="#road" width="33" textZIndex="30" textStyle="#roadName"/>
+                <class value="crossing"        zIndex="2014" style="#road" width="34" textZIndex="31" textStyle="#roadName" textField="ref"/>
+                <class value="primary"         zIndex="2015" style="#road" width="35" textZIndex="32" textStyle="#roadName"/>
+                <class value="primary_link"    zIndex="2016" style="#road" width="36" textZIndex="33" textStyle="#roadName"/>
+                <class value="bus_stop"        zIndex="2017" style="#road" width="37" textZIndex="34" textStyle="#roadName" textField="ref"/>
+                <class value="trunk"           zIndex="2018" style="#road" width="38" textZIndex="35" textStyle="#roadName"/>
+                <class value="trunk_link"      zIndex="2019" style="#road" width="39" textZIndex="36" textStyle="#roadName"/>
+                <class value="motorway"        zIndex="2020" style="#road" width="40" textZIndex="37" textStyle="#roadName"/>
+                <class value="motorway_link"   zIndex="2021" style="#road" width="41" textZIndex="38" textStyle="#roadName"/>
             </condition>
             <condition tagKey="railway" closed="both">
-                <class value="default"      textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
+                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
             </condition>
         </restriction>
         <restriction zLevels="16,17,18,19">
             <condition closed="both" tagKey="highway">
-                <class value="stop"            zIndex="2000" style="#road" width="16" textStyle="#roadName"/>
-                <class value="steps"           zIndex="2001" style="#stairs" width="5" textStyle="#roadName"/>
-                <class value="footway"         zIndex="2001" style="#path" width="5" textStyle="#roadName"/>
-                <class value="path"            zIndex="2002" style="#path" width="5" textStyle="#roadName"/>
-                <class value="pedestrian"      zIndex="2003" style="#path" width="5" textStyle="#roadName"/>
-                <class value="unclassified"    zIndex="2004" style="#road" width="10" textStyle="#roadName"/>
-                <class value="cycleway"        zIndex="2005" style="#road" width="5"  textStyle="#roadName"/>
-                <class value="residential"     zIndex="2006" style="#road" width="10" textStyle="#roadName"/>
-                <class value="service"         zIndex="2007" style="#road" width="10" textStyle="#roadName"/>
-                <class value="track"           zIndex="2008" style="#road" width="10" textStyle="#roadName"/>
-                <class value="turning_circle"  zIndex="2010" style="#road" width="10" textStyle="#roadName"/>
-                <class value="living_street"   zIndex="2011" style="#road" width="10" textStyle="#roadName"/>
-                <class value="tertiary"        zIndex="2012" style="#road" width="16" textStyle="#roadName"/>
-                <class value="secondary"       zIndex="2013" style="#road" width="20" textStyle="#roadName"/>
-                <class value="crossing"        zIndex="2014" style="#road" width="16" textStyle="#roadName"/>
-                <class value="primary"         zIndex="2015" style="#road" width="20" textStyle="#roadName"/>
-                <class value="primary_link"    zIndex="2016" style="#road" width="16" textStyle="#roadName"/>
-                <class value="bus_stop"        zIndex="2017" style="#road" width="16" textStyle="#roadName"/>
-                <class value="trunk"           zIndex="2018" style="#road" width="16" textStyle="#roadName"/>
-                <class value="trunk_link"      zIndex="2019" style="#road" width="16" textStyle="#roadName"/>
-                <class value="motorway"        zIndex="2020" style="#road" width="20" textStyle="#roadName"/>
-                <class value="motorway_link"   zIndex="2021" style="#road" width="16" textStyle="#roadName"/>
+                <class value="stop"            zIndex="2000" style="#road" width="16"  textZIndex="20" textStyle="#roadName"/>
+                <class value="steps"           zIndex="2001" style="#stairs" width="5" textZIndex="21" textStyle="#roadName"/>
+                <class value="footway"         zIndex="2001" style="#path" width="5"   textZIndex="22" textStyle="#roadName"/>
+                <class value="path"            zIndex="2002" style="#path" width="5"   textZIndex="23" textStyle="#roadName"/>
+                <class value="pedestrian"      zIndex="2003" style="#path" width="5"   textZIndex="24" textStyle="#roadName"/>
+                <class value="unclassified"    zIndex="2004" style="#road" width="10" textZIndex="25" textStyle="#roadName"/>
+                <class value="cycleway"        zIndex="2005" style="#road" width="5"  textZIndex="26" textStyle="#roadName"/>
+                <class value="residential"     zIndex="2006" style="#road" width="10" textZIndex="27" textStyle="#roadName"/>
+                <class value="service"         zIndex="2007" style="#road" width="10" textZIndex="28" textStyle="#roadName"/>
+                <class value="track"           zIndex="2008" style="#road" width="10" textZIndex="29" textStyle="#roadName"/>
+                <class value="turning_circle"  zIndex="2010" style="#road" width="10" textZIndex="30" textStyle="#roadName"/>
+                <class value="living_street"   zIndex="2011" style="#road" width="10" textZIndex="31" textStyle="#roadName"/>
+                <class value="tertiary"        zIndex="2012" style="#road" width="16" textZIndex="32" textStyle="#roadName"/>
+                <class value="secondary"       zIndex="2013" style="#road" width="20" textZIndex="33" textStyle="#roadName"/>
+                <class value="crossing"        zIndex="2014" style="#road" width="16" textZIndex="34" textStyle="#roadName"/>
+                <class value="primary"         zIndex="2015" style="#road" width="20" textZIndex="35" textStyle="#roadName"/>
+                <class value="primary_link"    zIndex="2016" style="#road" width="16" textZIndex="36" textStyle="#roadName"/>
+                <class value="bus_stop"        zIndex="2017" style="#road" width="16" textZIndex="37" textStyle="#roadName"/>
+                <class value="trunk"           zIndex="2018" style="#road" width="16" textZIndex="38" textStyle="#roadName"/>
+                <class value="trunk_link"      zIndex="2019" style="#road" width="16" textZIndex="39" textStyle="#roadName"/>
+                <class value="motorway"        zIndex="2020" style="#road" width="20" textZIndex="40" textStyle="#roadName"/>
+                <class value="motorway_link"   zIndex="2021" style="#road" width="16" textZIndex="41" textStyle="#roadName"/>
             </condition>
             <condition tagKey="railway" closed="both">
-                <class value="default"      textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
+                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
             </condition>
         </restriction>
     </index>
@@ -923,18 +923,18 @@
         </restriction>
         <restriction zLevels="8,9,10,11,12">
             <condition closed="both" tagKey="highway">
-                <class value="motorway"         zIndex="2030" style="#redRoad"    textStyle="#roadName" textField="ref"/>
+                <class value="motorway"         zIndex="2030" style="#redRoad"    textZIndex="40" textStyle="#roadName" textField="ref"/>
                 <class value="motorway_link"    zIndex="2030" style="#redRoad"     />
-                <class value="trunk"            zIndex="2030" style="#redRoad"    textStyle="#roadName" textField="ref"/>
+                <class value="trunk"            zIndex="2030" style="#redRoad"    textZIndex="30" textStyle="#roadName" textField="ref"/>
                 <class value="trunk_link"       zIndex="2030" style="#redRoad"     />
-                <class value="primary"          zIndex="2030" style="#orangeRoad" textStyle="#roadName" textField="ref"/>
+                <class value="primary"          zIndex="2030" style="#orangeRoad" textZIndex="25" textStyle="#roadName" textField="ref"/>
                 <class value="primary_link"     zIndex="2030" style="#orangeRoad"  />
 
             </condition>
         </restriction>
         <restriction zLevels="11,12">
             <condition closed="both" tagKey="highway">
-                <class value="secondary"         zIndex="2030" style="fill:none; stroke:khaki;stroke-linecap:round;stroke-width:2"  textStyle="#roadName" textField="ref"/>
+                <class value="secondary"         zIndex="2030" style="fill:none; stroke:khaki;stroke-linecap:round;stroke-width:2"  textZIndex="20" textStyle="#roadName" textField="ref"/>
             </condition>
         </restriction>
     </index>
@@ -944,7 +944,7 @@
       <condition closed="both" tagKey="amenity">
            <class value="parking"  zIndex="50001" symbol="parking" />
            <class value="parking_entrance"  zIndex="50001" symbol="parking"/>
-           <class value="default"  zIndex="1" textStyle="#amenityName"/>
+           <class value="default"  zIndex="1" textZIndex="10" textStyle="#amenityName"/>
       </condition>
       </restriction>
    </index>
@@ -954,7 +954,7 @@
       <condition closed="yes" tagKey="amenity">
            <class value="parking"  zIndex="50001" style="#parking" symbol="parking" />
            <class value="parking_entrance"  zIndex="50001" symbol="parking"/>
-           <class value="default"  zIndex="1" textStyle="#amenityName"/>
+           <class value="default"  zIndex="1" textZIndex="10" textStyle="#amenityName"/>
       </condition>
       </restriction>
    </index>
@@ -964,7 +964,7 @@
       <condition closed="yes" tagKey="amenity">
            <class value="parking"  zIndex="50001" style="#parking" symbol="parking" />
            <class value="parking_entrance"  zIndex="50001" symbol="parking"/>
-           <class value="default"  zIndex="1" textStyle="#amenityName"/>
+           <class value="default"  zIndex="1" textZIndex="10" textStyle="#amenityName"/>
       </condition>
       </restriction>
    </index>
@@ -974,7 +974,7 @@
       <exclude tagKey="building" tagValue="*"/>
       <restriction zLevels="14,15,16,17,18,19">
       <condition closed="yes" tagKey="aeroway">
-           <class value="default"  zIndex="10" style="#concrete" textStyle="#greyAreaName" />
+           <class value="default"  zIndex="10" style="#concrete" textZIndex="20" textStyle="#greyAreaName" />
       </condition>
       </restriction>
    </index>
@@ -983,7 +983,7 @@
       <exclude tagKey="building" tagValue="*"/>
       <restriction zLevels="14,15,16,17,18,19">
       <condition closed="yes" tagKey="aeroway">
-           <class value="default"  zIndex="10" style="#concrete" textStyle="#greyAreaName" />
+           <class value="default"  zIndex="10" style="#concrete" textZIndex="20" textStyle="#greyAreaName" />
       </condition>
       </restriction>
    </index>
