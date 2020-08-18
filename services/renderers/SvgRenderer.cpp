@@ -578,7 +578,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     lbl.ref = "";    
     lbl.pos_x = lbl.angle = lbl.pos_y=0;
     lbl.style = 0;    
-    lbl.zindex = cl.zIndex;
+    lbl.zindex = cl.textZIndex;
     std::ostringstream result;
     double oldx = -1;
     double oldy = -1;
@@ -706,7 +706,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                  unsigned int chars = 1.4*length / (lbl.fontsize);
                  if(name.length() < chars)
                  {
-                       lbl.zindex = cl.zIndex;
+                       lbl.zindex = cl.textZIndex;
                        lbl.style = cl.rank;
                        lbl.text=name;
                        
@@ -730,7 +730,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 int64_t xxx = myWay.rect.x0/2 + myWay.rect.x1/2;
                 int64_t yyy = myWay.rect.y0/2 + myWay.rect.y1/2;
 
-                lbl.zindex = cl.zIndex;
+                lbl.zindex = cl.textZIndex;
                 int32_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
                 int32_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
                 lbl.pos_x = x;
@@ -764,7 +764,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
     lbl.ref = "";    
     lbl.pos_x = lbl.pos_y = lbl.angle = 0;    
     lbl.style = 0;    
-    lbl.zindex = cl.zIndex;
+    lbl.zindex = cl.textZIndex;
     //std::string style= "";
     std::string result = "";
     //double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
@@ -875,7 +875,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                 int32_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
                 lbl.pos_x = x;
                 lbl.pos_y = y;
-                lbl.zindex = cl.zIndex;
+                lbl.zindex = cl.textZIndex;
                 lbl.style = cl.rank;
                 lbl.text = name;
             }
@@ -906,7 +906,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
     lbl.ref = "";    
     lbl.pos_x = lbl.pos_y = lbl.angle = 0;    
     lbl.style = 0;    
-    lbl.zindex = cl.zIndex;
+    lbl.zindex = cl.textZIndex;
     std::string result = "";
     int x,y;
     //std::string style= "";
