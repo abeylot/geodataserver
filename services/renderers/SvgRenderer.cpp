@@ -30,8 +30,10 @@ bool compare(const label_s& l2, const label_s& l1)
 {
     if(l1.zindex < l2.zindex) return false;
     if(l2.zindex < l1.zindex) return true;
-    if(l1.id < l2.id) return true;
-    if(l2.id < l1.id) return false;
+    //if(l1.id < l2.id) return true;
+    //if(l2.id < l1.id) return false;
+    if (l1.text.length() > l2.text.length()) return true;
+    if (l1.text.length() < l2.text.length()) return false;
     return (l1.text > l2.text);
 }
 
@@ -348,8 +350,8 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             double xa,xb,xc,xd,ya,yb,yc,yd;
             
             
-            double lt = t->fontsize*0.75*ilt;
-            double lv = v->fontsize*0.75*ilv;
+            double lt = t->fontsize*0.5*ilt;
+            double lv = v->fontsize*0.5*ilv;
             
             xa = v->pos_x + lv*(cos(v->angle));
             ya = v->pos_y + lv*(sin(v->angle));
@@ -393,7 +395,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             
             if(diffsideab && diffsidecd)
             {
-                    to_show = false;
+                    //to_show = false;
                     break;
             }
             }
