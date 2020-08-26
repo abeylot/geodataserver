@@ -149,9 +149,12 @@ public :
     std::vector<IndexDesc*>* indexes;
     std::map<std::string, std::string>* symbols;
     std::map<std::string, std::string>* patterns;
+    
+    std::string path;
 
     CompiledDataManager(std::string name,std::vector<IndexDesc*>* conf, std::map<std::string, std::string>* symbs = NULL, std::map<std::string, std::string>* patts = NULL)
     {
+        path=name;
         indexes = conf;
         symbols = symbs;
         patterns = patts;

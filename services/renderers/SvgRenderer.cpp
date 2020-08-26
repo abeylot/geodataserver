@@ -725,7 +725,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 textWidth = atoi(cl.textWidth.c_str());
                 lbl.fontsize = textWidth*ppm;
             }
-            unsigned int chars = 1.4*szx*(myWay.rect.x1 - myWay.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
+            unsigned int chars = 1.0*szx*(myWay.rect.x1 - myWay.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
             if(name.length() < chars)
             {
                 style += ";stroke-width:" + std::to_string(atoi(cl.width.c_str())*ppm);

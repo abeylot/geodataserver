@@ -273,7 +273,7 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
     FILE* in;
     if(_z <= _cachelevel)
     {
-    	snprintf(filename,250,"cache/%ld/%ld/%ld.gz",_z,_x,_y);
+    	snprintf(filename,250,"%s/cache/%ld/%ld/%ld.gz",mger.path.c_str(),_z,_x,_y);
         in = fopen(filename, "r");
         if(in != NULL)
         {
@@ -295,7 +295,7 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
         fclose(in);
         encoder.addContent(rep,res);
     }else{	
-		std::string dir1 = "cache/" + std::to_string(_z);
+		std::string dir1 = mger.path + "/cache/" + std::to_string(_z);
 		std::string dir2 = dir1 + "/" + std::to_string(_x);
 
 

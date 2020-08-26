@@ -871,15 +871,15 @@
                 <class value="turning_circle"  zIndex="2010" style="#road" width="30" textZIndex="27" textStyle="#roadName" textField="ref"/>
                 <class value="living_street"   zIndex="2011" style="#road" width="31" textZIndex="28" textStyle="#roadName" textField="ref"/>
                 <class value="tertiary"        zIndex="2012" style="#road" width="32" textZIndex="29" textStyle="#roadName" textField="ref"/>
-                <class value="secondary"       zIndex="2013" style="#road" width="33" textZIndex="30" textStyle="#roadName"/>
+                <class value="secondary"       zIndex="2013" style="#road" width="33" textZIndex="30" textStyle="#roadName" textField="ref"/>
                 <class value="crossing"        zIndex="2014" style="#road" width="34" textZIndex="31" textStyle="#roadName" textField="ref"/>
-                <class value="primary"         zIndex="2015" style="#road" width="35" textZIndex="32" textStyle="#roadName"/>
-                <class value="primary_link"    zIndex="2016" style="#road" width="36" textZIndex="33" textStyle="#roadName"/>
+                <class value="primary"         zIndex="2015" style="#road" width="35" textZIndex="32" textStyle="#roadName" textField="ref"/>
+                <class value="primary_link"    zIndex="2016" style="#road" width="36" textZIndex="33" textStyle="#roadName" textField="ref"/>
                 <class value="bus_stop"        zIndex="2017" style="#road" width="37" textZIndex="34" textStyle="#roadName" textField="ref"/>
-                <class value="trunk"           zIndex="2018" style="#road" width="38" textZIndex="35" textStyle="#roadName"/>
-                <class value="trunk_link"      zIndex="2019" style="#road" width="39" textZIndex="36" textStyle="#roadName"/>
-                <class value="motorway"        zIndex="2020" style="#road" width="40" textZIndex="37" textStyle="#roadName"/>
-                <class value="motorway_link"   zIndex="2021" style="#road" width="41" textZIndex="38" textStyle="#roadName"/>
+                <class value="trunk"           zIndex="2018" style="#road" width="38" textZIndex="35" textStyle="#roadName" textField="ref"/>
+                <class value="trunk_link"      zIndex="2019" style="#road" width="39" textZIndex="36" textStyle="#roadName" textField="ref"/>
+                <class value="motorway"        zIndex="2020" style="#road" width="40" textZIndex="37" textStyle="#roadName" textField="ref"/>
+                <class value="motorway_link"   zIndex="2021" style="#road" width="41" textZIndex="38" textStyle="#roadName" textField="ref"/>
             </condition>
             <condition tagKey="railway" closed="both">
                 <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
