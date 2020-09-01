@@ -27,6 +27,7 @@ messaging/HttpEncoder.hpp \
 services/renderers/SvgRenderer.hpp \
 services/Tile.hpp \
 services/Svg.hpp \
+services/MapDisplay.hpp \
 helpers/TcpConnection.hpp \
 helpers/TcpListener.hpp
 
@@ -51,7 +52,8 @@ Tile.o \
 SvgRenderer.o \
 Msg.o \
 TcpListener.o \
-TcpConnection.o
+TcpConnection.o \
+MapDisplay.o
 
 libs=-lpthread  -lboost_system -lboost_thread -lboost_filesystem -lboost_atomic -lz -latomic
 
@@ -128,6 +130,9 @@ Tile.o: services/Tile.cpp services/Tile.hpp $(headersCommon) $(headersServer)
 
 SvgRenderer.o: services/renderers/SvgRenderer.cpp services/renderers/SvgRenderer.hpp $(headersCommon) $(headersServer)
 	$(cc) -c services/renderers/SvgRenderer.cpp   -o SvgRenderer.o	
+
+MapDisplay.o: services/MapDisplay.cpp services/MapDisplay.hpp $(headersCommon) $(headersServer)
+	$(cc) -c services/MapDisplay.cpp   -o MapDisplay.o	
 
 geoserver: server.cpp $(headersCommon) $(headersServer) $(objectsCommon) $(objectsServer)
 	$(cc) server.cpp $(objectsCommon) $(objectsServer) -o geoserver $(libs)	

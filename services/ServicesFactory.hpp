@@ -9,6 +9,7 @@
 #include "IdxDetail.hpp"
 #include "Svg.hpp"
 #include "Tile.hpp"
+#include "MapDisplay.hpp"
 class ServicesFactory
 {
 private:

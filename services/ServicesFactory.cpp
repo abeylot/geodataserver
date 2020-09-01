@@ -8,7 +8,8 @@ ServiceInterface* ServicesFactory::getService(std::string service, ParmsXmlVisit
     else if (service == "/index/get")     return new IdxDetail;
     else if (service == "/relation/get")  return new RelationDetail;
     else if (service == "/way/get")       return new WayDetail;
-    else if (service == "/svgMap.svg")        return new Svg;
+    else if (service == "/svgMap.svg")    return new Svg;
+    else if ((service == "/MapDisplay")||(service =="/"))    return new MapDisplay; 
     else if(service.find(".svg") != std::string::npos)
     {
         unsigned int pos = 0;
