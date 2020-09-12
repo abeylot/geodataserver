@@ -66,10 +66,10 @@
     <style ref="blueAreaName"    value="fill:blue;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px"/>
     <style ref="greyAreaName"    value="fill:grey;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px"/>
     
-    <style ref="capitalName"     value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:15px; font-weight:bold"/>
-    <style ref="subCapitalName"  value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:13px"/>
+    <style ref="capitalName"     value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:16px; font-weight:bold"/>
+    <style ref="subCapitalName"  value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:15px"/>
 
-    <style ref="cityName"        value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+    <style ref="cityName"        value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:14px"/>
     <style ref="townName"        value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:13px"/>
     <style ref="villageName"     value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:11px"/>
     
@@ -353,111 +353,114 @@
 
    <index type="node" name="capitalsNodeIdx">
         <select tagKey="place" tagValue="city"/>
+        <select tagKey="place" tagValue="town"/>
         <restriction zLevels="3,4,5,6">
             <condition tagKey="capital" closed="both">
-                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999"  textZIndex="30" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="400" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="300" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="7,8,9">
             <condition tagKey="capital" closed="both">
-                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997"  textZIndex="37"  textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="400" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="390" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="380" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="370"  textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="360" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="10,11,12,13">
             <condition tagKey="capital" closed="both">
-                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997"  textZIndex="37" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="400" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="390" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="380" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="370" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="360" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="14,15,16,17">
             <condition tagKey="capital" closed="both">
-                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998"  textZIndex="40" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997"  textZIndex="39" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996"  textZIndex="38" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="400" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="390" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="400" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="390" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="380" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
     </index>
 
    <index type="way" name="capitalsWayIdx">
         <select tagKey="place" tagValue="city"/>
+        <select tagKey="place" tagValue="town"/>
         <restriction zLevels="3,4,5,6">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="400" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="390" textStyle="#capitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="7,8,9">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997"  textZIndex="37" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="400" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="390" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="380" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="370" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="360" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="10,11,12,13">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997"  textZIndex="37" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="400" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="390" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="380" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="370" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="360" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="14,15,16,17">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997"  textZIndex="37" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="400" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="390" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="380" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="370" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="360" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
     </index>
 
    <index type="relation" name="capitalsRelationIdx">
         <select tagKey="place" tagValue="city"/>
+        <select tagKey="place" tagValue="town"/>
         <restriction zLevels="3,4,5,6">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="400" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="390" textStyle="#capitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="7,8,9">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997"  textZIndex="37" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="400" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="390" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="380" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="370" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="360" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="10,11,12,13">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997"  textZIndex="37" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="400" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="390" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="380" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="370" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="360" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
         <restriction zLevels="14,15,16,17">
             <condition tagKey="capital" closed="yes">
-                <class value="yes"           zIndex="10000" textZIndex="40" textStyle="#capitalName"/>
-                <class value="1"             zIndex="9999"  textZIndex="39" textStyle="#capitalName"/>
-                <class value="2"             zIndex="9998"  textZIndex="38" textStyle="#subCapitalName"/>
-                <class value="3"             zIndex="9997"  textZIndex="37" textStyle="#subCapitalName"/>
-                <class value="4"             zIndex="9996"  textZIndex="36" textStyle="#subCapitalName"/>
+                <class value="yes"           zIndex="10000" textZIndex="400" textStyle="#capitalName"/>
+                <class value="1"             zIndex="9999"  textZIndex="390" textStyle="#capitalName"/>
+                <class value="2"             zIndex="9998"  textZIndex="380" textStyle="#subCapitalName"/>
+                <class value="3"             zIndex="9997"  textZIndex="370" textStyle="#subCapitalName"/>
+                <class value="4"             zIndex="9996"  textZIndex="360" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
     </index>

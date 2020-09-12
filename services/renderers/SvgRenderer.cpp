@@ -28,8 +28,8 @@ Shape* SvgRenderer::getShape(CssClass* c)
 
 bool compare(const label_s& l2, const label_s& l1)
 {
-    if(l1.zindex < l2.zindex) return false;
-    if(l2.zindex < l1.zindex) return true;
+    if(l1.zindex > l2.zindex) return false;
+    if(l2.zindex > l1.zindex) return true;
     //if(l1.id < l2.id) return true;
     //if(l2.id < l1.id) return false;
     if (l1.text.length() > l2.text.length()) return true;
@@ -331,7 +331,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             int dy = v->pos_y - t->pos_y;
             if(dx < 0) dx = -dx;
             if(dy < 0) dy = -dy;
-            if((t->text == v->text)&&((dx*dx +dy*dy)< 1000))
+            if((t->text == v->text)&&((dx*dx +dy*dy)< 16000))
             {
                 to_show = false;
                 break;

@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
                                         kept = true;
                                         for(Selector* sel : d->selectors)
                                         {
-                                            kept = kept && ((sel->tagValue == "*")||( r->tags[sel->tagKey.c_str()] == sel->tagValue ));
+                                            kept = kept || ((sel->tagValue == "*")||( r->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
                                         for(Selector* sel : d->excludeSelectors)
                                         {

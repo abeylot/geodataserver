@@ -51,10 +51,31 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
                     std::string name = p->tags["name"];
                     resp += std::to_string(i) + ":: pos :" + std::to_string(record.key.pos)+ "::"+name+":: mask :" + std::to_string(record.key.maskLength)+"::"+std::to_string(record.key.zmMask)+":: id :" + std::to_string(record.value.id);
                     resp += "::" + name +"<br/>";
-                    /*for(std::pair<std::string, std::string> pair : p->tags)
+        
+                    uint64_t used = 0;
+
+                    while( used < p->tags.data_size)
                     {
-                        resp += pair.first + ":" + pair.second + "<br/>";
-                    }*/
+
+                        char* tag = NULL;
+                        char* value = NULL;
+
+                        unsigned char tag_size = 0;
+                        unsigned char value_size = 0;
+
+                        tag_size = p->tags.data[used];
+                        used++;
+                        tag = p->tags.data + used;
+                        used += tag_size;
+                        value_size =  p->tags.data[used];
+                        used++;
+                        value = p->tags.data+used;
+                        used += value_size;
+                        resp += std::string(tag, tag_size);
+                        resp += "=";
+                        resp += std::string(value, value_size);
+                        resp += "<br/>";
+                    }
                     i++;
                     delete p;
                 }
