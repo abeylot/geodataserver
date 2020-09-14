@@ -177,7 +177,9 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
 
 bool Line::isClosed()
 {
-    return points[0] == points[pointsCount - 1];
+    if(closed) return true;
+    if ( points[0] == points[pointsCount - 1] ) closed = true;
+    return closed;
 }
 
 void Line::crop(Rectangle& r)

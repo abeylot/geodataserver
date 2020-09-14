@@ -84,8 +84,10 @@ struct Line
     GeoPoint* points;
     uint64_t pointsCount;
     bool isClosed();
+    bool closed;
     bool mergePoints(GeoPoint* points, uint64_t pointsCount);
     void crop (Rectangle& r);
+    Line(){closed = false;};
     virtual ~Line()
     {
         free(points);
