@@ -683,15 +683,16 @@ void Shape::mergePoints(GeoPoint* points, uint64_t pointsCount)
 {
     bool merged = false;
     unsigned int i = 0;
-    for(i = 0; i < lines.size(); i++)
-    {
-        Line* l = lines[i];
-        if(l->mergePoints(points, pointsCount))
+    if(!(points[0] == points[pointsCount - 1]))
+        for(i = 0; i < lines.size(); i++)
         {
-            merged = true;
-            break;
+            Line* l = lines[i];
+            if(l->mergePoints(points, pointsCount))
+            {
+                merged = true;
+                break;
+            }
         }
-    }
     if(!merged)
     {
         GeoPoint* newPoints = static_cast<GeoPoint*> (malloc(pointsCount*sizeof(GeoPoint)));
