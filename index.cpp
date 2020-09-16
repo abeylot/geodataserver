@@ -22,7 +22,9 @@ int main(int argc, char *argv[])
     std::vector<IndexDesc*> indexes;
 
     XmlVisitor v(indexes, true, ".");
-    FILE* config = fopen("config.xml","r");
+    std::string file = argv[1];
+    file += "/config.xml";
+    FILE* config = fopen(file.c_str(),"r");
     XmlFileParser<XmlVisitor>::parseXmlFile(config,v);
     fclose(config);
     CompiledDataManager mger(argv[1], &indexes);
