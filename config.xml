@@ -189,7 +189,7 @@
     </index>
 
 
-    <index type="way" name="placesIdxLowResWay">
+    <!--index type="way" name="placesIdxLowResWay">
         <restriction zLevels="5,6,7">
             <condition tagKey="place" closed="yes">
                 <class value="country"        zIndex="5001"  style="fill:none"   textZIndex="40" textStyle="#countryName"/>
@@ -205,10 +205,10 @@
                 <class value="county"           zIndex="5006"    style="fill:none" textZIndex="5"  textStyle="#countyName"/>
             </condition>
         </restriction>
-    </index>
+    </index-->
 
 
-    <index type="way" name="placesIdxMedResWay">
+    <!--index type="way" name="placesIdxMedResWay">
         <restriction zLevels="8,9">
             <condition tagKey="place" closed="yes">
                 <class value="city"             zIndex="5010" style="fill:none" textZIndex="40" textStyle="#cityName" />
@@ -222,11 +222,11 @@
                 <class value="village"          zIndex="5006" style="fill:none" textZIndex="20" textStyle="#villageName"/>
             </condition>
         </restriction>
-    </index>
+    </index-->
 
 
 
-    <index type="relation" name="placesIdxLowResRelation">
+    <!--index type="relation" name="placesIdxLowResRelation">
         <restriction zLevels="5,6,7">
             <condition tagKey="place" closed="yes">
                 <class value="country"        zIndex="5001"     style="fill:none" textZIndex="40" textStyle="#countryName"/>
@@ -242,9 +242,9 @@
                 <class value="county"           zIndex="5006"    style="fill:none" textZIndex="5" textStyle="#countyName"/>
             </condition>
         </restriction>
-    </index>
+    </index-->
 
-    <index type="relation" name="placesIdxMedResRelation">
+    <!--index type="relation" name="placesIdxMedResRelation">
         <restriction zLevels="8">
             <condition tagKey="place" closed="yes">
                 <class value="city"             zIndex="5010" style="fill:none" textStyle="#cityName"/>
@@ -263,7 +263,7 @@
                 <class value="village"          zIndex="5006" style="fill:none" textZIndex="20" textStyle="#villageName"/>
             </condition>
         </restriction>
-    </index>
+    </index-->
 
 
     <index type="node" name="placesIdxHighRes">
@@ -294,7 +294,7 @@
     </index> 
 
 
-    <index type="way" name="placesIdxHighResWay">
+    <!--index type="way" name="placesIdxHighResWay">
         <restriction zLevels="14,15,16,17,18">
         <condition tagKey="place" closed="yes">
                 <class value="city"              zIndex="5008" textZIndex="40" textStyle="#cityName"/>
@@ -319,10 +319,10 @@
                 <class value="square"          zIndex="5006" style="fill:none" textZIndex="40" textStyle="#roadName"/>
             </condition>
         </restriction>
-    </index> 
+    </index--> 
 
 
-    <index type="relation" name="placesIdxHighResRelation">
+    <!--index type="relation" name="placesIdxHighResRelation">
         <restriction zLevels="14,15,16,17,18">
         <condition tagKey="place" closed="yes">
                 <class value="city"              zIndex="5008" textZIndex="40" textStyle="#cityName"/>
@@ -347,7 +347,7 @@
                 <class value="square"          zIndex="5006" style="fill:none" textZIndex="40" textStyle="#roadName"/>
             </condition>
         </restriction>
-    </index> 
+    </index--> 
 
 
 
@@ -389,7 +389,7 @@
         </restriction>
     </index>
 
-   <index type="way" name="capitalsWayIdx">
+   <!--index type="way" name="capitalsWayIdx">
         <select tagKey="place" tagValue="city"/>
         <select tagKey="place" tagValue="town"/>
         <restriction zLevels="3,4,5,6">
@@ -425,9 +425,9 @@
                 <class value="4"             zIndex="9996"  textZIndex="360" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
-    </index>
+    </index-->
 
-   <index type="relation" name="capitalsRelationIdx">
+   <!--index type="relation" name="capitalsRelationIdx">
         <select tagKey="place" tagValue="city"/>
         <select tagKey="place" tagValue="town"/>
         <restriction zLevels="3,4,5,6">
@@ -463,7 +463,7 @@
                 <class value="4"             zIndex="9996"  textZIndex="360" textStyle="#subCapitalName"/>
             </condition>
         </restriction>
-    </index>
+    </index-->
 
 
     <index type="relation" name="relationLeisureIdx">
