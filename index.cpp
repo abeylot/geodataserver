@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
         if(r->tags.data == NULL) {
             delete r;
             if ((i &  0xF) == 0)
-                std::cout << "\rrelation " << i << '/' << mger.relationIndex->getSize() << "--" << std::flush;
+                std::cout << "\rrelation " << i * 100.0 / mger.relationIndex->getSize() << "%  " << std::flush;
             continue;
         }
 
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
             }
         }
         if ((i &  0xF) == 0)
-            std::cout << "\rrelation " << i << '/' << mger.relationIndex->getSize() << "  " << std::flush;
+            std::cout << "\rrelation " << i * 100.0 / mger.relationIndex->getSize() << "%  " << std::flush;
         delete r;
     }
 
@@ -191,13 +191,13 @@ int main(int argc, char *argv[])
             }
         }
         if ((i &  0xFFF) == 0)
-            std::cout << "\rway " << i << '/' << mger.wayIndex->getSize() << "  " << std::flush;
+            std::cout << "\rway " << i * 100.0 / mger.wayIndex->getSize() << "%  " << std::flush;
         delete w;
     }
     for(uint64_t i=0; i < mger.nodeIndex->getSize(); i++)
     {
         if ((i &  0xFFFFF) == 0)
-            std::cout << "\rpoint " << i << '/' << mger.nodeIndex->getSize() << "  " << std::flush;
+            std::cout << "\rpoint " << i *100.0 / mger.nodeIndex->getSize() << "%  " << std::flush;
 
         p = mger.loadPoint(i);
         if(!p) continue;
