@@ -212,6 +212,12 @@ private:
 
 int main(int argc, char *argv[])
 {
+    if(argc != 2)
+    {
+        std::cerr << "path argument is missing\n";
+        exit(1);
+    }
+
 
     FILE* config = fopen((std::string(argv[1]) + "/config.xml").c_str(),"r");
     XmlFileParser<ParmsXmlVisitor>::parseXmlFile(config,params);

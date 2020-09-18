@@ -219,20 +219,20 @@ struct XmlVisitor
     FileIndex<GeoPointNumberIndex, uint64_t> *nodeIdIndex;
     BaliseType curBalise;
 
-    XmlVisitor()
+    XmlVisitor(std::string rep)
     {
 
-        relationIdIndex = new FileIndex<uint64_t,uint64_t>("relationIdIndex", false);
-        wayIdIndex      = new FileIndex<uint64_t,uint64_t>("wayIdIndex",      false);
-        nodeIdIndex     = new FileIndex<GeoPointNumberIndex,uint64_t>("nodeIdIndex",     false);
+        relationIdIndex = new FileIndex<uint64_t,uint64_t>(rep + "/relationIdIndex", false);
+        wayIdIndex      = new FileIndex<uint64_t,uint64_t>(rep + "/wayIdIndex",      false);
+        nodeIdIndex     = new FileIndex<GeoPointNumberIndex,uint64_t>(rep + "/nodeIdIndex",     false);
 
-        relationIndex   = new FileRawIndex<GeoIndex>("relationIndex",  true);
-        wayIndex        = new FileRawIndex<GeoWayIndex>("wayIndex",       true);
-        nodeIndex       = new FileRawIndex<GeoPointIndex>("nodeIndex", true);
+        relationIndex   = new FileRawIndex<GeoIndex>(rep + "/relationIndex",  true);
+        wayIndex        = new FileRawIndex<GeoWayIndex>(rep + "/wayIndex",       true);
+        nodeIndex       = new FileRawIndex<GeoPointIndex>(rep + "/nodeIndex", true);
 
-        wayPoints  = new FileRawData<GeoPoint>("wayPoints", true);
-        relMembers = new FileRawData<GeoMember>("relMembers", true);
-        baliseTags = new FileRawVarData<GeoString>("baliseTags", true);
+        wayPoints  = new FileRawData<GeoPoint>(rep + "/wayPoints", true);
+        relMembers = new FileRawData<GeoMember>(rep + "/relMembers", true);
+        baliseTags = new FileRawVarData<GeoString>(rep + "/baliseTags", true);
 
     }
 
@@ -532,15 +532,29 @@ struct XmlVisitor
 
 int main(int argc, char *argv[])
 {
-    XmlVisitor v;
-    XmlFileParser<XmlVisitor>::parseXmlFile(stdin,v);
+    if(argc != 2)
+    {
+        std::cerr << "path argument is missing\n";
+        exit(1);
+    }
+    
+    std::string rep = std::string(argv[1]);
+
+    XmlVisitor* v = new XmlVisitor(rep);
+    XmlFileParser<XmlVisitor>::parseXmlFile(stdin,*v);
     ShpVisitor v2;
-    FILE* f =fopen("config.xml","r");
+    FILE* f =fopen((rep + "/config.xml").c_str(),"r");
+    if(f == NULL)
+    {
+        std::cout << "couldn't open "<< rep + "/config.xml" << "\n";
+        exit(1);
+    }
     XmlFileParser<ShpVisitor>::parseXmlFile(f,v2);
     for(shp_file f : v2.shpFiles)
     {
-        std::cout << "load shp file : " << f.name << " with tag : " << f.tag << " value : " << f.value << "\n";
-        v.addShape(f.name, f.tag, f.value, f.projection);
+        std::cout << "load shp file : " << rep + "/" + f.name << " with tag : " << f.tag << " value : " << f.value << "\n";
+        v->addShape(rep + "/" + f.name, f.tag, f.value, f.projection);
     }
     fclose(f);
+    delete v;
  }

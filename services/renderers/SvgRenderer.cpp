@@ -409,14 +409,14 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
         {
             if(v->ref == "")
             {
-                texts << "<text  x=\""
+                /*texts << "<text  x=\""
                        << std::to_string(v->pos_x)
                        << "\" y=\""
                        << std::to_string(v->pos_y)
                        << "\" class=\"c"
                        << std::to_string(v->style)
                        << "\" style=\"stroke-width:4; stroke:white;opacity:0.5\">"
-                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)+"</text>\n";
+                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)+"</text>\n";*/
                 texts << "<text  x=\""
                        << std::to_string(v->pos_x)
                        << "\" y=\""

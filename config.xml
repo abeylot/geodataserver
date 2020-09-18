@@ -55,30 +55,30 @@
 
 
     <!-- text -->
-    <style ref="countryName"  value="fill:red;font-family:sans-serif;opacity:0.5;font-size:15px"/>
-    <style ref="stateName"    value="fill:red;font-family:sans-serif;opacity:0.5;font-size:13px"/>
-    <style ref="provinceName" value="fill:red;font-family:sans-serif;opacity:0.5;font-size:12px"/>
-    <style ref="districtName" value="fill:red;font-family:sans-serif;opacity:0.5;font-size:11px"/>
-    <style ref="countyName"   value="fill:red;font-family:sans-serif;opacity:0.5;font-size:10px"/>
+    <style ref="countryName"  value="fill:red;font-family:sans-serif;opacity:0.5;font-size:15px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
+    <style ref="stateName"    value="fill:red;font-family:sans-serif;opacity:0.5;font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
+    <style ref="provinceName" value="fill:red;font-family:sans-serif;opacity:0.5;font-size:12px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
+    <style ref="districtName" value="fill:red;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
+    <style ref="countyName"   value="fill:red;font-family:sans-serif;opacity:0.5;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
 
-    <style ref="maroonAreaName"  value="fill:maroon;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px"/>
-    <style ref="greenAreaName"   value="fill:green;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px"/>
-    <style ref="blueAreaName"    value="fill:blue;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px"/>
-    <style ref="greyAreaName"    value="fill:grey;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px"/>
+    <style ref="maroonAreaName"  value="fill:maroon;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
+    <style ref="greenAreaName"   value="fill:green;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
+    <style ref="blueAreaName"    value="fill:blue;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
+    <style ref="greyAreaName"    value="fill:grey;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
     
-    <style ref="capitalName"     value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:16px; font-weight:bold"/>
-    <style ref="subCapitalName"  value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:15px"/>
+    <style ref="capitalName"     value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:16px; font-weight:bold;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
+    <style ref="subCapitalName"  value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:15px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
 
-    <style ref="cityName"        value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:14px"/>
-    <style ref="townName"        value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:13px"/>
-    <style ref="villageName"     value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:11px"/>
+    <style ref="cityName"        value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:14px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
+    <style ref="townName"        value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
+    <style ref="villageName"     value="fill:maroon;font-family:sans-serif;opacity:0.5; font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
     
-    <style ref="houseNumber"     value="fill:maroon;opacity:0.5;font-family:sans-serif; font-size:10px"/>
-    <style ref="roadName"        value="fill:black;font-family:sans-serif;opacity:0.5;font-size:10px"/>
-    <style ref="amenityName"     value="fill:blue;font-family:sans-serif;opacity:0.2;font-size:10px"/>
+    <style ref="houseNumber"     value="fill:maroon;opacity:0.5;font-family:sans-serif; font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
+    <style ref="roadName"        value="fill:black;font-family:sans-serif;opacity:0.5;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
+    <style ref="amenityName"     value="fill:blue;font-family:sans-serif;opacity:0.2;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
 
-    <style ref="riverName"       value="fill:darkblue;opacity:0.5;font-family:sans-serif; font-size:10px"/>
-    <style ref="ferryLineName"   value="fill:darkblue;;opacity:0.5;font-family:sans-serif"/>
+    <style ref="riverName"       value="fill:darkblue;opacity:0.5;font-family:sans-serif;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
+    <style ref="ferryLineName"   value="fill:darkblue;;opacity:0.5;font-family:sans-serif;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.5"/>
     
 
     <!-- Symbols -->

@@ -19,9 +19,17 @@ using namespace fidx;
 
 int main(int argc, char *argv[])
 {
+    
+    if(argc != 2)
+    {
+        std::cerr << "path argument is missing\n";
+        exit(1);
+    }
+
+    
     std::vector<IndexDesc*> indexes;
 
-    XmlVisitor v(indexes, true, ".");
+    XmlVisitor v(indexes, true, argv[1]);
     std::string file = argv[1];
     file += "/config.xml";
     FILE* config = fopen(file.c_str(),"r");

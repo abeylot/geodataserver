@@ -18,14 +18,15 @@ struct XmlVisitor
     FileIndex<uint64_t, uint64_t> *wayIdIndex;
     FileIndex<GeoPointNumberIndex, uint64_t> *nodeIdIndex;
 
-    XmlVisitor()
+    XmlVisitor(std::string rep)
     {
+        rep += "/";
         relid = 0;
         wayid = 0;
         nodid = 0;
-        relationIdIndex = new FileIndex<uint64_t,uint64_t>("relationIdIndex", true);
-        wayIdIndex      = new FileIndex<uint64_t,uint64_t>("wayIdIndex", true);
-        nodeIdIndex     = new FileIndex<GeoPointNumberIndex, uint64_t>("nodeIdIndex", true);
+        relationIdIndex = new FileIndex<uint64_t,uint64_t>((rep + "relationIdIndex") .c_str(), true);
+        wayIdIndex      = new FileIndex<uint64_t,uint64_t>((rep +"wayIdIndex").c_str(), true);
+        nodeIdIndex     = new FileIndex<GeoPointNumberIndex, uint64_t>((rep + "nodeIdIndex").c_str(), true);
     }
 
     ~XmlVisitor()
@@ -79,6 +80,12 @@ struct XmlVisitor
 
 int main(int argc, char *argv[])
 {
-    XmlVisitor v;
-    XmlFileParser<XmlVisitor>::parseXmlFile(stdin,v);
+    if(argc != 2)
+    {
+        std::cerr << "path argument is missing\n";
+        exit(1);
+    }
+    XmlVisitor* v = new XmlVisitor(std::string(argv[1]));
+    XmlFileParser<XmlVisitor>::parseXmlFile(stdin,*v);
+    delete v;
 }

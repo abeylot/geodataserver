@@ -118,7 +118,7 @@ struct GeoFile
         name = fname;
         if(create)
         {
-            fh = fopen(name.c_str(),"wb+");
+            fh = fopen64(name.c_str(),"wb+");
         } else {
             fh = fopen64 (name.c_str(),"rb");
         }
