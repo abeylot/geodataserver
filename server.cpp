@@ -22,8 +22,8 @@
 /**************************************************************************************************************************/
 /**************************************************************************************************************************/
 
-    ParmsXmlVisitor params;
-
+ParmsXmlVisitor params;
+std::atomic<int> pending(0);
 
 struct Listener
 {
@@ -39,7 +39,14 @@ struct Listener
         while(!boost::this_thread::interruption_requested())
         {
             TcpConnection *cnx = listener.waitForClient();
-            queue->push(cnx);
+            
+            if(pending < 100)
+            {   
+                queue->push(cnx);
+            } else {
+                std::cerr << "too much pending requests, client rejected !\n";
+                delete cnx;  
+            }
         }
         std::cout << "Listener end\n";
         return 0;
@@ -76,11 +83,13 @@ template<typename MSG> struct Reader
                             Msg* msg = encoder.encode(&m);
                             msg->setConnection(s);
                             queue->push(msg);
+                            pending++;
                         }
                     }
                     catch (const std::exception& e)
                     {
                         std::cerr << e.what() << "\n";
+                        delete s;
                     }
                 }
             }
@@ -117,6 +126,7 @@ template<typename MSG> struct Writer
                     delete s;
                     delete m->getConnection();
                     delete m;
+                    pending --;
                 }
                 catch (const std::exception& e)
                 {
