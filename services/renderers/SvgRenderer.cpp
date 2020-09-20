@@ -286,16 +286,6 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 
     result << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?> <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
     result << "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 " << std::to_string(sizex) << " " << std::to_string(sizey) << "\">\n";
-    result << "<defs>";
-    
-    for( auto pattern : *(mger->patterns))
-    {
-        //if(cssClasses.find("pat#"+pattern.first) != cssClasses.end())
-        //{
-            result << pattern.second;
-        //}
-    }
-    result << "</defs>";    result << "<style>\ntext,tspan{dominant-baseline:central;text-anchor:middle;} path{fill:none;}";
 
     indexId = 0;
     for (IndexDesc* idxDesc : *(mger->indexes))
@@ -467,6 +457,37 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     }
 
 
+    result << "<defs>";
+    
+    for( auto pattern : *(mger->symbols))
+    {
+        bool found = false;
+        for (IndexDesc* idxDesc : *(mger->indexes))
+        {
+            for (Condition* cd : idxDesc->conditions)
+            {
+                for(CssClass* cl : cd->classes)
+                {
+                    if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
+                    {    
+                        std::string style = cl->makeClass("c" + std::to_string(cl->rank), ppm, (idxDesc->type == "relation"));
+                        if(style.find("url(#"+pattern.first) != std::string::npos)
+                        {   
+                            found = true;
+                        }
+                    }
+                    if(found) break;
+                }
+                if(found) break;
+            }
+            if(found) break;
+        }
+        if(found) result << pattern.second;
+	}    
+
+    result << "</defs>";
+
+    result << "<style>\ntext,tspan{dominant-baseline:central;text-anchor:middle;} path{fill:none;}";
 
 
     for (IndexDesc* idxDesc : *(mger->indexes))

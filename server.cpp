@@ -149,16 +149,16 @@ template<typename MSG> struct Exec
     HttpEncoder encoder;
     std::vector<IndexDesc*>* idxList;
     std::map<std::string, std::string>* symbols;
-    std::map<std::string, std::string>* patterns;
+    //std::map<std::string, std::string>* patterns;
     Exec(boost::lockfree::queue<MSG*>* inqueue,boost::lockfree::queue<MSG*>* outqueue, std::string file,uint microSleep,std::vector<IndexDesc*>* idxL, std::map<std::string, std::string>* symbs, std::map<std::string, std::string>* patts ) : inqueue(inqueue), outqueue(outqueue), file(file), microSleep(microSleep)
     {
         idxList = idxL;
         symbols = symbs;
-        patterns = patts;
+        //patterns = patts;
     }
     int operator()()
     {
-        CompiledDataManager mger(file, idxList, symbols, patterns);
+        CompiledDataManager mger(file, idxList, symbols);
         MSG* m;
         while(!boost::this_thread::interruption_requested())
         {
@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
         config = fopen((std::string(argv[1]) + "/config.xml").c_str(),"r");
         XmlFileParser<XmlVisitor>::parseXmlFile(config,v);
         symbols[i] = v.symbols;
-        patterns[i] = v.patterns;
+//        patterns[i] = v.patterns;
         fclose(config);
     }
 

@@ -140,7 +140,7 @@ struct XmlVisitor
 {
     std::vector<IndexDesc*>* idxList;
     std::map<std::string, std::string> symbols;
-    std::map<std::string, std::string> patterns;
+    //std::map<std::string, std::string> patterns;
     std::map<std::string, std::string> shortcuts;
     int clRank;
     bool closed,opened,ccre,symbol,pattern;
@@ -150,8 +150,8 @@ struct XmlVisitor
     std::string symbolStr="";
     
     
-    std::string patternId;
-    std::string patternStr="";
+//    std::string patternId;
+//    std::string patternStr="";
 
 
     XmlVisitor(std::vector<IndexDesc*>& indexList, bool create, std::string rt):root(rt), symbolId(""),symbolStr("")
@@ -176,7 +176,17 @@ struct XmlVisitor
 
     void startTag(std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
-        if (b->baliseName == "symbol")
+        if (b->baliseName == "style")
+        {
+            shortcuts[b->keyValues["id"]] = b->keyValues["value"];
+        }
+        if (
+            (b->baliseName == "symbol")
+            ||
+            (b->baliseName == "pattern")
+            ||
+            (b->baliseName == "marker")
+           )
         {
             //shortcuts[b->keyValues["ref"]] = b->keyValues["value"];
             symbolId = b->keyValues["id"];
@@ -184,31 +194,12 @@ struct XmlVisitor
         }
         if(symbolId != "")
         {
-                symbolStr += "<" + b->baliseName + " ";
-                for(auto it = b->keyValues.begin(); it != b->keyValues.end(); it++)
-                {
-                    symbolStr += " " + it->first + "=\"" + it->second + "\" ";
-                }
-                symbolStr += ">";
-        }
-        if (b->baliseName == "pattern")
-        {
-            //shortcuts[b->keyValues["ref"]] = b->keyValues["value"];
-            patternId = b->keyValues["id"];
-            patternStr = "";
-        }
-        if(patternId != "")
-        {
-                patternStr += "<" + b->baliseName + " ";
-                for(auto it = b->keyValues.begin(); it != b->keyValues.end(); it++)
-                {
-                    patternStr += " " + it->first + "=\"" + it->second + "\" ";
-                }
-                patternStr += ">";
-        }
-        if (b->baliseName == "style")
-        {
-            shortcuts[b->keyValues["ref"]] = b->keyValues["value"];
+            symbolStr += "<" + b->baliseName + " ";
+            for(auto it = b->keyValues.begin(); it != b->keyValues.end(); it++)
+            {
+                symbolStr += " " + it->first + "=\"" + it->second + "\" ";
+            }
+            symbolStr += ">";
         }
         if (b->baliseName == "index")
         {
@@ -309,21 +300,17 @@ struct XmlVisitor
         {
             symbolStr += "</" + b->baliseName + ">";
         }
-        if (b->baliseName == "symbol")
+        if (
+            (b->baliseName == "symbol")
+            ||
+            (b->baliseName == "pattern")
+            ||
+            (b->baliseName == "marker")
+           )
         {
             symbols[symbolId] = symbolStr;
             std::cout << symbolId << " -> " << symbolStr << "\n";
             symbolId = "";
-        }
-        if ( patternId != "")
-        {
-            patternStr += "</" + b->baliseName + ">";
-        }
-        if (b->baliseName == "pattern")
-        {
-            patterns[patternId] = patternStr;
-            std::cout << symbolId << " -> " << symbolStr << "\n";
-            patternId = "";
         }
         if (b->baliseName == "restriction")
         {
