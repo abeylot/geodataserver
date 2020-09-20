@@ -111,19 +111,19 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
     {
 		 hash = &relationHash;
 	     gSet = makeGeoBoxSet(rect*1.1);
-	     rect2 = rect*1.1;
+	     rect2 = rect*2;
 	}	
     else if(idxDesc.type == "way")
     {
 		 hash = &wayHash;
 	     gSet = makeGeoBoxSet(rect*1.1);
-	     rect2 = rect*1.1;
+	     rect2 = rect*2;
 	}
     else
     {
 		 hash = &nodeHash;
 	     gSet = makeGeoBoxSet(rect*3);
-	     rect2 = rect*3;
+	     rect2 = rect*2;
 	} 
     for(short i = 0; i < gSet.count; i++)
     {
@@ -326,17 +326,17 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                 to_show = false;
                 break;
             }
-            if((t->ref == "") && (v->ref == ""))
-            {
-                if(((uint64_t)(dy << 1) < (t->fontsize + v->fontsize))
+            //if((t->ref == "") && (v->ref == ""))
+            //{
+                if(((uint64_t)(dy) < (t->fontsize + v->fontsize))
                   &&((uint64_t)(dx << 1) < (t->fontsize*0.75*ilt + v->fontsize*0.75*ilv)))
                 {
                     to_show = false;
                     break;
                 } 
-            }
-            if((t->ref != "") && (v->ref != ""))
-            {
+            //}
+            //if((t->ref != "") && (v->ref != ""))
+            //{
             double xa,xb,xc,xd,ya,yb,yc,yd;
             
             
@@ -385,10 +385,10 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             
             if(diffsideab && diffsidecd)
             {
-                    //to_show = false;
+                    to_show = false;
                     break;
             }
-            }
+            //}
 
         }
         if(to_show) to_print.push_back(*t);
@@ -397,16 +397,16 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     for(auto v=to_print.begin(); v!=to_print.end(); ++v)
     {
         {
-            if(v->ref == "")
+            /*if(v->ref == "")
             {
-                /*texts << "<text  x=\""
+                texts << "<text  x=\""
                        << std::to_string(v->pos_x)
                        << "\" y=\""
                        << std::to_string(v->pos_y)
                        << "\" class=\"c"
                        << std::to_string(v->style)
                        << "\" style=\"stroke-width:4; stroke:white;opacity:0.5\">"
-                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)+"</text>\n";*/
+                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)+"</text>\n";
                 texts << "<text  x=\""
                        << std::to_string(v->pos_x)
                        << "\" y=\""
@@ -418,9 +418,10 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                        cssClasses.insert("c"+std::to_string(v->style));
             }
             else
-            {
+            {*/
 //               libs += "<text text-anchor=\"middle\" dominant-baseline=\"central\" class=\"c"+std::to_string(v->style)+"\" style=\"font-size:" +std::to_string(v->fontsize)+ "px\"><textPath xlink:href=\"#W"+std::to_string(v->id)+"\" startOffset=\"50%\">"+v->text+"</textPath></text>\n";
-               texts << "<text  class=\"c"
+               /*
+                * texts << "<text  class=\"c"
                       << std::to_string(v->style)
                       << "\" style=\"font-size:"
                       << std::to_string(v->fontsize)
@@ -434,7 +435,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                       << std::to_string(v->pos_y)
                       << ")\" >"
                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
-                      << "</text>\n";
+                      << "</text>\n";*/
 
                texts << "<text  class=\"c"
                       << std::to_string(v->style)
@@ -452,7 +453,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
                       << "</text>\n";
                       cssClasses.insert("c"+std::to_string(v->style));
-            }
+            //}
 		}
     }
 
