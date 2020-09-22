@@ -1,6 +1,6 @@
 #CC=clang++ --analyze 
 CC=g++
-cc=$(CC) -O2 -s --static -Wall -std=c++11 -D_FILE_OFFSET_BITS=64
+cc=$(CC) -O2 -s  -Wall -std=c++11 -D_FILE_OFFSET_BITS=64
 #cc=$(CC) -g -Wall -std=c++11 -D_FILE_OFFSET_BITS=64
 
 

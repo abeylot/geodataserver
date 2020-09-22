@@ -110,19 +110,19 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
     if(idxDesc.type == "relation")
     {
 		 hash = &relationHash;
-	     gSet = makeGeoBoxSet(rect*1.1);
+	     gSet = makeGeoBoxSet(rect*1.25);
 	     rect2 = rect*2;
 	}	
     else if(idxDesc.type == "way")
     {
 		 hash = &wayHash;
-	     gSet = makeGeoBoxSet(rect*1.1);
+	     gSet = makeGeoBoxSet(rect*1.25);
 	     rect2 = rect*2;
 	}
     else
     {
 		 hash = &nodeHash;
-	     gSet = makeGeoBoxSet(rect*3);
+	     gSet = makeGeoBoxSet(rect*1.25);
 	     rect2 = rect*2;
 	} 
     for(short i = 0; i < gSet.count; i++)
