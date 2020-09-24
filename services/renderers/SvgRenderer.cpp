@@ -708,7 +708,10 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     }
 
     first = true;
-    for(unsigned int i = myWay.pointsCount - 2 ; i < myWay.pointsCount; i++)
+    unsigned int  start = ( (myWay.pointsCount - 1) * 2 ) / 3;
+    if(start > (myWay.pointsCount - 2)) start = myWay.pointsCount - 2;
+         
+    for(unsigned int i = start ; i < myWay.pointsCount; i++)
     {
         int64_t xx = myWay.points[i].x;
         int64_t yy = myWay.points[i].y;
@@ -727,8 +730,8 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 else if((dfx == 0) && (dfy <= 0)) symb_angle = - M_PI / 2;
                 else symb_angle = atan2(dfy , dfx);
                 
-                if(symb_angle > M_PI / 2) symb_angle -= M_PI;
-                if(symb_angle < -1 * M_PI / 2) symb_angle += M_PI;
+                //if(symb_angle > M_PI / 2) symb_angle -= M_PI;
+                //if(symb_angle < -1 * M_PI / 2) symb_angle += M_PI;
                 
                 break;
             }

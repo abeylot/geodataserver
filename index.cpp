@@ -37,9 +37,9 @@ int main(int argc, char *argv[])
     fclose(config);
     CompiledDataManager mger(argv[1], &indexes);
 
-    Way* w;
-    Point* p;
-    Relation* r;
+    Way* w = NULL;
+    Point* p = NULL;
+    Relation* r = NULL;
 
     for(uint64_t i=0; i < mger.relationIndex->getSize(); i++)
     {
@@ -94,13 +94,14 @@ int main(int argc, char *argv[])
                                     if ((closed && cd->closed)||((!closed) && (cd->opened)))
                                     {
                                         kept = true;
+                                        if(d->selectors.size() > 0) kept = false;
                                         for(Selector* sel : d->selectors)
                                         {
-                                            kept = kept || ((sel->tagValue == "*")||( r->tags[sel->tagKey.c_str()] == sel->tagValue ));
+                                            kept = kept || (((sel->tagValue == "*")&&(r->tags[sel->tagKey.c_str()] !=""))||( r->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
                                         for(Selector* sel : d->excludeSelectors)
                                         {
-                                            kept = kept && !((sel->tagValue == "*")||( r->tags[sel->tagKey.c_str()] == sel->tagValue ));
+                                            kept = kept && !(((sel->tagValue == "*")&&(r->tags[sel->tagKey.c_str()] !=""))||( r->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
                                         if(kept) zmMask = zmMask | cl->mask;
                                     }
@@ -171,13 +172,14 @@ int main(int argc, char *argv[])
                                     if ((closed && cd->closed)||((!closed) && (cd->opened)))
                                     {
                                         kept = true;
+                                        if(d->selectors.size() > 0) kept = false;
                                         for(Selector* sel : d->selectors)
                                         {
-                                            kept = kept && ( w->tags[sel->tagKey.c_str()] == sel->tagValue );
+                                            kept = kept || (((sel->tagValue == "*")&&(w->tags[sel->tagKey.c_str()] !=""))||( w->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
                                         for(Selector* sel : d->excludeSelectors)
                                         {
-                                            kept = kept && !( w->tags[sel->tagKey.c_str()] == sel->tagValue );
+                                            kept = kept && !(((sel->tagValue == "*")&&(w->tags[sel->tagKey.c_str()] !=""))||( w->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
                                         if(kept) zmMask = zmMask | cl->mask;
                                     }
@@ -247,13 +249,14 @@ int main(int argc, char *argv[])
                                    || (cl->tagValue =="default"))
                                 {
                                         kept = true;
+                                        if(d->selectors.size() > 0) kept = false;
                                         for(Selector* sel : d->selectors)
                                         {
-                                            kept = kept && ( p->tags[sel->tagKey.c_str()] == sel->tagValue );
+                                            kept = kept || (((sel->tagValue == "*")&&(p->tags[sel->tagKey.c_str()] !=""))||( p->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
                                         for(Selector* sel : d->excludeSelectors)
                                         {
-                                            kept = kept && !( p->tags[sel->tagKey.c_str()] == sel->tagValue );
+                                            kept = kept && !(((sel->tagValue == "*")&&(p->tags[sel->tagKey.c_str()] !=""))||( p->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
                                         if(kept) zmMask = zmMask | cl->mask;
                                 }
