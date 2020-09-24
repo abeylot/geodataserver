@@ -105,6 +105,14 @@
         <text x="8" y="8" style="fill:white;opacity:0.9;font-family:sans-serif;font-weight:bold;font-size:13px">P</text>
     </symbol>
 
+    <symbol id="oneway" width="10" height="10" transform="translate(-5 -5)" >
+        <text x="5" y="5" style="fill:white;opacity:0.9;font-family:sans-serif;font-weight:bold;font-size:10px">-&gt;</text>
+    </symbol>
+
+    <symbol id="onewayrev" width="10" height="10" transform="translate(-5 -5)" >
+        <text x="5" y="5" style="fill:white;opacity:0.9;font-family:sans-serif;font-weight:bold;font-size:10px">&lt;-</text>
+    </symbol>
+
 
     <index type="relation" name="oceanIdx">
     <restriction zLevels="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19">
@@ -903,13 +911,13 @@
                 <class value="pedestrian"      zIndex="2003" style="#path" width="5"   textZIndex="24" textStyle="#roadName"/>
                 <class value="unclassified"    zIndex="2004" style="#road" width="10" textZIndex="25" textStyle="#roadName"/>
                 <class value="cycleway"        zIndex="2005" style="#road" width="5"  textZIndex="26" textStyle="#roadName"/>
-                <class value="residential"     zIndex="2006" style="#road" width="10" textZIndex="27" textStyle="#roadName"/>
+                <class value="residential"     zIndex="2006" style="#road" symbol="oneway" width="10" textZIndex="27" textStyle="#roadName"/>
                 <class value="service"         zIndex="2007" style="#road" width="10" textZIndex="28" textStyle="#roadName"/>
-                <class value="track"           zIndex="2008" style="#road" width="10" textZIndex="29" textStyle="#roadName"/>
+                <class value="track"           zIndex="2008" symbol="oneway" style="#road" width="10" textZIndex="29" textStyle="#roadName"/>
                 <class value="turning_circle"  zIndex="2010" style="#road" width="10" textZIndex="30" textStyle="#roadName"/>
                 <class value="living_street"   zIndex="2011" style="#road" width="10" textZIndex="31" textStyle="#roadName"/>
-                <class value="tertiary"        zIndex="2012" style="#road" width="16" textZIndex="32" textStyle="#roadName"/>
-                <class value="secondary"       zIndex="2013" style="#road" width="20" textZIndex="33" textStyle="#roadName"/>
+                <class value="tertiary"        zIndex="2012" style="#road" symbol="oneway" width="16" textZIndex="32" textStyle="#roadName"/>
+                <class value="secondary"       zIndex="2013" style="#road" symbol="oneway" width="20" textZIndex="33" textStyle="#roadName"/>
                 <class value="crossing"        zIndex="2014" style="#road" width="16" textZIndex="34" textStyle="#roadName"/>
                 <class value="primary"         zIndex="2015" style="#road" width="20" textZIndex="35" textStyle="#roadName"/>
                 <class value="primary_link"    zIndex="2016" style="#road" width="16" textZIndex="36" textStyle="#roadName"/>

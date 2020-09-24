@@ -242,7 +242,7 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
         auto it2 = resMap.find(it.first->zIndex);
         if(it2 != resMap.end())
         {
-           it2->second += tmp;
+           it2->second = tmp + it2->second;
         }
         else
         {
@@ -518,6 +518,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                     {
                         if(mger->symbols->find(cl->symbol) != mger->symbols->end())
                             result << (*(mger->symbols))[cl->symbol];
+                            cssClasses.erase("sym#"+cl->symbol);
                     }   
 				}
 			}
@@ -604,6 +605,11 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     lbl.style = 0;    
     lbl.zindex = cl.textZIndex;
     std::ostringstream result;
+    
+    double symb_angle = 0;
+    int64_t symb_x = 0;
+    int64_t symb_y = 0;
+    
     double oldx = -1;
     double oldy = -1;
     double x=0;
@@ -700,6 +706,35 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
             first = false;
         }
     }
+
+    first = true;
+    for(unsigned int i = myWay.pointsCount - 2 ; i < myWay.pointsCount; i++)
+    {
+        int64_t xx = myWay.points[i].x;
+        int64_t yy = myWay.points[i].y;
+        oldx = x;
+        oldy = y;
+        x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+        y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+        {
+            if(!first)
+            {
+                symb_x = oldx;
+                symb_y = oldy;
+                double dfx = x - oldx;
+                double dfy = y - oldy;
+                if((dfx == 0) && (dfy > 0)) symb_angle = M_PI / 2;
+                else if((dfx == 0) && (dfy <= 0)) symb_angle = - M_PI / 2;
+                else symb_angle = atan2(dfy , dfx);
+                
+                if(symb_angle > M_PI / 2) symb_angle -= M_PI;
+                if(symb_angle < -1 * M_PI / 2) symb_angle += M_PI;
+                
+                break;
+            }
+            first = false;
+        }
+    }
     //myWay.crop(r1);
     if(draw)
     {
@@ -766,7 +801,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     }
     
     
-    if(cl.symbol != "")
+    if((cl.symbol != "") && !cl.opened)
     {
         int64_t xxx = (myWay.rect.x0 + myWay.rect.x1) / 2;
         int64_t yyy = (myWay.rect.y0 + myWay.rect.y1) /2;
@@ -774,6 +809,21 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
         result << "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" + std::to_string(trunc(x)) + "\"  y=\"" +std::to_string(trunc(y)) + "\" />";
         cssClasses.insert("sym#"+cl.symbol);
+    } else {
+            if(cl.symbol != "")
+            {
+                result << "<use xlink:href=\"#"
+                       <<  cl.symbol
+                       << "\"  x=\"" << std::to_string(symb_x) << "\"  y=\"" << std::to_string(symb_y)
+                       << "\" transform=\"rotate("
+                       << std::to_string(symb_angle*180/M_PI)
+                       << ","
+                       << std::to_string(symb_x)
+                       << ","
+                       << std::to_string(symb_y)
+                       << ")\"/>";
+                cssClasses.insert("sym#"+cl.symbol);
+            }
     }
 
     return result.str();
