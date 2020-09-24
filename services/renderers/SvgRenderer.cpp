@@ -34,7 +34,12 @@ bool compare(const label_s& l2, const label_s& l1)
     //if(l2.id < l1.id) return false;
     if (l1.text.length() > l2.text.length()) return true;
     if (l1.text.length() < l2.text.length()) return false;
-    return (l1.text > l2.text);
+    if (l1.text > l2.text) return true;
+    if (l1.text < l2.text) return false;
+    if (l1.pos_x > l2.pos_x) return true;
+    if (l1.pos_x < l2.pos_x) return false;
+    if (l1.pos_y > l2.pos_y) return true;
+    return false;
 }
 
 #define MAX_TEXT_LEN 18
@@ -799,6 +804,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 lbl.pos_y = y;
                 lbl.style = cl.rank;
                 lbl.text = name;
+                lbl.angle = 0;
             }
         }
     }
@@ -955,6 +961,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                 lbl.zindex = cl.textZIndex;
                 lbl.style = cl.rank;
                 lbl.text = name;
+                lbl.angle = 0;
             }
         }
     }
@@ -1045,6 +1052,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
             lbl.pos_x = x;
             lbl.pos_y = y;
             lbl.style = cl.rank;
+            lbl.angle = 0;
         }
     }
     if(cl.symbol != "")
