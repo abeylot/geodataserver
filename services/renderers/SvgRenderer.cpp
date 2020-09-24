@@ -122,8 +122,8 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
     else
     {
 		 hash = &nodeHash;
-	     gSet = makeGeoBoxSet(rect*1.25);
-	     rect2 = rect*2;
+	     gSet = makeGeoBoxSet(rect*3);
+	     rect2 = rect*3;
 	} 
     for(short i = 0; i < gSet.count; i++)
     {
@@ -615,7 +615,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     std::string name = "";
 
-    bool draw = ((myWay.rect)*rect).isValid();
+    bool draw = ((myWay.rect)*r1).isValid();
     std::string style = cl.style;
     std::string textStyle2;
     std::string textStyle = cl.textStyle;
