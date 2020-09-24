@@ -106,11 +106,11 @@
     </symbol>
 
     <symbol id="oneway" width="10" height="10" transform="translate(-5 -5)" >
-        <text x="5" y="5" style="fill:white;opacity:0.9;font-family:sans-serif;font-weight:bold;font-size:10px">-&gt;</text>
+        <path d="M0 5 L10 5 L5 3 M5 7 L10 5" stroke="white" stroke-width="1"/>
     </symbol>
 
     <symbol id="onewayreverse" width="10" height="10" transform="translate(-5 -5)" >
-        <text x="5" y="5" style="fill:red;opacity:0.9;font-family:sans-serif;font-weight:bold;font-size:10px">&lt;-</text>
+        <path d="M10 5 L0 5 L5 3 M5 7 L0 5" stroke="white" stroke-width="1"/>
     </symbol>
 
 
