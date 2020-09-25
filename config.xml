@@ -106,11 +106,11 @@
     </symbol>
 
     <symbol id="oneway" width="10" height="10" transform="translate(-5 -5)" >
-        <path d="M0 5 L10 5 L5 3 M5 7 L10 5" stroke="white" stroke-width="1"/>
+        <path d="M0 5 L10 5 L5 3 M5 7 L10 5" stroke="white" stroke-width="1" opacity="0.7"/>
     </symbol>
 
     <symbol id="onewayreverse" width="10" height="10" transform="translate(-5 -5)" >
-        <path d="M10 5 L0 5 L5 3 M5 7 L0 5" stroke="white" stroke-width="1"/>
+        <path d="M10 5 L0 5 L5 3 M5 7 L0 5" stroke="white" stroke-width="1"  opacity="0.7"/>
     </symbol>
 
 
@@ -872,6 +872,21 @@
     </index>
 
 
+    <index type="way" name="railwayIdxHighRes">
+        <restriction zLevels="13,14,15">
+            <condition tagKey="railway" closed="both">
+                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
+            </condition>
+        </restriction>
+        <restriction zLevels="16,17,18,19">
+            <condition tagKey="railway" closed="both">
+                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
+            </condition>
+        </restriction>
+    </index>
+
+
+
     <index type="way" name="routesIdxHighRes">
         <exclude tagKey="oneway" tagValue="1"/>
         <exclude tagKey="oneway" tagValue="-1"/>
@@ -902,9 +917,6 @@
                 <class value="motorway"        zIndex="2020" style="#road" width="40" textZIndex="37" textStyle="#roadName" textField="ref"/>
                 <class value="motorway_link"   zIndex="2021" style="#road" width="41" textZIndex="38" textStyle="#roadName" textField="ref"/>
             </condition>
-            <condition tagKey="railway" closed="both">
-                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
-            </condition>
         </restriction>
         <restriction zLevels="16,17,18,19">
             <condition closed="both" tagKey="highway">
@@ -930,9 +942,6 @@
                 <class value="trunk_link"      zIndex="2019" style="#road" width="16" textZIndex="39" textStyle="#roadName"/>
                 <class value="motorway"        zIndex="2020" style="#road" width="20" textZIndex="40" textStyle="#roadName"/>
                 <class value="motorway_link"   zIndex="2021" style="#road" width="16" textZIndex="41" textStyle="#roadName"/>
-            </condition>
-            <condition tagKey="railway" closed="both">
-                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
             </condition>
         </restriction>
     </index>
@@ -965,9 +974,6 @@
                 <class value="motorway"        zIndex="2020" style="#road" width="40" textZIndex="37" textStyle="#roadName" textField="ref"/>
                 <class value="motorway_link"   zIndex="2021" style="#road" width="41" textZIndex="38" textStyle="#roadName" textField="ref"/>
             </condition>
-            <condition tagKey="railway" closed="both">
-                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
-            </condition>
         </restriction>
         <restriction zLevels="16,17,18,19">
             <condition closed="both" tagKey="highway">
@@ -993,9 +999,6 @@
                 <class value="trunk_link"      zIndex="2019" style="#road" symbol="oneway" width="16" textZIndex="39" textStyle="#roadName"/>
                 <class value="motorway"        zIndex="2020" style="#road" symbol="oneway" width="20" textZIndex="40" textStyle="#roadName"/>
                 <class value="motorway_link"   zIndex="2021" style="#road" symbol="oneway" width="16" textZIndex="41" textStyle="#roadName"/>
-            </condition>
-            <condition tagKey="railway" closed="both">
-                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
             </condition>
         </restriction>
     </index>
@@ -1028,9 +1031,6 @@
                 <class value="motorway"        zIndex="2020" style="#road" width="40" textZIndex="37" textStyle="#roadName" textField="ref"/>
                 <class value="motorway_link"   zIndex="2021" style="#road" width="41" textZIndex="38" textStyle="#roadName" textField="ref"/>
             </condition>
-            <condition tagKey="railway" closed="both">
-                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
-            </condition>
         </restriction>
         <restriction zLevels="16,17,18,19">
             <condition closed="both" tagKey="highway">
@@ -1056,9 +1056,6 @@
                 <class value="trunk_link"      zIndex="2019" style="#road" symbol="onewayreverse" width="16" textZIndex="39" textStyle="#roadName"/>
                 <class value="motorway"        zIndex="2020" style="#road" symbol="onewayreverse" width="20" textZIndex="40" textStyle="#roadName"/>
                 <class value="motorway_link"   zIndex="2021" style="#road" symbol="onewayreverse" width="16" textZIndex="41" textStyle="#roadName"/>
-            </condition>
-            <condition tagKey="railway" closed="both">
-                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
             </condition>
         </restriction>
     </index>

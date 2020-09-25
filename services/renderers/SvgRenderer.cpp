@@ -115,20 +115,20 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
     if(idxDesc.type == "relation")
     {
 		 hash = &relationHash;
-	     gSet = makeGeoBoxSet(rect*2);
-	     rect2 = rect*2;
+	     gSet = makeGeoBoxSet(rect*1.25);
+	     rect2 = rect*1.25;
 	}	
     else if(idxDesc.type == "way")
     {
 		 hash = &wayHash;
-	     gSet = makeGeoBoxSet(rect*2);
-	     rect2 = rect*2;
+	     gSet = makeGeoBoxSet(rect*1.25);
+	     rect2 = rect*1.25;
 	}
     else
     {
 		 hash = &nodeHash;
-	     gSet = makeGeoBoxSet(rect*3);
-	     rect2 = rect*3;
+	     gSet = makeGeoBoxSet(rect*2);
+	     rect2 = rect*2;
 	} 
     for(short i = 0; i < gSet.count; i++)
     {
@@ -601,7 +601,7 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
 
 std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_t szx, uint32_t szy, CssClass& cl, Shape& s)
 {
-    Rectangle r1 = rect*1.5;
+    Rectangle r1 = rect*1.25;
     lbl.id = myWay.id + UINT64_C(0xA000000000000000);
     lbl.fontsize = 12;    
     lbl.text = "";    
@@ -875,7 +875,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 				result += "<path  d=\"";
 				for(Line* l: myRelation.shape.lines)
 				{
-					Rectangle r1 = rect*1.1;
+					Rectangle r1 = rect*1.25;
 					l->crop(r1);
                     bool first = true;
                     int x=0;
