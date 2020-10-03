@@ -1,7 +1,7 @@
-export GEOBIN=/home/aby/sources/geodataserver
+export GEOBIN=/home/pi/geodataserver
 export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.bz2 
 #planet.openstreetmap.org/planet/planet-latest.osm.bz2
-
+cp $GEOBIN/config.xml .
 wget osmdata.openstreetmap.de/download/water-polygons-split-4326.zip
 unzip water-polygons-split-4326.zip -d .
 rm water-polygons-split-4326.zip
@@ -16,7 +16,7 @@ mkdir ne_10m_lakes
 unzip ne_10m_lakes.zip -d ne_10m_lakes
 rm  ne_10m_lakes.zip
 
-wget -O - $OSMFILE | tee osm.bz2 | lbzcat | $GEOBIN/renumber
+wget -O - $OSMFILE | tee osm.bz2 | lbzcat | $GEOBIN/renumber .
 lbzcat osm.bz2 | $GEOBIN/compile .
 rm osm.bz2
 
