@@ -37,7 +37,7 @@ Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
         "<div id=\"map\"></div>"
         "<script type=\"text/javascript\">"
         "var map = L.map('map', {zoomControl: false}).setView([#lat#, #lon#], #zoom#);"
-        "L.tileLayer('http://127.0.0.1:8081/{z}/{x}/{y}.svg', {"
+        "L.tileLayer('/{z}/{x}/{y}.svg', {"
         "    attribution: 'Map data: &copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>)',"
         "    maxZoom: 19"
         "}).addTo(map);"

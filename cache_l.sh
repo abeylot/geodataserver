@@ -13,7 +13,7 @@ do
     then
 		echo "zoom " $i " x " $x " y " $y
         url="http://127.0.0.1:8081/"$i"/"$x"/"$y".svg"
-        wget -q -O /dev/null $url &
+        wget -q -O /dev/null $url 
     fi
 	done
 	done
