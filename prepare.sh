@@ -8,6 +8,11 @@ export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.b
 #below, entire world, test with a smaller file first
 #planet.openstreetmap.org/planet/planet-latest.osm.bz2
 
+
+# install dependancies
+
+
+
 # copy config.xml file to data path
 cp $GEOBIN/config.xml .
 
