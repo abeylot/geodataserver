@@ -29,6 +29,7 @@ services/Tile.hpp \
 services/Svg.hpp \
 services/MapDisplay.hpp \
 helpers/TcpConnection.hpp \
+helpers/StringBuffer.hpp \
 helpers/TcpListener.hpp
 
 
@@ -53,7 +54,8 @@ SvgRenderer.o \
 Msg.o \
 TcpListener.o \
 TcpConnection.o \
-MapDisplay.o
+MapDisplay.o \
+StringBuffer.o \
 
 libs=-lpthread  -lboost_system -lboost_thread -lboost_filesystem -lboost_atomic -lz -latomic
 
@@ -136,6 +138,9 @@ MapDisplay.o: services/MapDisplay.cpp services/MapDisplay.hpp $(headersCommon) $
 
 geoserver: server.cpp $(headersCommon) $(headersServer) $(objectsCommon) $(objectsServer)
 	$(cc) server.cpp $(objectsCommon) $(objectsServer) -o geoserver $(libs)	
+
+StringBuffer.o: helpers/StringBuffer.cpp helpers/StringBuffer.hpp
+	$(cc) -c helpers/StringBuffer.cpp             -o StringBuffer.o
 
 clean:
 		rm -f *.o geoserver renumber normalize index compile geoserver

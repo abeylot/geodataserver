@@ -4,10 +4,11 @@
 #include "../../helpers/hash.hpp"
 #include "../../common/constants.hpp"
 #include "../../Coordinates.hpp"
+#include "../../helpers/StringBuffer.hpp"
 #include <map>
 #include <set>
 #include <math.h>
-#include <sstream>
+//#include <sstream>
 
 
 Shape* SvgRenderer::getShape(CssClass* c)
@@ -286,11 +287,14 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     //std::cout << "zoom;" << zoom << "\n";
     zmMask = 1LL << zoom;
 
-    std::ostringstream result; 
-    std::ostringstream texts; 
+    std::string resultString;
+    std::string textsString;
+    
+    StringBuffer result(resultString); 
+    StringBuffer texts(textsString); 
 
     result << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?> <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
-    result << "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 " << std::to_string(sizex) << " " << std::to_string(sizey) << "\">\n";
+    result << "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 " << sizex << " " << sizey << "\">\n";
 
     indexId = 0;
     for (IndexDesc* idxDesc : *(mger->indexes))
@@ -443,17 +447,17 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                       << "</text>\n";*/
 
                texts << "<text  class=\"c"
-                      << std::to_string(v->style)
+                      << v->style
                       << "\" style=\"font-size:"
-                      << std::to_string(v->fontsize)
-                      << "px\" x=\""+std::to_string(v->pos_x)
-                      << "\" y=\""+std::to_string(v->pos_y)
+                      << v->fontsize
+                      << "px\" x=\"" << v->pos_x
+                      << "\" y=\"" << v->pos_y
                       << "\" transform=\"rotate("
-                      << std::to_string(v->angle*180/M_PI)
+                      << (int16_t)(v->angle*180/M_PI)
                       << ","
-                      << std::to_string(v->pos_x)
+                      << v->pos_x
                       << ","
-                      << std::to_string(v->pos_y)
+                      << v->pos_y
                       << ")\">"
                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
                       << "</text>\n";
@@ -522,8 +526,11 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                     if (cl->symbol != "")
                     {
                         if(mger->symbols->find(cl->symbol) != mger->symbols->end())
+                        {
                             result << (*(mger->symbols))[cl->symbol];
                             cssClasses.erase("sym#"+cl->symbol);
+                            
+                        }
                     }   
 				}
 			}
@@ -532,24 +539,27 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     
     
     
-    result << "<rect width=\"" << std::to_string(sizex + 1) << "\" height=\"" << std::to_string(sizey + 1) << "\" fill=\"antiquewhite\"/>\n";
+    result << "<rect width=\"" << (sizex + 1) << "\" height=\"" << (sizey + 1) << "\" fill=\"antiquewhite\"/>\n";
 
 
     for(std::pair<int,std::string> tmp : resMap)
     {
         result << tmp.second;
     }
-    result << texts.str();
+    texts.flush();
+    result << textsString;
     if(tag != "") result << "<text style=\"font-size:10px\" x=\"0\" y=\"15\" >"
                          << tag
                          << "</text>\n";
     result << "</svg>";
-    return result.str();
+    result.flush();
+    return resultString;
 }
 
 std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, CssClass& cl, Shape& s)
 {
-    std::ostringstream result;
+    std::string resultString;
+    StringBuffer result(resultString);
     double oldx = -1;
     double oldy = -1;
     //std::string style="";
@@ -582,20 +592,21 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
             {
                 if(first)
                 {
-                    result << "M" << trunc(x) << " " << trunc(y)  << " ";
+                    result << "M" << (int16_t)(x) << " " << (int16_t)(y)  << " ";
                     first = false;
                 }
                 else
                 {
                     if((trunc(x) != trunc(oldx)) || (trunc(y) != trunc(oldy))|| i == (l->pointsCount - 1))
-                        result << "L" << trunc(x) << " " << trunc(y) << " ";
+                        result << "L" << (int16_t)(x) << " " << (int16_t)(y) << " ";
                 }
             }
         }
 	}
     result << " \" class=\"c" << cl.rank << "\" />\n";
     cssClasses.insert("c"+std::to_string(cl.rank));
-    return result.str();
+    result.flush();
+    return resultString;
 }
 
 
@@ -609,7 +620,8 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     lbl.pos_x = lbl.angle = lbl.pos_y=0;
     lbl.style = 0;    
     lbl.zindex = cl.textZIndex;
-    std::ostringstream result;
+    std::string resultString;
+    StringBuffer result(resultString);
     
     double symb_angle = 0;
     int64_t symb_x = 0;
@@ -816,26 +828,26 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         int64_t yyy = (myWay.rect.y0 + myWay.rect.y1) /2;
         x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        result << "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" + std::to_string(trunc(x)) + "\"  y=\"" +std::to_string(trunc(y)) + "\" />";
+        result << "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" << (int16_t) x  << "\"  y=\"" << (int16_t) y << "\" />";
         cssClasses.insert("sym#"+cl.symbol);
     } else {
             if(cl.symbol != "")
             {
                 result << "<use xlink:href=\"#"
                        <<  cl.symbol
-                       << "\"  x=\"" << std::to_string(symb_x) << "\"  y=\"" << std::to_string(symb_y)
+                       << "\"  x=\"" << (int16_t)(symb_x) << "\"  y=\"" << (int16_t)(symb_y)
                        << "\" transform=\"rotate("
-                       << std::to_string(symb_angle*180/M_PI)
+                       << (int16_t)(symb_angle*180/M_PI)
                        << ","
-                       << std::to_string(symb_x)
+                       << (int16_t)(symb_x)
                        << ","
-                       << std::to_string(symb_y)
+                       << (int16_t)(symb_y)
                        << ")\"/>";
                 cssClasses.insert("sym#"+cl.symbol);
             }
     }
-
-    return result.str();
+    result.flush();
+    return resultString;
 }
 
 
@@ -849,7 +861,8 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
     lbl.style = 0;    
     lbl.zindex = cl.textZIndex;
     //std::string style= "";
-    std::string result = "";
+    std::string resultString = "";
+    StringBuffer result(resultString);
     //double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     std::string textField = "name";
     if(!(cl.textField == "")) textField = cl.textField;
@@ -864,7 +877,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 			{
 				if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
 				label_s lbl;
-				result += render(lbl,*myWay, rect, szx, szy, cl, s);
+				result << render(lbl,*myWay, rect, szx, szy, cl, s);
 			}
 		}
 		else
@@ -872,7 +885,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 			//style = cl.style;
 			if(draw)
 			{
-				result += "<path  d=\"";
+				result << "<path  d=\"";
 				for(Line* l: myRelation.shape.lines)
 				{
 					Rectangle r1 = rect*1.25;
@@ -892,17 +905,17 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                         {
                             if(first)
                             {
-                                result += "M" + std::to_string(trunc(x)) + " " + std::to_string(trunc(y)) + " ";
+                                result << "M" << (int16_t)(x) << " " << (int16_t)(y) << " ";
                                 first = false;
                             }
                             else
                             {
-                                result += "L" + std::to_string(trunc(x)) + " " + std::to_string(trunc(y)) + " ";
+                                result << "L" << (int16_t)(x) << " " << (int16_t)(y) << " ";
                             }
                         }
                     }
 				}
-                result += " \" class=\"c"+std::to_string(cl.rank)+"\" />\n";
+                result << " \" class=\"c" << cl.rank <<"\" />\n";
                 cssClasses.insert("c"+std::to_string(cl.rank));
 			}
 		}
@@ -972,11 +985,11 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
         int64_t yyy = (myRelation.rect.y0 + myRelation.rect.y1) /2;
         int64_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         int64_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        result += "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" + std::to_string(x) + "\"  y=\"" +std::to_string(y) + "\" />";
+        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int16_t)(x) << "\"  y=\"" << (int16_t)(y) << "\" />";
         cssClasses.insert("sym#"+cl.symbol);
     }
-
-    return result;
+    result.flush();
+    return resultString;
 }
 
 
@@ -991,7 +1004,8 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
     lbl.pos_x = lbl.pos_y = lbl.angle = 0;    
     lbl.style = 0;    
     lbl.zindex = cl.textZIndex;
-    std::string result = "";
+    std::string resultString = "";
+    StringBuffer result(resultString);
     int x,y;
     //std::string style= "";
     //std::string textStyle= "";
@@ -1061,10 +1075,11 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         int64_t yyy = myNode.y;
         x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        result += "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" + std::to_string(trunc(x)) + "\"  y=\"" +std::to_string(trunc(y)) + "\" />";
+        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int16_t)(x) << "\"  y=\"" << (int16_t)(y) << "\" />";
         cssClasses.insert("sym#"+cl.symbol);
     }
-    return result;
+    result.flush();
+    return resultString;
 }
 
 
