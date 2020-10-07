@@ -445,8 +445,21 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                       << ")\" >"
                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
                       << "</text>\n";*/
-
-               texts << "<text  class=\"c"
+               if(v->angle ==0)
+               {
+                   texts << "<text  class=\"c"
+                      << v->style
+                      << "\" style=\"font-size:"
+                      << v->fontsize
+                      << "px\" x=\"" << v->pos_x
+                      << "\" y=\"" << v->pos_y
+                      << "\">"
+                      << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
+                      << "</text>\n";
+               }
+               else
+               {
+                   texts << "<text  class=\"c"
                       << v->style
                       << "\" style=\"font-size:"
                       << v->fontsize
@@ -461,7 +474,8 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                       << ")\">"
                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
                       << "</text>\n";
-                      cssClasses.insert("c"+std::to_string(v->style));
+               } 
+               cssClasses.insert("c"+std::to_string(v->style));
             //}
 		}
     }
@@ -833,7 +847,14 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     } else {
             if(cl.symbol != "")
             {
-                result << "<use xlink:href=\"#"
+                if(symb_angle == 0)
+                {
+                    result << "<use xlink:href=\"#"
+                       <<  cl.symbol
+                       << "\"  x=\"" << (int16_t)(symb_x) << "\"  y=\"" << (int16_t)(symb_y)
+                       << "\"/>";
+                } else {
+                    result << "<use xlink:href=\"#"
                        <<  cl.symbol
                        << "\"  x=\"" << (int16_t)(symb_x) << "\"  y=\"" << (int16_t)(symb_y)
                        << "\" transform=\"rotate("
@@ -843,6 +864,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                        << ","
                        << (int16_t)(symb_y)
                        << ")\"/>";
+                }
                 cssClasses.insert("sym#"+cl.symbol);
             }
     }
