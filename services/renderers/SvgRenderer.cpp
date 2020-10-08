@@ -8,7 +8,7 @@
 #include <map>
 #include <set>
 #include <math.h>
-//#include <sstream>
+#include <sstream>
 
 
 Shape* SvgRenderer::getShape(CssClass* c)
@@ -445,15 +445,28 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                       << ")\" >"
                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
                       << "</text>\n";*/
-
-               texts << "<text  class=\"c"
+               if(v->angle ==0)
+               {
+                   texts << "<text  class=\"c"
+                      << v->style
+                      << "\" style=\"font-size:"
+                      << v->fontsize
+                      << "px\" x=\"" << v->pos_x
+                      << "\" y=\"" << v->pos_y
+                      << "\">"
+                      << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
+                      << "</text>\n";
+               }
+               else
+               {
+                   texts << "<text  class=\"c"
                       << v->style
                       << "\" style=\"font-size:"
                       << v->fontsize
                       << "px\" x=\"" << v->pos_x
                       << "\" y=\"" << v->pos_y
                       << "\" transform=\"rotate("
-                      << (int16_t)(v->angle*180/M_PI)
+                      << (int32_t)(v->angle*180/M_PI)
                       << ","
                       << v->pos_x
                       << ","
@@ -461,7 +474,8 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                       << ")\">"
                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
                       << "</text>\n";
-                      cssClasses.insert("c"+std::to_string(v->style));
+               } 
+               cssClasses.insert("c"+std::to_string(v->style));
             //}
 		}
     }
@@ -592,13 +606,13 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
             {
                 if(first)
                 {
-                    result << "M" << (int16_t)(x) << " " << (int16_t)(y)  << " ";
+                    result << "M" << (int32_t)(x) << " " << (int32_t)(y)  << " ";
                     first = false;
                 }
                 else
                 {
                     if((trunc(x) != trunc(oldx)) || (trunc(y) != trunc(oldy))|| i == (l->pointsCount - 1))
-                        result << "L" << (int16_t)(x) << " " << (int16_t)(y) << " ";
+                        result << "L" << (int32_t)(x) << " " << (int32_t)(y) << " ";
                 }
             }
         }
@@ -758,7 +772,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     //myWay.crop(r1);
     if(draw)
     {
-        myWay.crop(r1);
+        //myWay.crop(r1);
         s.mergePoints(myWay.points, myWay.pointsCount);
     }
     lbl.fontsize = 12;
@@ -828,21 +842,29 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         int64_t yyy = (myWay.rect.y0 + myWay.rect.y1) /2;
         x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        result << "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" << (int16_t) x  << "\"  y=\"" << (int16_t) y << "\" />";
+        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t) x  << "\"  y=\"" << (int32_t) y << "\" />";
         cssClasses.insert("sym#"+cl.symbol);
     } else {
             if(cl.symbol != "")
             {
-                result << "<use xlink:href=\"#"
+                if(symb_angle == 0)
+                {
+                    result << "<use xlink:href=\"#"
                        <<  cl.symbol
-                       << "\"  x=\"" << (int16_t)(symb_x) << "\"  y=\"" << (int16_t)(symb_y)
+                       << "\"  x=\"" << (int32_t)(symb_x) << "\"  y=\"" << (int32_t)(symb_y)
+                       << "\"/>";
+                } else {
+                    result << "<use xlink:href=\"#"
+                       <<  cl.symbol
+                       << "\"  x=\"" << (int32_t)(symb_x) << "\"  y=\"" << (int32_t)(symb_y)
                        << "\" transform=\"rotate("
-                       << (int16_t)(symb_angle*180/M_PI)
+                       << (int32_t)(symb_angle*180/M_PI)
                        << ","
-                       << (int16_t)(symb_x)
+                       << (int32_t)(symb_x)
                        << ","
-                       << (int16_t)(symb_y)
+                       << (int32_t)(symb_y)
                        << ")\"/>";
+                }
                 cssClasses.insert("sym#"+cl.symbol);
             }
     }
@@ -889,7 +911,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 				for(Line* l: myRelation.shape.lines)
 				{
 					Rectangle r1 = rect*1.25;
-					l->crop(r1);
+					//l->crop(r1);
                     bool first = true;
                     int x=0;
                     int y=0;
@@ -905,12 +927,12 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                         {
                             if(first)
                             {
-                                result << "M" << (int16_t)(x) << " " << (int16_t)(y) << " ";
+                                result << "M" << (int32_t)(x) << " " << (int32_t)(y) << " ";
                                 first = false;
                             }
                             else
                             {
-                                result << "L" << (int16_t)(x) << " " << (int16_t)(y) << " ";
+                                result << "L" << (int32_t)(x) << " " << (int32_t)(y) << " ";
                             }
                         }
                     }
@@ -985,7 +1007,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
         int64_t yyy = (myRelation.rect.y0 + myRelation.rect.y1) /2;
         int64_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         int64_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int16_t)(x) << "\"  y=\"" << (int16_t)(y) << "\" />";
+        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\" />";
         cssClasses.insert("sym#"+cl.symbol);
     }
     result.flush();
@@ -1075,7 +1097,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         int64_t yyy = myNode.y;
         x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int16_t)(x) << "\"  y=\"" << (int16_t)(y) << "\" />";
+        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\" />";
         cssClasses.insert("sym#"+cl.symbol);
     }
     result.flush();

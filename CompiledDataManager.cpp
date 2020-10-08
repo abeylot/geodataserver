@@ -193,7 +193,7 @@ void Line::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 2))
+        while ((i < pointsCount)&&(pointsCount > 4))
         {
             bool discarded = false;
             if(points[i].x < r.x0)
@@ -226,7 +226,7 @@ void Line::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 2))
+        while ((i < pointsCount)&&(pointsCount > 4))
         {
             bool discarded = false;
             if(points[i].x > r.x1)
@@ -258,7 +258,7 @@ void Line::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 2))
+        while ((i < pointsCount)&&(pointsCount > 4))
         {
             bool discarded = false;
             if(points[i].y < r.y0)
@@ -290,7 +290,7 @@ void Line::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 2))
+        while ((i < pointsCount)&&(pointsCount > 4))
         {
             bool discarded = false;
             if(points[i].y > r.y1)
@@ -419,7 +419,7 @@ void Way::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 2))
+        while ((i < pointsCount)&&(pointsCount > 4))
         {
             bool discarded = false;
             if(points[i].x < r.x0)
@@ -452,7 +452,7 @@ void Way::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 2))
+        while ((i < pointsCount)&&(pointsCount > 4))
         {
             bool discarded = false;
             if(points[i].x > r.x1)
@@ -484,7 +484,7 @@ void Way::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 2))
+        while ((i < pointsCount)&&(pointsCount > 4))
         {
             bool discarded = false;
             if(points[i].y < r.y0)
@@ -516,7 +516,7 @@ void Way::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 2))
+        while ((i < pointsCount)&&(pointsCount > 4))
         {
             bool discarded = false;
             if(points[i].y > r.y1)
