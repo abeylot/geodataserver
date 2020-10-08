@@ -5,6 +5,9 @@ a light SVG tile map server that uses openstreetmap data and shp files
 ## documentation
 see [webdoc/index.html](webdoc/index.html)
 ## requirements
-a debian based linux with at least 4gb memory and a fast 500gb ssd for whole world
+1. a debian based linux
+2. at least 4gb memory
+2. a fast 500gb ssd for whole world or some gb free space for smaller maps
 ## dependencies
-boost-threads  libzlib
+1. boost-threads
+2. libzlib
