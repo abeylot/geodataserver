@@ -12,4 +12,4 @@ see [webdoc/index.html](webdoc/index.html) after cloning this repo
 1. boost-threads
 2. libzlib
 ##
-![sample](/webdoc/map_13.jpg)
+![sample](/webdoc/map13.jpg)
