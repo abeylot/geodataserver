@@ -1,7 +1,7 @@
 # geodataserver
 ![sample](/webdoc/sample.jpg)
 ##
-a light SVG tile map server that uses openstreetmap data and shp files
+a light SVG tile map renderer and server that uses openstreetmap data and shp files
 ## documentation
 see [webdoc/index.html](webdoc/index.html) after cloning this repo
 ## requirements
