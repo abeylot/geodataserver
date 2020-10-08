@@ -466,7 +466,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                       << "px\" x=\"" << v->pos_x
                       << "\" y=\"" << v->pos_y
                       << "\" transform=\"rotate("
-                      << (int16_t)(v->angle*180/M_PI)
+                      << (int32_t)(v->angle*180/M_PI)
                       << ","
                       << v->pos_x
                       << ","
@@ -606,13 +606,13 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
             {
                 if(first)
                 {
-                    result << "M" << (int16_t)(x) << " " << (int16_t)(y)  << " ";
+                    result << "M" << (int32_t)(x) << " " << (int32_t)(y)  << " ";
                     first = false;
                 }
                 else
                 {
                     if((trunc(x) != trunc(oldx)) || (trunc(y) != trunc(oldy))|| i == (l->pointsCount - 1))
-                        result << "L" << (int16_t)(x) << " " << (int16_t)(y) << " ";
+                        result << "L" << (int32_t)(x) << " " << (int32_t)(y) << " ";
                 }
             }
         }
@@ -842,7 +842,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         int64_t yyy = (myWay.rect.y0 + myWay.rect.y1) /2;
         x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int16_t) x  << "\"  y=\"" << (int16_t) y << "\" />";
+        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t) x  << "\"  y=\"" << (int32_t) y << "\" />";
         cssClasses.insert("sym#"+cl.symbol);
     } else {
             if(cl.symbol != "")
@@ -851,18 +851,18 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 {
                     result << "<use xlink:href=\"#"
                        <<  cl.symbol
-                       << "\"  x=\"" << (int16_t)(symb_x) << "\"  y=\"" << (int16_t)(symb_y)
+                       << "\"  x=\"" << (int32_t)(symb_x) << "\"  y=\"" << (int32_t)(symb_y)
                        << "\"/>";
                 } else {
                     result << "<use xlink:href=\"#"
                        <<  cl.symbol
-                       << "\"  x=\"" << (int16_t)(symb_x) << "\"  y=\"" << (int16_t)(symb_y)
+                       << "\"  x=\"" << (int32_t)(symb_x) << "\"  y=\"" << (int32_t)(symb_y)
                        << "\" transform=\"rotate("
-                       << (int16_t)(symb_angle*180/M_PI)
+                       << (int32_t)(symb_angle*180/M_PI)
                        << ","
-                       << (int16_t)(symb_x)
+                       << (int32_t)(symb_x)
                        << ","
-                       << (int16_t)(symb_y)
+                       << (int32_t)(symb_y)
                        << ")\"/>";
                 }
                 cssClasses.insert("sym#"+cl.symbol);
@@ -1007,7 +1007,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
         int64_t yyy = (myRelation.rect.y0 + myRelation.rect.y1) /2;
         int64_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         int64_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int16_t)(x) << "\"  y=\"" << (int16_t)(y) << "\" />";
+        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\" />";
         cssClasses.insert("sym#"+cl.symbol);
     }
     result.flush();
@@ -1097,7 +1097,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         int64_t yyy = myNode.y;
         x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int16_t)(x) << "\"  y=\"" << (int16_t)(y) << "\" />";
+        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\" />";
         cssClasses.insert("sym#"+cl.symbol);
     }
     result.flush();
