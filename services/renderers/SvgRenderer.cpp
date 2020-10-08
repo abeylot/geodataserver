@@ -842,7 +842,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         int64_t yyy = (myWay.rect.y0 + myWay.rect.y1) /2;
         x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        result << "<use xlink:href=\"#" + cl.symbol + "\"  x=\"" << (int16_t) x  << "\"  y=\"" << (int16_t) y << "\" />";
+        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int16_t) x  << "\"  y=\"" << (int16_t) y << "\" />";
         cssClasses.insert("sym#"+cl.symbol);
     } else {
             if(cl.symbol != "")
