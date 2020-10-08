@@ -8,7 +8,7 @@
 #include <map>
 #include <set>
 #include <math.h>
-//#include <sstream>
+#include <sstream>
 
 
 Shape* SvgRenderer::getShape(CssClass* c)
@@ -927,12 +927,12 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                         {
                             if(first)
                             {
-                                result << "M" << (int16_t)(x) << " " << (int16_t)(y) << " ";
+                                result << "M" << (int32_t)(x) << " " << (int32_t)(y) << " ";
                                 first = false;
                             }
                             else
                             {
-                                result << "L" << (int16_t)(x) << " " << (int16_t)(y) << " ";
+                                result << "L" << (int32_t)(x) << " " << (int32_t)(y) << " ";
                             }
                         }
                     }
