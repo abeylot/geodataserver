@@ -1,0 +1,40 @@
+<html>
+<body>
+A lightweight SVG map Tile server.
+<br/>
+<a href="samples.html">Maps samples for every zoom level</a>
+<h4> compile from source : </h1>
+first install some dependancies :<br/>
+
+<code>
+    sudo apt update<br/>
+    sudo apt upgrade<br/>
+    sudo apt install g++ lbzip2 libboost-all-dev libbz2-dev git<br/>
+</code>
+<br/>
+	
+clone c++ code :<br/>
+<code>
+   git clone https://github.com/abeylot/geodataserver.git<br/>
+</code>
+<br/>
+build :<br/>
+<code>
+  cd geodataserver <br/>
+  make <br/>
+</code>
+
+<h4>download and compile map data :</h4>
+<code>
+   <br/>
+   mkdir data<br/>
+   <br/>
+   cp prepare.sh data <br/>
+   cd data <br/>
+   <br/>
+   nano prepare.sh <br/> 
+   sh prepare.sh  <br/>
+</code>
+<h4>configuration :</h4>
+</body>
+</html>
