@@ -1,7 +1,7 @@
 #This script shall be run in data directory
 
 # set environment variable to geodataserver binaries path
-export GEOBIN=/home/pi/geodataserver
+export GEOBIN=/$home/geodataserver
 
 #set environment variable to openstreet map file to download
 export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.bz2 

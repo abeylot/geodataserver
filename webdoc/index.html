@@ -1,8 +1,15 @@
 <html>
 <body>
-A lightweight SVG map Tile server.
+A lightweight SVG map Tile server that can run on a raspberry pi (4)
 <br/>
+<img src="sample.jpg" /><br/>
 <a href="samples.html">Maps samples for every zoom level</a>
+<br/>
+	following use example assumes that :
+	<li>you perform all actions in your home directory.</li>
+	<li>you are on a debian based linux system including raspberry os</li>
+<br/>
+
 <h4> compile from source : </h1>
 first install some dependancies :<br/>
 
@@ -15,12 +22,13 @@ first install some dependancies :<br/>
 	
 clone c++ code :<br/>
 <code>
+   cd $home <br/>
    git clone https://github.com/abeylot/geodataserver.git<br/>
 </code>
 <br/>
 build :<br/>
 <code>
-  cd geodataserver <br/>
+  cd $home/geodataserver <br/>
   make <br/>
 </code>
 
@@ -32,9 +40,22 @@ build :<br/>
    cp prepare.sh data <br/>
    cd data <br/>
    <br/>
-   nano prepare.sh <br/> 
    sh prepare.sh  <br/>
 </code>
-<h4>configuration :</h4>
+<h4>Launch tile server</h4>
+<code>$home/geodataserver/geoserver $home/geodataserver/data</code>
+<br/>
+server is listening on port 8081<br/>
+test page is available at : <a href="http://localhost:8081">http://localhost:8081</a><br/>
+<h4>change openstreetmap data file</h4>
+example scripts downloads only a small openstreetmap file, you can change it by editing prepare.sh script.
+first of all have a try with a small area openstreetmap file.
+
+<h4> change parameters and map style </h4>
+you can edit data/config.xml file and change some parameter. If you change indexes items you have to launch :
+<br/>
+<code> $home/geodataserver/index $home/geodataserver/data</code>
+<br/>
+in order to compute indexes.
 </body>
 </html>
