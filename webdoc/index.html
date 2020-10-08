@@ -6,7 +6,7 @@ A lightweight SVG map Tile server that can run on a raspberry pi (4)
 <a href="samples.html">Maps samples for every zoom level</a>
 <br/>
 	following use example assumes that :
-	<li>you perform all actions in your home directory.</li>
+	<li>you perform all actions in your HOME directory.</li>
 	<li>you are on a debian based linux system including raspberry os</li>
 <br/>
 
@@ -22,13 +22,13 @@ first install some dependancies :<br/>
 	
 clone c++ code :<br/>
 <code>
-   cd $home <br/>
+   cd $HOME <br/>
    git clone https://github.com/abeylot/geodataserver.git<br/>
 </code>
 <br/>
 build :<br/>
 <code>
-  cd $home/geodataserver <br/>
+  cd $HOME/geodataserver <br/>
   make <br/>
 </code>
 
@@ -43,7 +43,7 @@ build :<br/>
    sh prepare.sh  <br/>
 </code>
 <h4>Launch tile server</h4>
-<code>$home/geodataserver/geoserver $home/geodataserver/data</code>
+<code>$HOME/geodataserver/geoserver $HOME/geodataserver/data</code>
 <br/>
 server is listening on port 8081<br/>
 test page is available at : <a href="http://localhost:8081">http://localhost:8081</a><br/>
@@ -54,7 +54,7 @@ first of all have a try with a small area openstreetmap file.
 <h4> change parameters and map style </h4>
 you can edit data/config.xml file and change some parameter. If you change indexes items you have to launch :
 <br/>
-<code> $home/geodataserver/index $home/geodataserver/data</code>
+<code> $HOME/geodataserver/index $HOME/geodataserver/data</code>
 <br/>
 in order to compute indexes.
 </body>
