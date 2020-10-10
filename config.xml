@@ -611,7 +611,7 @@
         </restriction>
         <restriction zLevels="19">
             <condition tagKey="natural" closed="both">
-                <class value="tree_row"                  zIndex="50001" style="#treeLineB"/>
+                <class value="tree_row"                  zIndex="50001" style="#treeLineL"/>
             </condition>
         </restriction>
     </index>
@@ -720,7 +720,7 @@
         </restriction>
         <restriction zLevels="19">
             <condition tagKey="natural" closed="both">
-                <class value="tree_row"                  zIndex="50001" style="#treeLineB"/>
+                <class value="tree_row"                  zIndex="50001" style="#treeLineL"/>
             </condition>
         </restriction>
     </index>
