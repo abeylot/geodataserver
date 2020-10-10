@@ -184,6 +184,7 @@ bool Line::isClosed()
 
 void Line::crop(Rectangle& r)
 {
+/*
     if(points[0] == points[pointsCount - 1])
     {
         
@@ -193,7 +194,7 @@ void Line::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 4))
+        while ((i < pointsCount))
         {
             bool discarded = false;
             if(points[i].x < r.x0)
@@ -208,7 +209,7 @@ void Line::crop(Rectangle& r)
                 {
                     if((prev->x < r.x0)&&(next->x < r.x0))
                     {
-                        if(i && i!= (pointsCount-1)) discarded = true;
+                        discarded = true;
                     }
                 }
             }
@@ -226,7 +227,7 @@ void Line::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 4))
+        while ((i < pointsCount))
         {
             bool discarded = false;
             if(points[i].x > r.x1)
@@ -241,7 +242,7 @@ void Line::crop(Rectangle& r)
                 {
                     if((prev->x > r.x1)&&(next->x > r.x1))
                     {
-                        if(i && i!= (pointsCount-1)) discarded = true;
+                        discarded = true;
                     }
                 }
             }
@@ -258,7 +259,7 @@ void Line::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 4))
+        while ((i < pointsCount))
         {
             bool discarded = false;
             if(points[i].y < r.y0)
@@ -273,7 +274,7 @@ void Line::crop(Rectangle& r)
                 {
                     if((prev->y < r.y0)&&(next->y < r.y0))
                     {
-                        if(i && i!= (pointsCount-1)) discarded = true;
+                        discarded = true;
                     }
                 }
             }
@@ -290,7 +291,7 @@ void Line::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 4))
+        while ((i < pointsCount))
         {
             bool discarded = false;
             if(points[i].y > r.y1)
@@ -305,7 +306,7 @@ void Line::crop(Rectangle& r)
                 {
                     if((prev->y > r.y1)&&(next->y > r.y1))
                     {
-                        if(i && i!= (pointsCount-1)) discarded = true;
+                        discarded = true;
                     }
                 }
             }
@@ -322,7 +323,7 @@ void Line::crop(Rectangle& r)
         
     }
     else
-    {
+   */ {
         uint64_t i;
         GeoPoint* newPoints;
         uint64_t newPointsCount = 0;
@@ -410,7 +411,7 @@ void Line::crop(Rectangle& r)
 }
 void Way::crop(Rectangle& r)
 {
-    if(points[0] == points[pointsCount - 1])
+/*    if(points[0] == points[pointsCount - 1])
     {
         
         uint64_t newPointsCount, i;
@@ -419,7 +420,7 @@ void Way::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 4))
+        while ((i < pointsCount))
         {
             bool discarded = false;
             if(points[i].x < r.x0)
@@ -434,7 +435,7 @@ void Way::crop(Rectangle& r)
                 {
                     if((prev->x < r.x0)&&(next->x < r.x0))
                     {
-                        if(i && i!= (pointsCount-1)) discarded = true;
+                        discarded = true;
                     }
                 }
             }
@@ -452,7 +453,7 @@ void Way::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 4))
+        while ((i < pointsCount))
         {
             bool discarded = false;
             if(points[i].x > r.x1)
@@ -467,7 +468,7 @@ void Way::crop(Rectangle& r)
                 {
                     if((prev->x > r.x1)&&(next->x > r.x1))
                     {
-                        if(i && i!= (pointsCount-1)) discarded = true;
+                        discarded = true;
                     }
                 }
             }
@@ -484,7 +485,7 @@ void Way::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 4))
+        while ((i < pointsCount))
         {
             bool discarded = false;
             if(points[i].y < r.y0)
@@ -499,7 +500,7 @@ void Way::crop(Rectangle& r)
                 {
                     if((prev->y < r.y0)&&(next->y < r.y0))
                     {
-                        if(i && i!= (pointsCount-1)) discarded = true;
+                        discarded = true;
                     }
                 }
             }
@@ -516,7 +517,7 @@ void Way::crop(Rectangle& r)
         newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
         newPointsCount = 0;
         i = 0;
-        while ((i < pointsCount)&&(pointsCount > 4))
+        while ((i < pointsCount))
         {
             bool discarded = false;
             if(points[i].y > r.y1)
@@ -531,7 +532,7 @@ void Way::crop(Rectangle& r)
                 {
                     if((prev->y > r.y1)&&(next->y > r.y1))
                     {
-                        if(i && i!= (pointsCount-1)) discarded = true;
+                        discarded = true;
                     }
                 }
             }
@@ -547,7 +548,7 @@ void Way::crop(Rectangle& r)
         pointsCount = newPointsCount;
         
     }
-    else
+    else*/
     {
         uint64_t i;
         GeoPoint* newPoints;
