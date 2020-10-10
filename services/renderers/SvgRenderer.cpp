@@ -772,7 +772,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     //myWay.crop(r1);
     if(draw)
     {
-        //myWay.crop(r1);
+        myWay.crop(r1);
         s.mergePoints(myWay.points, myWay.pointsCount);
     }
     lbl.fontsize = 12;
@@ -911,7 +911,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 				for(Line* l: myRelation.shape.lines)
 				{
 					Rectangle r1 = rect*1.25;
-					//l->crop(r1);
+					l->crop(r1);
                     bool first = true;
                     int x=0;
                     int y=0;

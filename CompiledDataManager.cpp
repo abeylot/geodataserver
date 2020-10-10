@@ -208,7 +208,7 @@ void Line::crop(Rectangle& r)
                 {
                     if((prev->x < r.x0)&&(next->x < r.x0))
                     {
-                        discarded = true;
+                        if(i && i!= (pointsCount-1)) discarded = true;
                     }
                 }
             }
@@ -241,7 +241,7 @@ void Line::crop(Rectangle& r)
                 {
                     if((prev->x > r.x1)&&(next->x > r.x1))
                     {
-                        discarded = true;
+                        if(i && i!= (pointsCount-1)) discarded = true;
                     }
                 }
             }
@@ -273,7 +273,7 @@ void Line::crop(Rectangle& r)
                 {
                     if((prev->y < r.y0)&&(next->y < r.y0))
                     {
-                        discarded = true;
+                        if(i && i!= (pointsCount-1)) discarded = true;
                     }
                 }
             }
@@ -305,7 +305,7 @@ void Line::crop(Rectangle& r)
                 {
                     if((prev->y > r.y1)&&(next->y > r.y1))
                     {
-                        discarded = true;
+                        if(i && i!= (pointsCount-1)) discarded = true;
                     }
                 }
             }
@@ -434,7 +434,7 @@ void Way::crop(Rectangle& r)
                 {
                     if((prev->x < r.x0)&&(next->x < r.x0))
                     {
-                        discarded = true;
+                        if(i && i!= (pointsCount-1)) discarded = true;
                     }
                 }
             }
@@ -467,7 +467,7 @@ void Way::crop(Rectangle& r)
                 {
                     if((prev->x > r.x1)&&(next->x > r.x1))
                     {
-                        discarded = true;
+                        if(i && i!= (pointsCount-1)) discarded = true;
                     }
                 }
             }
@@ -499,7 +499,7 @@ void Way::crop(Rectangle& r)
                 {
                     if((prev->y < r.y0)&&(next->y < r.y0))
                     {
-                        discarded = true;
+                        if(i && i!= (pointsCount-1)) discarded = true;
                     }
                 }
             }
@@ -531,7 +531,7 @@ void Way::crop(Rectangle& r)
                 {
                     if((prev->y > r.y1)&&(next->y > r.y1))
                     {
-                        discarded = true;
+                        if(i && i!= (pointsCount-1)) discarded = true;
                     }
                 }
             }
