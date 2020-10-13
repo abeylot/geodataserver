@@ -106,6 +106,33 @@ std::string cutString(std::string text, int x, int y, int dy)
 	}
 }	
 
+size_t cutString(std::string txt)
+{
+	if(txt.length() < MAX_TEXT_LEN) return txt.length(); 
+    size_t result = 0;
+    while(true)
+    {
+		if(txt.length() < MAX_TEXT_LEN )
+        {
+            break;
+        }
+		size_t pos = txt.find(' ', MIN_TEXT_LEN);
+		if(pos == std::string::npos)
+		    pos = txt.find('/', MIN_TEXT_LEN);
+		if(pos == std::string::npos)
+		    pos = txt.find('-', MIN_TEXT_LEN);
+		if(pos == std::string::npos)
+		{
+			pos = MAX_TEXT_LEN;
+		}
+		if((pos) > result) result = pos;
+        txt = txt.substr(pos);
+    }
+    return result;
+}	
+
+
+
 
 template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rect)
 {
@@ -320,12 +347,9 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
         
         for(auto v = label_vector.begin(); v!=t; ++v)
         {
-            int ilt = t->text.length();
-            int ilv = v->text.length();
+            int ilt = cutString(t->text);
+            int ilv = cutString(v->text);
             
-            if(ilt > MAX_TEXT_LEN) ilt = MAX_TEXT_LEN;
-            if(ilv > MAX_TEXT_LEN) ilv = MAX_TEXT_LEN;
-
             int dx = v->pos_x - t->pos_x;
             int dy = v->pos_y - t->pos_y;
             if(dx < 0) dx = -dx;
