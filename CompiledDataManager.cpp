@@ -158,12 +158,24 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
 
     if (r.isPyramidal )
     {
-        for(unsigned int i = 0; i < r.shape.lines.size(); i++)
+        /*for(unsigned int i = 0; i < r.shape.lines.size(); i++)
         {
             if (! r.shape.lines[i]->isClosed())
             {
                 delete r.shape.lines[i];
                 r.shape.lines.erase(r.shape.lines.begin() + i);
+            }
+        }*/
+        for (auto it = r.shape.lines.begin(); it != r.shape.lines.end(); )
+        {
+        	if (!(*it)->isClosed())
+        	{
+        		delete (*it);
+            	it = r.shape.lines.erase(it);
+        	}
+        	else
+        	{
+            	++it;
             }
         }
     }
@@ -184,6 +196,7 @@ bool Line::isClosed()
 
 void Line::crop(Rectangle& r)
 {
+	if (pointsCount < 3) return;
 /*
     if(points[0] == points[pointsCount - 1])
     {

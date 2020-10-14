@@ -1,7 +1,7 @@
 #!/bin/bash
 n=2
 m=1
-for i in `seq 1 8`;
+for i in `seq 1 11`;
 do
         echo "zoom" $i
         for x in `seq 0 $m`
