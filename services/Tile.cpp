@@ -307,7 +307,7 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
         def(res, smallRes);
         encoder.addContent(rep,smallRes);
         std::cout << "cache level " << _cachelevel << "\n";
-	if(_z <= _cachelevel)
+	if(_z <= _cachelevel && res.length() > 2048)
         {
 			boost::filesystem::path p1(dir1);
 			boost::filesystem::path p2(dir2);
