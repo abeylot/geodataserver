@@ -563,6 +563,7 @@ void Way::crop(Rectangle& r)
     }
     else*/
     {
+		if(pointsCount < 3) return;
         uint64_t i;
         GeoPoint* newPoints;
         uint64_t newPointsCount = 0;
