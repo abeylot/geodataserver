@@ -255,7 +255,9 @@ template <class ITEM, class KEY> int fileIndexComp(const void* a, const void* b)
  */
 template<class ITEM, class KEY> class FileIndex
 {
-private:
+    private:
+    bool sorted;
+    KEY last_inserted;
     std::string filename;
     Record<ITEM, KEY> *buffer;
     unsigned long bufferCount;
@@ -266,6 +268,13 @@ public:
     uint64_t fileSize;
     //FILE * pFile;
     GeoFile pFile;
+    //uint64_t lastMaxIndex;
+    //KEY lastMaxValue;
+    //uint64_t lastMinIndex;
+    //KEY lastMinValue;
+    
+    bool isSorted(){return sorted;}
+    
     /**
      * @brief Construct a new File Index object.
      * 
@@ -274,7 +283,7 @@ public:
      */
     FileIndex(std::string filename_, bool replace) : filename(filename_)
     {
-	    std::cout << "file name : " << this->filename << ":" << filename << "\n";
+	    //std::cout << "file name : " << this->filename << ":" << filename << "\n";
 
         pFile.open(filename, replace);
         buffer = NULL;
@@ -285,6 +294,8 @@ public:
         recSize = sizeof(Record<ITEM,KEY>);
         fileSize = pFile.length()/recSize;
         sortedSize = 0;
+        sorted = true;
+        //lastMaxIndex = lastMinIndex = 0;
     }
 
     /**
@@ -313,7 +324,8 @@ public:
         {
             flush();
         }
-
+        if(key < last_inserted) sorted = false;
+        last_inserted = record.key;
     }
 
 
@@ -352,7 +364,7 @@ public:
         std::cerr << "sorting  " << fileSize << " elements \n";
         if(!fileSize) return;
         sortedSize = 0;
-        uint64_t buffer_size = 0xFFFFFFFFULL / (3*recSize);
+        uint64_t buffer_size = 0xFFFFFFFFFFULL / (3*recSize);
         Record<ITEM,KEY>* sort_buffer = NULL;
         while(sort_buffer == NULL)
         {
@@ -585,6 +597,17 @@ public:
         {
             return false;
         }
+        
+        /*if(lastMaxIndex && lastMaxValue >= key)
+        {
+            iMax = lastMaxIndex;
+            level = FILEINDEX_CACHELEVEL;
+        }
+        if(lastMinIndex && lastMinValue <= key)
+        {
+            iMin = lastMinIndex;
+            level = FILEINDEX_CACHELEVEL;
+        }*/
 
         while((iMax - iMin) > 1)
         {
@@ -592,12 +615,23 @@ public:
             uint64_t iPivot = (iMin + iMax) >> 1;
             if(level < FILEINDEX_CACHELEVEL) getAndCache(iPivot,result);
             else get(iPivot, result);
-            if(result->key > key) iMax = iPivot;
+            if(result->key > key)
+            {
+                //lastMaxIndex = iMax;
+                //lastMaxValue = result->key;
+                iMax = iPivot;
+            }
             else if(result->key == key)
             {
+                
                 return true;
             }
-            else iMin = iPivot;
+            else
+            {
+                //lastMinIndex = iMin;
+                //lastMinValue = result->key;
+                iMin = iPivot;
+            }
         }
         return false;
     };

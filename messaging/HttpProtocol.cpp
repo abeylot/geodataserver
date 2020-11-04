@@ -59,6 +59,6 @@ int64_t HttpProtocol::getMessage(std::string& message,TcpConnection* s)
         std::cout << e.what() << "\n";
         return -1;
     }
-    std::cout <<"lus" << rcv << "\n";
+    //std::cout <<"lus" << rcv << "\n";
     return rcv;
 }

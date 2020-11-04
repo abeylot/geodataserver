@@ -49,7 +49,7 @@ int64_t TcpConnection::write( const char* buff, uint64_t length )
     int64_t iWritten = 0;
     int64_t toWrite = length;
     unsigned int errorcount = 0;
-    std::cout << "write : " << length << "\n";
+    //std::cout << "write : " << length << "\n";
     while( (iWritten < toWrite) &&(_IsAlive) )
     {
         int64_t i = send( _FileDescr, buff + iWritten, toWrite, MSG_NOSIGNAL );
@@ -70,7 +70,7 @@ int64_t TcpConnection::write( const char* buff, uint64_t length )
             break;
         }
     }
-	std::cout << "wrote : " << iWritten << "\n";
+	//std::cout << "wrote : " << iWritten << "\n";
     return iWritten;
 }
 

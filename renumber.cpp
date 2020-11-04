@@ -34,9 +34,9 @@ struct XmlVisitor
         relationIdIndex->flush();
         wayIdIndex->flush();
         nodeIdIndex->flush();
-        relationIdIndex->sort();
-        wayIdIndex->sort();
-        nodeIdIndex->sort();
+        if(!relationIdIndex->isSorted()) relationIdIndex->sort();
+        if(!wayIdIndex->isSorted()) wayIdIndex->sort();
+        if(!wayIdIndex->isSorted()) nodeIdIndex->sort();
         delete relationIdIndex;
         delete wayIdIndex;
         delete nodeIdIndex;

@@ -21,7 +21,7 @@ Msg* HttpEncoder::encode(std::string* in)
 {
     Msg* res = new Msg;
     if(*in == "") return res;
-    printf("[%s]\n",in->c_str());
+    //printf("[%s]\n",in->c_str());
     Record *rcd = new Record();
     Record *rcdParms = new Record();
     res->addRecord(rcd);

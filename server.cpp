@@ -171,9 +171,9 @@ template<typename MSG> struct Exec
                     if(m->getRecordCount() > 0)
                     {
                         std::string url = m->getRecord(0)->getNamedValue("URL");
-                        printf("%s\n",url.c_str());
+                        //printf("%s\n",url.c_str());
                         time_t ctt = time(0);
-                        std::cout << asctime(localtime(&ctt)) << std::endl;
+                        //std::cout << asctime(localtime(&ctt)) << std::endl;
                         ServiceInterface* s = ServicesFactory::getService(url, params);
                         if(s)
                         {
@@ -187,7 +187,7 @@ template<typename MSG> struct Exec
                             encoder.addContent(rep,"<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>Page "+url+" non trouvée.</body></html>");
                         }
                         ctt = time(0);
-                        std::cout << asctime(localtime(&ctt)) << std::endl;
+                        //std::cout << asctime(localtime(&ctt)) << std::endl;
                     }
                     else
                     {

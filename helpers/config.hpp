@@ -309,7 +309,7 @@ struct XmlVisitor
            )
         {
             symbols[symbolId] = symbolStr;
-            std::cout << symbolId << " -> " << symbolStr << "\n";
+            //std::cout << symbolId << " -> " << symbolStr << "\n";
             symbolId = "";
         }
         if (b->baliseName == "restriction")
@@ -327,7 +327,7 @@ struct XmlVisitor
 		if(symbolId != "")
 		{
 			symbolStr += s;
-			std::cout << "[" << s << "]\n";
+			//std::cout << "[" << s << "]\n";
 		}
     }
 

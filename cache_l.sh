@@ -10,10 +10,17 @@ do
         for y in `seq 0 $m`
 	do
     if [ $1 = $i ]
-    then
-		echo "zoom " $i " x " $x " y " $y
-        url="http://127.0.0.1:8081/"$i"/"$x"/"$y".svg"
-        wget -q -O /dev/null $url 
+     	then
+    	if [ $((y%3)) -eq 0 ]
+		then
+			echo "zoom " $1 " x " $x " y " $y
+        	url="http://127.0.0.1:8081/"$i"/"$x"/"$y".svg"
+        	wget  -q -O /dev/null $url 
+		else
+        	url="http://127.0.0.1:8081/"$1"/"$x"/"$y".svg"
+			#echo "p zoom " $1 " x " $x " y " $y
+        	wget  -q -O /dev/null $url & 
+		fi
     fi
 	done
 	done

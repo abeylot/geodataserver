@@ -255,8 +255,8 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
     //rect = rect*1.2;
 
 
-    std::cout << lon1 << "::" << lat1 << "::" << lon2 << "::" << lat2 << "\n";
-    std::cout << rect.x0 << "::" << rect.y0 << "::" << rect.x1 << "::" << rect.y1 << "\n";
+    //std::cout << lon1 << "::" << lat1 << "::" << lon2 << "::" << lat2 << "\n";
+    //std::cout << rect.x0 << "::" << rect.y0 << "::" << rect.x1 << "::" << rect.y1 << "\n";
 
 
     uint32_t szx, szy;
@@ -291,7 +291,7 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
     }
     if(filefound)
     {
-	printf("USING CACHE !\n");
+	//printf("USING CACHE !\n");
         fclose(in);
         encoder.addContent(rep,res);
     }else{	
@@ -306,7 +306,7 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
         std::string smallRes;
         def(res, smallRes);
         encoder.addContent(rep,smallRes);
-        std::cout << "cache level " << _cachelevel << "\n";
+        //std::cout << "cache level " << _cachelevel << "\n";
 	if(_z <= _cachelevel && res.length() > 2048)
         {
 			boost::filesystem::path p1(dir1);
