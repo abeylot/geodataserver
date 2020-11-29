@@ -46,7 +46,7 @@ struct dbf_header
     }
     else
     {
-        nbr_of_records = tmp[0] + tmp[1] * 0xFF + tmp[2] * 0xFFFF + tmp[3]*0xFFFF;
+        nbr_of_records = tmp[0] + 256 * tmp[1] + 256*256*tmp[2]  + 256*256*256*tmp[3];
     }
     if(fread(tmp, 2, 1, f) != 1)
     {

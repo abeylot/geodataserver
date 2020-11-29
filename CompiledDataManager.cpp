@@ -197,457 +197,170 @@ bool Line::isClosed()
 void Line::crop(Rectangle& r)
 {
 	if (pointsCount < 3) return;
-/*
-    if(points[0] == points[pointsCount - 1])
+    uint64_t i;
+    GeoPoint* newPoints;
+    uint64_t newPointsCount = 0;
+    bool discarded;
+    newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
+    newPoints[0] = points[0];
+    newPointsCount++;
+    for(i = 1; i < (pointsCount - 1); i++)
     {
-        
-        uint64_t newPointsCount, i;
-        GeoPoint* newPoints;
-
-        newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-        newPointsCount = 0;
-        i = 0;
-        while ((i < pointsCount))
+        discarded = false;
+        if((points[i-1].x < r.x0)&&(points[i].x < r.x0)&&(points[i+1].x < r.x0)) discarded = true;
+        if(!discarded)
         {
-            bool discarded = false;
-            if(points[i].x < r.x0)
-            {
-                GeoPoint* prev;
-                GeoPoint* next;
-                if(i == 0) prev = &(points[pointsCount -1]);
-                else  prev = &(points[i - 1]);
-                if ( i == (pointsCount -1) ) next = &(points[0]);
-                else next = &(points[i + 1]);
-                if(points[i].x < r.x0)
-                {
-                    if((prev->x < r.x0)&&(next->x < r.x0))
-                    {
-                        discarded = true;
-                    }
-                }
-            }
-            if(!discarded)
-            {
-                memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
-                newPointsCount++;
-            }
-            i++;
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
         }
-
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
-        newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-        newPointsCount = 0;
-        i = 0;
-        while ((i < pointsCount))
-        {
-            bool discarded = false;
-            if(points[i].x > r.x1)
-            {
-                GeoPoint* prev;
-                GeoPoint* next;
-                if(i == 0) prev = &(points[pointsCount -1]);
-                else  prev = &(points[i - 1]);
-                if ( i == (pointsCount -1) ) next = &(points[0]);
-                else next = &(points[i + 1]);
-                if(points[i].x > r.x1)
-                {
-                    if((prev->x > r.x1)&&(next->x > r.x1))
-                    {
-                        discarded = true;
-                    }
-                }
-            }
-            if(!discarded)
-            {
-                memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
-                newPointsCount++;
-            }
-            i++;
-        }
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
-        newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-        newPointsCount = 0;
-        i = 0;
-        while ((i < pointsCount))
-        {
-            bool discarded = false;
-            if(points[i].y < r.y0)
-            {
-                GeoPoint* prev;
-                GeoPoint* next;
-                if(i == 0) prev = &(points[pointsCount -1]);
-                else  prev = &(points[i - 1]);
-                if ( i == (pointsCount -1) ) next = &(points[0]);
-                else next = &(points[i + 1]);
-                if(points[i].y < r.y0)
-                {
-                    if((prev->y < r.y0)&&(next->y < r.y0))
-                    {
-                        discarded = true;
-                    }
-                }
-            }
-            if(!discarded)
-            {
-                memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
-                newPointsCount++;
-            }
-            i++;
-        }
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
-        newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-        newPointsCount = 0;
-        i = 0;
-        while ((i < pointsCount))
-        {
-            bool discarded = false;
-            if(points[i].y > r.y1)
-            {
-                GeoPoint* prev;
-                GeoPoint* next;
-                if(i == 0) prev = &(points[pointsCount -1]);
-                else  prev = &(points[i - 1]);
-                if ( i == (pointsCount -1) ) next = &(points[0]);
-                else next = &(points[i + 1]);
-                if(points[i].y > r.y1)
-                {
-                    if((prev->y > r.y1)&&(next->y > r.y1))
-                    {
-                        discarded = true;
-                    }
-                }
-            }
-            if(!discarded)
-            {
-                memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
-                newPointsCount++;
-            }
-            i++;
-        }
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
-        
     }
-    else
-   */ {
-        uint64_t i;
-        GeoPoint* newPoints;
-        uint64_t newPointsCount = 0;
-        bool discarded;
+    newPoints[newPointsCount] = points[pointsCount - 1];
+    newPointsCount++;
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
 
-        newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-        newPoints[0] = points[0];
-        newPointsCount++;
-        for(i = 1; i < (pointsCount - 1); i++)
+    newPointsCount = 0;
+    newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
+    newPoints[0] = points[0];
+    newPointsCount++;
+    for(i = 1; i < (pointsCount - 1); i++)
+    {
+        discarded = false;
+        if((points[i-1].x > r.x1)&&(points[i].x > r.x1)&&(points[i+1].x > r.x1)) discarded = true;
+        if(!discarded)
         {
-            discarded = false;
-            if((points[i-1].x < r.x0)&&(points[i].x < r.x0)&&(points[i+1].x < r.x0)) discarded = true;
-            if(!discarded)
-            {
-                newPoints[newPointsCount] = points[i];
-                newPointsCount++;
-            }
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
         }
-        newPoints[newPointsCount] = points[pointsCount - 1];
-        newPointsCount++;
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
-
-        newPointsCount = 0;
-        newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-        newPoints[0] = points[0];
-        newPointsCount++;
-        for(i = 1; i < (pointsCount - 1); i++)
-        {
-            discarded = false;
-            if((points[i-1].x > r.x1)&&(points[i].x > r.x1)&&(points[i+1].x > r.x1)) discarded = true;
-            if(!discarded)
-            {
-                newPoints[newPointsCount] = points[i];
-                newPointsCount++;
-            }
-        }
-        newPoints[newPointsCount] = points[pointsCount - 1];
-        newPointsCount++;
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
-
-        newPointsCount = 0;
-        newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-        newPoints[0] = points[0];
-        newPointsCount++;
-        for(i = 1; i < (pointsCount - 1); i++)
-        {
-            discarded = false;
-            if((points[i-1].y < r.y0)&&(points[i].y < r.y0)&&(points[i+1].y < r.y0)) discarded = true;
-            if(!discarded)
-            {
-                newPoints[newPointsCount] = points[i];
-                newPointsCount++;
-            }
-        }
-        newPoints[newPointsCount] = points[pointsCount - 1];
-        newPointsCount++;
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
-
-        newPointsCount = 0;
-        newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-        newPoints[0] = points[0];
-        newPointsCount++;
-        for(i = 1; i < (pointsCount - 1); i++)
-        {
-            discarded = false;
-            if((points[i-1].y > r.y1)&&(points[i].y > r.y1)&&(points[i+1].y > r.y1)) discarded = true;
-            if(!discarded)
-            {
-                newPoints[newPointsCount] = points[i];
-                newPointsCount++;
-            }
-        }
-        newPoints[newPointsCount] = points[pointsCount - 1];
-        newPointsCount++;
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
     }
+    newPoints[newPointsCount] = points[pointsCount - 1];
+    newPointsCount++;
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
+    newPointsCount = 0;
+    newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
+    newPoints[0] = points[0];
+    newPointsCount++;
+    for(i = 1; i < (pointsCount - 1); i++)
+    {
+        discarded = false;
+        if((points[i-1].y < r.y0)&&(points[i].y < r.y0)&&(points[i+1].y < r.y0)) discarded = true;
+        if(!discarded)
+        {
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
+        }
+    }
+    newPoints[newPointsCount] = points[pointsCount - 1];
+    newPointsCount++;
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
+    newPointsCount = 0;
+    newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
+    newPoints[0] = points[0];
+    newPointsCount++;
+    for(i = 1; i < (pointsCount - 1); i++)
+    {
+        discarded = false;
+        if((points[i-1].y > r.y1)&&(points[i].y > r.y1)&&(points[i+1].y > r.y1)) discarded = true;
+        if(!discarded)
+        {
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
+        }
+    }
+    newPoints[newPointsCount] = points[pointsCount - 1];
+    newPointsCount++;
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
 }
+
 void Way::crop(Rectangle& r)
 {
-/*    if(points[0] == points[pointsCount - 1])
+    if(pointsCount < 3) return;
+    uint64_t i;
+    GeoPoint* newPoints;
+    uint64_t newPointsCount = 0;
+    bool discarded;
+    newPoints = static_cast<GeoPoint*> (malloc ((pointsCount * sizeof(GeoPoint))));
+    newPoints[0] = points[0];
+    newPointsCount++;
+    for(i = 1; i < (pointsCount - 1); i++)
     {
-        
-        uint64_t newPointsCount, i;
-        GeoPoint* newPoints;
-
-        newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-        newPointsCount = 0;
-        i = 0;
-        while ((i < pointsCount))
+        discarded = false;
+        if((points[i-1].x < r.x0)&&(points[i].x < r.x0)&&(points[i+1].x < r.x0)) discarded = true;
+        if(!discarded)
         {
-            bool discarded = false;
-            if(points[i].x < r.x0)
-            {
-                GeoPoint* prev;
-                GeoPoint* next;
-                if(i == 0) prev = &(points[pointsCount -1]);
-                else  prev = &(points[i - 1]);
-                if ( i == (pointsCount -1) ) next = &(points[0]);
-                else next = &(points[i + 1]);
-                if(points[i].x < r.x0)
-                {
-                    if((prev->x < r.x0)&&(next->x < r.x0))
-                    {
-                        discarded = true;
-                    }
-                }
-            }
-            if(!discarded)
-            {
-                memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
-                newPointsCount++;
-            }
-            i++;
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
         }
-
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
-        newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-        newPointsCount = 0;
-        i = 0;
-        while ((i < pointsCount))
-        {
-            bool discarded = false;
-            if(points[i].x > r.x1)
-            {
-                GeoPoint* prev;
-                GeoPoint* next;
-                if(i == 0) prev = &(points[pointsCount -1]);
-                else  prev = &(points[i - 1]);
-                if ( i == (pointsCount -1) ) next = &(points[0]);
-                else next = &(points[i + 1]);
-                if(points[i].x > r.x1)
-                {
-                    if((prev->x > r.x1)&&(next->x > r.x1))
-                    {
-                        discarded = true;
-                    }
-                }
-            }
-            if(!discarded)
-            {
-                memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
-                newPointsCount++;
-            }
-            i++;
-        }
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
-        newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-        newPointsCount = 0;
-        i = 0;
-        while ((i < pointsCount))
-        {
-            bool discarded = false;
-            if(points[i].y < r.y0)
-            {
-                GeoPoint* prev;
-                GeoPoint* next;
-                if(i == 0) prev = &(points[pointsCount -1]);
-                else  prev = &(points[i - 1]);
-                if ( i == (pointsCount -1) ) next = &(points[0]);
-                else next = &(points[i + 1]);
-                if(points[i].y < r.y0)
-                {
-                    if((prev->y < r.y0)&&(next->y < r.y0))
-                    {
-                        discarded = true;
-                    }
-                }
-            }
-            if(!discarded)
-            {
-                memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
-                newPointsCount++;
-            }
-            i++;
-        }
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
-        newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-        newPointsCount = 0;
-        i = 0;
-        while ((i < pointsCount))
-        {
-            bool discarded = false;
-            if(points[i].y > r.y1)
-            {
-                GeoPoint* prev;
-                GeoPoint* next;
-                if(i == 0) prev = &(points[pointsCount -1]);
-                else  prev = &(points[i - 1]);
-                if ( i == (pointsCount -1) ) next = &(points[0]);
-                else next = &(points[i + 1]);
-                if(points[i].y > r.y1)
-                {
-                    if((prev->y > r.y1)&&(next->y > r.y1))
-                    {
-                        discarded = true;
-                    }
-                }
-            }
-            if(!discarded)
-            {
-                memcpy(newPoints + newPointsCount, points + i, sizeof(GeoPoint));
-                newPointsCount++;
-            }
-            i++;
-        }
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
-        
     }
-    else*/
+    newPoints[newPointsCount] = points[pointsCount - 1];
+    newPointsCount++;
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
+    newPointsCount = 0;
+    newPoints = static_cast<GeoPoint*> (malloc ((pointsCount * sizeof(GeoPoint))));
+    newPoints[0] = points[0];
+    newPointsCount++;
+    for(i = 1; i < (pointsCount - 1); i++)
     {
-		if(pointsCount < 3) return;
-        uint64_t i;
-        GeoPoint* newPoints;
-        uint64_t newPointsCount = 0;
-        bool discarded;
-
-        newPoints = static_cast<GeoPoint*> (malloc ((pointsCount * sizeof(GeoPoint))));
-        newPoints[0] = points[0];
-        newPointsCount++;
-        for(i = 1; i < (pointsCount - 1); i++)
+        discarded = false;
+        if((points[i-1].x > r.x1)&&(points[i].x > r.x1)&&(points[i+1].x > r.x1)) discarded = true;
+        if(!discarded)
         {
-            discarded = false;
-            if((points[i-1].x < r.x0)&&(points[i].x < r.x0)&&(points[i+1].x < r.x0)) discarded = true;
-            if(!discarded)
-            {
-                newPoints[newPointsCount] = points[i];
-                newPointsCount++;
-            }
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
         }
-        newPoints[newPointsCount] = points[pointsCount - 1];
-        newPointsCount++;
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
-
-        newPointsCount = 0;
-        newPoints = static_cast<GeoPoint*> (malloc ((pointsCount * sizeof(GeoPoint))));
-        newPoints[0] = points[0];
-        newPointsCount++;
-        for(i = 1; i < (pointsCount - 1); i++)
-        {
-            discarded = false;
-            if((points[i-1].x > r.x1)&&(points[i].x > r.x1)&&(points[i+1].x > r.x1)) discarded = true;
-            if(!discarded)
-            {
-                newPoints[newPointsCount] = points[i];
-                newPointsCount++;
-            }
-        }
-        newPoints[newPointsCount] = points[pointsCount - 1];
-        newPointsCount++;
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
-
-        newPointsCount = 0;
-        newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-        newPoints[0] = points[0];
-        newPointsCount++;
-        for(i = 1; i < (pointsCount - 1); i++)
-        {
-            discarded = false;
-            if((points[i-1].y < r.y0)&&(points[i].y < r.y0)&&(points[i+1].y < r.y0)) discarded = true;
-            if(!discarded)
-            {
-                newPoints[newPointsCount] = points[i];
-                newPointsCount++;
-            }
-        }
-        newPoints[newPointsCount] = points[pointsCount - 1];
-        newPointsCount++;
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
-
-        newPointsCount = 0;
-        newPoints = static_cast<GeoPoint*>( malloc (pointsCount * sizeof(GeoPoint)));
-        newPoints[0] = points[0];
-        newPointsCount++;
-        for(i = 1; i < (pointsCount - 1); i++)
-        {
-            discarded = false;
-            if((points[i-1].y > r.y1)&&(points[i].y > r.y1)&&(points[i+1].y > r.y1)) discarded = true;
-            if(!discarded)
-            {
-                newPoints[newPointsCount] = points[i];
-                newPointsCount++;
-            }
-        }
-        newPoints[newPointsCount] = points[pointsCount - 1];
-        newPointsCount++;
-        free(points);
-        points = newPoints;
-        pointsCount = newPointsCount;
     }
+    newPoints[newPointsCount] = points[pointsCount - 1];
+    newPointsCount++;
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
+    newPointsCount = 0;
+    newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
+    newPoints[0] = points[0];
+    newPointsCount++;
+    for(i = 1; i < (pointsCount - 1); i++)
+    {
+        discarded = false;
+        if((points[i-1].y < r.y0)&&(points[i].y < r.y0)&&(points[i+1].y < r.y0)) discarded = true;
+        if(!discarded)
+        {
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
+        }
+    }
+    newPoints[newPointsCount] = points[pointsCount - 1];
+    newPointsCount++;
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
+    newPointsCount = 0;
+    newPoints = static_cast<GeoPoint*>( malloc (pointsCount * sizeof(GeoPoint)));
+    newPoints[0] = points[0];
+    newPointsCount++;
+    for(i = 1; i < (pointsCount - 1); i++)
+    {
+        discarded = false;
+        if((points[i-1].y > r.y1)&&(points[i].y > r.y1)&&(points[i+1].y > r.y1)) discarded = true;
+        if(!discarded)
+        {
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
+        }
+    }
+    newPoints[newPointsCount] = points[pointsCount - 1];
+    newPointsCount++;
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
 }
 
 
@@ -657,7 +370,7 @@ bool Line::mergePoints (GeoPoint* points, uint64_t pointsCount)
     if(points == NULL) return true;
     if(!this->isClosed())
     {
-        if(this->points[0] == points[0])
+        /*if(this->points[0] == points[0])
         {
             this->points = static_cast<GeoPoint*> (realloc(this->points,(pointsCount + this->pointsCount)*sizeof(GeoPoint)));
             fidx::FileRawData<GeoPoint>::revert(this->points, this->pointsCount);
@@ -665,28 +378,27 @@ bool Line::mergePoints (GeoPoint* points, uint64_t pointsCount)
             this->pointsCount += pointsCount;
             return true;
         }
-        else if (this->points[this->pointsCount - 1] == points[0])
+        else*/ if (this->points[this->pointsCount - 1] == points[0])
         {
             this->points = static_cast<GeoPoint*> (realloc(this->points,(pointsCount + this->pointsCount)*sizeof(GeoPoint)));
-            memcpy(this->points + this->pointsCount, points , pointsCount *sizeof(GeoPoint));
-            this->pointsCount += pointsCount;
+            memcpy(this->points + (this->pointsCount - 1), points , pointsCount *sizeof(GeoPoint));
+            this->pointsCount += (pointsCount - 1);
             return true;
         }
-        else if (this->points[this->pointsCount - 1] == points[pointsCount - 1])
+        /*else if (this->points[this->pointsCount - 1] == points[pointsCount - 1])
         {
             this->points = static_cast<GeoPoint*> (realloc(this->points,(pointsCount + this->pointsCount)*sizeof(GeoPoint)));
             memcpy(this->points + this->pointsCount, points, pointsCount *sizeof(GeoPoint));
             fidx::FileRawData<GeoPoint>::revert(this->points+this->pointsCount,pointsCount );
             this->pointsCount += pointsCount;
             return true;
-        }
+        }*/
         else if (this->points[0] == points[pointsCount - 1])
         {
             this->points = static_cast<GeoPoint*> (realloc(this->points,(pointsCount + this->pointsCount)*sizeof(GeoPoint)));
-            fidx::FileRawData<GeoPoint>::revert(this->points, this->pointsCount);
-            memcpy(this->points + this->pointsCount, points, pointsCount *sizeof(GeoPoint));
-            fidx::FileRawData<GeoPoint>::revert(this->points+this->pointsCount,pointsCount );
-            this->pointsCount += pointsCount ;
+            memmove(this->points + pointsCount , this->points + 1, ( this->pointsCount - 1) *sizeof(GeoPoint));
+            memcpy(this->points, points, pointsCount *sizeof(GeoPoint));
+            this->pointsCount += pointsCount - 1 ;
             return true;
         }
     }
