@@ -12,14 +12,15 @@ class Tile : public ServiceInterface
 private:
     long _x, _y, _z;
     unsigned int _cachelevel;
-    std::string _locale;
+    std::string _locale, _defaultColor;
 public:
-    Tile(long z, long x, long y, unsigned int cachelevel, std::string locale):_locale(locale)
+    Tile(long z, long x, long y, unsigned int cachelevel, std::string locale, std::string defaultColor):_locale(locale)
     {
         _x = x;
         _y = y;
         _z = z;
         _cachelevel = cachelevel;
+        _defaultColor = defaultColor;
     }
     Msg* processRequest(Msg* request, CompiledDataManager& mger);
 };

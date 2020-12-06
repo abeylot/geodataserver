@@ -35,13 +35,13 @@ private:
     std::vector<label_s> label_vector;
     std::map<CssClass*, Shape*> shapes;
     std::set<std::string> cssClasses;
-    std::string _locale;
+    std::string _locale, _defaultColor;
     char _locales[32][2];
     unsigned char _nb_locales = 0; 
     
 
 public:
-    SvgRenderer(CompiledDataManager* m, std::string locale) : relationHash(10000), wayHash(10000), nodeHash(1000), _locale(locale)
+    SvgRenderer(CompiledDataManager* m, std::string locale, std::string defaultColor) : relationHash(10000), wayHash(10000), nodeHash(1000), _locale(locale), _defaultColor(defaultColor)
     {
         mger = m;
         zoom = 0;
@@ -58,7 +58,7 @@ public:
             _nb_locales ++ ;
         }
     }
-    SvgRenderer(CompiledDataManager* m, short z, std::string locale) : relationHash(10000), wayHash(10000), nodeHash(1000), _locale(locale)
+    SvgRenderer(CompiledDataManager* m, short z, std::string locale, std::string defaultColor) : relationHash(10000), wayHash(10000), nodeHash(1000), _locale(locale), _defaultColor(defaultColor)
     {
         zoom = 0;
         size_x = 0;

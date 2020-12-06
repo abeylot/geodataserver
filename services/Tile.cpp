@@ -299,7 +299,7 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
 		std::string dir2 = dir1 + "/" + std::to_string(_x);
 
 
-    	SvgRenderer rdr(&mger,_z, _locale);
+    	SvgRenderer rdr(&mger,_z, _locale, _defaultColor);
         std::string tag = "";
         res = rdr.renderItems(rect,szx,szy,tag);
         rep->getRecord(0)->addBlock("HTTPEncoding=gzip");

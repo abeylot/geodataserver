@@ -577,7 +577,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     
     
     
-    result << "<rect width=\"" << (sizex + 1) << "\" height=\"" << (sizey + 1) << "\" fill=\"antiquewhite\"/>\n";
+    result << "<rect width=\"" << (sizex + 1) << "\" height=\"" << (sizey + 1) << "\" fill=\""+_defaultColor+"\"/>\n";
 
 
     for(std::pair<int,std::string> tmp : resMap)

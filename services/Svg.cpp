@@ -48,7 +48,7 @@ Msg* Svg::processRequest(Msg* request, CompiledDataManager& mger)
     Msg* rep = new Msg;
     HttpEncoder encoder;
     encoder.build200Header(rep, "image/svg+xml");
-    SvgRenderer rdr(&mger,std::string(""));
+    SvgRenderer rdr(&mger,std::string(""),"#888888");
 
     std::string tag ="";
     for(std::string val : (request->getRecord(2)->getBlocks()))
