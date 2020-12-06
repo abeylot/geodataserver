@@ -370,29 +370,29 @@ bool Line::mergePoints (GeoPoint* points, uint64_t pointsCount)
     if(points == NULL) return true;
     if(!this->isClosed())
     {
-        /*if(this->points[0] == points[0])
+        if(this->points[0] == points[0])
         {
             this->points = static_cast<GeoPoint*> (realloc(this->points,(pointsCount + this->pointsCount)*sizeof(GeoPoint)));
             fidx::FileRawData<GeoPoint>::revert(this->points, this->pointsCount);
-            memcpy(this->points + this->pointsCount, points , pointsCount*sizeof(GeoPoint) );
-            this->pointsCount += pointsCount;
+            memcpy(this->points + this->pointsCount - 1, points , pointsCount*sizeof(GeoPoint) );
+            this->pointsCount += ( pointsCount - 1 );
             return true;
         }
-        else*/ if (this->points[this->pointsCount - 1] == points[0])
+        else if (this->points[this->pointsCount - 1] == points[0])
         {
             this->points = static_cast<GeoPoint*> (realloc(this->points,(pointsCount + this->pointsCount)*sizeof(GeoPoint)));
             memcpy(this->points + (this->pointsCount - 1), points , pointsCount *sizeof(GeoPoint));
             this->pointsCount += (pointsCount - 1);
             return true;
         }
-        /*else if (this->points[this->pointsCount - 1] == points[pointsCount - 1])
+        else if (this->points[this->pointsCount - 1] == points[pointsCount - 1])
         {
             this->points = static_cast<GeoPoint*> (realloc(this->points,(pointsCount + this->pointsCount)*sizeof(GeoPoint)));
-            memcpy(this->points + this->pointsCount, points, pointsCount *sizeof(GeoPoint));
-            fidx::FileRawData<GeoPoint>::revert(this->points+this->pointsCount,pointsCount );
-            this->pointsCount += pointsCount;
+            memcpy(this->points + this->pointsCount -1 , points, pointsCount *sizeof(GeoPoint));
+            fidx::FileRawData<GeoPoint>::revert(this->points+this->pointsCount - 1 ,pointsCount );
+            this->pointsCount += pointsCount - 1;
             return true;
-        }*/
+        }
         else if (this->points[0] == points[pointsCount - 1])
         {
             this->points = static_cast<GeoPoint*> (realloc(this->points,(pointsCount + this->pointsCount)*sizeof(GeoPoint)));
