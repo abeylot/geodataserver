@@ -2,8 +2,8 @@
 #ifndef FILEINDEX_HPP
 #define FILEINDEX_HPP
 //#define FILEINDEX_SORTBUFFERSIZE 10000000LL
-#define FILEINDEX_RAWFLUSHSIZE   10000ULL
-#define FILEINDEX_CACHELEVEL 26
+#define FILEINDEX_RAWFLUSHSIZE   1000ULL
+#define FILEINDEX_CACHELEVEL 22
 #include <string>
 #include <unordered_map>
 #include <algorithm>
