@@ -28,6 +28,7 @@ struct GeoFile
             fh = open64(name.c_str(),O_CREAT|O_TRUNC|O_RDWR, S_IWUSR | S_IREAD);
         } else {
             fh = open64(name.c_str(),O_RDONLY);
+            posix_fadvise(fh, 0, 0, POSIX_FADV_RANDOM);
         }
         if (fh < 0)
         {
@@ -121,6 +122,7 @@ struct GeoFile
             fh = fopen64(name.c_str(),"wb+");
         } else {
             fh = fopen64 (name.c_str(),"rb");
+
         }
         if (fh == NULL)
         {
