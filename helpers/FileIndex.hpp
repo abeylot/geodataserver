@@ -28,7 +28,7 @@ struct GeoFile
             fh = open64(name.c_str(),O_CREAT|O_TRUNC|O_RDWR, S_IWUSR | S_IREAD);
         } else {
             fh = open64(name.c_str(),O_RDONLY);
-            posix_fadvise(fh, 0, 0, POSIX_FADV_RANDOM);
+            posix_fadvise(fh, 0, 0, POSIX_FADV_RANDOM | POSIX_FADV_NOREUSE);
         }
         if (fh < 0)
         {
