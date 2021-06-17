@@ -25,8 +25,8 @@ Msg* Svg::processRequest(Msg* request, CompiledDataManager& mger)
     rect.y1 = atoll(sLat2.c_str());
 
     uint32_t meany = (rect.y0 >> 1) + (rect.y1  >> 1);
-    double angle = PI * ((meany *1.0) / (1.0 * UINT32_MAX));
-    double ratio = 	( 2.0* sin(angle)*(rect.x1 - rect.x0))/(1.0*(rect.y1 - rect.y0));
+    double angle = PI * ((meany *1.0) / (1.0 * UINT32_MAX)) - PI/2;
+    double ratio = 	(sin(angle)*(rect.x1 - rect.x0))/(1.0*(rect.y1 - rect.y0));
     if (ratio < 0) ratio *= -1;
 
     uint32_t szx, szy;
@@ -34,12 +34,12 @@ Msg* Svg::processRequest(Msg* request, CompiledDataManager& mger)
     if(ratio > 1)
     {
         szx = 2000;
-        szy = 2000.0 / ratio;
+        szy = 2000.0 / (ratio*0.5);
     }
     else
     {
         szy = 2000;
-        szx = 2000.0 * ratio;
+        szx = 2000.0 * ratio*0.5;
     }
 
 
