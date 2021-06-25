@@ -348,7 +348,7 @@ GeoBox makeGeoBox(Rectangle rect)
 {
     GeoBox result;
     result.maskLength = 0;
-    uint32_t szx,szy,sz;
+    /*uint32_t szx,szy,sz;
     if(rect.x0 > rect.x1) szx = rect.x0 - rect.x1;
     else szx = rect.x1 - rect.x0;
     if(rect.y0 > rect.y1) szy = rect.y0 - rect.y1;
@@ -367,6 +367,97 @@ GeoBox makeGeoBox(Rectangle rect)
 
     result.maskLength = 2*pos;
     result.pos =  mergeBits(rect.x0,rect.y0) & mask64;
+    */
+    uint32_t minx,maxx,miny,maxy;
+    if(rect.x0 < rect.x1)
+    {
+        minx = rect.x0;
+        maxx = rect.x1;
+    } else {
+        minx = rect.x1;
+        maxx = rect.x0;
+    }
+    
+    if(rect.y0 < rect.y1)
+    {
+        miny = rect.y0;
+        maxy = rect.y1;
+    } else {
+        miny = rect.y1;
+        maxy = rect.y0;
+    }
+    
+    uint64_t minpos = mergeBits(minx, miny);
+    uint64_t maxpos = mergeBits(maxx, maxy);
+    uint64_t delta = minpos ^ maxpos;
+    short mask_length = 0;
+    if(delta & UINT64_BIT0) mask_length = 1;
+    if(delta & UINT64_BIT1) mask_length = 2;
+    if(delta & UINT64_BIT2) mask_length = 3;
+    if(delta & UINT64_BIT3) mask_length = 4;
+    if(delta & UINT64_BIT4) mask_length = 5;
+    if(delta & UINT64_BIT5) mask_length = 6;
+    if(delta & UINT64_BIT6) mask_length = 7;
+    if(delta & UINT64_BIT7) mask_length = 8;
+    if(delta & UINT64_BIT8) mask_length = 9;
+    if(delta & UINT64_BIT9) mask_length = 10;
+    if(delta & UINT64_BIT10) mask_length = 11;
+    if(delta & UINT64_BIT11) mask_length = 12;
+    if(delta & UINT64_BIT12) mask_length = 13;
+    if(delta & UINT64_BIT13) mask_length = 14;
+    if(delta & UINT64_BIT14) mask_length = 15;
+    if(delta & UINT64_BIT15) mask_length = 16;
+    if(delta & UINT64_BIT16) mask_length = 17;
+    if(delta & UINT64_BIT17) mask_length = 18;
+    if(delta & UINT64_BIT18) mask_length = 19;
+    if(delta & UINT64_BIT19) mask_length = 20;
+    if(delta & UINT64_BIT20) mask_length = 21;
+    if(delta & UINT64_BIT21) mask_length = 22;
+    if(delta & UINT64_BIT22) mask_length = 23;
+    if(delta & UINT64_BIT23) mask_length = 24;
+    if(delta & UINT64_BIT24) mask_length = 25;
+    if(delta & UINT64_BIT25) mask_length = 26;
+    if(delta & UINT64_BIT26) mask_length = 27;
+    if(delta & UINT64_BIT27) mask_length = 28;
+    if(delta & UINT64_BIT28) mask_length = 29;
+    if(delta & UINT64_BIT29) mask_length = 30;
+    if(delta & UINT64_BIT30) mask_length = 31;
+    if(delta & UINT64_BIT31) mask_length = 32;
+    if(delta & UINT64_BIT32) mask_length = 33;
+    if(delta & UINT64_BIT33) mask_length = 34;
+    if(delta & UINT64_BIT34) mask_length = 35;
+    if(delta & UINT64_BIT35) mask_length = 36;
+    if(delta & UINT64_BIT36) mask_length = 37;
+    if(delta & UINT64_BIT37) mask_length = 38;
+    if(delta & UINT64_BIT38) mask_length = 39;
+    if(delta & UINT64_BIT39) mask_length = 40;
+    if(delta & UINT64_BIT40) mask_length = 41;
+    if(delta & UINT64_BIT41) mask_length = 42;
+    if(delta & UINT64_BIT42) mask_length = 43;
+    if(delta & UINT64_BIT43) mask_length = 44;
+    if(delta & UINT64_BIT44) mask_length = 45;
+    if(delta & UINT64_BIT45) mask_length = 46;
+    if(delta & UINT64_BIT46) mask_length = 47;
+    if(delta & UINT64_BIT47) mask_length = 48;
+    if(delta & UINT64_BIT48) mask_length = 49;
+    if(delta & UINT64_BIT49) mask_length = 50;
+    if(delta & UINT64_BIT50) mask_length = 51;
+    if(delta & UINT64_BIT51) mask_length = 52;
+    if(delta & UINT64_BIT52) mask_length = 53;
+    if(delta & UINT64_BIT53) mask_length = 54;
+    if(delta & UINT64_BIT54) mask_length = 55;
+    if(delta & UINT64_BIT55) mask_length = 56;
+    if(delta & UINT64_BIT56) mask_length = 57;
+    if(delta & UINT64_BIT57) mask_length = 58;
+    if(delta & UINT64_BIT58) mask_length = 59;
+    if(delta & UINT64_BIT59) mask_length = 60;
+    if(delta & UINT64_BIT60) mask_length = 61;
+    if(delta & UINT64_BIT61) mask_length = 62;
+    if(delta & UINT64_BIT62) mask_length = 63;
+    if(delta & UINT64_BIT63) mask_length = 64;
+    uint64_t mask64 = UINT64_C(0XFFFFFFFFFFFFFFFF) << mask_length;
+    result.pos = minpos & mask64;
+    result.maskLength = mask_length;
     return result;
 }
 
@@ -390,6 +481,7 @@ Rectangle getRectangle(GeoBox& g)
 
 GeoBoxSet makeGeoBoxSet(Rectangle rect)
 {
+    
     GeoBoxSet result;
     memset(&result, 0, sizeof(result));
     result.count = 1;
