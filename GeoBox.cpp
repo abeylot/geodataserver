@@ -307,6 +307,9 @@ uint32_t getYmax(GeoBox& a)
 
 bool geoBoxContains(GeoBox* a, GeoBox* b)
 {
+    if(a->maskLength < b->maskLength) return false;
+    uint64_t mask = UINT64_C(0xFFFFFFFFFFFFFFFF) << a->maskLength;
+    if((a->pos & mask) == (b->pos & mask)) return true;
     return false;
 }
 
@@ -344,11 +347,148 @@ short compareGeoBox(GeoBox const* a, GeoBox const* b)
     return 0;
 }
 
+bool dividex(Rectangle r, Rectangle& left, Rectangle& right)
+{
+    uint32_t delta = r.x0 ^ r.x1;
+    short mask_length;
+    if(delta & UINT32_BIT0) mask_length = 1;
+    if(delta & UINT32_BIT1) mask_length = 2;
+    if(delta & UINT32_BIT2) mask_length = 3;
+    if(delta & UINT32_BIT3) mask_length = 4;
+    if(delta & UINT32_BIT4) mask_length = 5;
+    if(delta & UINT32_BIT5) mask_length = 6;
+    if(delta & UINT32_BIT6) mask_length = 7;
+    if(delta & UINT32_BIT7) mask_length = 8;
+    if(delta & UINT32_BIT8) mask_length = 9;
+    if(delta & UINT32_BIT9) mask_length = 10;
+    if(delta & UINT32_BIT10) mask_length = 11;
+    if(delta & UINT32_BIT11) mask_length = 12;
+    if(delta & UINT32_BIT12) mask_length = 13;
+    if(delta & UINT32_BIT13) mask_length = 14;
+    if(delta & UINT32_BIT14) mask_length = 15;
+    if(delta & UINT32_BIT15) mask_length = 16;
+    if(delta & UINT32_BIT16) mask_length = 17;
+    if(delta & UINT32_BIT17) mask_length = 18;
+    if(delta & UINT32_BIT18) mask_length = 19;
+    if(delta & UINT32_BIT19) mask_length = 20;
+    if(delta & UINT32_BIT20) mask_length = 21;
+    if(delta & UINT32_BIT21) mask_length = 22;
+    if(delta & UINT32_BIT22) mask_length = 23;
+    if(delta & UINT32_BIT23) mask_length = 24;
+    if(delta & UINT32_BIT24) mask_length = 25;
+    if(delta & UINT32_BIT25) mask_length = 26;
+    if(delta & UINT32_BIT26) mask_length = 27;
+    if(delta & UINT32_BIT27) mask_length = 28;
+    if(delta & UINT32_BIT28) mask_length = 29;
+    if(delta & UINT32_BIT29) mask_length = 30;
+    if(delta & UINT32_BIT30) mask_length = 31;
+    if(delta & UINT32_BIT31) mask_length = 32;
+
+    uint32_t maxx;
+    uint32_t minx;
+    if(r.x0 > r.x1)
+    {
+        maxx = r.x0;
+        minx = r.x1;
+    }
+    else if (r.x0 < r.x1)
+    {
+        maxx = r.x1;
+        minx = r.x0;
+    }
+    else
+    {
+        return false;
+    }
+    uint32_t mask;
+    mask = UINT32_C(0XFFFFFFFF) << (mask_length - 1);
+    uint32_t pivotx =maxx & mask;
+    left.x0 = minx;
+    left.x1 = pivotx - 1;
+    left.y0 = r.y0;
+    left.y1 = r.y1; 
+
+    right.x0 = pivotx;
+    right.x1 = maxx;
+    right.y0 = r.y0;
+    right.y1 = r.y1;
+    return true; 
+}
+bool dividey(Rectangle r, Rectangle& bottom, Rectangle& top)
+{
+    uint32_t delta = r.y0 ^ r.y1;
+    short mask_length;
+    
+    if(delta & UINT32_BIT0) mask_length = 1;
+    if(delta & UINT32_BIT1) mask_length = 2;
+    if(delta & UINT32_BIT2) mask_length = 3;
+    if(delta & UINT32_BIT3) mask_length = 4;
+    if(delta & UINT32_BIT4) mask_length = 5;
+    if(delta & UINT32_BIT5) mask_length = 6;
+    if(delta & UINT32_BIT6) mask_length = 7;
+    if(delta & UINT32_BIT7) mask_length = 8;
+    if(delta & UINT32_BIT8) mask_length = 9;
+    if(delta & UINT32_BIT9) mask_length = 10;
+    if(delta & UINT32_BIT10) mask_length = 11;
+    if(delta & UINT32_BIT11) mask_length = 12;
+    if(delta & UINT32_BIT12) mask_length = 13;
+    if(delta & UINT32_BIT13) mask_length = 14;
+    if(delta & UINT32_BIT14) mask_length = 15;
+    if(delta & UINT32_BIT15) mask_length = 16;
+    if(delta & UINT32_BIT16) mask_length = 17;
+    if(delta & UINT32_BIT17) mask_length = 18;
+    if(delta & UINT32_BIT18) mask_length = 19;
+    if(delta & UINT32_BIT19) mask_length = 20;
+    if(delta & UINT32_BIT20) mask_length = 21;
+    if(delta & UINT32_BIT21) mask_length = 22;
+    if(delta & UINT32_BIT22) mask_length = 23;
+    if(delta & UINT32_BIT23) mask_length = 24;
+    if(delta & UINT32_BIT24) mask_length = 25;
+    if(delta & UINT32_BIT25) mask_length = 26;
+    if(delta & UINT32_BIT26) mask_length = 27;
+    if(delta & UINT32_BIT27) mask_length = 28;
+    if(delta & UINT32_BIT28) mask_length = 29;
+    if(delta & UINT32_BIT29) mask_length = 30;
+    if(delta & UINT32_BIT30) mask_length = 31;
+    if(delta & UINT32_BIT31) mask_length = 32;
+
+    uint32_t maxy;
+    uint32_t miny;
+    if(r.y0 > r.y1)
+    {
+        maxy = r.y0;
+        miny = r.y1;
+    }
+    else if (r.y0 < r.y1)
+    {
+        maxy = r.y1;
+        miny = r.y0;
+    }
+    else
+    {
+        return false;
+    }
+    uint32_t mask;
+    mask = UINT32_C(0XFFFFFFFF) << (mask_length - 1);
+    uint32_t pivoty =maxy & mask;
+    bottom.y0 = miny;
+    bottom.y1 = pivoty - 1;
+    bottom.x0 = r.x0;
+    bottom.x1 = r.x1; 
+
+    top.y0 = pivoty;
+    top.y1 = maxy;
+    top.x0 = r.x0;
+    top.x1 = r.x1;
+    return true; 
+}
+
+
 GeoBox makeGeoBox(Rectangle rect)
 {
     GeoBox result;
     result.maskLength = 0;
-    uint32_t szx,szy,sz;
+    /*uint32_t szx,szy,sz;
     if(rect.x0 > rect.x1) szx = rect.x0 - rect.x1;
     else szx = rect.x1 - rect.x0;
     if(rect.y0 > rect.y1) szy = rect.y0 - rect.y1;
@@ -367,6 +507,97 @@ GeoBox makeGeoBox(Rectangle rect)
 
     result.maskLength = 2*pos;
     result.pos =  mergeBits(rect.x0,rect.y0) & mask64;
+    */
+    uint32_t minx,maxx,miny,maxy;
+    if(rect.x0 < rect.x1)
+    {
+        minx = rect.x0;
+        maxx = rect.x1;
+    } else {
+        minx = rect.x1;
+        maxx = rect.x0;
+    }
+    
+    if(rect.y0 < rect.y1)
+    {
+        miny = rect.y0;
+        maxy = rect.y1;
+    } else {
+        miny = rect.y1;
+        maxy = rect.y0;
+    }
+    
+    uint64_t minpos = mergeBits(minx, miny);
+    uint64_t maxpos = mergeBits(maxx, maxy);
+    uint64_t delta = minpos ^ maxpos;
+    short mask_length = 0;
+    if(delta & UINT64_BIT0) mask_length = 1;
+    if(delta & UINT64_BIT1) mask_length = 2;
+    if(delta & UINT64_BIT2) mask_length = 3;
+    if(delta & UINT64_BIT3) mask_length = 4;
+    if(delta & UINT64_BIT4) mask_length = 5;
+    if(delta & UINT64_BIT5) mask_length = 6;
+    if(delta & UINT64_BIT6) mask_length = 7;
+    if(delta & UINT64_BIT7) mask_length = 8;
+    if(delta & UINT64_BIT8) mask_length = 9;
+    if(delta & UINT64_BIT9) mask_length = 10;
+    if(delta & UINT64_BIT10) mask_length = 11;
+    if(delta & UINT64_BIT11) mask_length = 12;
+    if(delta & UINT64_BIT12) mask_length = 13;
+    if(delta & UINT64_BIT13) mask_length = 14;
+    if(delta & UINT64_BIT14) mask_length = 15;
+    if(delta & UINT64_BIT15) mask_length = 16;
+    if(delta & UINT64_BIT16) mask_length = 17;
+    if(delta & UINT64_BIT17) mask_length = 18;
+    if(delta & UINT64_BIT18) mask_length = 19;
+    if(delta & UINT64_BIT19) mask_length = 20;
+    if(delta & UINT64_BIT20) mask_length = 21;
+    if(delta & UINT64_BIT21) mask_length = 22;
+    if(delta & UINT64_BIT22) mask_length = 23;
+    if(delta & UINT64_BIT23) mask_length = 24;
+    if(delta & UINT64_BIT24) mask_length = 25;
+    if(delta & UINT64_BIT25) mask_length = 26;
+    if(delta & UINT64_BIT26) mask_length = 27;
+    if(delta & UINT64_BIT27) mask_length = 28;
+    if(delta & UINT64_BIT28) mask_length = 29;
+    if(delta & UINT64_BIT29) mask_length = 30;
+    if(delta & UINT64_BIT30) mask_length = 31;
+    if(delta & UINT64_BIT31) mask_length = 32;
+    if(delta & UINT64_BIT32) mask_length = 33;
+    if(delta & UINT64_BIT33) mask_length = 34;
+    if(delta & UINT64_BIT34) mask_length = 35;
+    if(delta & UINT64_BIT35) mask_length = 36;
+    if(delta & UINT64_BIT36) mask_length = 37;
+    if(delta & UINT64_BIT37) mask_length = 38;
+    if(delta & UINT64_BIT38) mask_length = 39;
+    if(delta & UINT64_BIT39) mask_length = 40;
+    if(delta & UINT64_BIT40) mask_length = 41;
+    if(delta & UINT64_BIT41) mask_length = 42;
+    if(delta & UINT64_BIT42) mask_length = 43;
+    if(delta & UINT64_BIT43) mask_length = 44;
+    if(delta & UINT64_BIT44) mask_length = 45;
+    if(delta & UINT64_BIT45) mask_length = 46;
+    if(delta & UINT64_BIT46) mask_length = 47;
+    if(delta & UINT64_BIT47) mask_length = 48;
+    if(delta & UINT64_BIT48) mask_length = 49;
+    if(delta & UINT64_BIT49) mask_length = 50;
+    if(delta & UINT64_BIT50) mask_length = 51;
+    if(delta & UINT64_BIT51) mask_length = 52;
+    if(delta & UINT64_BIT52) mask_length = 53;
+    if(delta & UINT64_BIT53) mask_length = 54;
+    if(delta & UINT64_BIT54) mask_length = 55;
+    if(delta & UINT64_BIT55) mask_length = 56;
+    if(delta & UINT64_BIT56) mask_length = 57;
+    if(delta & UINT64_BIT57) mask_length = 58;
+    if(delta & UINT64_BIT58) mask_length = 59;
+    if(delta & UINT64_BIT59) mask_length = 60;
+    if(delta & UINT64_BIT60) mask_length = 61;
+    if(delta & UINT64_BIT61) mask_length = 62;
+    if(delta & UINT64_BIT62) mask_length = 63;
+    if(delta & UINT64_BIT63) mask_length = 64;
+    uint64_t mask64 = UINT64_C(0XFFFFFFFFFFFFFFFF) << mask_length;
+    result.pos = minpos & mask64;
+    result.maskLength = mask_length;
     return result;
 }
 
@@ -390,40 +621,60 @@ Rectangle getRectangle(GeoBox& g)
 
 GeoBoxSet makeGeoBoxSet(Rectangle rect)
 {
+    
     GeoBoxSet result;
     memset(&result, 0, sizeof(result));
-    result.count = 1;
-    result.boxes[0] = makeGeoBox (rect);
-    Rectangle rect2;
-    rect2.x0 = rect.x0;
-    rect2.x1 = rect.x1;
-    rect2.y0 = rect.y1;
-    rect2.y1 = rect.y0;
-    GeoBox g = makeGeoBox (rect2);
-    if(g.pos != result.boxes[0].pos )
+    result.count = 0;
+    
+    Rectangle a,b,c,d,r[4];
+    short rcount = 0;
+    
+    if(dividex(rect,a,b))
     {
-        result.boxes[1] = g;
-        result.count++;
+        if(dividey(a,c,d))
+        {
+            r[rcount++] = c;
+            r[rcount++] = d;
+        }
+        else
+        {
+            r[rcount++] = a;
+        }
+        if(dividey(b,c,d))
+        {
+            r[rcount++] = c;
+            r[rcount++] = d;
+        }
+        else
+        {
+            r[rcount++] = b;
+        }
     }
-    rect2.x0 = rect.x1;
-    rect2.x1 = rect.x0;
-    rect2.y0 = rect.y0;
-    rect2.y1 = rect.y1;
-    g = makeGeoBox (rect2);
-    if((g.pos != result.boxes[0].pos) && (g.pos!= result.boxes[1].pos))
+    else
     {
-        result.boxes[result.count] = g;
-        result.count++;
+        if(dividey(rect,a,b))
+        {
+        }
+        else
+        {
+            r[rcount++] = rect;
+        }
     }
-    rect2.x0 = rect.x1;
-    rect2.x1 = rect.x0;
-    rect2.y0 = rect.y1;
-    rect2.y1 = rect.y0;
-    g = makeGeoBox (rect2);
-    if((g.pos != result.boxes[0].pos) && (g.pos!= result.boxes[1].pos)&& (g.pos!= result.boxes[2].pos))
+
+    for(short i = 0; i < rcount; i++)
     {
-        result.boxes[result.count] = g;
-        result.count++;
+        GeoBox g = makeGeoBox(r[i]);
+        bool alreadyExists = false;
+        for(short j = 0; j < result.count; j++)
+        {
+            if(geoBoxContains(&(result.boxes[j]), &g)) alreadyExists = true;
+            else if(geoBoxContains(&g, &(result.boxes[j])))
+            {
+                result.boxes[j] = g;
+                alreadyExists = true;
+            }
+        }
+        if(!alreadyExists) result.boxes[result.count++] = g;
     }
     return result;
 }
