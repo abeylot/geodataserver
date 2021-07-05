@@ -42,6 +42,7 @@ bool operator>=(GeoBox const& a, GeoBox const& b);
 bool operator<=(GeoBox const& a, GeoBox const& b);
 
 
+bool hasgoodMask(Rectangle r);
 
 
 #endif
