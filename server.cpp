@@ -1,7 +1,6 @@
 #include <boost/thread/thread.hpp>
 #include <boost/lockfree/queue.hpp>
 
-#include <boost/system/system_error.hpp>
 #include <iostream>
 #include <string>
 #include <unistd.h>
