@@ -1,5 +1,4 @@
 #include <boost/thread/thread.hpp>
-#include <boost/asio/signal_set.hpp>
 #include <boost/lockfree/queue.hpp>
 
 #include <boost/system/system_error.hpp>
