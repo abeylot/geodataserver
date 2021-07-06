@@ -7,8 +7,8 @@
 #include <iostream>
 #include "zlib.h"
 #include "assert.h"
-#include <boost/filesystem.hpp>
-using namespace boost::filesystem;
+#include <filesystem>
+//using namespace std::filesystem;
 #define CHUNK 0x4000
 
 int def(std::string& source, FILE* dest)
@@ -309,17 +309,17 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
         //std::cout << "cache level " << _cachelevel << "\n";
 	if(_z <= _cachelevel && res.length() > 2048)
         {
-			boost::filesystem::path p1(dir1);
-			boost::filesystem::path p2(dir2);
+			std::filesystem::path p1(dir1);
+			std::filesystem::path p2(dir2);
 
-			if(! boost::filesystem::exists(p1))
+			if(! std::filesystem::exists(p1))
 			{
-				boost::filesystem::create_directory(p1);
+				std::filesystem::create_directory(p1);
 			}
 
-			if(! boost::filesystem::exists(p2))
+			if(! std::filesystem::exists(p2))
 			{
-				boost::filesystem::create_directory(p2);
+				std::filesystem::create_directory(p2);
 			}
             FILE* out = fopen(filename, "w");
                 if(out != NULL)
