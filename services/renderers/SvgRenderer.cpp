@@ -204,7 +204,7 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
 										*getShape(cl)
 										);
 							}
-						if constexpr( std::is_same<ITEM, Point>())
+						else
 						{
 							tmp = render(lbl, *item,
 										rect,
@@ -266,7 +266,7 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
 											*getShape(cl)
 											);
 							}
-							if constexpr( std::is_same<ITEM, Point>())
+							else
 							{
 								tmp = render(lbl, *item,
 											rect,
