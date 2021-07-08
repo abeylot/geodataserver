@@ -138,21 +138,26 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
 {
     GeoBoxSet gSet;
     Shape myShape;
-    hh::THashIntegerTable* hash = &nodeHash;
+    hh::THashIntegerTable* hash;
     Rectangle rect2;
-    if(idxDesc.type == "relation")
+
+    static_assert(std::is_same<ITEM,Relation>() ||
+                  std::is_same<ITEM,Way>() ||
+                  std::is_same<ITEM,Point>(), " Type unsuported for template method");
+                  
+    if constexpr(std::is_same<ITEM,Relation>())
     {
 		 hash = &relationHash;
 	     gSet = makeGeoBoxSet(rect*1.25);
 	     rect2 = rect*1.25;
 	}	
-    else if(idxDesc.type == "way")
+    if constexpr(std::is_same<ITEM,Way>())
     {
 		 hash = &wayHash;
 	     gSet = makeGeoBoxSet(rect*1.25);
 	     rect2 = rect*1.25;
 	}
-    else
+    if constexpr(std::is_same<ITEM,Point>())
     {
 		 hash = &nodeHash;
 	     gSet = makeGeoBoxSet(rect*2);
@@ -189,14 +194,28 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
                     label_s lbl;
                     if(cl)
                     {
-                        tmp = render(lbl, *item,
-                                      rect,
-                                      size_x,
-                                      size_y,
-                                      *cl,
-                                      *getShape(cl)
-                                      );
-                        it = resMap.find(cl->zIndex);
+						if constexpr(! std::is_same<ITEM, Point>())
+						{
+							tmp = render(lbl, *item,
+										rect,
+										size_x,
+										size_y,
+										*cl,
+										*getShape(cl)
+										);
+							}
+						if constexpr( std::is_same<ITEM, Point>())
+						{
+							tmp = render(lbl, *item,
+										rect,
+										size_x,
+										size_y,
+										*cl
+										
+										);
+						}
+						
+						it = resMap.find(cl->zIndex);
                         if(it != resMap.end())
                         {
                             it->second += tmp;
@@ -207,8 +226,8 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
                         }
                         if((lbl.text.length() > 0) && (lbl.fontsize > 5))
                             label_vector.push_back(lbl);
-                        }
-                        delete item;
+                    }
+                    delete item;
                 }
             }
             start++;
@@ -237,13 +256,26 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
 
                         if(cl)
                         {
-                            tmp = render(lbl, *item,
-                                         rect,
-                                         size_x,
-                                         size_y,
-                                         *cl,
-                                         *getShape(cl)
-                                         );
+							if constexpr(! std::is_same<ITEM, Point>())
+							{
+								tmp = render(lbl, *item,
+											rect,
+											size_x,
+											size_y,
+											*cl,
+											*getShape(cl)
+											);
+							}
+							if constexpr( std::is_same<ITEM, Point>())
+							{
+								tmp = render(lbl, *item,
+											rect,
+											size_x,
+											size_y,
+											*cl
+											);
+							}
+
                             it = resMap.find(cl->zIndex);
                             if(it != resMap.end())
                             {
@@ -262,27 +294,30 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
             }
         }
     }
-    for(auto it : shapes)
-    {
-        tmp = renderShape(
-         rect,
-         size_x,
-         size_y,
-         * (it.first),
-         * (it.second)
-        );
-        delete it.second;
-        auto it2 = resMap.find(it.first->zIndex);
-        if(it2 != resMap.end())
-        {
-           it2->second = tmp + it2->second;
-        }
-        else
-        {
-           resMap[it.first->zIndex] = tmp;
-        }
+    if constexpr(! std::is_same<ITEM, Point>())
+	{
+		for(auto it : shapes)
+		{
+			tmp = renderShape(
+			rect,
+			size_x,
+			size_y,
+			* (it.first),
+			* (it.second)
+			);
+			delete it.second;
+			auto it2 = resMap.find(it.first->zIndex);
+			if(it2 != resMap.end())
+			{
+				it2->second = tmp + it2->second;
+			}
+			else
+			{
+				resMap[it.first->zIndex] = tmp;
+			}
+		}
+		shapes.clear();
 	}
-	shapes.clear();
 }
 
 
@@ -1040,7 +1075,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 
 
 std::string SvgRenderer::render(label_s& lbl, Point& myNode,
-                                    Rectangle rect, uint32_t szx, uint32_t szy, CssClass& cl, Shape& s)
+                                    Rectangle rect, uint32_t szx, uint32_t szy, CssClass& cl )
 {
 
     lbl.id = myNode.id  + UINT64_C(0xC000000000000000);
