@@ -57,7 +57,7 @@ TcpConnection.o \
 MapDisplay.o \
 StringBuffer.o \
 
-libs=-lpthread  -lboost_system -lboost_thread -lboost_filesystem -lboost_atomic -lz -latomic -lstdc++fs
+libs=-lpthread  -lboost_system -lboost_thread -lz -latomic -lstdc++fs
 
 all: renumber compile index geoserver
 

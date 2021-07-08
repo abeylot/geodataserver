@@ -31,8 +31,6 @@ bool compare(const label_s& l2, const label_s& l1)
 {
     if(l1.zindex > l2.zindex) return false;
     if(l2.zindex > l1.zindex) return true;
-    //if(l1.id < l2.id) return true;
-    //if(l2.id < l1.id) return false;
     if (l1.text.length() > l2.text.length()) return true;
     if (l1.text.length() < l2.text.length()) return false;
     if (l1.text > l2.text) return true;
@@ -234,7 +232,6 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
         }
         mask = g.maskLength;
         short max = 64;
-        //if (max >= 64) max = 64;
         while(mask++ < max )
         {
             GeoBox maxGeoBox2 = g;
@@ -394,17 +391,14 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                 to_show = false;
                 break;
             }
-            //if((t->ref == "") && (v->ref == ""))
-            //{
-                if(((uint64_t)(dy) < (t->fontsize + v->fontsize))
-                  &&((uint64_t)(dx << 1) < (t->fontsize*0.75*ilt + v->fontsize*0.75*ilv)))
-                {
-                    to_show = false;
-                    break;
-                } 
-            //}
-            //if((t->ref != "") && (v->ref != ""))
-            //{
+
+            if(((uint64_t)(dy) < (t->fontsize + v->fontsize))
+              &&((uint64_t)(dx << 1) < (t->fontsize*0.75*ilt + v->fontsize*0.75*ilv)))
+            {
+                to_show = false;
+                break;
+            } 
+
             double xa,xb,xc,xd,ya,yb,yc,yd;
             
             
@@ -456,7 +450,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                     to_show = false;
                     break;
             }
-            //}
+
 
         }
         if(to_show) to_print.push_back(*t);
@@ -465,45 +459,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     for(auto v=to_print.begin(); v!=to_print.end(); ++v)
     {
         {
-            /*if(v->ref == "")
-            {
-                texts << "<text  x=\""
-                       << std::to_string(v->pos_x)
-                       << "\" y=\""
-                       << std::to_string(v->pos_y)
-                       << "\" class=\"c"
-                       << std::to_string(v->style)
-                       << "\" style=\"stroke-width:4; stroke:white;opacity:0.5\">"
-                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)+"</text>\n";
-                texts << "<text  x=\""
-                       << std::to_string(v->pos_x)
-                       << "\" y=\""
-                       << std::to_string(v->pos_y)
-                       << "\" class=\"c"
-                       << std::to_string(v->style)
-                       << "\">"
-                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)+"</text>\n";
-                       cssClasses.insert("c"+std::to_string(v->style));
-            }
-            else
-            {*/
-//               libs += "<text text-anchor=\"middle\" dominant-baseline=\"central\" class=\"c"+std::to_string(v->style)+"\" style=\"font-size:" +std::to_string(v->fontsize)+ "px\"><textPath xlink:href=\"#W"+std::to_string(v->id)+"\" startOffset=\"50%\">"+v->text+"</textPath></text>\n";
-               /*
-                * texts << "<text  class=\"c"
-                      << std::to_string(v->style)
-                      << "\" style=\"font-size:"
-                      << std::to_string(v->fontsize)
-                      << "px; stroke-width:4; stroke:white;opacity:0.5\" x=\""+std::to_string(v->pos_x)
-                      << "\" y=\""+std::to_string(v->pos_y)
-                      << "\" transform=\"rotate("
-                      << std::to_string(v->angle*180/M_PI)
-                      << ","
-                      << std::to_string(v->pos_x)
-                      << ","
-                      << std::to_string(v->pos_y)
-                      << ")\" >"
-                      << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
-                      << "</text>\n";*/
+
                if(v->angle ==0)
                {
                    texts << "<text  class=\"c"
@@ -535,7 +491,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                       << "</text>\n";
                } 
                cssClasses.insert("c"+std::to_string(v->style));
-            //}
+
 		}
     }
 
@@ -635,7 +591,6 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
     StringBuffer result(resultString);
     double oldx = -1;
     double oldy = -1;
-    //std::string style="";
 
     int width=0;
 
@@ -643,7 +598,6 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
 
     if(cl.width.length()) width = std::stoi(cl.width);
     if(width && ((width*ppm) <  0.25)) return "";
-    //if(width) style ="stroke-width:"+ std::to_string(width*ppm)+";" + cl.style;
  
 
     if(s.lines.size() == 0) return "";
@@ -820,15 +774,12 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 else if((dfx == 0) && (dfy <= 0)) symb_angle = - M_PI / 2;
                 else symb_angle = atan2(dfy , dfx);
                 
-                //if(symb_angle > M_PI / 2) symb_angle -= M_PI;
-                //if(symb_angle < -1 * M_PI / 2) symb_angle += M_PI;
                 
                 break;
             }
             first = false;
         }
     }
-    //myWay.crop(r1);
     if(draw)
     {
         myWay.crop(r1);
@@ -941,10 +892,8 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
     lbl.pos_x = lbl.pos_y = lbl.angle = 0;    
     lbl.style = 0;    
     lbl.zindex = cl.textZIndex;
-    //std::string style= "";
     std::string resultString = "";
     StringBuffer result(resultString);
-    //double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     std::string textField = "name";
     if(!(cl.textField == "")) textField = cl.textField;
     bool draw = ((myRelation.rect)*rect).isValid();
@@ -963,7 +912,6 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 		}
 		else
 		{
-			//style = cl.style;
 			if(draw)
 			{
 				result << "<path  d=\"";
@@ -1003,7 +951,6 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 	}
     if(cl.textStyle != "")
     {
-        //std::string textStyle ="";
         std::string name = "";
         if(textField != "name")
         {
@@ -1022,27 +969,6 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
         }
         if(name != "")
         {
-            if(cl.textWidth != "")
-            {
-                if ( cl.textWidth == "auto" )
-                {
-                    //int length = name.length();
-                    //if (length < 12) length = 12;
-                    //int64_t dxx = (myRelation.rect.x1 - myRelation.rect.x0);
-                    //uint32_t dx = (dxx)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-                    //int textWidth = (dx*1.5)/(2.0*length);
-                    //textStyle ="font-size:"+ std::to_string((int)textWidth)+ "px;" + cl.textStyle;
-                }
-                else
-                {
-                    //int textWidth = atoi(cl.textWidth.c_str());
-                    //textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
-                }
-            }
-            else
-            {
-                //textStyle = cl.textStyle;
-            }
             unsigned int chars = 1.4*szx*(myRelation.rect.x1 - myRelation.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
             if(name.length() < chars)
             {
@@ -1088,8 +1014,6 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
     std::string resultString = "";
     StringBuffer result(resultString);
     int x,y;
-    //std::string style= "";
-    //std::string textStyle= "";
     double ppm = 107 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     std::string name = "";
 
@@ -1116,7 +1040,6 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         }
         
         lbl.text = name;
-        //style = cl.style;
         
         std::size_t found = cl.textStyle.find("font-size:");
         if(found != std::string::npos)
@@ -1127,14 +1050,11 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
 
         if(cl.textWidth != "")
         {
-            //style += ";stroke-width:" + std::to_string(atoi(cl.width.c_str())*ppm);
             int textWidth = atoi(cl.textWidth.c_str());
             lbl.fontsize = textWidth*ppm;
-            //textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
         }
         else
         {
-            //textStyle = cl.textStyle;
         }
 
 

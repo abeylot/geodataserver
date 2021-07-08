@@ -4,7 +4,7 @@
 enum BaliseType {relation, point, way, unknown };
 
 /**
- * @brief Structure to store geographic data position in indexes.
+ * @brief Structure to store geographic data Relation in indexes.
  * 
  */
 struct GeoIndex
@@ -19,7 +19,7 @@ struct GeoIndex
     uint64_t mstart;
 };
 /**
- * @brief structure to store geographic poins dat in indexes.
+ * @brief structure to store geographic Point data in indexes.
  * 
  */
 struct GeoPointIndex
@@ -34,7 +34,7 @@ struct GeoPointIndex
     uint32_t tsize;
 };
 /**
- * @brief structure to store way data in indexes file
+ * @brief structure to store Way data in indexes file
  * 
  */
 struct GeoWayIndex
