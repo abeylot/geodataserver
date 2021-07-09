@@ -1,7 +1,7 @@
-#CC=clang++ --analyze 
+#CC=clang++ 
 CC=g++
 cc=$(CC) -O2 -s   -Wall -std=c++17 -D_FILE_OFFSET_BITS=64
-#cc=$(CC) -g -Wall -std=c++11 -D_FILE_OFFSET_BITS=64
+#cc=$(CC) -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64
 
 
 headersCommon=CompiledDataManager.hpp \

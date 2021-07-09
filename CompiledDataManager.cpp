@@ -1,7 +1,7 @@
 #include "CompiledDataManager.hpp"
 
 
-Way* CompiledDataManager::loadWay(uint64_t id)
+Way* CompiledDataManager::loadWay(uint64_t id, bool fast)
 {
     GeoWayIndex record;
     bool found = wayIndex->get(id,&record);
@@ -10,7 +10,7 @@ Way* CompiledDataManager::loadWay(uint64_t id)
         Way* w = new Way();
         w->id = id;
         fillPoints(&(w->points), w->pointsCount,record.pstart,record.psize);
-        if(w->pointsCount > 0)
+        if(w->pointsCount > 0 && ! fast)
         {
             GeoPoint *curpoint = NULL;
             GeoPoint *lastpoint = NULL;
@@ -47,13 +47,13 @@ Point* CompiledDataManager::loadPoint(uint64_t id)
     else return NULL;
 
 }
-
+/*
 Relation* CompiledDataManager::loadRelation(uint64_t id)
 {
     return loadRelation(id, 2);
-}
+}*/
 
-Relation* CompiledDataManager::loadRelation(uint64_t id, short recurs)
+Relation* CompiledDataManager::loadRelation(uint64_t id, short recurs, bool fast)
 {
     recurs --;
     if (recurs < 1) return NULL;
@@ -71,7 +71,7 @@ Relation* CompiledDataManager::loadRelation(uint64_t id, short recurs)
         {
             r->isPyramidal = true;
         }
-        fillLinkedItems(*r,record.mstart,record.msize, recurs);
+        fillLinkedItems(*r,record.mstart,record.msize, recurs, fast);
         return r;
     }
     else return NULL;
@@ -104,7 +104,7 @@ void CompiledDataManager::fillTags(Tags& tags, uint64_t start, uint64_t size)
     tags.data_size = size;
 }
 
-void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t size, short recurs)
+void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t size, short recurs, bool fast)
 {
     GeoMember* buffer = relMembers->getData(start,size);
     Way* newWay = NULL;
@@ -122,7 +122,7 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
             }
             break;
         case BaliseType::way:
-            newWay = loadWay(buffer[i].id);
+            newWay = loadWay(buffer[i].id, fast);
             if(newWay)
             {
                 r.shape.mergePoints(newWay->points, newWay->pointsCount);
@@ -131,7 +131,7 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
             }
             break;
         case BaliseType::relation:
-            newRel = loadRelation(buffer[i].id, recurs);
+            newRel = loadRelation(buffer[i].id, recurs, fast);
             if(newRel)
             {
                 r.relations.push_back(newRel);

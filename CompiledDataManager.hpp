@@ -179,24 +179,24 @@ public :
         delete baliseTags;
     }
 
-    Way* loadWay(uint64_t id);
+    Way* loadWay(uint64_t id, bool fast = false);
     Point* loadPoint(uint64_t id);
-    Relation* loadRelation(uint64_t id);
+    //Relation* loadRelation(uint64_t id);
     Relation* loadRelationFast(uint64_t id);
-    Relation* loadRelation(uint64_t id, short recurs);
+    Relation* loadRelation(uint64_t id, short recurs = 2, bool fast = false);
     
 
-    void load(Relation*& r, uint64_t id)
+    inline void load(Relation*& r, uint64_t id, bool fast)
     {
-        r = loadRelation(id, 3);
+        r = loadRelation(id, 3, fast);
     }
 
-    void load(Way*& w, uint64_t id)
+    inline void load(Way*& w, uint64_t id, bool fast)
     {
-        w = loadWay(id);
+        w = loadWay(id, fast);
     }
 
-    void load(Point*& p, uint64_t id)
+    inline void load(Point*& p, uint64_t id, bool fast)
     {
         p =  loadPoint(id);
     }
@@ -205,7 +205,7 @@ public :
 
     void fillTags(Tags& tags, uint64_t start, uint64_t size);
 
-    void fillLinkedItems(Relation& r, uint64_t start, uint64_t size, short recurs);
+    void fillLinkedItems(Relation& r, uint64_t start, uint64_t size, short recurs, bool fast);
 
 };
 #endif

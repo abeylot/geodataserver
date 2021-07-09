@@ -187,13 +187,14 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
                 if( hash->addIfUnique(record.value.id*100 + indexId))
                 {
                     ITEM* item = NULL;
-                    mger->load(item, record.value.id);
+                    mger->load(item, record.value.id, true);
                     CssClass* cl = getCssClass(idxDesc, *item, zoom, record.key.zmMask & 0X100000LL);
                     label_s lbl;
                     if(cl)
                     {
 						if constexpr(! std::is_same<ITEM, Point>())
 						{
+							item->rect = record.value.r;
 							tmp = render(lbl, *item,
 										rect,
 										size_x,
@@ -246,7 +247,7 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
                     if((record.key.zmMask &  zmMask ) && ((record.value.r * (rect2) ).isValid()))
                     {
                         ITEM* item = NULL;
-                        mger->load(item, record.value.id);
+                        mger->load(item, record.value.id, true);
 
                         CssClass* cl = getCssClass(idxDesc, *item, zoom, record.key.zmMask & 0X100000LL);
                         label_s lbl;
@@ -255,6 +256,7 @@ template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rec
                         {
 							if constexpr(! std::is_same<ITEM, Point>())
 							{
+							    item->rect = record.value.r;
 								tmp = render(lbl, *item,
 											rect,
 											size_x,
