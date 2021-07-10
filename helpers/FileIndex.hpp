@@ -1,7 +1,6 @@
 #define _FILE_OFFSFET_BITS 64
 #ifndef FILEINDEX_HPP
 #define FILEINDEX_HPP
-//#define FILEINDEX_SORTBUFFERSIZE 10000000LL
 #define FILEINDEX_RAWFLUSHSIZE   1000ULL
 #define FILEINDEX_CACHELEVEL 22
 #include <string>
@@ -268,12 +267,7 @@ template<class ITEM, class KEY> class FileIndex
     std::unordered_map<uint64_t, Record<ITEM, KEY>> cache;
 public:
     uint64_t fileSize;
-    //FILE * pFile;
     GeoFile pFile;
-    //uint64_t lastMaxIndex;
-    //KEY lastMaxValue;
-    //uint64_t lastMinIndex;
-    //KEY lastMinValue;
     
     bool isSorted(){return sorted;}
     
@@ -285,19 +279,15 @@ public:
      */
     FileIndex(std::string filename_, bool replace) : filename(filename_)
     {
-	    //std::cout << "file name : " << this->filename << ":" << filename << "\n";
 
         pFile.open(filename, replace);
         buffer = NULL;
         if (replace)  buffer = new Record<ITEM,KEY>[FILEINDEX_RAWFLUSHSIZE];
-    //        pFile.open(filename.c_str(),O_RDONLY);
-    //        pFile = open64(filename.c_str(),O_CREAT|O_TRUNC|O_RDWR, S_IWUSR);
         bufferCount = 0;
         recSize = sizeof(Record<ITEM,KEY>);
         fileSize = pFile.length()/recSize;
         sortedSize = 0;
         sorted = true;
-        //lastMaxIndex = lastMinIndex = 0;
     }
 
     /**
@@ -395,19 +385,14 @@ public:
     {
         std::cerr << "sort " << begin <<" "<< end <<"\n";
         uint64_t count = (end - begin) + 1;
-        //coutFile(pFile);
         if((end - begin) < (3ULL*buffer_size))
         {
             std::cout << "enough memory, performing qsort \n";
-            //fseeko(pFile, begin * recSize, SEEK_SET);
             std::cout << "read data \n";
-            //count = fread((char*)sort_buffer, recSize, count, pFile);
             pFile.oread((char*)sort_buffer, begin * recSize, recSize * count);
             std::cout << "sort data \n";
             std::qsort(&sort_buffer[0], count, recSize,fileIndexComp<ITEM,KEY>);
-            //fseeko(pFile, begin * recSize, SEEK_SET);
             std::cout << "write data \n";
-            //count = fwrite((char*)sort_buffer, recSize, count, pFile);
             pFile.owrite((char*)sort_buffer, begin * recSize, recSize * count );
             sortedSize += count;
             std::cerr << "*** *** *** *** sorted " << sortedSize << " out of " << fileSize << "\n";
@@ -418,7 +403,6 @@ public:
             uint64_t i = (end + begin) / 2;
             swap(i,end);
         }
-        //coutFile(pFile);
         Record<ITEM,KEY>* plusPetits = sort_buffer;
         Record<ITEM,KEY>* plusGrands = sort_buffer + buffer_size;
         Record<ITEM,KEY>* autres = sort_buffer + 2ULL*buffer_size;
@@ -435,8 +419,6 @@ public:
             uint64_t toRead = buffer_size;
             std::cout << "reading " << toRead << "items from file \n";
             if(toRead > autresCount) toRead = autresCount;
-            //fseeko(pFile, (end - (toRead  + plusGrandsCount)) * recSize, SEEK_SET);
-            //uint64_t count = fread((char*)autres, recSize, toRead, pFile);
             pFile.oread((char*)autres, (end - (toRead  + plusGrandsCount)) * recSize, recSize * toRead );
             autresBufferCount = toRead;
             plusPetitsBufferCount = 0;
@@ -511,7 +493,7 @@ public:
     }
 
 /**
- * @brief Get the And Cache object
+ * @brief Get And Cache object
  * 
  * @param pos 
  * @param result 
@@ -551,8 +533,6 @@ public:
         {
             return false;
         }
-        //fseeko(pFile, pos*recSize, SEEK_SET);
-        //uint64_t count = fread(result, recSize, 1, pFile);
         pFile.oread((char*)result, pos*recSize, recSize);
         return true;
     }
@@ -600,16 +580,6 @@ public:
             return false;
         }
         
-        /*if(lastMaxIndex && lastMaxValue >= key)
-        {
-            iMax = lastMaxIndex;
-            level = FILEINDEX_CACHELEVEL;
-        }
-        if(lastMinIndex && lastMinValue <= key)
-        {
-            iMin = lastMinIndex;
-            level = FILEINDEX_CACHELEVEL;
-        }*/
 
         while((iMax - iMin) > 1)
         {
@@ -619,8 +589,6 @@ public:
             else get(iPivot, result);
             if(result->key > key)
             {
-                //lastMaxIndex = iMax;
-                //lastMaxValue = result->key;
                 iMax = iPivot;
             }
             else if(result->key == key)
@@ -630,8 +598,6 @@ public:
             }
             else
             {
-                //lastMinIndex = iMin;
-                //lastMinValue = result->key;
                 iMin = iPivot;
             }
         }
@@ -652,8 +618,6 @@ public:
         Record<ITEM,KEY> result;
         iMin = 0;
         uint64_t iMax = getSize() - 1;
-        //uint64_t iFound = -1;
-        //bool found = false;
         short level = 0;
         getAndCache(iMin, &result);
         if( result.key == key)
@@ -667,10 +631,6 @@ public:
         }
 
         getAndCache(iMax, &result);
-        //if( result.key == key)
-        //{
-        //    return true;
-        //}
         if( result.key < key)
         {
 			iMin = iMax;
@@ -686,12 +646,6 @@ public:
             if(result.key >= key) iMax = iPivot;
             else iMin = iPivot;
         }
-        //get(iMin, &result);
-        /*while((iMin > 0) && (result.key >= key))
-        {
-            iMin--;
-            get(iMin, &result);
-        }*/
         return true;
     };
 
@@ -706,7 +660,6 @@ template<class ITEM> class FileRawIndex
 {
 private:
     std::string filename;
-    //FILE * pFile;
     GeoFile  pFile;
     ITEM *buffer;
     unsigned long bufferCount;
@@ -764,8 +717,6 @@ public:
     {
         pFile.append((char*)&buffer[0], recSize * bufferCount);
         bufferCount = 0;
-        //fileSize = ftello(pFile)/recSize;
-        //fileSize = ltell64(pFile)/recSize;
         fileSize = pFile.length()/recSize;
 
     }
@@ -795,7 +746,6 @@ template<class ITEM> class FileRawData
 {
 public:
     uint64_t startPos;
-    //FILE* pFile;
     GeoFile pFile;
     ITEM* buffer;
     uint64_t bufferCount;
@@ -874,11 +824,8 @@ public:
  */
     void flush()
     {
-        //fwrite(&buffer[0], recSize, bufferCount, pFile);
         pFile.append((char*)&buffer[0], recSize * bufferCount);
         bufferCount = 0;
-        //fileSize = ftello(pFile)/recSize;
-        //fileSize = tell64(pFile)/recSize;
         fileSize = pFile.length()/recSize;
     }
 /**
@@ -902,7 +849,7 @@ public:
 };
 
 /**
- * @brief storage for variable length recors.
+ * @brief storage for variable length records.
  * 
  * @tparam ITEM 
  */
@@ -910,7 +857,6 @@ template<class ITEM> class FileRawVarData
 {
 public:
     uint64_t startPos;
-    //FILE* pFile;
     GeoFile pFile;
     char* buffer;
     uint64_t bufferCount;
@@ -951,8 +897,6 @@ public:
     {
         if(count == 0) return NULL;
         char* result = (char*) malloc(count);
-        //fseeko(pFile, start, SEEK_SET);
-        //count = fread(result, 1, count, pFile);
         pFile.oread(result, start,  count);
         return result;
     }

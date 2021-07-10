@@ -512,26 +512,6 @@ GeoBox makeGeoBox(Rectangle rect)
 {
     GeoBox result;
     result.maskLength = 0;
-    /*uint32_t szx,szy,sz;
-    if(rect.x0 > rect.x1) szx = rect.x0 - rect.x1;
-    else szx = rect.x1 - rect.x0;
-    if(rect.y0 > rect.y1) szy = rect.y0 - rect.y1;
-    else szy = rect.y1 - rect.y0;
-    if(szx > szy) sz = szx  ;
-    else sz = szy ;
-
-    short pos;
-    for(pos = 0; pos < 32; pos++)
-    {
-        if((sz >> pos) == UINT32_C(0)) break;
-    }
-
-    uint64_t mask64 = UINT64_C(0XFFFFFFFFFFFFFFFF) << pos << pos;
-
-
-    result.maskLength = 2*pos;
-    result.pos =  mergeBits(rect.x0,rect.y0) & mask64;
-    */
     uint32_t minx,maxx,miny,maxy;
     if(rect.x0 < rect.x1)
     {
