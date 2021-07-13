@@ -49,3 +49,6 @@ a light SVG tile map renderer and server that uses openstreetmap data and shp fi
 server is listening on port 8081<br/>
 test page is available at : http://localhost:8081
 tiles are available at : http://127.0.0.1:8081/{z}/{x}/{y}.svg 
+
+### [specifications](specifications.md)
+### [configuration](configuration.md)
