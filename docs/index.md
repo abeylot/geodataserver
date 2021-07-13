@@ -12,7 +12,7 @@ a light SVG tile map renderer and server that uses openstreetmap data and shp fi
 1. boost-threads
 2. libzlib
 
-## howto try the app
+## how to try the app
 ###  compile from source
 #### first install some dependancies
 
