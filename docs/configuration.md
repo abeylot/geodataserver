@@ -116,25 +116,53 @@ the openstreetmap value ( * can be specified for all values )
 
 
 ### restriction tag
-to do
-#### zLevels attribute
-to do
-### condition tag
-to do
-#### tagKey attribute
-to do
-#### closed attribute
-to do
-### class tag
-to do
-#### value attribute
-to do
-#### zIndex attribute
-to do
-#### textZIndex attribute
-to do
-#### style attribute
-to do
-#### textStyle attribute
-to do
+    <index type="node" name="placesIdxLowRes">
+        <restriction zLevels="3,4">
+            <condition tagKey="place" closed="both">
+                <class value="country"        zIndex="5002"    textZIndex="31" textStyle="#countryName"/>
+            </condition>
+        </restriction>
+        ...
+    </index>
 
+restrict the content to some zoom levels
+#### zLevels attribute
+the list of correspondig zoom levels
+### condition tag
+    <index type="node" name="placesIdxLowRes">
+        <restriction zLevels="3,4">
+            <condition tagKey="place" closed="both">
+                <class value="country"        zIndex="5002"    textZIndex="31" textStyle="#countryName"/>
+            </condition>
+        </restriction>
+        ...
+    </index>
+
+inner class descriptions are related to openstreetmap tag *place*
+#### tagKey attribute
+an Openstreetmap tag
+#### closed attribute
+values are yes no and both ( will select closed shapes not closed shapes, or both ) this is meaningless for nodes.
+### class tag
+    <index type="node" name="placesIdxLowRes">
+        <restriction zLevels="3,4">
+            <condition tagKey="place" closed="both">
+                <class value="country"        zIndex="5002"    textZIndex="31" textStyle="#countryName"/>
+            </condition>
+        </restriction>
+        ...
+    </index>
+openstreetmap nodes with tag *place* having value *country* will be drawn with style which id is *countryName*. 
+#### value attribute
+the openstreetmap tag value, or * for all values
+#### zIndex attribute
+a number, the higher, the most on top the item will be drawn.
+#### textZIndex attribute
+a number, the higher, the most on top the items name will be drawn.
+#### style attribute
+the SVG style, can refer to a previous style id if starts with #, or a plain SVG style.
+#### textStyle attribute
+the SVG text style, can refer to a previous style id if starts with #, or a plain SVG style.
+if unspecified, no text is displayed.
+### textField attribute
+if specified, the openstreetmap tag used for item label, if unspecified, name is used.
