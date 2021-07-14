@@ -6,7 +6,7 @@ port on which the tile server listens
 
     `<parameter name="ServerPort"    value="8081"/>`
 
-number of threads that write tile to clients
+number of threads that write tiles to clients
 
     `<parameter name="WriterThreads" value="25"/>`
 
@@ -14,7 +14,7 @@ number of threads which compute tiles
 
     `<parameter name="ExecThreads"   value="5"/>`
 
-all tiles with data and zoom level lsser or equal than 11 wwill be cached (you should delete them from cace directory if you change configuration )
+all tiles with data and zoom level lesser or equal than 11 wwill be cached (you should delete them from cache directory if you change configuration )
 
     `<parameter name="CacheLevel"    value="11"/>`
 
