@@ -3,7 +3,7 @@
 ##
 a light SVG tile map renderer and server that uses openstreetmap data and shp files
 ## documentation
-see [webdoc/index.html](https://raw.githubusercontent.com/abeylot/geodataserver/master/webdoc/index.html) after cloning this repo
+see [docs/index.md]docs/index.md
 ## requirements
 1. a debian based linux
 2. at least 4gb memory
