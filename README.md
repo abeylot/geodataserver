@@ -3,7 +3,7 @@
 ##
 a light SVG tile map renderer and server that uses openstreetmap data and shp files
 ## documentation
-see [docs/index.md]docs/index.md
+see [here](/docs/index.md).
 ## requirements
 1. a debian based linux
 2. at least 4gb memory
