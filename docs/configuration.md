@@ -35,6 +35,7 @@ the shp file water-polygons-split-4326/water_polygons will be loaded with shape 
 # styling configuration
 ## filling patterns
 *SVG* patterns for areas filling can be defined so ( refer to *SVG* documentation for details ).
+
     <pattern id="mudPattern" width="16" height="16" patternUnits="userSpaceOnUse" >
              <rect x="0" y="0" width="16" height="16" fill="#AAFFAA" style="opacity:0.2"/>
              <circle cx="8" cy="8" r="2" stroke-width="0" fill="skyblue" />
@@ -42,11 +43,10 @@ the shp file water-polygons-split-4326/water_polygons will be loaded with shape 
 ## symbols
 *SVG* symbols for points display can be defined so ( refer to *SVG* documentation for details ).
 
-    <symbol id="parking" width="16" height="16" transform="translate(-8 -8)" >
+     <symbol id="parking" width="16" height="16" transform="translate(-8 -8)" >
         <circle  cx="8"  cy="8"  r="8"  style="fill:#000099;opacity:0.2;" />
         <text x="8" y="8" style="fill:white;opacity:0.9;font-family:sans-serif;font-weight:bold;font-size:13px">P</text>
     </symbol>
-    
 ## styles
 *SVG* styles can defined so ( refer to *SVG* documentation for details). Note that this example refers to mudpattern example pattern.
 
@@ -77,28 +77,37 @@ openstreetmap items will be indexed and displayed according to indexes descripti
         </restriction>
     </index>
 ### index tag
+the index tag causes an index file to be created when indexing Openstreetmap data, and related svg styles
 #### type attribute
+possible values are
+
+node : indexing of nodes
+
+way : indexing of ways
+
+relation : indexing or relations
+
+(nodes, ways and relations are related to openstreetmap data definitions )
 #### name attribute
+the name of the index ( must be unique )
 ### select tag
+
     <index type="node" name="capitalsNodeIdx">
         <select tagKey="place" tagValue="city"/>
         <select tagKey="place" tagValue="town"/>
         ...
     </index>
-
 Openstreetmap nodes who don't have tag place with values city or town will be ignored.
 #### tagKey attribute
 the openstreetmap tag
 #### tagValue attribute
 the openstreetmap value ( * can be specified for all values )
-
 ### exclude tag
 
     <index type="relation" name="relationHeritageIdx">
         <exclude tagKey="location" tagValue="underground"/>
         ...
     </index>
-
 Openstreetmap items with tag location having value underground will be ignored.
 #### tagKey attribute
 the openstreetmap tag
@@ -107,14 +116,25 @@ the openstreetmap value ( * can be specified for all values )
 
 
 ### restriction tag
+to do
 #### zLevels attribute
+to do
 ### condition tag
+to do
 #### tagKey attribute
+to do
 #### closed attribute
+to do
 ### class tag
+to do
 #### value attribute
+to do
 #### zIndex attribute
+to do
 #### textZIndex attribute
+to do
 #### style attribute
+to do
 #### textStyle attribute
+to do
 
