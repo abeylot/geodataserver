@@ -29,6 +29,7 @@ a light SVG tile map renderer and server that uses openstreetmap data and shp fi
     cp prepare.sh data
     cd datà
     sh prepare.sh̀
+You may change downloaded openstreetmap file in prepare.sh script.
 #### Launch tile server | 
     $HOME/geodataserver/geoserver $HOME/geodataserver/data
 
