@@ -46,6 +46,7 @@ the shp file water-polygons-split-4326/water_polygons will be loaded with shape 
         <circle  cx="8"  cy="8"  r="8"  style="fill:#000099;opacity:0.2;" />
         <text x="8" y="8" style="fill:white;opacity:0.9;font-family:sans-serif;font-weight:bold;font-size:13px">P</text>
     </symbol>
+    
 ## styles
 *SVG* styles can defined so ( refer to *SVG* documentation for details). Note that this example refers to mudpattern example pattern.
 
