@@ -31,7 +31,7 @@ a light SVG tile map renderer and server that uses openstreetmap data and shp fi
 #### download and compile map data :
     mkdir data
     cp prepare.sh data
-    cd datà
+    cd dataa
     sh prepare.sh̀
     
 You may change downloaded openstreetmap file in prepare.sh script.
