@@ -19,19 +19,23 @@ a light SVG tile map renderer and server that uses openstreetmap data and shp fi
     sudo apt update
     sudo apt upgrade
     sudo apt install g++ lbzip2 libboost-all-dev libbz2-dev git
+    
 #### clone c++ code :
     cd $HOME
-    git clone https://github.com/abeylot/geodataserver.git`
+    git clone https://github.com/abeylot/geodataserver.git
+    
 #### build :
     cd $HOME/geodataserver
     make
+    
 #### download and compile map data :
     mkdir data
     cp prepare.sh data
     cd datà
     sh prepare.sh̀
+    
 You may change downloaded openstreetmap file in prepare.sh script.
-#### Launch tile server | 
+#### Launch tile server :  
     $HOME/geodataserver/geoserver $HOME/geodataserver/data
 
 server is listening on port 8081<br/>
