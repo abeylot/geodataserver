@@ -1,6 +1,6 @@
 Map configuration is done through config.xml file
 # generic configuration
-## parameter tag
+## *parameter* tag
 
 port on which the tile server listens
 
@@ -27,7 +27,7 @@ default color of land
     `<parameter name="DefaultColor"  value="#EEFFEE"/>`
 
 # input data configuration    
-## shp_file tag
+## *shp_file* tag
 the shp file water-polygons-split-4326/water_polygons will be loaded with shape tag having value ocean
 
     <shp_file name="water-polygons-split-4326/water_polygons" tag="shape" value="ocean"/>
@@ -52,7 +52,7 @@ the shp file water-polygons-split-4326/water_polygons will be loaded with shape 
 
      <style id="mud" value="fill:url(#mudPattern); fill-rule:evenodd"/>
 ## indexes
-openstreetmap items will be indexed and displayed according to indexes descriptions like example below :
+*Openstreetmap* items will be indexed and displayed according to indexes descriptions like example below :
 
     <index type="node" name="placesIdxLowRes">
         <restriction zLevels="3,4">
@@ -76,9 +76,9 @@ openstreetmap items will be indexed and displayed according to indexes descripti
             </condition>
         </restriction>
     </index>
-### index tag
-the index tag causes an index file to be created when indexing Openstreetmap data, and related svg styles
-#### type attribute
+### *index* tag
+the index tag causes an index file to be created when indexing *Openstreetmap* data, and related *SVG* styles
+#### *type* attribute
 possible values are
 
 node : indexing of nodes
@@ -87,35 +87,35 @@ way : indexing of ways
 
 relation : indexing or relations
 
-(nodes, ways and relations are related to openstreetmap data definitions )
-#### name attribute
+(nodes, ways and relations are related to *Openstreetmap* data definitions )
+#### *name* attribute
 the name of the index ( must be unique )
-### select tag
+### *select* tag
 
     <index type="node" name="capitalsNodeIdx">
         <select tagKey="place" tagValue="city"/>
         <select tagKey="place" tagValue="town"/>
         ...
     </index>
-Openstreetmap nodes who don't have tag place with values city or town will be ignored.
-#### tagKey attribute
-the openstreetmap tag
-#### tagValue attribute
-the openstreetmap value ( * can be specified for all values )
-### exclude tag
+*Openstreetmap* nodes who don't have tag place with values city or town will be ignored.
+#### *tagKey* attribute
+the *Openstreetmap* tag
+#### *tagValue* attribute
+the *Openstreetmap* value ( * can be specified for all values )
+### *exclude* tag
 
     <index type="relation" name="relationHeritageIdx">
         <exclude tagKey="location" tagValue="underground"/>
         ...
     </index>
-Openstreetmap items with tag location having value underground will be ignored.
-#### tagKey attribute
-the openstreetmap tag
-#### tagValue attribute
-the openstreetmap value ( * can be specified for all values )
+*Openstreetmap* items with tag location having value underground will be ignored.
+#### *tagKey* attribute
+the *Openstreetmap* tag
+#### *tagValue* attribute
+the *Openstreetmap* value ( * can be specified for all values )
 
 
-### restriction tag
+### *restriction* tag
     <index type="node" name="placesIdxLowRes">
         <restriction zLevels="3,4">
             <condition tagKey="place" closed="both">
@@ -126,9 +126,9 @@ the openstreetmap value ( * can be specified for all values )
     </index>
 
 restrict the content to some zoom levels
-#### zLevels attribute
+#### *zLevels* attribute
 the list of correspondig zoom levels
-### condition tag
+### *condition* tag
     <index type="node" name="placesIdxLowRes">
         <restriction zLevels="3,4">
             <condition tagKey="place" closed="both">
@@ -139,11 +139,11 @@ the list of correspondig zoom levels
     </index>
 
 inner class descriptions are related to openstreetmap tag *place*
-#### tagKey attribute
-an Openstreetmap tag
-#### closed attribute
+#### *tagKey* attribute
+an *Openstreetmap* tag
+#### *closed* attribute
 values are yes no and both ( will select closed shapes not closed shapes, or both ) this is meaningless for nodes.
-### class tag
+### *class* tag
     <index type="node" name="placesIdxLowRes">
         <restriction zLevels="3,4">
             <condition tagKey="place" closed="both">
@@ -152,17 +152,17 @@ values are yes no and both ( will select closed shapes not closed shapes, or bot
         </restriction>
         ...
     </index>
-openstreetmap nodes with tag *place* having value *country* will be drawn with style which id is *countryName*. 
-#### value attribute
-the openstreetmap tag value, or * for all values
-#### zIndex attribute
+*Openstreetmap* nodes with tag *place* having value *country* will be drawn with style which id is *countryName*. 
+#### *value* attribute
+the *Openstreetmap* tag value, or * for all values
+#### *zIndex* attribute
 a number, the higher, the most on top the item will be drawn.
-#### textZIndex attribute
+#### *textZIndex* attribute
 a number, the higher, the most on top the items name will be drawn.
-#### style attribute
-the SVG style, can refer to a previous style id if starts with #, or a plain SVG style.
-#### textStyle attribute
-the SVG text style, can refer to a previous style id if starts with #, or a plain SVG style.
+#### *style* attribute
+the *SVG* style, can refer to a previous style id if starts with #, or a plain *SVG* style.
+#### *textStyle* attribute
+the *SVG* text style, can refer to a previous style id if starts with #, or a plain *SVG* style.
 if unspecified, no text is displayed.
-### textField attribute
+### *textField* attribute
 if specified, the openstreetmap tag used for item label, if unspecified, name is used.
