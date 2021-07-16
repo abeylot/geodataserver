@@ -101,3 +101,5 @@ are bigger than this geobox, and lesser or equal
 
 geobox : { z = 11101111 11111111 11111111 11111111 11111111 11111111 11111111 11111111, masklength = 0 }
 
+this will allow us to iterate geoboxes in an useful manner.
+
