@@ -22,7 +22,46 @@ latitude is mapped to unsigned 32 bit int using mercator projection.
 ## Dividing the world
 ![image](world.jpg)
 
-world is divided in squares:
-1 big part, then 4 smaller parts then 16 even smaller parts ... parts include lower x and y boudaries, not upper which are in the next part.
+world is divided in rectangles, we divide horizontally, then vertically:
+1 big part, then 2 smaller parts then 4 even smaller parts and so on 64 times... parts include lower x and y boudaries, not upper which are in the next part.
 ## Spatial objects indexing
-to do
+As we want to use theses parts of map as an index, we have to order them. Let chose this way of ordering :
+
+lets associate a number z to each (x,y) position, x an y being 32 bits unsigned integers,( most significant bit on the left )
+
+if x is is in binary
+
+x1 x2 x3 x4 x5 X6 x7 x8 x9 x10 x11  .... x32 each xn beeing 0 or 1
+
+and y
+
+y1 y2 y3 ..... y32
+
+let our number be
+
+z = x1 y1 x2 y2 x3 y3 .... x32 y32 making an unsigned 64 bits integer, x and y bits ar interleaved to make z.
+
+the range  z1 z2 ... zn 0 0 0 0 ... 0 to z1 z2 ... zn 1 1 1 1 will represent a rectangle that we call geobox
+
+let's call z1 z2 ... zn 0 ... 0 the position of the geobox
+
+the number of bits varying from 0 to 1 the masklength of the geobox
+
+we choose to order them this way
+
+the "smaller" geobox is the one which the smaller position, or the biggest mask if positions are equal.
+
+we have divided the map in rectangles and ordered them :
+
+as an example, the 7 first geoboxes :
+
+![image](world1.jpg)
+
+![image](world2.jpg)
+![image](world3.jpg)
+
+![image](world4.jpg)
+![image](world5.jpg)
+
+![image](world6.jpg)
+![image](world7.jpg)
