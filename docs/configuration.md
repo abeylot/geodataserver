@@ -101,7 +101,7 @@ the name of the index ( must be unique )
 #### *tagKey* attribute
 the *Openstreetmap* tag
 #### *tagValue* attribute
-the *Openstreetmap* value ( * can be specified for all values )
+the *Openstreetmap* value ( "default" can be specified for all values )
 ### *exclude* tag
 
     <index type="relation" name="relationHeritageIdx">
@@ -112,7 +112,7 @@ the *Openstreetmap* value ( * can be specified for all values )
 #### *tagKey* attribute
 the *Openstreetmap* tag
 #### *tagValue* attribute
-the *Openstreetmap* value ( * can be specified for all values )
+the *Openstreetmap* value ( "default" can be specified for all values )
 
 
 ### *restriction* tag
@@ -154,7 +154,7 @@ values are yes no and both ( will select closed shapes not closed shapes, or bot
     </index>
 *Openstreetmap* nodes with tag *place* having value *country* will be drawn with style which id is *countryName*. 
 #### *value* attribute
-the *Openstreetmap* tag value, or * for all values
+the *Openstreetmap* tag value, or "default" for all remaining values
 #### *zIndex* attribute
 a number, the higher, the most on top the item will be drawn.
 #### *textZIndex* attribute
