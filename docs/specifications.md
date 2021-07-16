@@ -1,6 +1,6 @@
 ## From latitude and longitude to 32 bits unsigned integers
 -180° to 180° longitude mapped to 0 0xFFFFFFFF (biggest unsigned 32 bits int) for internal program use.
-## From two 32 bits unsigned integers to one 64 bits unsigned integers
+ 
 latitude is mapped to unsigned 32 bit int using mercator projection.
 0 being the most far south and 0xFFFFFFFF north.
     
@@ -24,7 +24,7 @@ latitude is mapped to unsigned 32 bit int using mercator projection.
 
 world is divided in rectangles, we divide horizontally, then vertically:
 1 big part, then 2 smaller parts then 4 even smaller parts and so on 64 times... parts include lower x and y boudaries, not upper which are in the next part.
-## Spatial objects indexing
+## ordering the parts
 As we want to use theses parts of map as an index, we have to order them. Let chose this way of ordering :
 
 lets associate a number z to each (x,y) position, x an y being 32 bits unsigned integers,( most significant bit on the left )
@@ -49,7 +49,7 @@ the number of bits varying from 0 to 1 the masklength of the geobox
 
 we choose to order them this way
 
-the "smaller" geobox is the one which the smaller position, or the biggest mask if positions are equal.
+the "smaller" geobox is the one which the smaller z number , or the biggest masklength if z numbers  are equal.
 
 we have divided the map in rectangles and ordered them :
 
