@@ -53,7 +53,7 @@ the "smaller" geobox is the one which the smaller z number , or the biggest mask
 
 we have divided the map in rectangles and ordered them :
 
-as an example, the 7 first geoboxes :
+as an example, the biggest geoboxes ordered :
 
 
 
