@@ -21,6 +21,7 @@ latitude is mapped to unsigned 32 bit int using mercator projection.
 
 ## Dividing the world
 ![image](/docs/world.jpg)
+
 world is divided in squares:
 1 big part, then 4 smaller parts then 16 even smaller parts ... parts include lower x and y boudaries, not upper which are in the next part.
 ## Spatial objects indexing
