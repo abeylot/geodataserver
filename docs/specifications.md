@@ -91,3 +91,10 @@ z = 11000000 00000000 000000000 00000000 00000000 00000000 000000000 00000000
 masklength is 62
 
 ![image](world6.jpg)
+
+## interesting properties of this order
+all geoboxes contained in one bigger geobox are in the range beginning with the this geobox and ending whith the geobox representing the point of ths geobox whith maximum x and maximum y. for instance, all geoboxes contained in geobox
+{ z =11101111 00000000 00000000 00000000 00000000 00000000 00000000 00000000, masklength = 56 }
+are bigger than this geobox, and lesser or equal
+{ z = 11101111 11111111 11111111 11111111 11111111 11111111 11111111 11111111, masklength 0 }
+
