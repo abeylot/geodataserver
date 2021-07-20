@@ -49,6 +49,7 @@ Fast for small scales ( high zoom levels ) but can take 10 or 20 seconds for lar
     sh prepare.sh̀
     
 You may change downloaded openstreetmap file in prepare.sh script.
+example data file is pays-de-la-loire-latest.osm.bz2 ( part from france ) which will be fast processed.
 #### Launch tile server :  
     $HOME/geodataserver/geoserver $HOME/geodataserver/data
 
