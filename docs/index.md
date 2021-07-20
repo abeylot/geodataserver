@@ -13,6 +13,18 @@ a light SVG tile map renderer and server that uses openstreetmap data and shp fi
 1. boost-threads
 2. libzlib
 
+## performances
+
+### warning
+High disk usage, using an usb key to store map datas may damage it !
+
+### data extraction
+can be awfull slow, up to one week on my old laptop for full world data processing, with a ssd external drive.
+
+### map tile generation
+Processor use is not the problem, file access is.
+Fast for small scales ( high zoom levels ) but can take 10 or 20 seconds for large ones ( but those ones will be cached for next use)
+
 ## how to try the app
 ###  compile from source
 #### first install some dependancies
@@ -40,7 +52,7 @@ You may change downloaded openstreetmap file in prepare.sh script.
 
 server is listening on port 8081<br/>
 test page is available at : http://localhost:8081
-tiles are available at : http://127.0.0.1:8081/{z}/{x}/{y}.svg 
+tiles are available at : http://localhost:8081/{z}/{x}/{y}.svg 
 
 ### [configuration](configuration.md)
 
