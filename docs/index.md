@@ -1,5 +1,5 @@
 # geodataserver
-![sample](https://raw.githubusercontent.com/abeylot/geodataserver/master/webdoc/map13.jpg)
+![sample](https://raw.githubusercontent.com/abeylot/geodataserver/master/doc/sample.jpg)
 
 
 a light SVG tile map renderer and server that uses openstreetmap data and shp files.
