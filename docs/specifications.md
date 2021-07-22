@@ -107,7 +107,7 @@ this will allow us to iterate geoboxes in an useful manner.
 
 to do
 
-## In this case geobox is much biggger than my item
+## In this case geobox is much bigger than my item
 
 to do
 
