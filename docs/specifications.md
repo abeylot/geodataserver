@@ -103,3 +103,14 @@ geobox : { z = 0b11101111 11111111 11111111 11111111 11111111 11111111 11111111 
 
 this will allow us to iterate geoboxes in an useful manner.
 
+## In what geobox fits my item ?
+
+to do
+
+## In this case geobox is much biggger than my item
+
+to do
+
+## Cutting my item in pieces to index it
+
+to do
