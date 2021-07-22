@@ -1,5 +1,5 @@
 # geodataserver
-![sample](/doc/sample.jpg)
+![sample](/docs/sample.jpg)
 ##
 A light SVG tile map renderer and server that uses openstreetmap data and shp files.
 Works on raspberry pi 4 for world extracts, you will need a bigger computer for whole world.
@@ -13,4 +13,4 @@ see [here](/docs/index.md).
 1. boost-threads
 2. libzlib
 ##
-![sample](/doc/sample2.jpg)
+![sample](/docs/sample2.jpg)
