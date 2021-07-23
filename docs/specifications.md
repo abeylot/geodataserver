@@ -103,3 +103,39 @@ geobox : { z = 0b11101111 11111111 11111111 11111111 11111111 11111111 11111111 
 
 this will allow us to iterate geoboxes in an useful manner.
 
+## In what geobox fits my item ?
+
+( changing parts are in **bold** )
+
+let boundaries of our item be in binary be :
+
+x min  1 0 1 0 1 0 0 0 1 0 1 0 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 1 0 0 1 1 
+
+y min   1 1 1 0 0 0 1 0 0 1 1 0 1 1 0 1 1 1 0 1 0 0 0 0 0 0 1 0 0 0 0 1
+
+x max  1 0 1 0 1 0 0 0 1 0 1 0 1 1 1 1 1 1 1 1 0 0 0 0 0 0 **1 1 0 0 1 1**
+
+y max   1 1 1 0 0 0 1 0 0 1 1 0 1 1 0 1 1 1 0 1 0 0 0 0 0 0 1 **1 0 0 0 1**
+
+we compute z values, interleaving bits :
+
+z min  11011100 10000100 100111001 11110111 11110110 00000000 00001100 00010110
+
+z max  11011100 10000100 10011100 111110111 11110110 00000000 000**11110 00010110**
+
+the 51 first bits of z are unchanged, the first changing bit is the 52th. our item fits in gebox
+
+geobox : { z = 0b 11011100 10000100 10011100 11111011 11111011 00000000 000**00000 00000000**, masklength = 13 }
+
+
+## In this case geobox is much bigger than my item
+
+if our item was right in the middle of the map, he would fit only in the biggest geobox because the most left bit of z min and z max would be different, even if the size of the item is small.
+
+geobox : { z = 0b 1**000000 00000000 00000000 000000000 000000000 00000000 000000000 00000000**, masklength = 63 }
+
+that's a big problem as we would like to index it in something that matches well it's position and size !
+
+## Cutting my item in pieces to index it
+
+to do
