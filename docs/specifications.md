@@ -144,4 +144,3 @@ let an item be like tis picture :
 
 if we cut it on the green and red lines, we see that he will fit in geoboxes that match much more his size, thats how we will index items, cutting them in four, selecting the four geoboxes where the part fit. and merging those geoboxes when one is included in another one.
 
-![image](item.jpg)
