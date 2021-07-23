@@ -130,7 +130,7 @@ geobox : { z = 0b 11011100 10000100 10011100 11111011 11111011 00000000 000**000
 
 ## In this case geobox is much bigger than my item
 
-if our item was right in the middle og the map, he would fit only in the biggest geobox because the most left bit of z min and z max would be different, even if the size of the item is small.
+if our item was right in the middle of the map, he would fit only in the biggest geobox because the most left bit of z min and z max would be different, even if the size of the item is small.
 
 geobox : { z = 0b 1**000000 00000000 00000000 000000000 000000000 00000000 000000000 00000000**, masklength = 63 }
 
