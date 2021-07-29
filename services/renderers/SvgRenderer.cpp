@@ -916,13 +916,13 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 		{
 			if(draw)
 			{
-				//result << "<path  d=\"";
+				result << "<path  d=\"";
 				for(Line* l: myRelation.shape.lines)
 				{
                     Rectangle r1 = rect*1.25;
-                    l->crop(r1);
-                    s.mergePoints(l->points, l->pointsCount);
-					/*l->crop(r1);
+                    //l->crop(r1);
+                    //s.mergePoints(l->points, l->pointsCount);
+					l->crop(r1);
                     bool first = true;
                     int x=0;
                     int y=0;
@@ -946,9 +946,9 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                                 result << "L" << (int32_t)(x) << " " << (int32_t)(y) << " ";
                             }
                         }
-                    }*/
+                    }
 				}
-                //result << " \" class=\"c" << cl.rank <<"\" />\n";*/
+                result << " \" class=\"c" << cl.rank <<"\" />\n";
 			}
             cssClasses.insert("c"+std::to_string(cl.rank));
 		}
