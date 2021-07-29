@@ -916,7 +916,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 		{
 			if(draw)
 			{
-				result << "<path  d=\"";
+				//result << "<path  d=\"";
 				for(Line* l: myRelation.shape.lines)
 				{
                     Rectangle r1 = rect*1.25;
