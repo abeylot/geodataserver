@@ -34,7 +34,7 @@
     <style id="sand"             value="fill:moccasin; fill-rule:evenodd"/>
     <style id="mud"              value="fill:url(#mudPattern); fill-rule:evenodd"/>
     <style id="building"         value="fill:linen;opacity:0.9;stroke:BurlyWood ;stroke-width:1; fill-rule:evenodd"/>
-    <style id="historicBuilding" value="fill:mistyrose;opacity:0.9;stroke:grey ;stroke-width:1; fill-rule:evenodd"/>
+    <style id="historicBuilding" value="fill:mistyrose;opacity:0.7;stroke:#B13014 ;stroke-width:1; fill-rule:evenodd"/>
     <style id="zone"             value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:5,5; fill-rule:evenodd"/>
     <style id="parking"          value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:1,5; fill-rule:evenodd"/>
     
@@ -537,18 +537,18 @@
         <select tagKey="heritage" tagValue="*"/>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                <class value="default" zIndex="2900" textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber" style="#historicBuilding"/>
+                <class value="default" zIndex="2901" textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber" style="#historicBuilding"/>
             </condition>
             <condition tagKey="type"    closed="yes">
-                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
+                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
             </condition>
         </restriction>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                <class value="default" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
+                <class value="default" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
             </condition>
             <condition tagKey="type"    closed="yes">
-                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
+                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
             </condition>
         </restriction>
     </index>
@@ -559,18 +559,18 @@
         <select tagKey="historic" tagValue="*"/>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                <class value="default" zIndex="2900" textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber" style="#historicBuilding"/>
+                <class value="default" zIndex="2901" textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber" style="#historicBuilding"/>
             </condition>
             <condition tagKey="type"    closed="yes">
-                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
+                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
             </condition>
         </restriction>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                <class value="default" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
+                <class value="default" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
             </condition>
             <condition tagKey="type"    closed="yes">
-                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#historicBuilding"/>
+                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
             </condition>
         </restriction>
     </index>
@@ -603,18 +603,18 @@
         <exclude tagKey="heritage" tagValue="*"/>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                    <class value="default"       zIndex="2900" style="#historicBuilding" textZIndex="0" textField="addr:housenumber" textStyle="#houseNumber"/> 
+                    <class value="default"       zIndex="2901" style="#historicBuilding" textZIndex="0" textField="addr:housenumber" textStyle="#houseNumber"/> 
             </condition>
             <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2900" style="#historicBuilding"/>
+                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2901" style="#historicBuilding"/>
             </condition>
         </restriction>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                    <class value="default"       textField="addr:housenumber"    textZIndex="0" textStyle="#houseNumber"      zIndex="2900" style="#historicBuilding"/>
+                    <class value="default"       textField="addr:housenumber"    textZIndex="0" textStyle="#houseNumber"      zIndex="2901" style="#historicBuilding"/>
             </condition>
             <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2900" style="#historicBuilding"/>
+                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2901" style="#historicBuilding"/>
             </condition>
         </restriction>
     </index>
@@ -624,18 +624,18 @@
         <select tagKey="heritage" tagValue="*"/>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                    <class value="default"       zIndex="2900" style="#historicBuilding" textField="addr:housenumber" textZIndex="0" textStyle="#houseNumber"/> 
+                    <class value="default"       zIndex="2901" style="#historicBuilding" textField="addr:housenumber" textZIndex="0" textStyle="#houseNumber"/> 
             </condition>
             <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2900" style="#historicBuilding"/>
+                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2901" style="#historicBuilding"/>
             </condition>
         </restriction>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                    <class value="default"       textField="addr:housenumber"    textZIndex="0" textStyle="#houseNumber"      zIndex="2900" style="#historicBuilding"/>
+                    <class value="default"       textField="addr:housenumber"    textZIndex="0" textStyle="#houseNumber"      zIndex="2901" style="#historicBuilding"/>
             </condition>
             <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2900" style="#historicBuilding"/>
+                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2901" style="#historicBuilding"/>
             </condition>
         </restriction>
     </index>
