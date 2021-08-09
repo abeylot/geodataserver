@@ -106,6 +106,36 @@
         <text x="8" y="8" style="fill:white;opacity:0.9;font-family:sans-serif;font-weight:bold;font-size:13px">P</text>
     </symbol>
 
+    <symbol id="hospital" width="24" height="24" transform="translate(-12 -34)" >
+        <circle  cx="12"  cy="12"  r="12"  style="fill:#FFFFFF;opacity:0.2;" />
+        <text x="12" y="12" style="fill:red;opacity:0.7;font-family:sans-serif;font-weight:bold;font-size:17px">&#10010;</text>
+    </symbol>
+
+    <symbol id="pharmacy" width="24" height="24" transform="translate(-12 -34)" >
+        <circle  cx="12"  cy="12"  r="12"  style="fill:#FFFFFF;opacity:0.2;" />
+        <text x="12" y="12" style="fill:green;opacity:0.7;font-family:sans-serif;font-weight:bold;font-size:17px">&#10010;</text>
+    </symbol>
+
+    <symbol id="restaurant" width="24" height="24" transform="translate(-12 -34)" >
+        <circle  cx="12"  cy="12"  r="12"  style="fill:#FFFFFF;opacity:0.2;" />
+        <text x="12" y="12" style="fill:grey;opacity:0.7;font-family:sans-serif;font-weight:bold;font-size:17px">&#127860;</text>
+    </symbol>
+
+    <symbol id="bar" width="24" height="24" transform="translate(-12 -34)" >
+        <circle  cx="12"  cy="12"  r="12"  style="fill:#FFFFFF;opacity:0.2;" />
+        <text x="12" y="12" style="fill:grey;opacity:0.7;font-family:sans-serif;font-weight:bold;font-size:17px">&#127863;</text>
+    </symbol>
+
+    <symbol id="post_office" width="24" height="24" transform="translate(-12 -34)" >
+        <circle  cx="12"  cy="12"  r="12"  style="fill:#FFFFFF;opacity:0.2;" />
+        <text x="12" y="12" style="fill:grey;opacity:0.7;font-family:sans-serif;font-weight:bold;font-size:17px">&#9993;</text>
+    </symbol>
+
+    <symbol id="toilets" width="24" height="24" transform="translate(-12 -12)" >
+        <circle  cx="12"  cy="12"  r="12"  style="fill:#FFFFFF;opacity:0.2;" />
+        <text x="12" y="12" style="fill:grey;opacity:0.7;font-family:sans-serif;font-weight:bold;font-size:17px">&#128699;</text>
+    </symbol>
+
     <symbol id="oneway" width="10" height="10" transform="translate(-5 -5)" >
         <path d="M0 5 L10 5 L5 3 M5 7 L10 5" stroke="white" stroke-width="1" opacity="0.7"/>
     </symbol>
@@ -875,10 +905,25 @@
     </index>
 
    <index type="node" name="amenityNodeIdx">
-      <restriction zLevels="17,18,19">
+      <restriction zLevels="17,18">
       <condition closed="both" tagKey="amenity">
-           <class value="parking"  zIndex="50001" symbol="parking" />
-           <class value="parking_entrance"  zIndex="50001" symbol="parking"/>
+           <class value="default"  zIndex="1" textZIndex="10" textStyle="#amenityName"/>
+      </condition>
+      </restriction>
+      <restriction zLevels="19">
+      <condition closed="both" tagKey="amenity">
+           <class value="post_office"  zIndex="50001" symbol="post_office" textStyle="#amenityName"/>
+           <class value="bar"  zIndex="50001" symbol="bar" textStyle="#amenityName"/>
+           <class value="pub"  zIndex="50001" symbol="bar" textStyle="#amenityName"/>
+           <class value="restaurant"  zIndex="50001" symbol="restaurant" textStyle="#amenityName"/>
+           <class value="fast_food"  zIndex="50001" symbol="restaurant" textStyle="#amenityName"/>
+           <class value="food_court"  zIndex="50001" symbol="restaurant" textStyle="#amenityName"/>
+           <class value="pharmacy"  zIndex="50001" symbol="pharmacy" textStyle="#amenityName"/>
+           <class value="toilets"  zIndex="50001" symbol="toilets" textStyle="#amenityName"/>
+           <class value="clinic"  zIndex="50001" symbol="hospital" textStyle="#amenityName"/>
+           <class value="hospital"  zIndex="50001" symbol="hospital" textStyle="#amenityName"/>
+           <class value="parking"  zIndex="50001" symbol="parking" textStyle="#amenityName"/>
+           <class value="parking_entrance"  zIndex="50001" symbol="parking" textStyle="#amenityName"/>
            <class value="default"  zIndex="1" textZIndex="10" textStyle="#amenityName"/>
       </condition>
       </restriction>
@@ -887,6 +932,8 @@
    <index type="way" name="amenityWayIdx">
       <restriction zLevels="17,18,19">
       <condition closed="yes" tagKey="amenity">
+           <class value="clinic"  zIndex="50001" symbol="hospital" />
+           <class value="hospital"  zIndex="50001" symbol="hospital" />
            <class value="parking"  zIndex="50001" style="#parking" symbol="parking" />
            <class value="parking_entrance"  zIndex="50001" symbol="parking"/>
            <class value="default"  zIndex="1" textZIndex="10" textStyle="#amenityName"/>
