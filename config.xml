@@ -235,7 +235,7 @@
 
 
     <index type="node" name="placesIdxHighRes">
-        <restriction zLevels="14,15,16,17,18">
+        <restriction zLevels="14,15,16">
         <condition tagKey="place" closed="both">
                 <class value="city"              zIndex="5008" textZIndex="40" textStyle="#cityName"/>
                 <class value="borough"           zIndex="5008" textZIndex="30" textStyle="#townName"/>
