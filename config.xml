@@ -912,19 +912,19 @@
       </restriction>
       <restriction zLevels="19">
       <condition closed="both" tagKey="amenity">
-           <class value="post_office"  zIndex="50001" symbol="post_office" textStyle="#amenityName"/>
-           <class value="bar"  zIndex="50001" symbol="bar" textStyle="#amenityName"/>
-           <class value="pub"  zIndex="50001" symbol="bar" textStyle="#amenityName"/>
-           <class value="restaurant"  zIndex="50001" symbol="restaurant" textStyle="#amenityName"/>
-           <class value="fast_food"  zIndex="50001" symbol="restaurant" textStyle="#amenityName"/>
-           <class value="food_court"  zIndex="50001" symbol="restaurant" textStyle="#amenityName"/>
-           <class value="pharmacy"  zIndex="50001" symbol="pharmacy" textStyle="#amenityName"/>
-           <class value="toilets"  zIndex="50001" symbol="toilets" textStyle="#amenityName"/>
-           <class value="clinic"  zIndex="50001" symbol="hospital" textStyle="#amenityName"/>
-           <class value="hospital"  zIndex="50001" symbol="hospital" textStyle="#amenityName"/>
-           <class value="parking"  zIndex="50001" symbol="parking" textStyle="#amenityName"/>
-           <class value="parking_entrance"  zIndex="50001" symbol="parking" textStyle="#amenityName"/>
-           <class value="default"  zIndex="1" textZIndex="10" textStyle="#amenityName"/>
+           <class value="post_office"      zIndex="50001" symbol="post_office" textStyle="#amenityName" textZIndex="1"/>
+           <class value="bar"              zIndex="50001" symbol="bar"         textStyle="#amenityName" textZIndex="1"/>
+           <class value="pub"              zIndex="50001" symbol="bar"         textStyle="#amenityName" textZIndex="1"/>
+           <class value="restaurant"       zIndex="50001" symbol="restaurant"  textStyle="#amenityName" textZIndex="1"/>
+           <class value="fast_food"        zIndex="50001" symbol="restaurant"  textStyle="#amenityName" textZIndex="1"/>
+           <class value="food_court"       zIndex="50001" symbol="restaurant"  textStyle="#amenityName" textZIndex="1"/>
+           <class value="pharmacy"         zIndex="50001" symbol="pharmacy"    textStyle="#amenityName" textZIndex="1"/>
+           <class value="toilets"          zIndex="50001" symbol="toilets"     textStyle="#amenityName" textZIndex="1"/>
+           <class value="clinic"           zIndex="50001" symbol="hospital"    textStyle="#amenityName" textZIndex="1"/>
+           <class value="hospital"         zIndex="50001" symbol="hospital"    textStyle="#amenityName" textZIndex="1"/>
+           <class value="parking"          zIndex="50001" symbol="parking"     textStyle="#amenityName" textZIndex="1"/>
+           <class value="parking_entrance" zIndex="50001" symbol="parking"     textStyle="#amenityName" textZIndex="1"/>
+           <class value="default"          zIndex="1"                          textStyle="#amenityName" textZIndex="1"/>
       </condition>
       </restriction>
    </index>
