@@ -29,8 +29,8 @@ Shape* SvgRenderer::getShape(CssClass* c)
 
 bool compare(const label_s& l2, const label_s& l1)
 {
-    if(l1.zindex > l2.zindex) return true;
-    if(l2.zindex > l1.zindex) return false;
+    if(l1.zindex > l2.zindex) return false;
+    if(l2.zindex > l1.zindex) return true;
     if(l1.style > l2.style) return true;
     if(l2.style > l1.style) return false;
     if (l1.text.length() > l2.text.length()) return true;
