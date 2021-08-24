@@ -8,6 +8,7 @@
 #include "zlib.h"
 #include "assert.h"
 #include <filesystem>
+#include <mutex>
 //using namespace std::filesystem;
 #define CHUNK 0x4000
 
@@ -234,7 +235,7 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
     char filename[250];
 
     double lon1, lon2, lat1, lat2;
-
+    static std::mutex file_mtx;
 
     lon1 = tilex2long(_x, _z);
     lon2 = tilex2long(_x+1, _z);
@@ -321,7 +322,9 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
 			{
 				std::filesystem::create_directory(p2);
 			}
-            FILE* out = fopen(filename, "w");
+			{
+				std::lock_guard<std::mutex> guard(file_mtx);
+                FILE* out = fopen(filename, "w");
                 if(out != NULL)
                 {
                     def(res, out);
@@ -329,8 +332,9 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
                 }
                 else
                 {
-					printf("UNABLE TO CACHE %s !\n", filename);
+				    printf("UNABLE TO CACHE %s !\n", filename);
 				}
+			}
         }
     }
     return rep;
