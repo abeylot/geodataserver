@@ -31,8 +31,7 @@ struct GeoFile
         }
         if (fh < 0)
         {
-            std::cerr << "Unable to open file : " << name << std::endl;
-            exit(1);
+			throw std::runtime_error("Unable to open file : " + name);
         }
     }
     
@@ -46,8 +45,7 @@ struct GeoFile
             int64_t count = pwrite64(fh, &buffer[got], length, offset+got);
             if(count <= 0)
             {
-                std::cerr << "Unable to write file : " << name << std::endl;
-                exit(1);
+			    throw std::runtime_error("Unable to write file : " + name);
             } else {
                 length -= count;
                 got += count; 
@@ -63,8 +61,7 @@ struct GeoFile
             int64_t count = pread64(fh, &buffer[got], length, offset+got);
             if(count <= 0)
             {
-                std::cerr << "Unable to read file : " << name << std::endl;
-                exit(1);
+    			throw std::runtime_error("Unable to read file : " + name);
             } else {
                 length -= count;
                 got += count; 
@@ -77,8 +74,7 @@ struct GeoFile
         int64_t len = lseek64(fh, 0, SEEK_END);
         if( len < 0 )
         {
-            std::cerr << "Unable to seek file : " << name << std::endl;
-            exit(1);
+			throw std::runtime_error("Unable to seek file : " + name);
         }
         
         uint64_t got = 0;
@@ -87,8 +83,7 @@ struct GeoFile
             int64_t count = write(fh, &buffer[got], length);
             if(count <= 0)
             {
-                std::cerr << "Unable to write file : " << name << std::endl;
-                exit(1);
+ 			    throw std::runtime_error("Unable to write file : " + name);
             } else {
                 length -= count;
                 got += count; 
@@ -101,8 +96,7 @@ struct GeoFile
         int64_t len = lseek64(fh, 0, SEEK_END);
         if( len < 0 )
         {
-            std::cerr << "Unable to seek file : " << name << std::endl;
-            exit(1);
+			throw std::runtime_error("Unable to seek file : " + name);
         }
         
         return len;
@@ -125,8 +119,7 @@ struct GeoFile
         }
         if (fh == NULL)
         {
-            std::cerr << "Unable to open file : " << name << std::endl;
-            exit(1);
+			throw std::runtime_error("Unable to open file : " + name);
         }
     }
     
@@ -137,16 +130,14 @@ struct GeoFile
         uint64_t got = 0;
         if(fseeko(fh, offset, SEEK_SET))
         {
-            std::cerr << "Unable to seek file : " << name << std::endl;
-            exit(1);
+			throw std::runtime_error("Unable to write file : " + name);
         }
         while(length)
         {
             int64_t count = fwrite(buffer + got, 1, length, fh);
             if(count <= 0)
             {
-                std::cerr << "Unable to write file : " << name << std::endl;
-                exit(1);
+			    throw std::runtime_error("Unable to write file : " + name);
             } else {
                 length -= count;
                 got += count; 
@@ -159,16 +150,14 @@ struct GeoFile
         uint64_t got = 0;
         if(fseeko(fh, offset, SEEK_SET))
         {
-            std::cerr << "Unable to seek file : " << name << std::endl;
-            exit(1);
+			throw std::runtime_error("Unable to seek file : " + name);
         }
         while(length)
         {
             int64_t count = fread(buffer + got, 1, length, fh);
             if(count <= 0)
             {
-                std::cerr << "Unable to read file : " << name << std::endl;
-                exit(1);
+   			    throw std::runtime_error("Unable to read file : " + name);
             } else {
                 length -= count;
                 got += count; 
@@ -181,16 +170,14 @@ struct GeoFile
         uint64_t got = 0;
         if(fseeko(fh, 0, SEEK_END))
         {
-            std::cerr << "Unable to seek file : " << name << std::endl;
-            exit(1);
+			throw std::runtime_error("Unable to seek file : " + name);
         }
         while(length)
         {
             int64_t count = fwrite(buffer + got, 1, length, fh);
             if(count <= 0)
             {
-                std::cerr << "Unable to write file : " << name << std::endl;
-                exit(1);
+				throw std::runtime_error("Unable to write file : " + name);
             } else {
                 length -= count;
                 got += count; 
@@ -202,8 +189,7 @@ struct GeoFile
     {
         if(fseeko(fh, 0, SEEK_END))
         {
-            std::cerr << "Unable to seek file : " << name << std::endl;
-            exit(1);
+			throw std::runtime_error("Unable to seek file : " + name);
         }
         
         return ftello(fh);
