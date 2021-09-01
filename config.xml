@@ -42,7 +42,7 @@
 
     <!-- lines -->
     <style id="frontier"  value="fill:none;stroke:grey; stroke-width:1;"/>
-    <style id="ferryLine" value="fill:none;stroke:blue; stroke-width:1;"/>
+    <style id="ferryLine" value="fill:none;stroke:blue; stroke-width:1;opacity:0.7"/>
     <style id="waterLine" value="fill:none;stroke:skyblue; stroke-width:1"/>
     <style id="treeLineS"  value="fill:none;stroke:#99DD99; stroke-width:8; stroke-dasharray:0.1,16;stroke-linecap:round;opacity:0.7;"/>
     <style id="treeLineM"  value="fill:none;stroke:#99DD99; stroke-width:16; stroke-dasharray:0.1,32;stroke-linecap:round;opacity:0.7;"/>
@@ -416,7 +416,7 @@
             </condition>
             <condition tagKey="route" closed="both">
                 <!--class value="bus"      textWidth="4" textStyle="fill:red;font-family:sans-serif"      zIndex="2100" style="fill:none; stroke:green;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/-->
-                <class value="ferry"       textWidth="4" textStyle="#ferryLineName"      zIndex="2100" textZIndex="26" style="#ferryLine"/>
+                <class value="ferry"       textWidth="4" textStyle="#ferryLineName"      zIndex="1000" textZIndex="1000" style="#ferryLine"/>
             </condition>
         </restriction>
         <restriction zLevels="17">
@@ -525,7 +525,7 @@
             </condition>
             <condition tagKey="route" closed="both">
                 <class value="bus"       textWidth="4" textZIndex="21" textStyle="fill:maroon;;opacity:0.3;font-family:sans-serif"      zIndex="2100" style="fill:none; stroke:maroon;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
-                <class value="ferry"       textWidth="4" textZIndex="21" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif"   zIndex="2100" style="#ferryLine"/>
+                <class value="ferry"       textWidth="4" textZIndex="21" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif"   zIndex="1000" style="#ferryLine"/>
             </condition>
         </restriction>
         <restriction zLevels="17">
@@ -693,14 +693,23 @@
 
 
     <index type="way" name="railwayIdxHighRes">
+		<exclude tagKey="tunnel" tagValue="yes"/>
+		<exclude tagKey="layer" tagValue="-1"/>
+		<exclude tagKey="layer" tagValue="-2"/>
+		<exclude tagKey="layer" tagValue="-3"/>
+		<exclude tagKey="layer" tagValue="-4"/>
+		<exclude tagKey="layer" tagValue="-5"/>
+		<exclude tagKey="layer" tagValue="-6"/>
+		<exclude tagKey="layer" tagValue="-7"/>
+		<exclude tagKey="layer" tagValue="-8"/>
         <restriction zLevels="13,14,15">
             <condition tagKey="railway" closed="both">
-                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
+                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:lightgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
             </condition>
         </restriction>
         <restriction zLevels="16,17,18,19">
             <condition tagKey="railway" closed="both">
-                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:darkgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
+                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:lightgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
             </condition>
         </restriction>
     </index>
