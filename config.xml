@@ -258,6 +258,9 @@
             <condition tagKey="place" closed="both">
                 <class value="square"          zIndex="5006" style="fill:none" textZIndex="30" textStyle="#roadName"/>
             </condition>
+            <condition tagKey="highway" closed="both">
+                <class value="bus_stop"       zIndex="5006" style="fill:none" textZIndex="30" textStyle="#greenAreaName"/>
+            </condition>
         </restriction>
     </index> 
 
@@ -415,8 +418,8 @@
                 <class value="waterway"                  zIndex="101" textZIndex="25" style="#water" />
             </condition>
             <condition tagKey="route" closed="both">
-                <!--class value="bus"      textWidth="4" textStyle="fill:red;font-family:sans-serif"      zIndex="2100" style="fill:none; stroke:green;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/-->
-                <class value="ferry"       textWidth="4" textStyle="#ferryLineName"      zIndex="1000" textZIndex="1000" style="#ferryLine"/>
+                <class value="bus"      textWidth="4" textStyle="fill:green;font-family:sans-serif"      zIndex="2500" style="fill:none; stroke:green;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
+                <class value="ferry"       textWidth="4" textStyle="#ferryLineName"      zIndex="1000" textZIndex="2000" style="#ferryLine"/>
             </condition>
         </restriction>
         <restriction zLevels="17">
@@ -524,8 +527,8 @@
                     <class value="default"                  zIndex="101" style="#water" />
             </condition>
             <condition tagKey="route" closed="both">
-                <class value="bus"       textWidth="4" textZIndex="21" textStyle="fill:maroon;;opacity:0.3;font-family:sans-serif"      zIndex="2100" style="fill:none; stroke:maroon;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
-                <class value="ferry"       textWidth="4" textZIndex="21" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif"   zIndex="1000" style="#ferryLine"/>
+                <class value="bus"       textWidth="4" textZIndex="21" textStyle="fill:maroon;;opacity:0.3;font-family:sans-serif"      zIndex="2500" style="fill:none; stroke:maroon;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
+                <class value="ferry"       textWidth="4" textZIndex="21" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif"   zIndex="2000" style="#ferryLine"/>
             </condition>
         </restriction>
         <restriction zLevels="17">

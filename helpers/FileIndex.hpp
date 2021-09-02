@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <unistd.h>
+
 struct GeoFile
 {
     int fh = -1;
@@ -344,6 +345,10 @@ public:
         sortedSize = 0;
         uint64_t buffer_size = 0xFFFFFFFFFFULL / (3*recSize);
         Record<ITEM,KEY>* sort_buffer = NULL;
+//#ifdef  _SC_PAGE_SIZE
+//        size_t memory = sysconf(_SC_PAGE_SIZE) * sysconf(_SC_AVPHYS_PAGES) ;
+//        buffer_size = (memory / 4) / (3*recSize);
+//#endif     
         while(sort_buffer == NULL)
         {
             buffer_size /= 2;
@@ -355,6 +360,7 @@ public:
                 std::cout << "buffer_size : " << buffer_size << "too big\n";
             }
         }
+        
         sort(0,fileSize-1, sort_buffer, buffer_size);
         delete[] sort_buffer;
     }

@@ -75,6 +75,7 @@ struct Way
         if(tags.data != NULL) free(tags.data);
     }
     void crop (Rectangle& r);
+    void fillrec();
 };
 
 

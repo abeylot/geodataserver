@@ -645,7 +645,14 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
 {
     Rectangle r1 = rect*1.25;
     lbl.id = myWay.id + UINT64_C(0xA000000000000000);
-    lbl.fontsize = 12;    
+    lbl.fontsize = 12;
+    std::string name = "";
+    std::string inherited_name = "";
+    if(!lbl.text.empty())
+    {
+		inherited_name = lbl.text;//when called by relation render
+		//std::cout << inherited_name << "\n";
+	}    
     lbl.text = "";    
     lbl.ref = "";    
     lbl.pos_x = lbl.angle = lbl.pos_y=0;
@@ -667,7 +674,6 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     int width=0;
     int textWidth=0;
     double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
-    std::string name = "";
 
     bool draw = ((myWay.rect)*r1).isValid();
     std::string style = cl.style;
@@ -680,7 +686,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     if(width) style ="stroke-width:"+ std::to_string(width*ppm)+";" + cl.style;
     std::string textField = "name";
     if(cl.textField != "") textField = cl.textField;
-    if(textField != "name")
+    if(textField != "name" && name.empty())
     {
         name = myWay.tags[textField.c_str()];
     }
@@ -695,6 +701,11 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         }
         if(name == "") name = myWay.tags["name"];
     }
+    if(inherited_name != "") {
+		if(inherited_name == "void") name ="";
+		else name = inherited_name;
+		//std::cout << inherited_name << "\n";
+	}
     bool first = true;
     double length = 0;
     double halfLength = 0;
@@ -907,11 +918,36 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
     
 		if(cl.opened)
 		{
+            std::string name = "";
+		    if(cl.textStyle != "")
+            {
+                if(textField != "name")
+                {
+                    name = myRelation.tags[textField.c_str()];
+                }
+                if(name == "" || textField != "name")
+                {
+                    for ( unsigned int i = 0 ; i < _nb_locales; i++)
+                    {
+                        std::string tmp = std::string("name:") + std::string(_locales[i],2);
+                        name = myRelation.tags[tmp.c_str()];
+                        if (name != "") break;
+            
+                    }
+                    if(name == "") name = myRelation.tags["name"];
+                }
+			}
+			
+            label_s lbl2;
+            lbl2.text = name;
+            if(lbl2.text == "") lbl2.text = "void";
 			for(Way* myWay : myRelation.ways)
 			{
+				myWay->fillrec();
 				if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
-				label_s lbl;
-				result << render(lbl,*myWay, rect, szx, szy, cl, s);
+
+				result << render(lbl2,*myWay, rect, szx, szy, cl, s);
+				label_vector.push_back(lbl2);
 			}
 		}
 		else
@@ -953,44 +989,45 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                 result << " \" class=\"c" << cl.rank <<"\" />\n";
 			}
             cssClasses.insert("c"+std::to_string(cl.rank));
-		}
-	}
-    if(cl.textStyle != "")
-    {
-        std::string name = "";
-        if(textField != "name")
-        {
-            name = myRelation.tags[textField.c_str()];
-        }
-        if(name == "" || textField != "name")
-        {
-            for ( unsigned int i = 0 ; i < _nb_locales; i++)
+            if(cl.textStyle != "")
             {
-                std::string tmp = std::string("name:") + std::string(_locales[i],2);
-                name = myRelation.tags[tmp.c_str()];
-                if (name != "") break;
+                std::string name = "";
+                if(textField != "name")
+                {
+                    name = myRelation.tags[textField.c_str()];
+                }
+                if(name == "" || textField != "name")
+                {
+                    for ( unsigned int i = 0 ; i < _nb_locales; i++)
+                    {
+                        std::string tmp = std::string("name:") + std::string(_locales[i],2);
+                        name = myRelation.tags[tmp.c_str()];
+                        if (name != "") break;
             
+                    }
+                    if(name == "") name = myRelation.tags["name"];
+                }
+                if(name != "")
+                {
+                    unsigned int chars = 1.4*szx*(myRelation.rect.x1 - myRelation.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
+                    if(name.length() < chars)
+                    {
+                        int64_t xxx = (myRelation.rect.x0/2 + myRelation.rect.x1/2);
+                        int64_t yyy = (myRelation.rect.y0/2 + myRelation.rect.y1/2);
+                        int32_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+                        int32_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+                        lbl.pos_x = x;
+                        lbl.pos_y = y;
+                        lbl.zindex = cl.textZIndex;
+                        lbl.style = cl.rank;
+                        lbl.text = name;
+                        lbl.angle = 0;
+                    }
+
+                }
             }
-            if(name == "") name = myRelation.tags["name"];
         }
-        if(name != "")
-        {
-            unsigned int chars = 1.4*szx*(myRelation.rect.x1 - myRelation.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
-            if(name.length() < chars)
-            {
-                int64_t xxx = (myRelation.rect.x0/2 + myRelation.rect.x1/2);
-                int64_t yyy = (myRelation.rect.y0/2 + myRelation.rect.y1/2);
-                int32_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-                int32_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-                lbl.pos_x = x;
-                lbl.pos_y = y;
-                lbl.zindex = cl.textZIndex;
-                lbl.style = cl.rank;
-                lbl.text = name;
-                lbl.angle = 0;
-            }
-        }
-    }
+	}
     
     if(cl.symbol != "")
     {

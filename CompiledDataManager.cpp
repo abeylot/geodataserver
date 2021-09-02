@@ -279,6 +279,21 @@ void Line::crop(Rectangle& r)
     pointsCount = newPointsCount;
 }
 
+void Way::fillrec()
+{
+	if (!pointsCount) return;
+    rect.x0 = rect.x1 = points[0].x;
+    rect.y0 = rect.y1 = points[0].y;
+    for(unsigned int i = 0; i < pointsCount; i++)
+    {
+        if(points[i].x < rect.x0) rect.x0 = points[i].x;
+        if(points[i].x > rect.x1) rect.x1 = points[i].x;
+        if(points[i].y < rect.y0) rect.y0 = points[i].y;
+        if(points[i].y > rect.y1) rect.y1 = points[i].y;
+    }
+
+}
+
 void Way::crop(Rectangle& r)
 {
     if(pointsCount < 3) return;
