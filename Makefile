@@ -1,6 +1,6 @@
 #CC=clang++ 
-CC=ccache g++
-cc=$(CC) -O2 -s   -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 -fuse-ld=gold
+CC= g++
+cc=$(CC) -O2 -s   -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 
 #cc=$(CC) -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64
 
 
