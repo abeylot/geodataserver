@@ -1127,13 +1127,30 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
 }
 
 
-CssClass* SvgRenderer::getCssClass(IndexDesc& idx, Relation& b, short zoom, bool isClosed)
+
+
+template<class ITEM> CssClass* SvgRenderer::getCssClass(IndexDesc& idx, ITEM& item,      short zoom, bool closed)
 {
     uint32_t mask = 1LL << zoom;
     CssClass* myCl = NULL;
     for (Condition* cd : idx.conditions)
     {
-        if (((b.isClosed && cd->closed)||(!b.isClosed && cd->opened)) && (b.tags[cd->tagKey.c_str()] != ""))
+
+		bool cond = false;
+
+        if constexpr(std::is_same<ITEM,Relation>() || std::is_same<ITEM,Way>())
+        {
+			cond = ((closed && cd->closed)||(!closed && cd->opened)) && (item.tags[cd->tagKey.c_str()] != "");
+	    }
+	    
+	    
+        if constexpr(std::is_same<ITEM,Point>())
+        {
+			cond = (item.tags[cd->tagKey.c_str()] != "");
+	    }
+	    
+
+        if (cond)
         {
             for(CssClass* cl : cd->classes)
             {
@@ -1146,7 +1163,7 @@ CssClass* SvgRenderer::getCssClass(IndexDesc& idx, Relation& b, short zoom, bool
             for(CssClass* cl : cd->classes)
             {
                 if(cl->mask & mask)
-                    if (cl->tagValue == b.tags[cd->tagKey.c_str()])
+                    if (cl->tagValue == item.tags[cd->tagKey.c_str()])
                     {
                         myCl = cl;
                     }
@@ -1156,62 +1173,6 @@ CssClass* SvgRenderer::getCssClass(IndexDesc& idx, Relation& b, short zoom, bool
     return myCl;
 }
 
-CssClass* SvgRenderer::getCssClass(IndexDesc& idx, Way& b, short zoom, bool isClosed)
-{
-    uint32_t mask = 1LL << zoom;
-    CssClass* myCl = NULL;
-    for (Condition* cd : idx.conditions)
-    {
-        if (((isClosed && cd->closed)||(!isClosed && cd->opened)) && (b.tags[cd->tagKey.c_str()] != ""))
-        {
-            for(CssClass* cl : cd->classes)
-            {
-                if(cl->mask & mask)
-                    if (cl->tagValue=="default")
-                    {
-                        myCl = cl;
-                    }
-            }
-            for(CssClass* cl : cd->classes)
-            {
-                if(cl->mask & mask)
-                    if (cl->tagValue == b.tags[cd->tagKey.c_str()])
-                    {
-                        myCl = cl;
-                    }
-            }
-        }
-    }
-    return myCl;
-}
 
-CssClass* SvgRenderer::getCssClass(IndexDesc& idx, Point& b, short zoom, bool isClosed)
-{
-    uint32_t mask = 1LL << zoom;
-    CssClass* myCl = NULL;
-    for (Condition* cd : idx.conditions)
-    {
-        if (b.tags[cd->tagKey.c_str()] != "")
-        {
-            for(CssClass* cl : cd->classes)
-            {
-                if(cl->mask & mask)
-                    if (cl->tagValue=="default")
-                    {
-                        myCl = cl;
-                    }
-            }
-            for(CssClass* cl : cd->classes)
-            {
-                if(cl->mask & mask)
-                    if (cl->tagValue == b.tags[cd->tagKey.c_str()])
-                    {
-                        myCl = cl;
-                    }
-            }
-        }
-    }
-    return myCl;
-}
 
 

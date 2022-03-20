@@ -97,11 +97,9 @@ public:
     std::string render(label_s& lbl, Relation& myWay,Rectangle rect, uint32_t sizex, uint32_t sizey, CssClass& cl, Shape& s);
     std::string render(label_s& lbl, Point& myNode,  Rectangle rect,uint32_t  sizex, uint32_t sizey, CssClass& cl);
     std::string renderShape(Rectangle rect,uint32_t  sizex, uint32_t sizey, CssClass& cl, Shape& s);
-    static CssClass* getCssClass(IndexDesc& idx, Relation& b, short zoom, bool closed);
-    static CssClass* getCssClass(IndexDesc& idx, Point& b,    short zoom, bool closed);
-    static CssClass* getCssClass(IndexDesc& idx, Way& b,      short zoom, bool closed);
     Shape* getShape(CssClass* cssClass);
     template<class ITEM> void iterate(IndexDesc& idxDesc, Rectangle r);
+    template<class ITEM> CssClass* getCssClass(IndexDesc& idx, ITEM& b,      short zoom, bool closed);
 };
 
 #endif
