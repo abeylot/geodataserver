@@ -98,8 +98,8 @@ public:
     std::string render(label_s& lbl, Point& myNode,  Rectangle rect,uint32_t  sizex, uint32_t sizey, CssClass& cl);
     std::string renderShape(Rectangle rect,uint32_t  sizex, uint32_t sizey, CssClass& cl, Shape& s);
     Shape* getShape(CssClass* cssClass);
-    template<class ITEM> void iterate(IndexDesc& idxDesc, Rectangle r);
-    template<class ITEM> CssClass* getCssClass(IndexDesc& idx, ITEM& b,      short zoom, bool closed);
+    template<class ITEM> void iterate(const IndexDesc& idxDesc, const Rectangle& r);
+    template<class ITEM> CssClass* getCssClass(const IndexDesc& idx, ITEM& b, short zoom, bool closed);
 };
 
 #endif

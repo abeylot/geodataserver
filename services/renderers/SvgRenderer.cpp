@@ -134,7 +134,7 @@ size_t cutString(std::string txt)
 
 
 
-template<class ITEM> void SvgRenderer::iterate(IndexDesc& idxDesc, Rectangle rect)
+template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const Rectangle& rect)
 {
     GeoBoxSet gSet;
     Shape myShape;
@@ -1129,7 +1129,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
 
 
 
-template<class ITEM> CssClass* SvgRenderer::getCssClass(IndexDesc& idx, ITEM& item,      short zoom, bool closed)
+template<class ITEM> CssClass* SvgRenderer::getCssClass(const IndexDesc& idx, ITEM& item,      short zoom, bool closed)
 {
     uint32_t mask = 1LL << zoom;
     CssClass* myCl = NULL;
