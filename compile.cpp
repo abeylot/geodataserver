@@ -95,9 +95,9 @@ struct dbf_header
            if(index2 >= index)
               memcpy(value2, value + index, (index2 - index + 1));
             GeoString s;
-            s.value = field_descriptors[i].name ;
+            s = field_descriptors[i].name ;
             baliseTags->append(s);
-            s.value = value2;
+            s = value2;
             baliseTags->append(s);
        }
        return 0;
@@ -271,9 +271,9 @@ struct XmlVisitor
         if ((b->baliseName == BALISENAME_TAG)&&(isNod || isWay || isRel))
         {
             GeoString s;
-            s.value = b->keyValues["k"];
+            s = b->keyValues["k"];
             baliseTags->append(s);
-            s.value = b->keyValues["v"];
+            s = b->keyValues["v"];
             baliseTags->append(s);
         }
         else if (b->baliseName == BALISENAME_NODE)
@@ -455,9 +455,9 @@ struct XmlVisitor
                 relMembers->startBatch();
                 baliseTags->startBatch();
                 GeoString s;
-                s.value = tag;
+                s = tag;
                 baliseTags->append(s);
-                s.value = value;
+                s = value;
                 baliseTags->append(s);
 
                 if(dbfheader.read_record(dbf, baliseTags) != 0) std::cout << "error while reading dbf file !\n";;

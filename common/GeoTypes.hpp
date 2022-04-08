@@ -92,14 +92,29 @@ struct GeoMember
  */
 struct GeoString
 {
-    std::string value;
+    char _buffer[256];
+    unsigned char _length;
+    
+    GeoString & operator=(const std::string &s)
+    {
+        if(s.length() <= 255) _length = s.length();
+        else _length = 255;
+        memcpy(_buffer, s.c_str(),_length);
+        return *this;
+    }
+    
+    GeoString()
+    {
+        _length=0;
+    }
+    
     inline uint64_t size()
     {
-        return value.length() ;
+        return _length;
     }
     inline const char* buffer()
     {
-        return value.c_str();
+        return _buffer;
     }
 };
 
