@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_HPP
 #define SEQUENCE_HPP
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <stdint.h>
 #include <string.h>
@@ -68,7 +68,7 @@ public:
 struct SeqBalise
 {
     std::string baliseName;
-    std::map<std::string,std::string> keyValues;
+    std::unordered_map<std::string,std::string> keyValues;
     uint64_t start;
     uint64_t size;
 };
