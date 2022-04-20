@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <sstream>
 
 #define  COMMENT_BEGIN   "<!--",4
 #define  MANIFEST_BEGIN  "<?",2
@@ -131,6 +132,45 @@ public:
     }
 
 
+    static void parseXmlIstream(std::istream& my_stream, VISITOR& visitor)
+    {
+        ParseContext p;
+        unsigned char buffer[BUFFLEN];
+        short initSeq=0;
+        uint64_t done = 0;
+        uint64_t len = 0;
+        Sequence<4> seq;
+        std::vector<SeqBalise*> tagStack;
+        unsigned char* c;
+        //len = fread(buffer,1,BUFFLEN,fIn);
+        my_stream.read((char*)buffer,BUFFLEN);
+        len = my_stream.gcount();
+        while(len)
+        {
+            for(c=buffer; c < (buffer + len) ; c++)
+            {
+                done++;
+                if((done & 0xFFFFFFF) == 0)
+                {
+                    visitor.log(done);
+                }
+
+                seq.append(*c);
+                if(initSeq < 3) initSeq++;
+                else selectXmlFile(seq, visitor, &tagStack, p);
+            }
+            my_stream.read((char*)buffer,BUFFLEN);
+            len = my_stream.gcount();
+        }
+        for(int i=0; i < 15; i++)
+        {
+            seq.append(0);
+            selectXmlFile(seq, visitor, &tagStack, p);
+        }
+
+    }
+
+
 
 
 
@@ -165,8 +205,16 @@ private:
                 p.state = STATE_TAGEND;
                 p.curBalise = tagStack->back();
                 tagStack->pop_back();
-                visitor.stringNode(*tagStack, p.stringNode);
-                p.stringNode = "";
+                if(p.stringNode.size())
+                {
+                    visitor.stringNode(*tagStack, p.stringNode);
+                    p.stringNode = "";
+                }
+                if(p.stringNode.size())
+                {
+                    visitor.stringNode(*tagStack, p.stringNode);
+                    p.stringNode = "";
+                }
                 visitor.endTag(*tagStack, p.curBalise);
                 delete(p.curBalise);
                 p.skip = 1;
@@ -177,8 +225,11 @@ private:
                 p.curBalise = new SeqBalise;
                 p.baliseNameLen = 0;
                 //stringName="";
-                visitor.stringNode(*tagStack, p.stringNode);
-                p.stringNode="";
+                if(p.stringNode.size())
+                {
+                    visitor.stringNode(*tagStack, p.stringNode);
+                    p.stringNode = "";
+                }
             }
 	        else
             {
@@ -317,10 +368,8 @@ private:
 
         }
     }
-
-
-
-
 };
+
+
 
 #endif
