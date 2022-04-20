@@ -73,12 +73,29 @@ struct SeqBalise
     uint64_t size;
 };
 
+struct ParseContext
+{
+        int state = STATE_UNKNOWN;
+        int previous_state = STATE_UNKNOWN;
+
+        char attrName[2048];
+        char attrValue[2048];
+        char baliseName[2048];
+        unsigned int attrNameLen = 0;
+        unsigned int attrValueLen = 0;
+        unsigned int baliseNameLen = 0;
+        SeqBalise* curBalise;
+        std::string stringNode = "";
+        short skip = 0;
+};
+
 template<class VISITOR> class XmlFileParser
 {
 
 public:
     static void parseXmlFile(FILE* file, VISITOR& visitor)
     {
+        ParseContext p;
         unsigned char buffer[BUFFLEN];
         FILE* fIn  = file;
         short initSeq=0;
@@ -101,14 +118,14 @@ public:
 
                 seq.append(*c);
                 if(initSeq < 3) initSeq++;
-                else selectXmlFile(seq, visitor, &tagStack);
+                else selectXmlFile(seq, visitor, &tagStack, p);
             }
             len = fread(buffer,1,BUFFLEN,fIn);
         }
         for(int i=0; i < 15; i++)
         {
             seq.append(0);
-            selectXmlFile(seq, visitor, &tagStack);
+            selectXmlFile(seq, visitor, &tagStack, p);
         }
 
     }
@@ -120,66 +137,52 @@ public:
 
 
 private:
-    static void selectXmlFile(Sequence<4> sq, VISITOR& visitor, std::vector<SeqBalise*>* tagStack)
+    static void selectXmlFile(Sequence<4> sq, VISITOR& visitor, std::vector<SeqBalise*>* tagStack, ParseContext& p)
     {
-        static int state = STATE_UNKNOWN;
-        static int previous_state = STATE_UNKNOWN;
 
-        static char attrName[2048];
-        static char attrValue[2048];
-        static char baliseName[2048];
-        static unsigned int attrNameLen = 0;
-        static unsigned int attrValueLen = 0;
-        static unsigned int baliseNameLen = 0;
-        static SeqBalise* curBalise;
-        static std::string stringNode = "";
-
-
-        static short skip = 0;
-
-        if(skip)
+        if(p.skip)
         {
-            skip--;
+            p.skip--;
             return;
         }
 
-        switch(state)
+        switch(p.state)
         {
         case STATE_UNKNOWN:
             if(sq.check(COMMENT_BEGIN))
             {
-                previous_state = state;
-                state = STATE_COMMENT;
-                skip = 3;
+                p.previous_state = p.state;
+                p.state = STATE_COMMENT;
+                p.skip = 3;
             }
             else if (sq.check(MANIFEST_BEGIN))
             {
-                state = STATE_MANIFEST;
-                skip = 1;
+                p.state = STATE_MANIFEST;
+                p.skip = 1;
             }
             else if (sq.check(ENDTAG_BEGIN))
             {
-                state = STATE_TAGEND;
-                curBalise = tagStack->back();
+                p.state = STATE_TAGEND;
+                p.curBalise = tagStack->back();
                 tagStack->pop_back();
-                visitor.stringNode(*tagStack, stringNode);
-                stringNode = "";
-                visitor.endTag(*tagStack, curBalise);
-                delete(curBalise);
-                skip = 1;
+                visitor.stringNode(*tagStack, p.stringNode);
+                p.stringNode = "";
+                visitor.endTag(*tagStack, p.curBalise);
+                delete(p.curBalise);
+                p.skip = 1;
             }
             else if (sq.check(STARTTAG_BEGIN))
             {
-                state = STATE_TAGNAME;
-                curBalise = new SeqBalise;
-                baliseNameLen = 0;
+                p.state = STATE_TAGNAME;
+                p.curBalise = new SeqBalise;
+                p.baliseNameLen = 0;
                 //stringName="";
-                visitor.stringNode(*tagStack, stringNode);
-                stringNode="";
+                visitor.stringNode(*tagStack, p.stringNode);
+                p.stringNode="";
             }
 	        else
             {
-                 stringNode += sq.c[0];
+                 p.stringNode += sq.c[0];
                  //std::cout << " -----[" << stringNode << "]\n";
             }
             break;
@@ -187,40 +190,40 @@ private:
         case STATE_COMMENT:
             if (sq.check(COMMENT_END))
             {
-                state = previous_state;
-                skip = 2;
+                p.state = p.previous_state;
+                p.skip = 2;
             }
             break;
 
         case STATE_TAGNAME:
             if(sq.check(STARTTAG_END))
             {
-                state = STATE_UNKNOWN;
-                baliseName[baliseNameLen] = 0;
-                curBalise->baliseName = baliseName;
-                visitor.startTag(*tagStack, curBalise);
-                tagStack->push_back(curBalise);
+                p.state = STATE_UNKNOWN;
+                p.baliseName[p.baliseNameLen] = 0;
+                p.curBalise->baliseName = p.baliseName;
+                visitor.startTag(*tagStack, p.curBalise);
+                tagStack->push_back(p.curBalise);
             }
             else if(sq.check(ENDTAG_END))
             {
-                baliseName[baliseNameLen] = 0;
-                curBalise->baliseName = baliseName;
-                visitor.startTag(*tagStack, curBalise);
-                visitor.endTag(*tagStack, curBalise);
-                delete(curBalise);
-                skip = 1;
-                state = STATE_UNKNOWN;
+                p.baliseName[p.baliseNameLen] = 0;
+                p.curBalise->baliseName = p.baliseName;
+                visitor.startTag(*tagStack, p.curBalise);
+                visitor.endTag(*tagStack, p.curBalise);
+                delete(p.curBalise);
+                p.skip = 1;
+                p.state = STATE_UNKNOWN;
             }
             else if(isspace(sq.c[0]))
             {
-                state = STATE_ATTRNAME;
-                attrNameLen = 0;
+                p.state = STATE_ATTRNAME;
+                p.attrNameLen = 0;
             }
             else
             {
                 if(!isspace(sq.c[0]))
                 {
-                    if(baliseNameLen < 2047) baliseName[baliseNameLen ++] = sq.c[0];
+                    if(p.baliseNameLen < 2047) p.baliseName[p.baliseNameLen ++] = sq.c[0];
                 }
             }
             break;
@@ -229,54 +232,54 @@ private:
         case STATE_TAGEND:
             if(sq.check(STARTTAG_END))
             {
-                state = STATE_UNKNOWN;
+                p.state = STATE_UNKNOWN;
             }
             break;
 
         case STATE_ATTRNAME:
             if (sq.check(STARTTAG_END) || sq.check(ENDTAG_END))
             {
-                state = STATE_UNKNOWN;
-                if(attrNameLen)
+                p.state = STATE_UNKNOWN;
+                if(p.attrNameLen)
                 {
-                    attrValue[attrValueLen] = 0;
-                    attrName[attrNameLen] = 0;
-                    curBalise->keyValues[attrName] = attrValue;
+                    p.attrValue[p.attrValueLen] = 0;
+                    p.attrName[p.attrNameLen] = 0;
+                    p.curBalise->keyValues[p.attrName] = p.attrValue;
                 }
                 if(sq.check(STARTTAG_END))
                 {
-                    baliseName[baliseNameLen] = 0;
-                    curBalise->baliseName = baliseName;
-                    visitor.startTag(*tagStack, curBalise);
-                    tagStack->push_back(curBalise);
+                    p.baliseName[p.baliseNameLen] = 0;
+                    p.curBalise->baliseName = p.baliseName;
+                    visitor.startTag(*	tagStack, p.curBalise);
+                    tagStack->push_back(p.curBalise);
                 }
                 else
                 {
-                    baliseName[baliseNameLen] = 0;
-                    curBalise->baliseName = baliseName;
-                    visitor.startTag(*tagStack, curBalise);
-                    visitor.endTag(*tagStack, curBalise);
-                    delete(curBalise);
-                    skip=1;
+                    p.baliseName[p.baliseNameLen] = 0;
+                    p.curBalise->baliseName = p.baliseName;
+                    visitor.startTag(*tagStack, p.curBalise);
+                    visitor.endTag(*tagStack, p.curBalise);
+                    delete(p.curBalise);
+                    p.skip=1;
                 }
             }
             else if (sq.check(EQUALS))
             {
-                state = STATE_ATTRVALUE;
-                attrValueLen = 0;
-                skip = 1;
+                p.state = STATE_ATTRVALUE;
+                p.attrValueLen = 0;
+                p.skip = 1;
             }
             else if (sq.check(EQUALSSPACE))
             {
-                state = STATE_ATTRVALUE;
-                attrValueLen = 0;
-                skip = 2;
+                p.state = STATE_ATTRVALUE;
+                p.attrValueLen = 0;
+                p.skip = 2;
             }
             else
             {
                 if(!isspace(sq.c[0]))
                 {
-                    if(attrNameLen < 2047)    attrName[attrNameLen ++] = sq.c[0];
+                    if(p.attrNameLen < 2047)    p.attrName[p.attrNameLen ++] = sq.c[0];
                 }
             }
             break;
@@ -284,21 +287,21 @@ private:
         case STATE_ATTRVALUE:
             if(sq.c[0] == '"')
             {
-                state = STATE_ATTRNAME;
-                if(attrNameLen)
+                p.state = STATE_ATTRNAME;
+                if(p.attrNameLen)
                 {
-                    attrValue[attrValueLen] = 0;
-                    attrName[attrNameLen] = 0;
-                    curBalise->keyValues[attrName] = attrValue;
+                    p.attrValue[p.attrValueLen] = 0;
+                    p.attrName[p.attrNameLen] = 0;
+                    p.curBalise->keyValues[p.attrName] = p.attrValue;
                 }
-                attrNameLen = 0;
-                attrValueLen = 0;
+                p.attrNameLen = 0;
+                p.attrValueLen = 0;
             }
             else
             {
-                if(attrValueLen < 2048)
+                if(p.attrValueLen < 2048)
                 {
-                    attrValue[attrValueLen++] = sq.c[0];
+                    p.attrValue[p.attrValueLen++] = sq.c[0];
                 }
             }
             break;
@@ -307,8 +310,8 @@ private:
         case STATE_MANIFEST:
             if (sq.check(MANIFEST_END))
             {
-                state=STATE_UNKNOWN;
-                skip = 1;
+                p.state=STATE_UNKNOWN;
+                p.skip = 1;
             }
             break;
 
