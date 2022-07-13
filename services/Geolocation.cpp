@@ -33,8 +33,8 @@ uint64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
 			    {
 					a[j] = UNDEFINED_ID;
 					counta--;
+					result -= 40;
 					break;
-					result -= 20;
 				}
 	        }
 		}
@@ -83,8 +83,8 @@ uint64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
 			    {
 					a[j] = UNDEFINED_ID;
 					counta--;
+					result -= 40;
 					break;
-					result -= 20;
 				}
 	        }
 		}
@@ -122,6 +122,9 @@ uint64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
 				{
 					if(i!=0) result -=10;
 					a[0] = b[i] = UNDEFINED_ID;
+					break;
+				}
+			}
   		            for(auto i : a) if(i != UNDEFINED_ID) new_a.push_back(i);
 		            for(auto i : b) if(i != UNDEFINED_ID) new_b.push_back(i);
 		
@@ -130,9 +133,6 @@ uint64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
 		
 		            new_a.clear();
 		            new_b.clear();
-					break;
-				}
-			}
 		}
 		
 	 
@@ -191,185 +191,7 @@ inline bool operator < (textSearchIds const& a, textSearchIds const& b)
 Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 {
     std::string name = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("name"));
-/*
 
-    fidx::Record<IndexEntry, uint64_t> eN;
-    fidx::Record<IndexEntry, uint64_t> eW;
-    fidx::Record<IndexEntry, uint64_t> eR;
-
-    uint64_t k = fidx::makeLexicalKey(name.c_str(), name.length());
-
-
-    bool foundN = mger.textIndexNode->find(k, &eN);
-    bool foundW = mger.textIndexWay->find(k, &eW);
-    bool foundR = mger.textIndexRelation->find(k, &eR);
-
-   if(foundR)
-   {
-    std::string resp = "<root>";
-    resp += "<word_match match contains_count=\"" + std::to_string(999) + "\" item_count=\"" + std::to_string(1) + "\" >";
-        Rectangle r = eR.value.r;
-        resp += "<url u=\"http://127.0.0.1:8081/svgMap.svg?longitude1=" + std::to_string(r.x0) + "&amp;lattitude1=" + std::to_string(r.y0) + "&amp;longitude2=" + std::to_string(r.x1) + "&amp;lattitude2=" + std::to_string(r.y1) + "\" />";
-        resp += "<rectangle xo=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x0))
-              + "\" y0=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y0))
-              + "\" x1=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x1))
-              + "\" y1=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y1))
-              + "\" />";
-    resp += "</word_match>";
-    resp += "</root>";
-    Msg* rep = new Msg;
-    encoder.build200Header(rep, "application/xml");
-    encoder.addContent(rep,resp);
-    return rep;
-   }
-
-   if(foundW)
-   {
-    std::string resp = "<root>";
-    resp += "<word_match match_count=\"" + std::to_string(999) + "\" item_count=\"" + std::to_string(1) + "\" >";
-        Rectangle r = eW.value.r;
-        resp += "<url u=\"http://127.0.0.1:8081/svgMap.svg?longitude1=" + std::to_string(r.x0) + "&amp;lattitude1=" + std::to_string(r.y0) + "&amp;longitude2=" + std::to_string(r.x1) + "&amp;lattitude2=" + std::to_string(r.y1) + "\" />";
-        resp += "<rectangle xo=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x0))
-              + "\" y0=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y0))
-              + "\" x1=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x1))
-              + "\" y1=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y1))
-              + "\" />";
-    resp += "</word_match>";
-    resp += "</root>";
-    Msg* rep = new Msg;
-    encoder.build200Header(rep, "application/xml");
-    encoder.addContent(rep,resp);
-    return rep;
-   }
-
-   if(foundN)
-   {
-    std::string resp = "<root>";
-    resp += "<word_match match_count=\"" + std::to_string(999) + "\" item_count=\"" + std::to_string(1) + "\" >";
-        Rectangle r = eN.value.r;
-        resp += "<url u=\"http://127.0.0.1:8081/svgMap.svg?longitude1=" + std::to_string(r.x0) + "&amp;lattitude1=" + std::to_string(r.y0) + "&amp;longitude2=" + std::to_string(r.x1) + "&amp;lattitude2=" + std::to_string(r.y1) + "\" />";
-        resp += "<rectangle xo=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x0))
-              + "\" y0=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y0))
-              + "\" x1=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x1))
-              + "\" y1=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y1))
-              + "\" />";
-    resp += "</word_match>";
-    resp += "</root>";
-    Msg* rep = new Msg;
-    encoder.build200Header(rep, "application/xml");
-    encoder.addContent(rep,resp);
-    return rep;
-   }
-
-
-*/
-
-
-/*    std::stringstream my_stream(name);
-    std::string word;
-    const int level_count = 10;
-    std::list<Rectangle> rectangles[level_count];
-    int best_level = -1;
-    fidx::Record<IndexEntry, uint64_t> record;
-    while(std::getline(my_stream,word,' '))
-    {
-        std::cout << word << "\n";
-        std::list<Rectangle> new_rectangles[level_count];
-        for(int i = 0; i < level_count;i++) new_rectangles[i].clear();
-        uint64_t key = fidx::makeLexicalKey(word.c_str(), word.length());
-        uint64_t start;
-        // search in node, way, relation text indexes
-        if(mger.textIndexNode->findLastLesser(key, start))
-        {
-            start++;
-            while((mger.textIndexNode->get(start, &record) && record.key == key))
-            {
-                new_rectangles[0].push_back(record.value.r);
-                start++;
-            }
-        }
-        if(mger.textIndexWay->findLastLesser(key, start))
-        {
-            start++;
-            while((mger.textIndexWay->get(start, &record) && record.key == key))
-            {
-                new_rectangles[0].push_back(record.value.r);
-                start++;
-            }
-        }
-        if(mger.textIndexRelation->findLastLesser(key, start))
-        {
-            start++;
-            while((mger.textIndexRelation->get(start, &record) && record.key == key))
-            {
-                new_rectangles[0].push_back(record.value.r);
-                start++;
-            }
-        }
-        
-        std::cout << new_rectangles[0].size() << "\n";
-        
-        new_rectangles[0].sort();
-        new_rectangles[0].unique();
-        
-        for(auto nr : new_rectangles[0])
-        {
-            for(int level = 0; level <= best_level && level < ( level_count - 1 ); level++)
-            {
-                for(auto r : rectangles[level])
-                {
-                    if((nr*r).isValid() &&(nr.isIn(r) || r.isIn(nr)))
-                    {
-                        new_rectangles[level+1].push_back(nr*r);
-                    }
-                }
-            }
-        }
-        for(int i = 0; i < level_count; i++)
-        {
-            new_rectangles[i].sort();
-            new_rectangles[i].unique();
-        }
-        best_level = -1;
-        for(int level = 0; level < level_count ; level++)
-        {
-            rectangles[level].insert(rectangles[level].end(),new_rectangles[level].begin(),new_rectangles[level].end());
-            new_rectangles[level].clear();
-            if(rectangles[level].size()) best_level = level;
-        }
-        for(int i = 0; i < level_count; i++)
-        {
-            rectangles[i].sort();
-            rectangles[i].unique();
-        }
-    }
-
-    std::string resp = "<root>";
-    for(int i = best_level; i >= best_level; i--)
-    {
-        if(rectangles[i].size())
-        {
-            bool first = true;
-            resp += "<word_match match_count=\"" + std::to_string(i + 1) + "\" item_count=\"" + std::to_string(rectangles[i].size()) + "\" >";
-            for(auto r : rectangles[i])
-            {
-                if (first)
-                resp += "<url u=\"http://127.0.0.1:8081/svgMap.svg?longitude1=" + std::to_string(r.x0) + "&amp;lattitude1=" + std::to_string(r.y0) + "&amp;longitude2=" + std::to_string(r.x1) + "&amp;lattitude2=" + std::to_string(r.y1) + "\" />";
-                resp += "<url u=\"http://127.0.0.1:8081/MapDisplay?longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&amp;lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&amp;zoom=17\"/>";
-            	resp += "<rectangle xo=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x0))
-            	              + "\" y0=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y0))
-            	              + "\" x1=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x1))
-            	              + "\" y1=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y1))
-            	              + "\" />";
-            	resp += "<rectangle xo=\"" + std::to_string(Coordinates::toNormalizedLon(std::to_string(Coordinates::fromNormalizedLon(r.x0))))
-            	              + "\" y0=\"" + std::to_string(Coordinates::toNormalizedLat(std::to_string(Coordinates::fromNormalizedLat(r.y0))))
-            	              + "\" x1=\"" + std::to_string(Coordinates::toNormalizedLon(std::to_string(Coordinates::fromNormalizedLon(r.x1))))
-            	              + "\" y1=\"" + std::to_string(Coordinates::toNormalizedLat(std::to_string(Coordinates::fromNormalizedLat(r.y1))))
-            	              + "\" />";
-            }
-            resp += "</word_match>";
-        }
-    }*/
     std::string resp = "<root>";
     std::string word;
     
@@ -449,6 +271,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
     {
 		Rectangle r;
 		uint64_t score;
+		std::list<uint64_t> words;
 	};
 	
 	std::list<weightedArea> areas;
@@ -456,10 +279,10 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
     
     for(auto searchIds : foundWords)
     {
-		auto it = std::find(wordsToMatch.begin(), wordsToMatch.end(), searchIds.word);
-		if(it != wordsToMatch.end())
+		//auto it = std::find(wordsToMatch.begin(), wordsToMatch.end(), searchIds.word);
+		//if(it != wordsToMatch.end())
 		{
-			wordsToMatch.erase(it);
+			//wordsToMatch.erase(it);
 		
 		    if (searchIds.node_start_id != UNDEFINED_ID)
 		    {
@@ -528,22 +351,24 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 		    }
 		    // keep only best score(s)
 		}
-	    break;
+		if(best_areas.size() == 0)
+		{
+		    uint64_t best_score = 0;
+		    for(auto a : areas) {if (a.score > best_score) best_score = a.score;} 
+		    for(auto a : areas)
+		    {
+		        if (a.score == best_score) best_areas.push_back(a);
+			}
+		}
+		break;
 	}
 
-		    if(best_areas.size() == 0)
-		    {
-		        uint64_t best_score = 0;
-		        for(auto a : areas) {if (a.score > best_score) best_score = a.score;} 
-		        for(auto a : areas)
-		        {
-					if (a.score == best_score) best_areas.push_back(a);
-				}
-			}
+
 
     for (auto a: best_areas)
     {
 		Rectangle r = a.r;
+		resp += "<score value=\"" + std::to_string(a.score) + "\"/>"; 
         resp += "<url u=\"http://127.0.0.1:8081/svgMap.svg?longitude1=" + std::to_string(r.x0) + "&amp;lattitude1=" + std::to_string(r.y0) + "&amp;longitude2=" + std::to_string(r.x1) + "&amp;lattitude2=" + std::to_string(r.y1) + "\" />";
         resp += "<url u=\"http://127.0.0.1:8081/MapDisplay?longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&amp;lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&amp;zoom=17\"/>";
         resp += "<rectangle xo=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x0))
