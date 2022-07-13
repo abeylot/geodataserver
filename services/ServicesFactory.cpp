@@ -3,6 +3,7 @@
 ServiceInterface* ServicesFactory::getService(std::string service, ParmsXmlVisitor& params)
 {
     if(service == "/ping")                return new Ping;
+    if(service == "/geoloc")              return new Geolocation;
     else if (service == "/relation/list") return new RelationList;
     else if (service == "/index/list")    return new IdxList;
     else if (service == "/index/get")     return new IdxDetail;

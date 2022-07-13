@@ -80,6 +80,12 @@ struct IndexEntry
 	Rectangle r;
 };
 
+struct IndexRange
+{
+	uint64_t first;
+	uint64_t last;
+};
+
 struct IndexDesc
 {
     std::string type;

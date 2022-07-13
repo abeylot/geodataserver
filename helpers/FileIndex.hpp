@@ -202,6 +202,29 @@ struct GeoFile
 // i.e. entier, double, char ou structure et tableaux de ces types.
 namespace fidx
 {
+
+   inline uint64_t makeLexicalKey(const char* value, size_t value_size)
+   {
+		uint64_t key = 0;
+		if(value_size > 0) { key += tolower(value[0]);}
+		key <<= 3;
+		if(value_size > 1) { key += tolower(value[1]);}
+		key <<= 3;
+		if(value_size > 2) { key += tolower(value[2]);}
+		key <<= 3;
+		if(value_size > 3) { key += tolower(value[3]);}
+		key <<= 3;
+		if(value_size > 4) { key += tolower(value[4]);}
+		key <<= 3;
+		if(value_size > 5) { key += tolower(value[5]);}
+		key <<= 3;
+		if(value_size > 6) { key += tolower(value[6]);}
+		key <<= 3;
+		if(value_size > 7) { key += tolower(value[7]);}
+		return key;
+   }
+
+	
  /**
   * @brief Record for index file.
   * 
@@ -419,18 +442,18 @@ public:
             std::cout << "dividing items \n";
             while(autresBufferCount > 0)
             {
-                int comp = fileIndexComp<ITEM,KEY>(&autres[autresBufferCount -1], &pivot);
+                autresBufferCount --;
+                int comp = fileIndexComp<ITEM,KEY>(&autres[autresBufferCount], &pivot);
                 if(comp > 0)
                 {
-                    plusGrands[plusGrandsBufferCount] = autres[autresBufferCount - 1];
-                    plusGrandsBufferCount++;
+                    plusGrands[plusGrandsBufferCount ++] = autres[autresBufferCount];
+                    //plusGrandsBufferCount++;
                 }
                 else
                 {
-                    plusPetits[plusPetitsBufferCount] = autres[autresBufferCount - 1];
-                    plusPetitsBufferCount++;
+                    plusPetits[plusPetitsBufferCount ++] = autres[autresBufferCount];
+                    //plusPetitsBufferCount++;
                 }
-                autresBufferCount --;
             }
             std::cout << "divided items \n";
 

@@ -17,6 +17,53 @@ HttpEncoder::~HttpEncoder()
 {
 }
 
+std::string HttpEncoder::urlDecode(const std::string& in)
+{
+    int awaitingHex = 0;
+    unsigned char curchar = 0;
+    std::string out = "";
+    for(size_t i = 0; i < in.length(); i++)
+    {
+        if (in.c_str()[i] == '%') awaitingHex = 2;
+        else if (in.c_str()[i] == '+') out += ' ';
+        else if (awaitingHex)
+        {
+            curchar <<= 4;
+            if(in.c_str()[i] == '1') curchar += 1;
+            else if(in.c_str()[i] == '2') curchar += 2;
+            else if(in.c_str()[i] == '3') curchar += 3;
+            else if(in.c_str()[i] == '4') curchar += 4;
+            else if(in.c_str()[i] == '5') curchar += 5;
+            else if(in.c_str()[i] == '6') curchar += 6;
+            else if(in.c_str()[i] == '7') curchar += 7;
+            else if(in.c_str()[i] == '8') curchar += 8;
+            else if(in.c_str()[i] == '9') curchar += 9;
+            else if(in.c_str()[i] == 'a') curchar += 10;
+            else if(in.c_str()[i] == 'A') curchar += 10;
+            else if(in.c_str()[i] == 'b') curchar += 11;
+            else if(in.c_str()[i] == 'B') curchar += 11;
+            else if(in.c_str()[i] == 'c') curchar += 12;
+            else if(in.c_str()[i] == 'C') curchar += 12;
+            else if(in.c_str()[i] == 'd') curchar += 13;
+            else if(in.c_str()[i] == 'D') curchar += 13;
+            else if(in.c_str()[i] == 'e') curchar += 14;
+            else if(in.c_str()[i] == 'E') curchar += 14;
+            else if(in.c_str()[i] == 'f') curchar += 15;
+            else if(in.c_str()[i] == 'F') curchar += 15;
+            awaitingHex--;
+            if(!awaitingHex){
+                out += curchar;
+                curchar = 0;
+           }
+        }
+        else
+        {
+            out += in.c_str()[i];
+        }
+    }
+    return out;
+}
+
 Msg* HttpEncoder::encode(std::string* in)
 {
     Msg* res = new Msg;

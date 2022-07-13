@@ -10,8 +10,8 @@ MapDisplay::~MapDisplay()
 
 Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
 {
-    std::string latitude = "47.218371";
-    std::string longitude = "-1.553621";
+    std::string latitude = "0.000000";
+    std::string longitude = "0.000000";
     std::string zoom = "12";
     
     std::string resp =
@@ -31,9 +31,22 @@ Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
         "    -webkit-border-radius: 5px;"
         "    border-radius: 5px;"
         "}"
+        "#form {"
+        "    height: 2em; width: 80%; margin: 0 auto;"
+        "    -webkit-box-shadow: 0 2px 3px 3px rgba(0, 0, 0, 0.2);"
+        "    box-shadow: 0 2px 3px 3px rgba(0, 0, 0, 0.2);"
+        "    -webkit-border-radius: 5px;"
+        "    border-radius: 5px;"
+        "}"
         "</style>"
         "</head>"
-        "<body>" 
+        "<div id=\"form\"><body>" 
+         "<form method=\"post\" action=\"/geoloc\" accept-charset=\"utf-8\">"
+        "<label>Locate :"
+            "<input name=\"name\" >"
+        "</label>"
+        "<button>Send</button>"
+        "</form></div>"
         "<div id=\"map\"></div>"
         "<script type=\"text/javascript\">"
         "var map = L.map('map', {zoomControl: false}).setView([#lat#, #lon#], #zoom#);"
@@ -46,13 +59,13 @@ Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
         "</html>";
     
     
-    if (request->getRecord(2)->getNamedValue("latitude") != "")
+    if (request->getRecord(2)->getNamedValue("lattitude") != "")
     {
-        latitude = request->getRecord(2)->getNamedValue("latitude");
+        latitude = request->getRecord(2)->getNamedValue("lattitude");
     }
-    else if(request->getRecord(1)->getNamedValue("latitude") != "")
+    else if(request->getRecord(1)->getNamedValue("lattitude") != "")
     {
-        latitude = request->getRecord(1)->getNamedValue("latitude");
+        latitude = request->getRecord(1)->getNamedValue("lattitude");
     }
     
     if (request->getRecord(2)->getNamedValue("longitude") != "")

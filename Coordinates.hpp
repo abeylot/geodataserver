@@ -16,6 +16,8 @@ public :
      * @return uint32_t  internal integer;
      */
     static uint32_t toNormalizedLon(const std::string& coord);
+    
+    static double fromNormalizedLon(uint32_t coord);
     /**
      * @brief converts string coordinates to internal format.
      * 
@@ -23,6 +25,8 @@ public :
      * @return uint32_t internal integer.
      */
     static uint32_t toNormalizedLat(const std::string& coord);
+
+    static double fromNormalizedLat(uint32_t coord);
     /**
      * @brief Converts uint32_t to hex.
      * 

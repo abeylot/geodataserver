@@ -25,6 +25,7 @@ public:
     static void build404Header(Msg* msg);
     static void build500Header(Msg* msg);
     static void addContent(Msg* msg,const std::string &content);
+    static std::string urlDecode(const std::string& in);
 
 private:
     int iIdent;
