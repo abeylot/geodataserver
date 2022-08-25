@@ -2,7 +2,6 @@
 #include "../Coordinates.hpp"
 #include "ServicesFactory.hpp"
 #include "../common/constants.hpp"
-#include <list>
 #include <stdlib.h>
 
 const uint64_t UNDEFINED_ID = 0xFFFFFFFFFFFFFFFF;
@@ -188,26 +187,25 @@ inline bool operator < (textSearchIds const& a, textSearchIds const& b)
     return count_a < count_b;
 }
 
-Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
-{
-    std::string name = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("name"));
 
-    std::string resp = "<root>";
-    std::string word;
-    
-    std::stringstream my_stream(name);
+
+
+std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDataManager& mger)
+{
+    std::stringstream my_stream(expr);
     
     std::list<textSearchIds> foundWords;
     std::vector<uint64_t> queryWordsVector;
     std::list<uint64_t> words;
     std::list<uint64_t> wordsToMatch;
-    
+    std::string word;
     while(std::getline(my_stream,word,' '))
     {
         uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length());
 		words.push_back(k);
         queryWordsVector.push_back(k);
     }
+    
     words.sort();
     words.unique();
     
@@ -228,25 +226,16 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
         
         if (foundN)
         {
-			resp += "<node word=\"";
-			resp += std::to_string(myword) + "\" count = \"" + std::to_string(eN.value.last - eN.value.first) + "\"";
-			resp += "/>\n";
 			nstart = eN.value.first;
 			nstop  = eN.value.last;
 		}
         if (foundW)
         {
-			resp += "<way word=\"";
-			resp += std::to_string(myword) + "\" count = \"" + std::to_string(eW.value.last - eW.value.first) + "\"";
-			resp += "/>\n";
 			wstart = eW.value.first;
 			wstop  = eW.value.last;
 		}
         if (foundR)
         {
-			resp += "<rel word=\"";
-			resp += std::to_string(myword) + "\" count = \"" + std::to_string(eR.value.last - eR.value.first) + "\"";
-			resp += "/>\n";
 			rstart = eR.value.first;
 			rstop  = eR.value.last;
 		}
@@ -267,23 +256,14 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 	}
     foundWords.sort();
     
-    struct weightedArea
-    {
-		Rectangle r;
-		uint64_t score;
-		std::list<uint64_t> words;
-	};
 	
 	std::list<weightedArea> areas;
     std::list<weightedArea> best_areas;
     
     for(auto searchIds : foundWords)
     {
-		//auto it = std::find(wordsToMatch.begin(), wordsToMatch.end(), searchIds.word);
-		//if(it != wordsToMatch.end())
+		areas.clear();
 		{
-			//wordsToMatch.erase(it);
-		
 		    if (searchIds.node_start_id != UNDEFINED_ID)
 		    {
 			    for(uint64_t i = searchIds.node_start_id; i <= searchIds.node_stop_id; i++)
@@ -294,7 +274,8 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 			        mger.textIndexNode->get(i, &record);
 			        Point* item;
                     mger.load(item, record.value.id, true);		    
-			        area.r =  record.value.r;
+			        area.r.x0 = area.r.x1 = item->x;
+			        area.r.y0 = area.r.y1 = item->y;
                     std::stringstream my_stream(item->tags["name"]);
                     std::string word;
                     while(std::getline(my_stream,word,' '))
@@ -306,7 +287,9 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 			        areas.push_back(area);
 			        delete item;		    
 			    }
-
+            }
+		    if (searchIds.relation_start_id != UNDEFINED_ID)
+		    {
 			    for(uint64_t i = searchIds.relation_start_id; i <= searchIds.relation_stop_id; i++)
 			    {
 			        weightedArea area;
@@ -327,7 +310,9 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 			        areas.push_back(area);
 			        delete item;		    
 			    }
-
+            } 
+		    if (searchIds.way_start_id != UNDEFINED_ID)
+		    {
 			    for(uint64_t i = searchIds.way_start_id; i <= searchIds.way_stop_id; i++)
 			    {
 			        weightedArea area;
@@ -359,16 +344,60 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 		    {
 		        if (a.score == best_score) best_areas.push_back(a);
 			}
+			break;
 		}
-		break;
+		/*else
+		{
+			for(auto b: best_areas)
+			{
+				auto it = std::find(b.words.begin(), b.words.end(), searchIds.word);
+				if(it ==  b.words.end())
+				{
+				    for(auto a:areas)
+				    {
+						if ((b.r * a.r).isValid())
+						{
+							b.r = b.r + a.r;
+							b.score += a.score;
+							for(auto w : a.words) b.words.push_back(w);
+						}
+				    }
+				}
+			}
+		}*/
+		
 	}
+    return best_areas;
+}
 
 
+Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
+{
+    std::string name = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("name"));
 
+    std::string resp = "<root>";
+    std::string word;
+    
+    
+    
+    uint64_t best_score = 0;
+    std::list<weightedArea> best_areas = findExpression(name, mger);
+    
+    for(auto a : best_areas) {if (a.score > best_score) best_score = a.score;} 
+    weightedArea result;
     for (auto a: best_areas)
     {
-		Rectangle r = a.r;
-		resp += "<score value=\"" + std::to_string(a.score) + "\"/>"; 
+		if(a.score == best_score)
+		{
+			result = a;
+			break;
+		} 
+	}
+
+//    for (auto a: best_areas)
+//    {
+		Rectangle r = result.r;
+		resp += "<score value=\"" + std::to_string(result.score) + "\"/>"; 
         resp += "<url u=\"http://127.0.0.1:8081/svgMap.svg?longitude1=" + std::to_string(r.x0) + "&amp;lattitude1=" + std::to_string(r.y0) + "&amp;longitude2=" + std::to_string(r.x1) + "&amp;lattitude2=" + std::to_string(r.y1) + "\" />";
         resp += "<url u=\"http://127.0.0.1:8081/MapDisplay?longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&amp;lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&amp;zoom=17\"/>";
         resp += "<rectangle xo=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x0))
@@ -381,7 +410,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
             	              + "\" x1=\"" + std::to_string(Coordinates::toNormalizedLon(std::to_string(Coordinates::fromNormalizedLon(r.x1))))
             	              + "\" y1=\"" + std::to_string(Coordinates::toNormalizedLat(std::to_string(Coordinates::fromNormalizedLat(r.y1))))
             	              + "\" />";
-	}		
+//	}		
     
     resp +=            "</root>";
     Msg* rep = new Msg;

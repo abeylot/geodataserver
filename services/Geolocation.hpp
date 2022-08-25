@@ -3,6 +3,7 @@
 #include "../messaging/HttpEncoder.hpp"
 #include "../messaging/Msg.hpp"
 #include "ServiceInterface.hpp"
+#include <list>
 //#include "ServicesFactory.hpp"
 
 struct SearchContext
@@ -14,12 +15,18 @@ struct SearchContext
 };
 
 
-
+struct weightedArea
+{
+	Rectangle r;
+	uint64_t score;
+	std::list<uint64_t> words;
+};
 
 class Geolocation : public ServiceInterface
 {
 private:
     HttpEncoder encoder;
+    std::list<weightedArea> findExpression(std::string expr, CompiledDataManager& mger);
 public:
     Msg* processRequest(Msg* request, CompiledDataManager& mger);
 };
