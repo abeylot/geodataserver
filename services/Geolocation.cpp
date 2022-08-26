@@ -378,19 +378,47 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
     std::string resp = "<root>";
     std::string word;
     
+    std::stringstream my_stream(name);
     
+    std::list<weightedArea> areas;
+    std::list<weightedArea> best_areas;
+    std::list<weightedArea> new_areas;
     
-    uint64_t best_score = 0;
-    std::list<weightedArea> best_areas = findExpression(name, mger);
-    
-    for(auto a : best_areas) {if (a.score > best_score) best_score = a.score;} 
+    while(std::getline(my_stream,word,','))
+    {
+		if(best_areas.size() == 0)
+		{
+			best_areas = findExpression(word, mger);
+		}
+		else
+		{
+			areas = findExpression(word, mger);
+			if(areas.size())
+			{
+				for(auto a : areas) for(auto b : best_areas)
+				{
+					if ((b.r * a.r).isValid())
+					{
+						weightedArea c;
+						c.r = b.r * a.r;
+						c.score = a.score + b.score;
+						new_areas.push_back(c);
+					}
+				}
+				best_areas = new_areas;
+			}
+		}
+		      
+	}
+
+    uint64_t best_size = 0;
     weightedArea result;
     for (auto a: best_areas)
     {
-		if(a.score == best_score)
+		if(((a.r.x1 - a.r.x0)*(a.r.y1 - a.r.y0)) > best_size)
 		{
 			result = a;
-			break;
+			best_size = (a.r.x1 - a.r.x0)*(a.r.y1 - a.r.y0);
 		} 
 	}
 

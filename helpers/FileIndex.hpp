@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <map>
 
 struct GeoFile
 {
@@ -203,8 +204,48 @@ struct GeoFile
 namespace fidx
 {
 
-   inline uint64_t makeLexicalKey(const char* value, size_t value_size)
+   const std::map<std::string,std::string> substitutions = 
    {
+	   {"à", "a"},
+	   {"â", "a"},
+	   {"Â", "a"},
+	   {"é", "e"},
+	   {"è", "e"},
+	   {"ê", "e"},
+	   {"ë", "e"},
+	   {"È", "e"},
+	   {"È", "e"},
+       {"Ê", "e"},
+	   {"î", "i"},
+	   {"ï", "i"},
+	   {"ô", "o"},
+	   {"œ", "oe"},
+	   {"û", "u"},
+	   {"ç", "c"}	   
+   };
+
+   inline uint64_t makeLexicalKey(const char* value_, size_t value_size_)
+   {
+	    char value[16];
+	    size_t value_size = 0;
+	    for(unsigned int i = 0; i < 8 && i < value_size_;i++)
+	    {
+		    size_t utf_8_len = 1;
+		    if((value[i] & 0b11111111) ==  0b11110000) 	utf_8_len = 4;
+		    else if ((value[i] & 0b11111111) ==  0b11100000) utf_8_len = 3; 
+		    else if ((value[i] & 0b11111111) ==  0b11000000) utf_8_len = 2;
+		    std::string in = "";
+		    for(unsigned int j = i; (j < (utf_8_len + i)) && j < value_size_ ; j++)
+		    {
+		       in += value_[j];
+		    }
+		    auto it = substitutions.find(in);
+		    std::string out = in;
+		    if(it != substitutions.end())
+		    {
+				 out = it->second;
+			}
+		} 
 		uint64_t key = 0;
 		if(value_size > 0) { key += tolower(value[0]);}
 		key <<= 3;
