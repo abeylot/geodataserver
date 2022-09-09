@@ -192,6 +192,7 @@ inline bool operator < (textSearchIds const& a, textSearchIds const& b)
 
 std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDataManager& mger)
 {
+	std::cout << "Search : " << expr << "\n";
     std::stringstream my_stream(expr);
     
     std::list<textSearchIds> foundWords;
@@ -383,6 +384,10 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
     std::list<weightedArea> areas;
     std::list<weightedArea> best_areas;
     std::list<weightedArea> new_areas;
+    
+    areas.clear();
+    best_areas.clear();
+    new_areas.clear();
     
     while(std::getline(my_stream,word,','))
     {

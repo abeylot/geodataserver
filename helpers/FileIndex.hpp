@@ -228,12 +228,12 @@ namespace fidx
    {
 	    char value[16];
 	    size_t value_size = 0;
-	    for(unsigned int i = 0; i < 8 && i < value_size_;i++)
+	    for(unsigned int i = 0; i < 8 && i < value_size_;)
 	    {
 		    size_t utf_8_len = 1;
-		    if((value[i] & 0b11111111) ==  0b11110000) 	utf_8_len = 4;
-		    else if ((value[i] & 0b11111111) ==  0b11100000) utf_8_len = 3; 
-		    else if ((value[i] & 0b11111111) ==  0b11000000) utf_8_len = 2;
+		    if((value_[i] & 0b11111111) ==  0b11110000) 	utf_8_len = 4;
+		    else if ((value_[i] & 0b11111111) ==  0b11100000) utf_8_len = 3; 
+		    else if ((value_[i] & 0b11111111) ==  0b11000000) utf_8_len = 2;
 		    std::string in = "";
 		    for(unsigned int j = i; (j < (utf_8_len + i)) && j < value_size_ ; j++)
 		    {
@@ -241,13 +241,15 @@ namespace fidx
 		    }
 		    auto it = substitutions.find(in);
 		    std::string out = in;
+		    i += in.length();
 		    if(it != substitutions.end())
 		    {
 				 out = it->second;
 			}
+			value[value_size++] = tolower(out[out.length() - 1]);
 		} 
 		uint64_t key = 0;
-		if(value_size > 0) { key += tolower(value[0]);}
+		/*if(value_size > 0) { key += tolower(value[0]);}
 		key <<= 3;
 		if(value_size > 1) { key += tolower(value[1]);}
 		key <<= 3;
@@ -261,7 +263,12 @@ namespace fidx
 		key <<= 3;
 		if(value_size > 6) { key += tolower(value[6]);}
 		key <<= 3;
-		if(value_size > 7) { key += tolower(value[7]);}
+		if(value_size > 7) { key += tolower(value[7]);}*/
+		char* key_c = (char*) &key; 
+		for(unsigned int i = 0; i < value_size; i++)
+		{
+			key_c[i%8] = key_c[i%8] ^ value[i]; 
+		}
 		return key;
    }
 
