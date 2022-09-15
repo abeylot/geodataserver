@@ -231,9 +231,9 @@ namespace fidx
 	    for(unsigned int i = 0; i < 8 && i < value_size_;)
 	    {
 		    size_t utf_8_len = 1;
-		    if((value_[i] & 0b11111111) ==  0b11110000) 	utf_8_len = 4;
-		    else if ((value_[i] & 0b11111111) ==  0b11100000) utf_8_len = 3; 
-		    else if ((value_[i] & 0b11111111) ==  0b11000000) utf_8_len = 2;
+		    if((value_[i] & 0b11110000) ==  0b11110000) 	utf_8_len = 4;
+		    else if ((value_[i] & 0b11110000) ==  0b11100000) utf_8_len = 3; 
+		    else if ((value_[i] & 0b11110000) ==  0b11000000) utf_8_len = 2;
 		    std::string in = "";
 		    for(unsigned int j = i; (j < (utf_8_len + i)) && j < value_size_ ; j++)
 		    {
@@ -246,7 +246,7 @@ namespace fidx
 		    {
 				 out = it->second;
 			}
-			value[value_size++] = tolower(out[out.length() - 1]);
+			for(size_t k = 0; k < out.length();k++)	value[value_size++] = tolower(out[k]);
 		} 
 		uint64_t key = 0;
 		/*if(value_size > 0) { key += tolower(value[0]);}

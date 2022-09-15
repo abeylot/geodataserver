@@ -192,7 +192,7 @@ inline bool operator < (textSearchIds const& a, textSearchIds const& b)
 
 std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDataManager& mger)
 {
-	std::cout << "Search : " << expr << "\n";
+	//std::cout << "Search : [" << expr << "]\n";
     std::stringstream my_stream(expr);
     
     std::list<textSearchIds> foundWords;
@@ -202,9 +202,13 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
     std::string word;
     while(std::getline(my_stream,word,' '))
     {
-        uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length());
-		words.push_back(k);
-        queryWordsVector.push_back(k);
+		if(!word.empty())
+		{
+	        //std::cout << "word : [" << word << "]\n";
+			uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length());
+			words.push_back(k);
+			queryWordsVector.push_back(k);
+		}
     }
     
     words.sort();
@@ -368,6 +372,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 		}*/
 		
 	}
+	//std::cout << best_areas.size() << " results\n";
     return best_areas;
 }
 
@@ -398,18 +403,29 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 		else
 		{
 			areas = findExpression(word, mger);
+			new_areas.clear();
 			if(areas.size())
 			{
-				for(auto a : areas) for(auto b : best_areas)
+				for(auto a : areas)
 				{
-					if ((b.r * a.r).isValid())
-					{
-						weightedArea c;
-						c.r = b.r * a.r;
-						c.score = a.score + b.score;
-						new_areas.push_back(c);
-					}
-				}
+					for(auto b : best_areas)
+				    {
+					    if ((b.r * a.r).isValid())
+					    {
+						    //std::cout << "match !!" << "\n";
+						    weightedArea c;
+						    c.r = b.r * a.r;
+						    c.score = a.score + b.score;
+						    new_areas.push_back(c);
+					    } else {
+						    /*std::cout << "no match !!" << "\n";						
+						    std::cout << a.r.x0 <<","<<  a.r.y0<<","<< a.r.x1<<","<< a.r.y1 << " * ";						
+						    std::cout << b.r.x0 <<","<< b.r.y0<<","<< b.r.x1<<","<< b.r.y1 << " = ";
+						    Rectangle c = a.r * b.r;						
+						    std::cout << c.x0<<","<< c.y0<<","<< c.x1<<","<< c.y1 << "\n";*/
+					    }
+				    }
+			    }
 				best_areas = new_areas;
 			}
 		}
@@ -417,10 +433,16 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 	}
 
     uint64_t best_size = 0;
+    uint64_t best_score = 0;
     weightedArea result;
     for (auto a: best_areas)
     {
-		if(((a.r.x1 - a.r.x0)*(a.r.y1 - a.r.y0)) > best_size)
+		if(a.score > best_score) best_score = a.score;
+	}
+    for (auto a: best_areas)
+    {
+		if(a.score == best_score)
+		if(((a.r.x1 - a.r.x0)*(a.r.y1 - a.r.y0)) >= best_size)
 		{
 			result = a;
 			best_size = (a.r.x1 - a.r.x0)*(a.r.y1 - a.r.y0);
