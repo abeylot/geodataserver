@@ -289,6 +289,27 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 		                nameWordVector.push_back(k);
                     }
 			        area.score = calcMatchScore(queryWordsVector, nameWordVector);
+			        std::string sPlace = item->tags["place"];
+			        if(!sPlace.empty())
+			        {
+			            if(sPlace == "country") area.score            *= 1.100;
+			            else if(sPlace == "state") area.score         *= 1.095;
+			            else if(sPlace == "region") area.score        *= 1.090;
+			            else if(sPlace == "district") area.score      *= 1.085;
+			            else if(sPlace == "county") area.score        *= 1.080;
+			            else if(sPlace == "municipality") area.score  *= 1.079;
+			            else if(sPlace == "city") area.score          *= 1.078;
+			            else if(sPlace == "borough") area.score       *= 1.077;
+			            else if(sPlace == "suburb") area.score        *= 1.076;
+			            else if(sPlace == "qarter") area.score        *= 1.075;
+			            else if(sPlace == "neighbourhood") area.score *= 1.074;
+			            else if(sPlace == "city_block") area.score    *= 1.073;
+			            else if(sPlace == "plot") area.score          *= 1.072;
+			            else if(sPlace == "town") area.score          *= 1.071;
+			            else if(sPlace == "village") area.score       *= 1.070;
+			            else if(sPlace == "hamlet") area.score        *= 1.069;
+			            else area.score                               *= 1.050;
+					}
 			        areas.push_back(area);
 			        delete item;		    
 			    }
@@ -347,7 +368,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 		    for(auto a : areas) {if (a.score > best_score) best_score = a.score;} 
 		    for(auto a : areas)
 		    {
-		        if (a.score == best_score) best_areas.push_back(a);
+		        /*if (a.score == best_score)*/ best_areas.push_back(a);
 			}
 			break;
 		}
@@ -469,7 +490,10 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
     
     resp +=            "</root>";
     Msg* rep = new Msg;
-    encoder.build200Header(rep, "application/xml");
-    encoder.addContent(rep,resp);
+    //encoder.build200Header(rep, "application/xml");
+    //encoder.addContent(rep,resp);
+    std::string URL = "http://127.0.0.1:8081/MapDisplay?longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&zoom=17";
+    encoder.build303Header(rep,URL);
+    encoder.addContent(rep,"redirect!!!");
     return rep;
 }

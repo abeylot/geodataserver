@@ -235,6 +235,12 @@ std::string* HttpEncoder::decode(Msg* outMsg) const
             *res += std::string("content-type: ")+ sContentType + "\r\n";
         }
 
+        std::string sLocation = outMsg->getRecord(0)->getNamedValue("HTTPLocation");
+        if(sLocation.length() != 0)
+        {
+            *res += std::string("Location: ")+ sLocation + "\r\n";
+        }
+
         const std::string* sData = outMsg->getRecord(1)->getBlock(0);
 
 
@@ -267,6 +273,17 @@ void HttpEncoder::build200Header(Msg* msg,const std::string& contentType)
     rcd->addBlock("HTTPVersion=HTTP/1.0");
     rcd->addBlock("HTTPStatus=200");
     rcd->addBlock("HTTPContentType="+contentType);
+}
+
+
+
+void HttpEncoder::build303Header(Msg* msg, std::string URL)
+{
+    Record* rcd = new Record;
+    msg->addRecord(rcd);
+    rcd->addBlock("HTTPVersion=HTTP/1.0");
+    rcd->addBlock("HTTPStatus=303");
+    rcd->addBlock("HTTPLocation="+URL);
 }
 
 
