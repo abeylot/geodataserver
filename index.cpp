@@ -88,10 +88,19 @@ int main(int argc, char *argv[])
             
             if(tag_size == 4 && (strncmp(tag, "name", tag_size) == 0) && value_size)
             {
-                stringstream my_stream(std::string(value, value_size));
-                std::string word;
+				std::string my_string(value, value_size); 
+				std::replace( my_string.begin(), my_string.end(), '-', ' ');
+                stringstream my_stream(my_string);
+                std::string word; 
                 while(std::getline(my_stream,word,' '))
                 {
+					size_t found = word.find("&apos;");
+					while(found != std::string::npos)
+					{
+					    std::string word2 = word.substr(0,found) + "'" + word.substr(found + 6,word.length());
+						word = word2;
+					    found = word.find("&apos;");
+					}
                     textIndexRelation.append(fidx::makeLexicalKey(word.c_str(), word.length()),{i, r->rect});
                 }
             }
@@ -177,7 +186,9 @@ int main(int argc, char *argv[])
 
             if(tag_size == 4 && (strncmp(tag, "name", tag_size) == 0) && value_size)
             {
-                stringstream my_stream(std::string(value, value_size));
+				std::string my_string(value, value_size); 
+				std::replace( my_string.begin(), my_string.end(), '-', ' ');
+                stringstream my_stream(my_string);
                 std::string word;
                 while(std::getline(my_stream,word,' '))
                 {
@@ -267,7 +278,9 @@ int main(int argc, char *argv[])
 
             if(tag_size == 4 && (strncmp(tag, "name", tag_size) == 0) && value_size)
             {
-                stringstream my_stream(std::string(value, value_size));
+				std::string my_string(value, value_size); 
+				std::replace( my_string.begin(), my_string.end(), '-', ' ');
+                stringstream my_stream(my_string);
                 std::string word;
                 while(std::getline(my_stream,word,' '))
                 {

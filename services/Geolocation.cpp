@@ -7,9 +7,9 @@
 const uint64_t UNDEFINED_ID = 0xFFFFFFFFFFFFFFFF;
 
 
-uint64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
+int64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
 {
-	uint64_t result = 1000000;
+	int64_t result = 0;
 	std::vector<uint64_t> new_a, new_b;
 	for(uint64_t i = 0; i < a.size(); i++)
 	{
@@ -119,19 +119,20 @@ uint64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
 			{
 				if(a[0] == b[i])
 				{
-					if(i!=0) result -=10;
+					if(i!=0) result += 300;
+					else result += 500;
 					a[0] = b[i] = UNDEFINED_ID;
 					break;
 				}
 			}
-  		            for(auto i : a) if(i != UNDEFINED_ID) new_a.push_back(i);
-		            for(auto i : b) if(i != UNDEFINED_ID) new_b.push_back(i);
+  		    for(auto i : a) if(i != UNDEFINED_ID) new_a.push_back(i);
+		    for(auto i : b) if(i != UNDEFINED_ID) new_b.push_back(i);
 		
-		            a = new_a;
-		            b = new_b;
+		    a = new_a;
+		    b = new_b;
 		
-		            new_a.clear();
-		            new_b.clear();
+		    new_a.clear();
+		    new_b.clear();
 		}
 		
 	 
@@ -192,7 +193,7 @@ inline bool operator < (textSearchIds const& a, textSearchIds const& b)
 
 std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDataManager& mger)
 {
-	//std::cout << "Search : [" << expr << "]\n";
+	std::cout << "Search : [" << expr << "]\n";
     std::stringstream my_stream(expr);
     
     std::list<textSearchIds> foundWords;
@@ -244,7 +245,9 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 			rstart = eR.value.first;
 			rstop  = eR.value.last;
 		}
-		if(foundN || foundW || foundR)
+		if((foundN || foundW || foundR) &&
+		((nstop - nstart) + (wstop - wstart) + (rstop -rstart)) < 100000
+		 )
 		{
 			textSearchIds ids;
 			ids.word = myword;
@@ -281,10 +284,20 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     mger.load(item, record.value.id, true);		    
 			        area.r.x0 = area.r.x1 = item->x;
 			        area.r.y0 = area.r.y1 = item->y;
-                    std::stringstream my_stream(item->tags["name"]);
+			        std::string my_string = item->tags["name"];
+                    std::replace( my_string.begin(), my_string.end(), '-', ' ');
+                    std::stringstream my_stream(my_string);
                     std::string word;
                     while(std::getline(my_stream,word,' '))
                     {
+					    size_t found = word.find("&apos;");
+					    while(found != std::string::npos)
+					    {
+					        std::string word2 = word.substr(0,found) + "'" + word.substr(found + 6,word.length());
+						    word = word2;
+					        found = word.find("&apos;");
+					    }
+						
                         uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length());
 		                nameWordVector.push_back(k);
                     }
@@ -310,6 +323,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 			            else if(sPlace == "hamlet") area.score        *= 1.069;
 			            else area.score                               *= 1.050;
 					}
+			        //std::cout << my_string << " " << area.score << "\n";
 			        areas.push_back(area);
 			        delete item;		    
 			    }
@@ -325,14 +339,45 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 			        Relation* item;
                     mger.load(item, record.value.id, true);		    
 			        area.r =  record.value.r;
-                    std::stringstream my_stream(item->tags["name"]);
+			        std::string my_string = item->tags["name"];
+                    std::replace( my_string.begin(), my_string.end(), '-', ' ');
+                    std::stringstream my_stream(my_string);
                     std::string word;
                     while(std::getline(my_stream,word,' '))
                     {
+					    size_t found = word.find("&apos;");
+					    while(found != std::string::npos)
+					    {
+					        std::string word2 = word.substr(0,found) + "'" + word.substr(found + 6,word.length());
+						    word = word2;
+					        found = word.find("&apos;");
+					    }
                         uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length());
 		                nameWordVector.push_back(k);
                     }
 			        area.score = calcMatchScore(queryWordsVector, nameWordVector);
+			        std::string sPlace = item->tags["place"];
+			        if(!sPlace.empty())
+			        {
+			            if(sPlace == "country") area.score            *= 1.100;
+			            else if(sPlace == "state") area.score         *= 1.095;
+			            else if(sPlace == "region") area.score        *= 1.090;
+			            else if(sPlace == "district") area.score      *= 1.085;
+			            else if(sPlace == "county") area.score        *= 1.080;
+			            else if(sPlace == "municipality") area.score  *= 1.079;
+			            else if(sPlace == "city") area.score          *= 1.078;
+			            else if(sPlace == "borough") area.score       *= 1.077;
+			            else if(sPlace == "suburb") area.score        *= 1.076;
+			            else if(sPlace == "qarter") area.score        *= 1.075;
+			            else if(sPlace == "neighbourhood") area.score *= 1.074;
+			            else if(sPlace == "city_block") area.score    *= 1.073;
+			            else if(sPlace == "plot") area.score          *= 1.072;
+			            else if(sPlace == "town") area.score          *= 1.071;
+			            else if(sPlace == "village") area.score       *= 1.070;
+			            else if(sPlace == "hamlet") area.score        *= 1.069;
+			            else area.score                               *= 1.050;
+					}
+			        //std::cout << my_string << " " << area.score << "\n";
 			        areas.push_back(area);
 			        delete item;		    
 			    }
@@ -348,14 +393,45 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 			        Way* item;
                     mger.load(item, record.value.id, true);		    
 			        area.r =  record.value.r;
-                    std::stringstream my_stream(item->tags["name"]);
+			        std::string my_string = item->tags["name"];
+                    std::replace( my_string.begin(), my_string.end(), '-', ' ');
+                    std::stringstream my_stream(my_string);
                     std::string word;
                     while(std::getline(my_stream,word,' '))
                     {
+					    size_t found = word.find("&apos;");
+					    while(found != std::string::npos)
+					    {
+					        std::string word2 = word.substr(0,found) + "'" + word.substr(found + 6,word.length());
+						    word = word2;
+					        found = word.find("&apos;");
+					    }
                         uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length());
 		                nameWordVector.push_back(k);
                     }
 			        area.score = calcMatchScore(queryWordsVector, nameWordVector);
+			        std::string sPlace = item->tags["place"];
+			        if(!sPlace.empty())
+			        {
+			            if(sPlace == "country") area.score            *= 1.100;
+			            else if(sPlace == "state") area.score         *= 1.095;
+			            else if(sPlace == "region") area.score        *= 1.090;
+			            else if(sPlace == "district") area.score      *= 1.085;
+			            else if(sPlace == "county") area.score        *= 1.080;
+			            else if(sPlace == "municipality") area.score  *= 1.079;
+			            else if(sPlace == "city") area.score          *= 1.078;
+			            else if(sPlace == "borough") area.score       *= 1.077;
+			            else if(sPlace == "suburb") area.score        *= 1.076;
+			            else if(sPlace == "qarter") area.score        *= 1.075;
+			            else if(sPlace == "neighbourhood") area.score *= 1.074;
+			            else if(sPlace == "city_block") area.score    *= 1.073;
+			            else if(sPlace == "plot") area.score          *= 1.072;
+			            else if(sPlace == "town") area.score          *= 1.071;
+			            else if(sPlace == "village") area.score       *= 1.070;
+			            else if(sPlace == "hamlet") area.score        *= 1.069;
+			            else area.score                               *= 1.050;
+					}
+			        //std::cout << my_string << " " << area.score << "\n";
 			        areas.push_back(area);
 			        delete item;		    
 			    }
@@ -364,8 +440,8 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 		}
 		if(best_areas.size() == 0)
 		{
-		    uint64_t best_score = 0;
-		    for(auto a : areas) {if (a.score > best_score) best_score = a.score;} 
+		    //uint64_t best_score = 0;
+		    //for(auto a : areas) {if (a.score > best_score) best_score = a.score;} 
 		    for(auto a : areas)
 		    {
 		        /*if (a.score == best_score)*/ best_areas.push_back(a);
@@ -401,7 +477,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 {
     std::string name = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("name"));
-
+    //std::cout << "search expr::" << name << "\n";
     std::string resp = "<root>";
     std::string word;
     
@@ -454,12 +530,13 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 	}
 
     uint64_t best_size = 0;
-    uint64_t best_score = 0;
+    int64_t best_score = 0;
     weightedArea result;
     for (auto a: best_areas)
     {
 		if(a.score > best_score) best_score = a.score;
 	}
+	std::cout << "best score : "<< best_score << "\n";
     for (auto a: best_areas)
     {
 		if(a.score == best_score)

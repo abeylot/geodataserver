@@ -18,7 +18,7 @@ struct SearchContext
 struct weightedArea
 {
 	Rectangle r;
-	uint64_t score;
+	int64_t score;
 	std::list<uint64_t> words;
 };
 
