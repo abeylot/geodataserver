@@ -302,26 +302,11 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 		                nameWordVector.push_back(k);
                     }
 			        area.score = calcMatchScore(queryWordsVector, nameWordVector);
-			        std::string sPlace = item->tags["place"];
+			        std::string sPlace = item->tags["admin_level"];
 			        if(!sPlace.empty())
 			        {
-			            if(sPlace == "country") area.score            *= 1.100;
-			            else if(sPlace == "state") area.score         *= 1.095;
-			            else if(sPlace == "region") area.score        *= 1.090;
-			            else if(sPlace == "district") area.score      *= 1.085;
-			            else if(sPlace == "county") area.score        *= 1.080;
-			            else if(sPlace == "municipality") area.score  *= 1.079;
-			            else if(sPlace == "city") area.score          *= 1.078;
-			            else if(sPlace == "borough") area.score       *= 1.077;
-			            else if(sPlace == "suburb") area.score        *= 1.076;
-			            else if(sPlace == "qarter") area.score        *= 1.075;
-			            else if(sPlace == "neighbourhood") area.score *= 1.074;
-			            else if(sPlace == "city_block") area.score    *= 1.073;
-			            else if(sPlace == "plot") area.score          *= 1.072;
-			            else if(sPlace == "town") area.score          *= 1.071;
-			            else if(sPlace == "village") area.score       *= 1.070;
-			            else if(sPlace == "hamlet") area.score        *= 1.069;
-			            else area.score                               *= 1.050;
+						int level = 10 - atoi(sPlace.c_str());
+						if(level) area.score *= (1.0 + 0.1 / level);
 					}
 			        //std::cout << my_string << " " << area.score << "\n";
 			        areas.push_back(area);
@@ -337,7 +322,8 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 			        std::vector<uint64_t> nameWordVector;
 			        mger.textIndexRelation->get(i, &record);
 			        Relation* item;
-                    mger.load(item, record.value.id, true);		    
+                    //mger.load(item, record.value.id, true);
+                    item = mger.loadRelationFast(record.value.id);		    
 			        area.r =  record.value.r;
 			        std::string my_string = item->tags["name"];
                     std::replace( my_string.begin(), my_string.end(), '-', ' ');
@@ -356,26 +342,11 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 		                nameWordVector.push_back(k);
                     }
 			        area.score = calcMatchScore(queryWordsVector, nameWordVector);
-			        std::string sPlace = item->tags["place"];
+			        std::string sPlace = item->tags["admin_level"];
 			        if(!sPlace.empty())
 			        {
-			            if(sPlace == "country") area.score            *= 1.100;
-			            else if(sPlace == "state") area.score         *= 1.095;
-			            else if(sPlace == "region") area.score        *= 1.090;
-			            else if(sPlace == "district") area.score      *= 1.085;
-			            else if(sPlace == "county") area.score        *= 1.080;
-			            else if(sPlace == "municipality") area.score  *= 1.079;
-			            else if(sPlace == "city") area.score          *= 1.078;
-			            else if(sPlace == "borough") area.score       *= 1.077;
-			            else if(sPlace == "suburb") area.score        *= 1.076;
-			            else if(sPlace == "qarter") area.score        *= 1.075;
-			            else if(sPlace == "neighbourhood") area.score *= 1.074;
-			            else if(sPlace == "city_block") area.score    *= 1.073;
-			            else if(sPlace == "plot") area.score          *= 1.072;
-			            else if(sPlace == "town") area.score          *= 1.071;
-			            else if(sPlace == "village") area.score       *= 1.070;
-			            else if(sPlace == "hamlet") area.score        *= 1.069;
-			            else area.score                               *= 1.050;
+						int level = 10 - atoi(sPlace.c_str());
+						if(level) area.score *= (1.0 + 0.1 / level);
 					}
 			        //std::cout << my_string << " " << area.score << "\n";
 			        areas.push_back(area);
@@ -410,26 +381,11 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 		                nameWordVector.push_back(k);
                     }
 			        area.score = calcMatchScore(queryWordsVector, nameWordVector);
-			        std::string sPlace = item->tags["place"];
+			        std::string sPlace = item->tags["admin_level"];
 			        if(!sPlace.empty())
 			        {
-			            if(sPlace == "country") area.score            *= 1.100;
-			            else if(sPlace == "state") area.score         *= 1.095;
-			            else if(sPlace == "region") area.score        *= 1.090;
-			            else if(sPlace == "district") area.score      *= 1.085;
-			            else if(sPlace == "county") area.score        *= 1.080;
-			            else if(sPlace == "municipality") area.score  *= 1.079;
-			            else if(sPlace == "city") area.score          *= 1.078;
-			            else if(sPlace == "borough") area.score       *= 1.077;
-			            else if(sPlace == "suburb") area.score        *= 1.076;
-			            else if(sPlace == "qarter") area.score        *= 1.075;
-			            else if(sPlace == "neighbourhood") area.score *= 1.074;
-			            else if(sPlace == "city_block") area.score    *= 1.073;
-			            else if(sPlace == "plot") area.score          *= 1.072;
-			            else if(sPlace == "town") area.score          *= 1.071;
-			            else if(sPlace == "village") area.score       *= 1.070;
-			            else if(sPlace == "hamlet") area.score        *= 1.069;
-			            else area.score                               *= 1.050;
+						int level = 10 - atoi(sPlace.c_str());
+						if(level) area.score *= (1.0 + 0.1 / level);
 					}
 			        //std::cout << my_string << " " << area.score << "\n";
 			        areas.push_back(area);
@@ -550,9 +506,22 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 //    for (auto a: best_areas)
 //    {
 		Rectangle r = result.r;
+		int zlevel = 32;
+		//best_size *= 1.5;
+		best_size = (r.x1 - r.x0);
+		if ((r.y1 - r.y0) > (r.x1 - r.x0)) best_size =(r.y1 - r.y0);
+		while(best_size)
+		{
+			zlevel --;
+			best_size >>= 1;
+		}
+		std::cout << zlevel << "\n";
+		if(zlevel > 17) zlevel = 17;
+		if(zlevel < 0) zlevel = 0;
+		
 		resp += "<score value=\"" + std::to_string(result.score) + "\"/>"; 
         resp += "<url u=\"http://127.0.0.1:8081/svgMap.svg?longitude1=" + std::to_string(r.x0) + "&amp;lattitude1=" + std::to_string(r.y0) + "&amp;longitude2=" + std::to_string(r.x1) + "&amp;lattitude2=" + std::to_string(r.y1) + "\" />";
-        resp += "<url u=\"http://127.0.0.1:8081/MapDisplay?longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&amp;lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&amp;zoom=17\"/>";
+        resp += "<url u=\"http://127.0.0.1:8081/MapDisplay?longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&amp;lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&amp;zoom="+std::to_string(zlevel)+"\"/>";
         resp += "<rectangle xo=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x0))
              + "\" y0=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y0))
              + "\" x1=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x1))
@@ -569,7 +538,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
     Msg* rep = new Msg;
     //encoder.build200Header(rep, "application/xml");
     //encoder.addContent(rep,resp);
-    std::string URL = "http://127.0.0.1:8081/MapDisplay?longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&zoom=17";
+    std::string URL = "http://127.0.0.1:8081/MapDisplay?pin=true&longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&zoom="+std::to_string(zlevel)+"";
     encoder.build303Header(rep,URL);
     encoder.addContent(rep,"redirect!!!");
     return rep;

@@ -10,6 +10,7 @@ MapDisplay::~MapDisplay()
 
 Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
 {
+	bool pin = false;
     std::string latitude = "0.000000";
     std::string longitude = "0.000000";
     std::string zoom = "12";
@@ -53,7 +54,7 @@ Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
         "L.tileLayer('/{z}/{x}/{y}.svg', {"
         "    attribution: 'Map data: &copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>)',"
         "    maxZoom: 19"
-        "}).addTo(map);"
+        "}).addTo(map);#pin#"
         "</script>"
         "</body>" 
         "</html>";
@@ -85,11 +86,21 @@ Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
     {
         zoom = request->getRecord(1)->getNamedValue("zoom");
     }
+
+    if (request->getRecord(2)->getNamedValue("pin") != "")
+    {
+        pin = true;
+    }
     
     resp.replace(resp.find("#lon#"),5,longitude);
     resp.replace(resp.find("#lat#"),5,latitude);
     resp.replace(resp.find("#zoom#"),6,zoom);
-    
+    if(pin)
+    {
+		resp.replace(resp.find("#pin#"),5,"var marker = L.marker(["+latitude+","+longitude+"]).addTo(map);");
+    } else {
+		resp.replace(resp.find("#pin#"),5,"");
+	}
     Msg* rep = new Msg;
     encoder.build200Header(rep, "text/html");
     encoder.addContent(rep,resp);

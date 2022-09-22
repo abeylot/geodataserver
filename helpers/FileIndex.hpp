@@ -226,9 +226,9 @@ namespace fidx
 
    inline uint64_t makeLexicalKey(const char* value_, size_t value_size_)
    {
-	    char value[16];
+	    char value[128];
 	    size_t value_size = 0;
-	    for(unsigned int i = 0; i < 8 && i < value_size_;)
+	    for(unsigned int i = 0; i < 128 && i < value_size_;)
 	    {
 		    size_t utf_8_len = 1;
 		    if((value_[i] & 0b11110000) ==  0b11110000) 	utf_8_len = 4;
