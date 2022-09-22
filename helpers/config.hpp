@@ -293,8 +293,8 @@ struct XmlVisitor
                 {
                     long level = 1LL << (atoll(c));
                     mask |= level;
-                    while(isdigit(*c)) c++;
-                    c++;
+                    while(*c && isdigit(*c)) c++;
+                    if(*c) c++;
                 }
             }
         }
