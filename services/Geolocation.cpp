@@ -6,6 +6,13 @@
 
 const uint64_t UNDEFINED_ID = 0xFFFFFFFFFFFFFFFF;
 
+bool weightedAreaCompare (const weightedArea& first, const weightedArea& second)
+{
+  if ( first.score < second.score ) return false;
+  if ( first.score > second.score ) return true;
+  if ( (first.r.x1 - first.r.x0)*(first.r.y1 - first.r.y0) < (second.r.x1 - second.r.x0)*(second.r.y1 - second.r.y0) ) return false;
+  return true;
+}
 
 int64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
 {
@@ -206,7 +213,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 		if(!word.empty())
 		{
 	        //std::cout << "word : [" << word << "]\n";
-			uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length());
+			uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
 			words.push_back(k);
 			queryWordsVector.push_back(k);
 		}
@@ -298,7 +305,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 					        found = word.find("&apos;");
 					    }
 						
-                        uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length());
+                        uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
 		                nameWordVector.push_back(k);
                     }
 			        area.score = calcMatchScore(queryWordsVector, nameWordVector);
@@ -309,6 +316,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 						if(level) area.score *= (1.0 + 0.1 / level);
 					}
 			        //std::cout << my_string << " " << area.score << "\n";
+			        area.found = "Node_"+std::to_string(i)+":"+my_string;
 			        areas.push_back(area);
 			        delete item;		    
 			    }
@@ -338,10 +346,10 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 						    word = word2;
 					        found = word.find("&apos;");
 					    }
-                        uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length());
+                        uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
 		                nameWordVector.push_back(k);
                     }
-			        area.score = calcMatchScore(queryWordsVector, nameWordVector);
+			        area.score = calcMatchScore(queryWordsVector, nameWordVector) + 2;
 			        std::string sPlace = item->tags["admin_level"];
 			        if(!sPlace.empty())
 			        {
@@ -349,6 +357,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 						if(level) area.score *= (1.0 + 0.1 / level);
 					}
 			        //std::cout << my_string << " " << area.score << "\n";
+			        area.found = "Relation_"+std::to_string(i)+":"+my_string;
 			        areas.push_back(area);
 			        delete item;		    
 			    }
@@ -377,10 +386,10 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 						    word = word2;
 					        found = word.find("&apos;");
 					    }
-                        uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length());
+                        uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
 		                nameWordVector.push_back(k);
                     }
-			        area.score = calcMatchScore(queryWordsVector, nameWordVector);
+			        area.score = calcMatchScore(queryWordsVector, nameWordVector) + 1;
 			        std::string sPlace = item->tags["admin_level"];
 			        if(!sPlace.empty())
 			        {
@@ -388,6 +397,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 						if(level) area.score *= (1.0 + 0.1 / level);
 					}
 			        //std::cout << my_string << " " << area.score << "\n";
+			        area.found = "Way_"+std::to_string(i)+":"+my_string;
 			        areas.push_back(area);
 			        delete item;		    
 			    }
@@ -433,8 +443,8 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 {
     std::string name = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("name"));
+    std::string mode = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("mode"));
     //std::cout << "search expr::" << name << "\n";
-    std::string resp = "<root>";
     std::string word;
     
     std::stringstream my_stream(name);
@@ -469,6 +479,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 						    weightedArea c;
 						    c.r = b.r * a.r;
 						    c.score = a.score + b.score;
+						    c.found = a.found + ", " + b.found;
 						    new_areas.push_back(c);
 					    } else {
 						    /*std::cout << "no match !!" << "\n";						
@@ -502,6 +513,8 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 			best_size = (a.r.x1 - a.r.x0)*(a.r.y1 - a.r.y0);
 		} 
 	}
+	
+	  best_areas.sort(weightedAreaCompare);
 
 //    for (auto a: best_areas)
 //    {
@@ -518,28 +531,86 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 		std::cout << zlevel << "\n";
 		if(zlevel > 17) zlevel = 17;
 		if(zlevel < 0) zlevel = 0;
-		
-		resp += "<score value=\"" + std::to_string(result.score) + "\"/>"; 
-        resp += "<url u=\"http://127.0.0.1:8081/svgMap.svg?longitude1=" + std::to_string(r.x0) + "&amp;lattitude1=" + std::to_string(r.y0) + "&amp;longitude2=" + std::to_string(r.x1) + "&amp;lattitude2=" + std::to_string(r.y1) + "\" />";
-        resp += "<url u=\"http://127.0.0.1:8081/MapDisplay?longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&amp;lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&amp;zoom="+std::to_string(zlevel)+"\"/>";
-        resp += "<rectangle xo=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x0))
-             + "\" y0=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y0))
-             + "\" x1=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x1))
-             + "\" y1=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y1))
+	
+	    if(mode == "xml")	
+		{
+            std::string resp = "<root>\n";
+            int i = 0;
+            for(auto a : best_areas)
+            {
+				if(i > 50) break;
+				if(! a.r.isValid()) continue;
+                resp += "<area "
+                    "lon_min=\""+std::to_string(Coordinates::fromNormalizedLon(a.r.x0))+"\" "
+                    "lon_max=\""+std::to_string(Coordinates::fromNormalizedLon(a.r.x1))+"\" "
+                    "lat_min=\""+std::to_string(Coordinates::fromNormalizedLat(a.r.y1))+"\" "
+                    "lat_max=\""+std::to_string(Coordinates::fromNormalizedLat(a.r.y0))+"\" "
+                    "found=\""+a.found+"\" "
+                    "score=\""+std::to_string(a.score)+"\" />\n";
+                i++;
+			}
+		    /*resp += "<score value=\"" + std::to_string(result.score) + "\"/>"; 
+            resp += "<url u=\"http://127.0.0.1:8081/svgMap.svg?longitude1=" + std::to_string(r.x0) + "&amp;lattitude1=" + std::to_string(r.y0) + "&amp;longitude2=" + std::to_string(r.x1) + "&amp;lattitude2=" + std::to_string(r.y1) + "\" />";
+            resp += "<url u=\"http://127.0.0.1:8081/MapDisplay?longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&amp;lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&amp;zoom="+std::to_string(zlevel)+"\"/>";
+            resp += "<rectangle xo=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x0))
+                 + "\" y0=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y0))
+                 + "\" x1=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x1))
+                 + "\" y1=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y1))
             	              + "\" />";
-       resp += "<rectangle xo=\"" + std::to_string(Coordinates::toNormalizedLon(std::to_string(Coordinates::fromNormalizedLon(r.x0))))
+           resp += "<rectangle xo=\"" + std::to_string(Coordinates::toNormalizedLon(std::to_string(Coordinates::fromNormalizedLon(r.x0))))
             	              + "\" y0=\"" + std::to_string(Coordinates::toNormalizedLat(std::to_string(Coordinates::fromNormalizedLat(r.y0))))
             	              + "\" x1=\"" + std::to_string(Coordinates::toNormalizedLon(std::to_string(Coordinates::fromNormalizedLon(r.x1))))
             	              + "\" y1=\"" + std::to_string(Coordinates::toNormalizedLat(std::to_string(Coordinates::fromNormalizedLat(r.y1))))
+            	              + "\" />";*/
+            	                 
+           resp += "</root>\n";
+           Msg* rep = new Msg;
+           encoder.build200Header(rep, "application/xml");
+           encoder.addContent(rep,resp);
+           return rep;
+	   } else if (mode =="json"){
+            std::string resp = "[";
+            int i = 0;
+            for(auto a : best_areas)
+            {
+				if(i > 50) break;
+				if(! a.r.isValid()) continue;
+				if(i) resp += ", ";
+ 				resp+="{"
+                    "\"lon_min\":"+std::to_string((Coordinates::fromNormalizedLon(a.r.x0)))+
+                    ", \"lon_max\":"+std::to_string(Coordinates::fromNormalizedLon(a.r.x1))+
+                    ", \"lat_min\":"+std::to_string(Coordinates::fromNormalizedLat(a.r.y1))+
+                    ", \"lat_max\":"+std::to_string(Coordinates::fromNormalizedLat(a.r.y0))+
+                    ", \"found\":\""+a.found+"\""+
+                    ", \"score\":"+std::to_string(a.score);
+				resp+="}\n";
+                i++;
+			}
+		    /*resp += "<score value=\"" + std::to_string(result.score) + "\"/>"; 
+            resp += "<url u=\"http://127.0.0.1:8081/svgMap.svg?longitude1=" + std::to_string(r.x0) + "&amp;lattitude1=" + std::to_string(r.y0) + "&amp;longitude2=" + std::to_string(r.x1) + "&amp;lattitude2=" + std::to_string(r.y1) + "\" />";
+            resp += "<url u=\"http://127.0.0.1:8081/MapDisplay?longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&amp;lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&amp;zoom="+std::to_string(zlevel)+"\"/>";
+            resp += "<rectangle xo=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x0))
+                 + "\" y0=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y0))
+                 + "\" x1=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x1))
+                 + "\" y1=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y1))
             	              + "\" />";
-//	}		
-    
-    resp +=            "</root>";
-    Msg* rep = new Msg;
-    //encoder.build200Header(rep, "application/xml");
-    //encoder.addContent(rep,resp);
-    std::string URL = "http://127.0.0.1:8081/MapDisplay?pin=true&longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&zoom="+std::to_string(zlevel)+"";
-    encoder.build303Header(rep,URL);
-    encoder.addContent(rep,"redirect!!!");
-    return rep;
+           resp += "<rectangle xo=\"" + std::to_string(Coordinates::toNormalizedLon(std::to_string(Coordinates::fromNormalizedLon(r.x0))))
+            	              + "\" y0=\"" + std::to_string(Coordinates::toNormalizedLat(std::to_string(Coordinates::fromNormalizedLat(r.y0))))
+            	              + "\" x1=\"" + std::to_string(Coordinates::toNormalizedLon(std::to_string(Coordinates::fromNormalizedLon(r.x1))))
+            	              + "\" y1=\"" + std::to_string(Coordinates::toNormalizedLat(std::to_string(Coordinates::fromNormalizedLat(r.y1))))
+            	              + "\" />";*/
+            	                 
+           resp += "]\n";
+           Msg* rep = new Msg;
+           encoder.build200Header(rep, "application/json");
+           encoder.addContent(rep,resp);
+           return rep;
+	   } else {
+	   
+            Msg* rep = new Msg;
+            std::string URL = "/MapDisplay?pin=true&longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&zoom="+std::to_string(zlevel)+"";
+            encoder.build303Header(rep,URL);
+            encoder.addContent(rep,"redirect!!!");
+            return rep;
+		}
 }

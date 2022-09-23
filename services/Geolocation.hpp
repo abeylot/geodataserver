@@ -19,8 +19,11 @@ struct weightedArea
 {
 	Rectangle r;
 	int64_t score;
-	std::list<uint64_t> words;
+	std::string found;
+	//std::list<uint64_t> words;
 };
+
+
 
 class Geolocation : public ServiceInterface
 {

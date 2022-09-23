@@ -204,7 +204,7 @@ struct GeoFile
 namespace fidx
 {
 
-   const std::map<std::string,std::string> substitutions = 
+   /*const std::map<std::string,std::string> substitutions = 
    {
 	   {"à", "a"},
 	   {"â", "a"},
@@ -222,9 +222,9 @@ namespace fidx
 	   {"œ", "oe"},
 	   {"û", "u"},
 	   {"ç", "c"}	   
-   };
+   };*/
 
-   inline uint64_t makeLexicalKey(const char* value_, size_t value_size_)
+   inline uint64_t makeLexicalKey(const char* value_, size_t value_size_, const std::map<std::string, std::string>&substitutions)
    {
 	    char value[128];
 	    size_t value_size = 0;

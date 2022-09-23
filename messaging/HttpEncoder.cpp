@@ -164,7 +164,11 @@ Msg* HttpEncoder::encode(std::string* in)
 
     // get data
     Record* rcdBody = new Record();
-    if(rcd->getNamedValue("content-type") == "application/x-www-form-urlencoded")
+    if(
+        (rcd->getNamedValue("content-type") == "application/x-www-form-urlencoded")
+        || (rcd->getNamedValue("Content-Type") == "application/x-www-form-urlencoded")
+        || (rcd->getNamedValue("Content-type") == "application/x-www-form-urlencoded")
+        )
     {
         iDone = 0;
         while((iSep = sBody.find("&",iDone)) != std::string::npos)

@@ -41,14 +41,24 @@ Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
         "}"
         "</style>"
         "</head>"
-        "<div id=\"form\"><body>" 
-         "<form method=\"post\" action=\"/geoloc\" accept-charset=\"utf-8\">"
+        "<body>"
+        
+        "<div id=\"form\">" 
+        "<form method=\"post\" action=\"/geoloc\" accept-charset=\"utf-8\">"
         "<label>Locate :"
-            "<input name=\"name\" >"
+        "<input name=\"name\" >"
         "</label>"
         "<button>Send</button>"
+        "<select id=\"mode\" name=\"mode\" selected=\"test\">"
+        "<option value=\"test\">test</option>"
+        "<option value=\"json\">json</option>"
+        "<option value=\"xml\">xml</option>"
+        "</select>"
         "</form></div>"
+        
+        
         "<div id=\"map\"></div>"
+ 
         "<script type=\"text/javascript\">"
         "var map = L.map('map', {zoomControl: false}).setView([#lat#, #lon#], #zoom#);"
         "L.tileLayer('/{z}/{x}/{y}.svg', {"
