@@ -3,6 +3,7 @@
 #include "../CompiledDataManager.hpp"
 #include "Ping.hpp"
 #include "RelationList.hpp"
+#include "Geolocation.hpp"
 #include "RelationDetail.hpp"
 #include "WayDetail.hpp"
 #include "IdxList.hpp"
@@ -10,6 +11,7 @@
 #include "Svg.hpp"
 #include "Tile.hpp"
 #include "MapDisplay.hpp"
+#include "Geolocation.hpp"
 class ServicesFactory
 {
 private:

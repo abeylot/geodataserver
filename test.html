@@ -17,6 +17,12 @@
     </style>
 </head>
 <body>
+    <form>
+        <label>Locate :
+            <input name="submitted-name" autocomplete="name">
+        </label>
+      <button>Send</button>
+    </form>
     <div id="map"></div>
     <script type="text/javascript">
         var map = L.map('map', {zoomControl: false}).setView([47.218371, -1.553621], 12);

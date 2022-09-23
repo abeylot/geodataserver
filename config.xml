@@ -981,5 +981,23 @@
       </condition>
       </restriction>
    </index>
+   <geoloc>
+	   <charconv from="à" to="a"/>
+	   <charconv from="â" to="a"/>
+	   <charconv from="Â" to="a"/>
+	   <charconv from="é" to="e"/>
+	   <charconv from="è" to="e"/>
+	   <charconv from="ê" to="e"/>
+	   <charconv from="ë" to="e"/>
+	   <charconv from="È" to="e"/>
+	   <charconv from="È" to="e"/>
+       <charconv from="Ê" to="e"/>
+	   <charconv from="î" to="i"/>
+	   <charconv from="ï" to="i"/>
+	   <charconv from="ô" to="o"/>
+	   <charconv from="œ" to="oe"/>
+	   <charconv from="û" to="u"/>
+	   <charconv from="ç" to="c"/>
+   </geoloc>
 
 </config>

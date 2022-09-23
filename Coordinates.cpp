@@ -43,6 +43,11 @@ uint32_t Coordinates::toNormalizedLon(const std::string& coord)
     return normalized;
 }
 
+double Coordinates::fromNormalizedLon(uint32_t coord)
+{
+    float res = ((float) coord * 360.0 /(float) 0b10000000000000000000000000000000) - 180.0;
+    return res;
+}
 
 uint32_t Coordinates::toNormalizedLat(const std::string& coord)
 {
@@ -78,7 +83,24 @@ uint32_t Coordinates::toNormalizedLat(const std::string& coord)
     return normalized;
 }
 
-
+double Coordinates::fromNormalizedLat(uint32_t coord)
+{
+   double dist;
+   double res;
+   int signe;
+   if(coord < 0b1000000000000000000000000000000)
+   {
+       signe = 1;
+       dist =( 0b1000000000000000000000000000000 - coord) *(2.5 * M_PI) / (double)0b1000000000000000000000000000000;
+   }
+   else
+   {
+       signe = -1;
+       dist =( coord - 0b1000000000000000000000000000000) *(2.5 * M_PI) / (double)0b1000000000000000000000000000000 ;
+   }
+   res = signe * (atan(exp(dist))*2 - M_PI/2.0) * 180.0 / M_PI;
+   return res;
+}
 
 std::string Coordinates::toHex(const uint32_t number)
 {
@@ -88,6 +110,8 @@ std::string Coordinates::toHex(const uint32_t number)
         rc[i] = digits[(number>>j) & 0x0f];
     return rc;
 }
+
+
 
 uint32_t Coordinates::fromHex(const std::string& s)
 {

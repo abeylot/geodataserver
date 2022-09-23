@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <map>
 
 struct GeoFile
 {
@@ -202,6 +203,76 @@ struct GeoFile
 // i.e. entier, double, char ou structure et tableaux de ces types.
 namespace fidx
 {
+
+   /*const std::map<std::string,std::string> substitutions = 
+   {
+	   {"à", "a"},
+	   {"â", "a"},
+	   {"Â", "a"},
+	   {"é", "e"},
+	   {"è", "e"},
+	   {"ê", "e"},
+	   {"ë", "e"},
+	   {"È", "e"},
+	   {"È", "e"},
+       {"Ê", "e"},
+	   {"î", "i"},
+	   {"ï", "i"},
+	   {"ô", "o"},
+	   {"œ", "oe"},
+	   {"û", "u"},
+	   {"ç", "c"}	   
+   };*/
+
+   inline uint64_t makeLexicalKey(const char* value_, size_t value_size_, const std::map<std::string, std::string>&substitutions)
+   {
+	    char value[128];
+	    size_t value_size = 0;
+	    for(unsigned int i = 0; i < 128 && i < value_size_;)
+	    {
+		    size_t utf_8_len = 1;
+		    if((value_[i] & 0b11110000) ==  0b11110000) 	utf_8_len = 4;
+		    else if ((value_[i] & 0b11110000) ==  0b11100000) utf_8_len = 3; 
+		    else if ((value_[i] & 0b11110000) ==  0b11000000) utf_8_len = 2;
+		    std::string in = "";
+		    for(unsigned int j = i; (j < (utf_8_len + i)) && j < value_size_ ; j++)
+		    {
+		       in += value_[j];
+		    }
+		    auto it = substitutions.find(in);
+		    std::string out = in;
+		    i += in.length();
+		    if(it != substitutions.end())
+		    {
+				 out = it->second;
+			}
+			for(size_t k = 0; k < out.length();k++)	value[value_size++] = tolower(out[k]);
+		} 
+		uint64_t key = 0;
+		/*if(value_size > 0) { key += tolower(value[0]);}
+		key <<= 3;
+		if(value_size > 1) { key += tolower(value[1]);}
+		key <<= 3;
+		if(value_size > 2) { key += tolower(value[2]);}
+		key <<= 3;
+		if(value_size > 3) { key += tolower(value[3]);}
+		key <<= 3;
+		if(value_size > 4) { key += tolower(value[4]);}
+		key <<= 3;
+		if(value_size > 5) { key += tolower(value[5]);}
+		key <<= 3;
+		if(value_size > 6) { key += tolower(value[6]);}
+		key <<= 3;
+		if(value_size > 7) { key += tolower(value[7]);}*/
+		char* key_c = (char*) &key; 
+		for(unsigned int i = 0; i < value_size; i++)
+		{
+			key_c[i%8] = key_c[i%8] ^ value[i]; 
+		}
+		return key;
+   }
+
+	
  /**
   * @brief Record for index file.
   * 
@@ -419,18 +490,18 @@ public:
             std::cout << "dividing items \n";
             while(autresBufferCount > 0)
             {
-                int comp = fileIndexComp<ITEM,KEY>(&autres[autresBufferCount -1], &pivot);
+                autresBufferCount --;
+                int comp = fileIndexComp<ITEM,KEY>(&autres[autresBufferCount], &pivot);
                 if(comp > 0)
                 {
-                    plusGrands[plusGrandsBufferCount] = autres[autresBufferCount - 1];
-                    plusGrandsBufferCount++;
+                    plusGrands[plusGrandsBufferCount ++] = autres[autresBufferCount];
+                    //plusGrandsBufferCount++;
                 }
                 else
                 {
-                    plusPetits[plusPetitsBufferCount] = autres[autresBufferCount - 1];
-                    plusPetitsBufferCount++;
+                    plusPetits[plusPetitsBufferCount ++] = autres[autresBufferCount];
+                    //plusPetitsBufferCount++;
                 }
-                autresBufferCount --;
             }
             std::cout << "divided items \n";
 

@@ -149,17 +149,28 @@ public :
     fidx::FileRawIndex<GeoWayIndex>   *wayIndex;
     fidx::FileRawIndex<GeoPointIndex> *nodeIndex;
 
+
+    fidx::FileIndex<IndexEntry,uint64_t> *textIndexNode;
+    fidx::FileIndex<IndexEntry,uint64_t> *textIndexWay;
+    fidx::FileIndex<IndexEntry,uint64_t> *textIndexRelation;
+
+    fidx::FileIndex<IndexRange,uint64_t> *textIndexNodeRange;
+    fidx::FileIndex<IndexRange,uint64_t> *textIndexWayRange;
+    fidx::FileIndex<IndexRange,uint64_t> *textIndexRelationRange;
+
     std::vector<IndexDesc*>* indexes;
     std::map<std::string, std::string>* symbols;
+    std::map<std::string, std::string>* charconvs;
     //std::map<std::string, std::string>* patterns;
     
     std::string path;
 
-    CompiledDataManager(std::string name,std::vector<IndexDesc*>* conf, std::map<std::string, std::string>* symbs = NULL)
+    CompiledDataManager(std::string name,std::vector<IndexDesc*>* conf, std::map<std::string, std::string>* symbs = NULL, std::map<std::string, std::string>* convs = NULL)
     {
         path=name;
         indexes = conf;
         symbols = symbs;
+        charconvs = convs;
         //patterns = patts;
         nodeIndex = new fidx::FileRawIndex<GeoPointIndex>((name + "/nodeIndex").c_str(),false);
         wayIndex = new fidx::FileRawIndex<GeoWayIndex>((name + "/wayIndex").c_str(),false);
@@ -168,6 +179,17 @@ public :
         wayPoints = new fidx::FileRawData<GeoPoint>((name + "/wayPoints").c_str(),false);
         relMembers= new fidx::FileRawData<GeoMember>((name + "/relMembers").c_str(),false);
         baliseTags = new fidx::FileRawVarData<GeoString>((name + "/baliseTags").c_str(),false);
+
+       
+
+        textIndexNode =     new fidx::FileIndex<IndexEntry,uint64_t> ((name + "/textIndexNode"    ).c_str(), false);
+        textIndexWay =      new fidx::FileIndex<IndexEntry,uint64_t> ((name + "/textIndexWay"     ).c_str(), false);
+        textIndexRelation = new fidx::FileIndex<IndexEntry,uint64_t> ((name + "/textIndexRelation").c_str(), false);
+
+        textIndexNodeRange =     new fidx::FileIndex<IndexRange,uint64_t> ((name + "/textIndexNodeRange"    ).c_str(), false);
+        textIndexWayRange =      new fidx::FileIndex<IndexRange,uint64_t> ((name + "/textIndexWayRange"     ).c_str(), false);
+        textIndexRelationRange = new fidx::FileIndex<IndexRange,uint64_t> ((name + "/textIndexRelationRange").c_str(), false);
+
 
     }
     virtual ~CompiledDataManager()
@@ -178,6 +200,12 @@ public :
         delete wayPoints;
         delete relMembers;
         delete baliseTags;
+        delete textIndexNode;
+        delete textIndexWay;
+        delete textIndexRelation;
+        delete textIndexNodeRange;
+        delete textIndexWayRange;
+        delete textIndexRelationRange;
     }
 
     Way* loadWay(uint64_t id, bool fast = false);

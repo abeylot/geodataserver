@@ -147,16 +147,22 @@ template<typename MSG> struct Exec
     HttpEncoder encoder;
     std::vector<IndexDesc*>* idxList;
     std::map<std::string, std::string>* symbols;
+    std::map<std::string, std::string>* charconvs;
     //std::map<std::string, std::string>* patterns;
-    Exec(boost::lockfree::queue<MSG*>* inqueue,boost::lockfree::queue<MSG*>* outqueue, std::string file,uint microSleep,std::vector<IndexDesc*>* idxL, std::map<std::string, std::string>* symbs, std::map<std::string, std::string>* patts ) : inqueue(inqueue), outqueue(outqueue), file(file), microSleep(microSleep)
+    Exec(boost::lockfree::queue<MSG*>* inqueue,boost::lockfree::queue<MSG*>* outqueue,
+         std::string file,
+         uint microSleep,std::vector<IndexDesc*>* idxL,
+         std::map<std::string, std::string>* symbs,
+         std::map<std::string, std::string>* convs ) : inqueue(inqueue), outqueue(outqueue), file(file), microSleep(microSleep)
     {
         idxList = idxL;
         symbols = symbs;
+        charconvs = convs;
         //patterns = patts;
     }
     int operator()()
     {
-        CompiledDataManager mger(file, idxList, symbols);
+        CompiledDataManager mger(file, idxList, symbols, charconvs);
         MSG* m;
         while(!boost::this_thread::interruption_requested())
         {

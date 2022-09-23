@@ -80,6 +80,12 @@ struct IndexEntry
 	Rectangle r;
 };
 
+struct IndexRange
+{
+	uint64_t first;
+	uint64_t last;
+};
+
 struct IndexDesc
 {
     std::string type;
@@ -142,6 +148,7 @@ struct XmlVisitor
     std::map<std::string, std::string> symbols;
     //std::map<std::string, std::string> patterns;
     std::map<std::string, std::string> shortcuts;
+    std::map<std::string, std::string> charconvs;
     int clRank;
     bool closed,opened,ccre,symbol,pattern;
     std::string root;
@@ -320,6 +327,13 @@ struct XmlVisitor
         {
             idxList->back()->mask = idxMask;
         }
+        else if(b->baliseName == "charconv")
+        {
+			if(!b->keyValues["from"].empty())
+			{
+			    charconvs[b->keyValues["from"]] = b->keyValues["to"];
+			}
+		}
     }
 
     void stringNode(std::vector<SeqBalise*>& tagStack, std::string& s)

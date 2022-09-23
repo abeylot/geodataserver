@@ -16,6 +16,7 @@ helpers/hash.hpp \
 GeoBox.hpp
 
 headersServer = services/Ping.hpp \
+services/Geolocation.hpp \
 services/RelationList.hpp \
 services/RelationDetail.hpp \
 services/WayDetail.hpp \
@@ -40,6 +41,7 @@ Rectangle.o \
 CompiledDataManager.o
 
 objectsServer = Ping.o \
+Geolocation.o \
 RelationList.o \
 RelationDetail.o \
 WayDetail.o \
@@ -55,7 +57,7 @@ Msg.o \
 TcpListener.o \
 TcpConnection.o \
 MapDisplay.o \
-StringBuffer.o \
+StringBuffer.o 
 
 libs=-lpthread  -lboost_system -lboost_thread -lz -latomic -lstdc++fs
 
@@ -95,6 +97,9 @@ GeoBox.o: GeoBox.hpp GeoBox.cpp
 	
 Ping.o: services/Ping.cpp services/Ping.hpp $(headersCommon) $(headersServer)
 	$(cc) -c services/Ping.cpp -o Ping.o
+
+Geolocation.o: services/Geolocation.cpp services/Geolocation.hpp $(headersCommon) $(headersServer)
+	$(cc) -c services/Geolocation.cpp -o Geolocation.o
 
 IdxList.o: services/IdxList.cpp services/IdxList.hpp $(headersCommon) $(headersServer)
 	$(cc) -c services/IdxList.cpp -o IdxList.o
