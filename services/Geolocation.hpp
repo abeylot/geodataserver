@@ -29,7 +29,7 @@ class Geolocation : public ServiceInterface
 {
 private:
     HttpEncoder encoder;
-    std::list<weightedArea> findExpression(std::string expr, CompiledDataManager& mger);
+    std::list<weightedArea> findExpression(std::string expr, CompiledDataManager& mger, int stree_number);
 public:
     Msg* processRequest(Msg* request, CompiledDataManager& mger);
 };
