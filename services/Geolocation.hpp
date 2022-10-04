@@ -20,6 +20,7 @@ struct weightedArea
 	Rectangle r;
 	int64_t score;
 	std::string found;
+	GeoPoint pin;
 	//std::list<uint64_t> words;
 };
 

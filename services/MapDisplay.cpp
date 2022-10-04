@@ -11,8 +11,8 @@ MapDisplay::~MapDisplay()
 Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
 {
 	bool pin = false;
-    std::string latitude = "0.000000";
-    std::string longitude = "0.000000";
+    std::string longitude = "-1.554136";
+    std::string latitude = "47.218637";
     std::string zoom = "12";
     
     std::string resp =
