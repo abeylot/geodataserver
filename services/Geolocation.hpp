@@ -20,6 +20,7 @@ struct weightedArea
 	Rectangle r;
 	int64_t score;
 	std::string found;
+	GeoPoint pin;
 	//std::list<uint64_t> words;
 };
 
@@ -29,7 +30,7 @@ class Geolocation : public ServiceInterface
 {
 private:
     HttpEncoder encoder;
-    std::list<weightedArea> findExpression(std::string expr, CompiledDataManager& mger);
+    std::list<weightedArea> findExpression(std::string expr, CompiledDataManager& mger, int stree_number);
 public:
     Msg* processRequest(Msg* request, CompiledDataManager& mger);
 };
