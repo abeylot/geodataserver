@@ -239,14 +239,14 @@ int main(int argc, char *argv[])
 
     std::vector<IndexDesc*>* indexes = new std::vector<IndexDesc*>[params.getNumParam("ExecThreads", 5)];
     std::map<std::string, std::string>* symbols = new std::map<std::string, std::string>[params.getNumParam("ExecThreads", 5)];
-    std::map<std::string, std::string>* patterns = new std::map<std::string, std::string>[params.getNumParam("ExecThreads", 5)];
+    std::map<std::string, std::string>* charconvs = new std::map<std::string, std::string>[params.getNumParam("ExecThreads", 5)];
     for(int i = 0; i < params.getNumParam("ExecThreads", 5); i++)
     {
         XmlVisitor v(indexes[i], false, std::string(argv[1]));
         config = fopen((std::string(argv[1]) + "/config.xml").c_str(),"r");
         XmlFileParser<XmlVisitor>::parseXmlFile(config,v);
         symbols[i] = v.symbols;
-//        patterns[i] = v.patterns;
+        charconvs[i] = v.charconvs;
         fclose(config);
     }
 
@@ -263,7 +263,7 @@ int main(int argc, char *argv[])
     std::cout << "launching " << params.getNumParam("ExecThreads", 5) << " Exec threads \n";
     for(int i=0; i < params.getNumParam("ExecThreads", 5); i++)
     {
-        Exec<Msg> exec(&myInQueue, &myOutQueue, argv[1], microSleep, /*&index*/ &(indexes[i]), &(symbols[i]), &(patterns[i]));
+        Exec<Msg> exec(&myInQueue, &myOutQueue, argv[1], microSleep, /*&index*/ &(indexes[i]), &(symbols[i]), &(charconvs[i]));
         microSleep *= 2;
         g.create_thread(exec);
     }

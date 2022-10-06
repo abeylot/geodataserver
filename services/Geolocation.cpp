@@ -259,7 +259,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 			rstop  = eR.value.last;
 		}
 		
-		//std::cout << ((nstop - nstart) + (wstop - wstart) + (rstop -rstart)) << "\n";
+		std::cout << ((nstop - nstart) + (wstop - wstart) + (rstop -rstart)) << "\n";
 		
 		if((foundN || foundW || foundR) &&
 		((nstop - nstart) + (wstop - wstart) + (rstop -rstart)) < 100000
