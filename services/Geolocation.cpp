@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 const uint64_t UNDEFINED_ID = 0xFFFFFFFFFFFFFFFF;
+const int64_t  WORST_SCORE  = -999999999;
 
 bool weightedAreaCompare (const weightedArea& first, const weightedArea& second)
 {
@@ -318,7 +319,8 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                         uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
 		                nameWordVector.push_back(k);
                     }
-			        area.score = calcMatchScore(queryWordsVector, nameWordVector);
+			        if(area.r.isValid()) area.score = calcMatchScore(queryWordsVector, nameWordVector);
+			        else area.score = WORST_SCORE;
 			        std::string sPlace = item->tags["admin_level"];
 			        if(!sPlace.empty())
 			        {
@@ -361,7 +363,8 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                         uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
 		                nameWordVector.push_back(k);
                     }
-			        area.score = calcMatchScore(queryWordsVector, nameWordVector) + 2;
+			        if(area.r.isValid()) area.score = calcMatchScore(queryWordsVector, nameWordVector);
+			        else area.score = WORST_SCORE;
 			        std::string sType = item->tags["type"];
 			        if(street_number && sType == "street")
 			        {
@@ -514,7 +517,8 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                         uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
 		                nameWordVector.push_back(k);
                     }
-			        area.score = calcMatchScore(queryWordsVector, nameWordVector) + 1;
+			        if(area.r.isValid()) area.score = calcMatchScore(queryWordsVector, nameWordVector);
+			        else area.score = WORST_SCORE;
 			        std::string sPlace = item->tags["admin_level"];
 			        if(!sPlace.empty())
 			        {
@@ -531,11 +535,20 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 		}
 		if(best_areas.size() == 0)
 		{
-		    int64_t best_score = -999999999;
+		    int64_t best_score = WORST_SCORE;
+		    int64_t best_score2 = WORST_SCORE;
+		    int64_t best_score3 = WORST_SCORE;
 		    for(auto a : areas) {if (a.score > best_score) best_score = a.score;} 
+		    for(auto a : areas) {if (a.score > best_score2 && a.score != best_score) best_score2 = a.score;} 
+		    for(auto a : areas) {if (a.score > best_score3 && a.score != best_score2 && a.score != best_score) best_score3 = a.score;} 
+
 		    for(auto a : areas)
 		    {
-		        if (a.score == best_score) best_areas.push_back(a);
+		        if (
+		        (a.score == best_score)
+		        ||(a.score == best_score2)
+		        ||(a.score == best_score3)
+		        ) best_areas.push_back(a);
 			}
 			break;
 		}
@@ -656,32 +669,34 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 		      
 	}
 
-    uint64_t best_size = 0;
-    int64_t best_score = 0;
+    /*uint64_t best_size = -1;
+    int64_t best_score = -999999999;
     weightedArea result;
     for (auto a: best_areas)
     {
-		if(a.score > best_score) best_score = a.score;
+		if(a.r.isValid() && (a.score > best_score)) best_score = a.score;
 	}
-	//std::cout << "best score : "<< best_score << "\n";
+	std::cout << "best score : "<< best_score << "\n";
     for (auto a: best_areas)
     {
 		if(a.score == best_score)
-		if(((a.r.x1 - a.r.x0)*(a.r.y1 - a.r.y0)) >= best_size)
+		if(a.r.isValid() && (((a.r.x1 - a.r.x0)*(a.r.y1 - a.r.y0)) >= best_size))
 		{
 			result = a;
 			best_size = (a.r.x1 - a.r.x0)*(a.r.y1 - a.r.y0);
 		} 
-	}
+	}*/
 	
+	  weightedArea result;
 	  best_areas.sort(weightedAreaCompare);
+	  if(best_areas.size()) result = *(best_areas.begin()); 
 
 //    for (auto a: best_areas)
 //    {
 		Rectangle r = result.r;
 		int zlevel = 32;
 		//best_size *= 1.5;
-		best_size = (r.x1 - r.x0);
+		uint64_t best_size = (r.x1 - r.x0);
 		if ((r.y1 - r.y0) > (r.x1 - r.x0)) best_size =(r.y1 - r.y0);
 		while(best_size)
 		{
