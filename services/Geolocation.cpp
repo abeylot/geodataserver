@@ -200,7 +200,7 @@ inline bool operator < (textSearchIds const& a, textSearchIds const& b)
 
 
 
-std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDataManager& mger, int street_number)
+std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDataManager& mger)
 {
 	std::cout << "Search : [" << expr << "]\n";
     std::stringstream my_stream(expr);
@@ -214,14 +214,9 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
     {
 		if(!word.empty())
 		{
-	        //std::cout << "word : [" << word << "]\n";
-    		//else {
-			    uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
-			    words.push_back(k);
-			    queryWordsVector.push_back(k);
-			//}
-            //find number if exist
-            //std::cout << "number " << street_number << "\n";
+		    uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
+		    words.push_back(k);
+		    queryWordsVector.push_back(k);
  		}
     }
     
@@ -287,7 +282,6 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
     
     for(auto searchIds : foundWords)
     {
-		//std::cout << ((searchIds.node_stop_id - searchIds.node_start_id) + (searchIds.way_stop_id - searchIds.way_start_id) + (searchIds.relation_stop_id - searchIds.relation_start_id)) << "xxx\n";
 		areas.clear();
 		{
 		    if (searchIds.node_start_id != UNDEFINED_ID)
@@ -328,7 +322,6 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 						int level = 10 - atoi(sPlace.c_str());
 						if(level) area.score *= (1.0 + 0.1 / level);
 					}
-			        //std::cout << my_string << " " << area.score << "\n";
 			        area.found = "Node_"+std::to_string(record.value.id)+":"+my_string;
 			        areas.push_back(area);
 			        delete item;		    
@@ -345,7 +338,6 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 			        mger.textIndexRelation->get(i, &record);
 			        Relation* item;
                     item = mger.loadRelationFast(record.value.id);		    
-                    //mger.load(item, record.value.id, true);
 			        area.r =  record.value.r;
 			        std::string my_string = item->tags["name"];
                     std::replace( my_string.begin(), my_string.end(), '-', ' ');
@@ -363,84 +355,16 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                         uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
 		                nameWordVector.push_back(k);
                     }
+
 			        if(area.r.isValid()) area.score = calcMatchScore(queryWordsVector, nameWordVector) + 1;
 			        else area.score = WORST_SCORE;
-			        std::string sType = item->tags["type"];
-			        if(street_number && sType == "street")
-			        {
-						//need to reload with full datas in this case
-						//delete item;
-                        //mger.load(item, record.value.id, true);
-                        for(auto p : item->points)
-                        {
-							std::string sNr = p->tags["addr:housenumber"];
-							if(atoi(sNr.c_str()) == street_number)
-							{
-								area.r.x0 = p->x;
-								area.r.x1 = p->x;
-								area.r.y0 = p->y;
-								area.r.y1 = p->y;
-							}
-						}		    
-                        for(auto w : item->ways)
-                        {
-							std::string sNr = w->tags["addr:housenumber"];
-							if(atoi(sNr.c_str()) == street_number)
-							{
-								area.r = w->rect;
 
-                            }
-						}		    
-                        for(auto r : item->relations)
-                        {
-							std::string sNr = r->tags["addr:housenumber"];
-							if(atoi(sNr.c_str()) == street_number)
-							{
-								area.r = r->rect;
-                            }
-						}		    
-				    }
-				    else if (street_number && sType == "associatedStreet")
-				    {
-						//need to reload with full datas in this case
-						//delete item;
-                        //mger.load(item, record.value.id, true);
-                        for(auto p : item->points)
-                        {
-							std::string sNr = p->tags["addr:housenumber"];
-							if(atoi(sNr.c_str()) == street_number)
-							{
-								area.r.x0 = p->x;
-								area.r.x1 = p->x;
-								area.r.y0 = p->y;
-								area.r.y1 = p->y;
-							}
-						}		    
-                        for(auto w : item->ways)
-                        {
-							std::string sNr = w->tags["addr:housenumber"];
-							if(atoi(sNr.c_str()) == street_number)
-							{
-								area.r = w->rect;
-
-                            }
-						}		    
-                        for(auto r : item->relations)
-                        {
-							std::string sNr = r->tags["addr:housenumber"];
-							if(atoi(sNr.c_str()) == street_number)
-							{
-								area.r = r->rect;
-                            }
-						}		    
-					} 	
 			        std::string sPlace = item->tags["admin_level"];
 			        if(!sPlace.empty())
 			        {
 						int level = 10 - atoi(sPlace.c_str());
 						if(level) area.score *= (1.0 + 0.1 / level);
 					}
-			        //std::cout << my_string << " " << area.score << "\n";
 			        area.found = "Relation_"+std::to_string(record.value.id)+":"+my_string;
 			        area.relations.push_back(record.value.id);
 			        	        
@@ -484,13 +408,11 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 						int level = 10 - atoi(sPlace.c_str());
 						if(level) area.score *= (1.0 + 0.1 / level);
 					}
-			        //std::cout << my_string << " " << area.score << "\n";
 			        area.found = "Way_"+std::to_string(record.value.id)+":"+my_string;
 			        areas.push_back(area);
 			        delete item;		    
 			    }
 		    }
-		    // keep only best score(s)
 		}
 		if(best_areas.size() == 0)
 		{
@@ -511,29 +433,133 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 			}
 			break;
 		}
-		/*else
-		{
-			for(auto b: best_areas)
-			{
-				auto it = std::find(b.words.begin(), b.words.end(), searchIds.word);
-				if(it ==  b.words.end())
-				{
-				    for(auto a:areas)
-				    {
-						if ((b.r * a.r).isValid())
-						{
-							b.r = b.r + a.r;
-							b.score += a.score;
-							for(auto w : a.words) b.words.push_back(w);
-						}
-				    }
-				}
-			}
-		}*/
 		
 	}
-	//std::cout << best_areas.size() << " results\n";
     return best_areas;
+}
+
+
+void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
+{
+    for( auto relid : a.relations)
+	{
+	    Relation* item;
+        mger.load(item, relid, true);
+        GeoPoint pin;
+
+        std::string sType = item->tags["type"];
+        if(street_number && sType == "street")
+        {
+            for(auto p : item->points)
+            {
+	    		std::string sNr = p->tags["addr:housenumber"];
+				if(atoi(sNr.c_str()) == street_number)
+				{
+					a.r.x0 = p->x;
+					a.r.x1 = p->x;
+					a.r.y0 = p->y;
+					a.r.y1 = p->y;
+				}
+		    }		    
+            for(auto w : item->ways)
+            {
+			    std::string sNr = w->tags["addr:housenumber"];
+				if(atoi(sNr.c_str()) == street_number)
+				{
+				    a.r = w->rect;
+                }
+    		}		    
+            for(auto r : item->relations)
+            {
+	    		std::string sNr = r->tags["addr:housenumber"];
+				if(atoi(sNr.c_str()) == street_number)
+				{
+					a.r = r->rect;
+                }
+			}		    
+		}
+		else if (street_number && sType == "associatedStreet")
+		{
+            for(auto p : item->points)
+            {
+			    std::string sNr = p->tags["addr:housenumber"];
+				if(atoi(sNr.c_str()) == street_number)
+				{
+				    a.r.x0 = p->x;
+					a.r.x1 = p->x;
+					a.r.y0 = p->y;
+					a.r.y1 = p->y;
+				}
+			}		    
+            for(auto w : item->ways)
+            {
+		    	std::string sNr = w->tags["addr:housenumber"];
+				if(atoi(sNr.c_str()) == street_number)
+				{
+			    	a.r = w->rect;
+
+                }
+		    }		    
+            for(auto r : item->relations)
+            {
+			    std::string sNr = r->tags["addr:housenumber"];
+				if(atoi(sNr.c_str()) == street_number)
+				{
+				    a.r = r->rect;
+                }
+			}		    
+		} 	
+		if(item->isClosed)
+		{
+		    // search in relation point to set pin
+			for(auto p : item->points)
+			{
+			    if ((p->tags["place"] != "")
+				    && (p->tags["name"] == item->tags["name"])) 
+				    {
+					if(
+					  (p->x >= a.r.x0) &&
+					  (p->x <= a.r.x1) &&
+					  (p->y >= a.r.y0) &&
+					  (p->y <= a.r.y1)
+					  )
+					{ 
+					    pin.x = p->x;
+						pin.y = p->y;
+						break;
+					}
+			    }
+		    }
+		}
+		else if (item->shape.lines.size() == 1)
+		{
+		    Line* l =  item->shape.lines[0];
+ 			// set pin to middle of shape points
+			if(
+			  (l->points[l->pointsCount/2].x >= a.r.x0) &&
+			  (l->points[l->pointsCount/2].x <= a.r.x1) &&
+			  (l->points[l->pointsCount/2].y >= a.r.y0) &&
+			  (l->points[l->pointsCount/2].y <= a.r.y1)
+			  )
+			{ 
+			    pin.x = l->points[l->pointsCount/2].x;
+			    pin.y =  l->points[l->pointsCount/2].y;
+			}
+		}
+		else
+		{
+			pin = {0,0};
+		}
+		if((pin.x)
+		   && (pin.x >= a.r.x0)
+		   && (pin.x <= a.r.x1)
+		   && (pin.y >= a.r.y0)
+		   && (pin.y <= a.r.y1))
+	    {
+		    a.pin = pin;
+		}
+
+	}
 }
 
 
@@ -541,7 +567,6 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 {
     std::string name = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("name"));
     std::string mode = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("mode"));
-    //std::cout << "search expr::" << name << "\n";
     std::string word;
     
     std::stringstream my_stream(name);
@@ -558,25 +583,21 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
     while(std::getline(my_stream,word,','))
     {
         bool is_number = (!word.empty());
-	    //for( unsigned int k = 0; k < word.length(); k++)
-	    //{
-		    if(!(word[0] >= '0' && word[0] <='9')){
-		    	is_number = false;
-	     		//break;
-			}
-    	//}
+	    if(!(word[0] >= '0' && word[0] <='9')){
+	    	is_number = false;
+		}
    		if(is_number){
 			 street_number = atoi(word.c_str());
 			 continue;
-		 }
+		}
 
 		if(best_areas.size() == 0)
 		{
-			best_areas = findExpression(word, mger, street_number);
+			best_areas = findExpression(word, mger);
 		}
 		else
 		{
-			areas = findExpression(word, mger, street_number);
+			areas = findExpression(word, mger);
 			new_areas.clear();
 			if(areas.size())
 			{
@@ -586,7 +607,6 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 				    {
 					    if ((b.r * a.r).isValid())
 					    {
-						    //std::cout << "match !!" << "\n";
 						    weightedArea c;
 						    c.r = b.r * a.r;
 						    c.score = a.score + b.score;
@@ -595,12 +615,6 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 						    for(auto r : a.relations) c.relations.push_back(r);
 						    for(auto r : b.relations) c.relations.push_back(r);
 						    new_areas.push_back(c);
-					    } else {
-						    /*std::cout << "no match !!" << "\n";						
-						    std::cout << a.r.x0 <<","<<  a.r.y0<<","<< a.r.x1<<","<< a.r.y1 << " * ";						
-						    std::cout << b.r.x0 <<","<< b.r.y0<<","<< b.r.x1<<","<< b.r.y1 << " = ";
-						    Rectangle c = a.r * b.r;						
-						    std::cout << c.x0<<","<< c.y0<<","<< c.x1<<","<< c.y1 << "\n";*/
 					    }
 				    }
 			    }
@@ -610,96 +624,16 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 		      
 	}
 
-    /*uint64_t best_size = -1;
-    int64_t best_score = -999999999;
-    weightedArea result;
-    for (auto a: best_areas)
-    {
-		if(a.r.isValid() && (a.score > best_score)) best_score = a.score;
-	}
-	std::cout << "best score : "<< best_score << "\n";
-    for (auto a: best_areas)
-    {
-		if(a.score == best_score)
-		if(a.r.isValid() && (((a.r.x1 - a.r.x0)*(a.r.y1 - a.r.y0)) >= best_size))
-		{
-			result = a;
-			best_size = (a.r.x1 - a.r.x0)*(a.r.y1 - a.r.y0);
-		} 
-	}*/
 	
 	  weightedArea result;
 	  best_areas.sort(weightedAreaCompare);
 	  
-	  int count = 0;
-	  for (auto a: best_areas)
-	  {
-		  //a.pin = {0,0};
-		  if(count > MAX_RESULTS) break;
-		  else
-		  {
-			  for( auto relid : a.relations)
-			  {
-			        Relation* item;
-                    mger.load(item, relid, true);
-                    GeoPoint pin;
-			        if(item->isClosed)
-			        {
-						// search in relation point to set pin
-						for(auto p : item->points)
-						{
-							if ((p->tags["place"] != "")
-							    && (p->tags["name"] == item->tags["name"])) 
-							{
-								if(
-								  (p->x >= a.r.x0) &&
-								  (p->x <= a.r.x1) &&
-								  (p->y >= a.r.y0) &&
-								  (p->y <= a.r.y1)
-								  )
-								{ 
-								    pin.x = p->x;
-								    pin.y = p->y;
-								    break;
-								}
-							}
-						}
-					}
-					else if (item->shape.lines.size() == 1)
-					{
-					    Line* l =  item->shape.lines[0];
- 					    // set pin to middle of shape points
-						if(
-						  (l->points[l->pointsCount/2].x >= a.r.x0) &&
-						  (l->points[l->pointsCount/2].x <= a.r.x1) &&
-						  (l->points[l->pointsCount/2].y >= a.r.y0) &&
-						  (l->points[l->pointsCount/2].y <= a.r.y1)
-						  )
-						{ 
-					        pin.x = l->points[l->pointsCount/2].x;
-					        pin.y =  l->points[l->pointsCount/2].y;
-						}
-					}
-					else
-					{
-						pin = {0,0};
-					}
-					if((pin.x)
-					   && (pin.x >= a.r.x0)
-					   && (pin.x <= a.r.x1)
-					   && (pin.y >= a.r.y0)
-					   && (pin.y <= a.r.y1))
-				    {
-					    a.pin = pin;
-				    }
-			  }
-		  }
-	  }
 	  
 	  if(best_areas.size()) result = *(best_areas.begin()); 
 
 //    for (auto a: best_areas)
 //    {
+		fillPin(mger, result, street_number); 
 		Rectangle r = result.r;
 		int zlevel = 32;
 		//best_size *= 1.5;
@@ -719,9 +653,10 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
             std::string resp = "<root>\n";
             int i = 0;
             for(auto a : best_areas)
-            {
+            {	
 				if(i > MAX_RESULTS) break;
 				if(! a.r.isValid()) continue;
+				fillPin(mger, a, street_number); 
 				std::string sPin = "";
 				if(a.pin.x) sPin = 
                     "pin_lon=\""+std::to_string(Coordinates::fromNormalizedLon(a.pin.x))+"\" "
@@ -736,20 +671,6 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
                     "score=\""+std::to_string(a.score)+"\" />\n";
                 i++;
 			}
-		    /*resp += "<score value=\"" + std::to_string(result.score) + "\"/>"; 
-            resp += "<url u=\"http://127.0.0.1:8081/svgMap.svg?longitude1=" + std::to_string(r.x0) + "&amp;lattitude1=" + std::to_string(r.y0) + "&amp;longitude2=" + std::to_string(r.x1) + "&amp;lattitude2=" + std::to_string(r.y1) + "\" />";
-            resp += "<url u=\"http://127.0.0.1:8081/MapDisplay?longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&amp;lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&amp;zoom="+std::to_string(zlevel)+"\"/>";
-            resp += "<rectangle xo=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x0))
-                 + "\" y0=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y0))
-                 + "\" x1=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x1))
-                 + "\" y1=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y1))
-            	              + "\" />";
-           resp += "<rectangle xo=\"" + std::to_string(Coordinates::toNormalizedLon(std::to_string(Coordinates::fromNormalizedLon(r.x0))))
-            	              + "\" y0=\"" + std::to_string(Coordinates::toNormalizedLat(std::to_string(Coordinates::fromNormalizedLat(r.y0))))
-            	              + "\" x1=\"" + std::to_string(Coordinates::toNormalizedLon(std::to_string(Coordinates::fromNormalizedLon(r.x1))))
-            	              + "\" y1=\"" + std::to_string(Coordinates::toNormalizedLat(std::to_string(Coordinates::fromNormalizedLat(r.y1))))
-            	              + "\" />";*/
-            	                 
            resp += "</root>\n";
            Msg* rep = new Msg;
            encoder.build200Header(rep, "application/xml");
@@ -762,6 +683,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
             {
 				if(i > MAX_RESULTS) break;
 				if(! a.r.isValid()) continue;
+				fillPin(mger, a, street_number); 
 				if(i) resp += ", ";
 				std::string sPin = "";
 				if(a.pin.x) sPin = 
