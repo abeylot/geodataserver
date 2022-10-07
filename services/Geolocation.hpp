@@ -4,6 +4,7 @@
 #include "../messaging/Msg.hpp"
 #include "ServiceInterface.hpp"
 #include <list>
+#include <vector>
 //#include "ServicesFactory.hpp"
 
 struct SearchContext
@@ -20,6 +21,7 @@ struct weightedArea
 	Rectangle r;
 	int64_t score;
 	std::string found;
+	std::vector<uint64_t> relations;
 	GeoPoint pin;
 	//std::list<uint64_t> words;
 };

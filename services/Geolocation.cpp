@@ -6,6 +6,7 @@
 
 const uint64_t UNDEFINED_ID = 0xFFFFFFFFFFFFFFFF;
 const int64_t  WORST_SCORE  = -999999999;
+const int64_t  MAX_RESULTS  = 50;
 
 bool weightedAreaCompare (const weightedArea& first, const weightedArea& second)
 {
@@ -343,9 +344,8 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 			        std::vector<uint64_t> nameWordVector;
 			        mger.textIndexRelation->get(i, &record);
 			        Relation* item;
+                    item = mger.loadRelationFast(record.value.id);		    
                     //mger.load(item, record.value.id, true);
-                    //item = mger.loadRelationFast(record.value.id);		    
-                    mger.load(item, record.value.id, true);
 			        area.r =  record.value.r;
 			        std::string my_string = item->tags["name"];
                     std::replace( my_string.begin(), my_string.end(), '-', ' ');
@@ -363,7 +363,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                         uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
 		                nameWordVector.push_back(k);
                     }
-			        if(area.r.isValid()) area.score = calcMatchScore(queryWordsVector, nameWordVector);
+			        if(area.r.isValid()) area.score = calcMatchScore(queryWordsVector, nameWordVector) + 1;
 			        else area.score = WORST_SCORE;
 			        std::string sType = item->tags["type"];
 			        if(street_number && sType == "street")
@@ -442,49 +442,8 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 					}
 			        //std::cout << my_string << " " << area.score << "\n";
 			        area.found = "Relation_"+std::to_string(record.value.id)+":"+my_string;
-			        
-			        if(item->isClosed)
-			        {
-						// search in relation point to set pin
-						for(auto p : item->points)
-						{
-							if ((p->tags["place"] != "")
-							    && (p->tags["name"] == item->tags["name"])) 
-							{
-								if(
-								  (p->x >= area.r.x0) &&
-								  (p->x <= area.r.x1) &&
-								  (p->y >= area.r.y0) &&
-								  (p->y <= area.r.y1)
-								  )
-								{ 
-								    area.pin.x = p->x;
-								    area.pin.y = p->y;
-								    break;
-								}
-							}
-						}
-					}
-					else if (item->shape.lines.size() == 1)
-					{
-					    Line* l =  item->shape.lines[0];
- 					    // set pin to middle of shape points
-						if(
-						  (l->points[l->pointsCount/2].x >= area.r.x0) &&
-						  (l->points[l->pointsCount/2].x <= area.r.x1) &&
-						  (l->points[l->pointsCount/2].y >= area.r.y0) &&
-						  (l->points[l->pointsCount/2].y <= area.r.y1)
-						  )
-						{ 
-					        area.pin.x = l->points[l->pointsCount/2].x;
-					        area.pin.y =  l->points[l->pointsCount/2].y;
-						}
-					}
-					else
-					{
-						area.pin = {0,0};
-					}
-			        
+			        area.relations.push_back(record.value.id);
+			        	        
 			        areas.push_back(area);
 			        delete item;		    
 			    }
@@ -632,27 +591,9 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 						    c.r = b.r * a.r;
 						    c.score = a.score + b.score;
 						    c.found = a.found + ", " + b.found;
-						    if((a.pin.x)
-						       && (a.pin.x >= b.r.x0)
-						       && (a.pin.x <= b.r.x1)
-						       && (a.pin.y >= b.r.y0)
-						       && (a.pin.y <= b.r.y1))
-						    {
-								c.pin = a.pin;
-						    }
-						    else
-						    if((b.pin.x)
-						       && (b.pin.x >= a.r.x0)
-						       && (b.pin.x <= a.r.x1)
-						       && (b.pin.y >= a.r.y0)
-						       && (b.pin.y <= a.r.y1))
-						    {
-								c.pin = b.pin;
-						    }
-						    else
-						    {
-								c.pin = {0,0};
-							}
+						    c.pin = {0,0};
+						    for(auto r : a.relations) c.relations.push_back(r);
+						    for(auto r : b.relations) c.relations.push_back(r);
 						    new_areas.push_back(c);
 					    } else {
 						    /*std::cout << "no match !!" << "\n";						
@@ -689,6 +630,72 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 	
 	  weightedArea result;
 	  best_areas.sort(weightedAreaCompare);
+	  
+	  int count = 0;
+	  for (auto a: best_areas)
+	  {
+		  //a.pin = {0,0};
+		  if(count > MAX_RESULTS) break;
+		  else
+		  {
+			  for( auto relid : a.relations)
+			  {
+			        Relation* item;
+                    mger.load(item, relid, true);
+                    GeoPoint pin;
+			        if(item->isClosed)
+			        {
+						// search in relation point to set pin
+						for(auto p : item->points)
+						{
+							if ((p->tags["place"] != "")
+							    && (p->tags["name"] == item->tags["name"])) 
+							{
+								if(
+								  (p->x >= a.r.x0) &&
+								  (p->x <= a.r.x1) &&
+								  (p->y >= a.r.y0) &&
+								  (p->y <= a.r.y1)
+								  )
+								{ 
+								    pin.x = p->x;
+								    pin.y = p->y;
+								    break;
+								}
+							}
+						}
+					}
+					else if (item->shape.lines.size() == 1)
+					{
+					    Line* l =  item->shape.lines[0];
+ 					    // set pin to middle of shape points
+						if(
+						  (l->points[l->pointsCount/2].x >= a.r.x0) &&
+						  (l->points[l->pointsCount/2].x <= a.r.x1) &&
+						  (l->points[l->pointsCount/2].y >= a.r.y0) &&
+						  (l->points[l->pointsCount/2].y <= a.r.y1)
+						  )
+						{ 
+					        pin.x = l->points[l->pointsCount/2].x;
+					        pin.y =  l->points[l->pointsCount/2].y;
+						}
+					}
+					else
+					{
+						pin = {0,0};
+					}
+					if((pin.x)
+					   && (pin.x >= a.r.x0)
+					   && (pin.x <= a.r.x1)
+					   && (pin.y >= a.r.y0)
+					   && (pin.y <= a.r.y1))
+				    {
+					    a.pin = pin;
+				    }
+			  }
+		  }
+	  }
+	  
 	  if(best_areas.size()) result = *(best_areas.begin()); 
 
 //    for (auto a: best_areas)
@@ -713,7 +720,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
             int i = 0;
             for(auto a : best_areas)
             {
-				if(i > 50) break;
+				if(i > MAX_RESULTS) break;
 				if(! a.r.isValid()) continue;
 				std::string sPin = "";
 				if(a.pin.x) sPin = 
@@ -753,7 +760,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
             int i = 0;
             for(auto a : best_areas)
             {
-				if(i > 50) break;
+				if(i > MAX_RESULTS) break;
 				if(! a.r.isValid()) continue;
 				if(i) resp += ", ";
 				std::string sPin = "";
