@@ -582,6 +582,18 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
     int street_number = 0;
     while(std::getline(my_stream,word,','))
     {
+		//trim word:
+		size_t left;
+		size_t right;
+		
+		left = 0;
+		right = word.size() - 1;
+		
+		while(left < right && isspace(word.c_str()[left])) ++left;
+		while(left <= right && isspace(word.c_str()[right])) --right;
+		word = word.substr(left, (right - left + 1));
+		std::cout << "search trimmed expr : [" << word << "]\n";
+		
         bool is_number = (!word.empty());
 	    if(!(word[0] >= '0' && word[0] <='9')){
 	    	is_number = false;
@@ -700,20 +712,6 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 				resp+="}\n";
                 i++;
 			}
-		    /*resp += "<score value=\"" + std::to_string(result.score) + "\"/>"; 
-            resp += "<url u=\"http://127.0.0.1:8081/svgMap.svg?longitude1=" + std::to_string(r.x0) + "&amp;lattitude1=" + std::to_string(r.y0) + "&amp;longitude2=" + std::to_string(r.x1) + "&amp;lattitude2=" + std::to_string(r.y1) + "\" />";
-            resp += "<url u=\"http://127.0.0.1:8081/MapDisplay?longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&amp;lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&amp;zoom="+std::to_string(zlevel)+"\"/>";
-            resp += "<rectangle xo=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x0))
-                 + "\" y0=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y0))
-                 + "\" x1=\"" + std::to_string(Coordinates::fromNormalizedLon(r.x1))
-                 + "\" y1=\"" + std::to_string(Coordinates::fromNormalizedLat(r.y1))
-            	              + "\" />";
-           resp += "<rectangle xo=\"" + std::to_string(Coordinates::toNormalizedLon(std::to_string(Coordinates::fromNormalizedLon(r.x0))))
-            	              + "\" y0=\"" + std::to_string(Coordinates::toNormalizedLat(std::to_string(Coordinates::fromNormalizedLat(r.y0))))
-            	              + "\" x1=\"" + std::to_string(Coordinates::toNormalizedLon(std::to_string(Coordinates::fromNormalizedLon(r.x1))))
-            	              + "\" y1=\"" + std::to_string(Coordinates::toNormalizedLat(std::to_string(Coordinates::fromNormalizedLat(r.y1))))
-            	              + "\" />";*/
-            	                 
            resp += "]\n";
            Msg* rep = new Msg;
            encoder.build200Header(rep, "application/json");
