@@ -57,7 +57,7 @@ server is listening on port 8081<br/>
 test page is available at : http://localhost:8081
 tiles are available at : http://localhost:8081/{z}/{x}/{y}.svg
 
-### [geolocation](geoloc.md)
+### [geolocation](geolocation.md)
 
 ### [configuration](configuration.md)
 
