@@ -55,7 +55,9 @@ example data file is pays-de-la-loire-latest.osm.bz2 ( part from france ) which 
 
 server is listening on port 8081<br/>
 test page is available at : http://localhost:8081
-tiles are available at : http://localhost:8081/{z}/{x}/{y}.svg 
+tiles are available at : http://localhost:8081/{z}/{x}/{y}.svg
+
+### [geolocation](geoloc.md)
 
 ### [configuration](configuration.md)
 
