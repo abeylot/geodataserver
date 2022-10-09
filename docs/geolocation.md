@@ -2,7 +2,7 @@
 
 a geolocation service is available at:
 
-localost:8081/geoloc
+http://localhost:8081/geoloc
 
 you have to perform a POST request with two parameters :
 
