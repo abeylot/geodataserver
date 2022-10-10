@@ -2,6 +2,7 @@
 ![sample](/docs/sample.jpg)
 ##
 A light SVG tile map renderer and server that uses openstreetmap data and shp files.
+An experimental geolocation service is also provided.
 Works on raspberry pi 4 for world extracts, you will need a bigger computer for whole world.
 ## documentation
 see [here](/docs/index.md).
