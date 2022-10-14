@@ -1,7 +1,8 @@
+!/bin/bash
 #This script shall be run in data directory
 set -x 
 echo "set environment variable to geodataserver binaries path"
-export GEOBIN=/geoserver/geodataserver
+export GEOBIN="../geodataserver"
 
 echo "set environment variable to openstreet map file to download"
 export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.bz2 
@@ -12,7 +13,7 @@ export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.b
 # install dependancies
 
 #first run
-if [ ! -d "cache" ] then
+if [ ! -d "cache" ]; then
 
     echo "copy config.xml file to data path"
     cp $GEOBIN/config.xml .
