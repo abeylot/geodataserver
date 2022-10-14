@@ -1,7 +1,7 @@
 #This script shall be run in data directory
 set -x 
 echo "set environment variable to geodataserver binaries path"
-export GEOBIN=/geodataserver/geodataserver
+export GEOBIN=/geoserver/geodataserver
 
 echo "set environment variable to openstreet map file to download"
 export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.bz2 
