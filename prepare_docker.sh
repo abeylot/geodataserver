@@ -12,7 +12,7 @@ export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.b
 # install dependancies
 
 #first run
-if [! -d cache]; then
+if [ ! -d "cache" ] then
 
     echo "copy config.xml file to data path"
     cp $GEOBIN/config.xml .
