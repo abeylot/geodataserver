@@ -66,6 +66,7 @@ struct dbf_header
         field_descriptors[count].name[0] = tmp[0];
         if(fread(field_descriptors[count].name + 1, 10, 1, f)!=1) return -1;
         field_descriptors[count].name[11] = 0;
+        std::cout << field_descriptors[count].name << " ";
         if(fread(&field_descriptors[count].field_type, 1, 1, f)!=1) return -1;
         if(fread(tmp2, 4, 1, f)!=1) return -1;
         if(fread(&field_descriptors[count].field_length, 1, 1, f)!=1) return -1;
@@ -73,7 +74,8 @@ struct dbf_header
         if(fread(tmp2, 14, 1, f)!=1) return -1;
         count++;
         if(fread(tmp, 1, 1, f) != 1) return -1;
-    } 
+    }
+    std::cout << "\n"; 
     field_count = count;
     return 0;
    }
