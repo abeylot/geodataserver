@@ -26,6 +26,7 @@ Processor use is not the problem, file access is.
 Fast for small scales ( high zoom levels ) but can take 10 or 20 seconds for large ones ( but those ones will be cached for next use)
 
 ## how to try the app
+
 ###  compile from source
 #### first install some dependancies
     sudo apt update
@@ -56,6 +57,20 @@ example data file is pays-de-la-loire-latest.osm.bz2 ( part from france ) which 
 server is listening on port 8081<br/>
 test page is available at : http://localhost:8081
 tiles are available at : http://localhost:8081/{z}/{x}/{y}.svg
+
+
+### Try in a docker :
+In case you have docker installed, and you know how to use it :
+a Dockerfile is present in
+
+    docker/sandbox
+
+in the directory just perform those commands :
+
+    docker build -t geoserver .  --network=host 
+    docker run  --network host  geoserver
+
+first run prepares data, so you'll have to wait for some time.
 
 ### [geolocation](geolocation.md)
 
