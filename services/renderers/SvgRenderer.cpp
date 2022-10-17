@@ -925,7 +925,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                 {
                     name = myRelation.tags[textField.c_str()];
                 }
-                if(name == "" || textField != "name")
+                if(name == "" || textField == "name")
                 {
                     for ( unsigned int i = 0 ; i < _nb_locales; i++)
                     {
@@ -996,7 +996,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                 {
                     name = myRelation.tags[textField.c_str()];
                 }
-                if(name == "" || textField != "name")
+                if(name == "" || textField == "name")
                 {
                     for ( unsigned int i = 0 ; i < _nb_locales; i++)
                     {

@@ -450,10 +450,37 @@ struct XmlVisitor
             uint64_t len = fread(recordcontent,2, recordlength, shp);
             if(len == 0) std::cerr << "read error !\n";
             uint64_t shapetype = getUnsignedInteger32(recordcontent, false);
-            if(shapetype == 5 || shapetype == 3)
+                       
+            if(shapetype == 1)
+            {
+                baliseTags->startBatch();
+                GeoString s;
+                s = tag;
+                baliseTags->append(s);
+                s = value;
+                baliseTags->append(s);
+
+				double x,y;
+                if(dbfheader.read_record(dbf, baliseTags) != 0) std::cout << "error while reading dbf file !\n";;
+                if(projection == "3857")
+                {
+                    x = getDouble(recordcontent) * 180.0 / 20037508.34;
+                    y = getDouble(recordcontent + 8);
+                    y = atan(exp(y * M_PI / 20037508.34)) * (360 / M_PI) - 90;
+				} else {
+                    x = getDouble(recordcontent + 4);
+                    y = getDouble(recordcontent + 4 + 8);
+				}
+                GeoPointIndex pointRecord;
+                pointRecord.x = Coordinates::toNormalizedLon(std::to_string(x));
+                pointRecord.y = Coordinates::toNormalizedLat(std::to_string(y));
+                pointRecord.tstart = baliseTags->startCount;
+                pointRecord.tsize = baliseTags->itemCount - baliseTags->startCount;
+                nodeIndex->append(pointRecord);
+			}
+            else if(shapetype == 5 || shapetype == 3)
             {
 
-                baliseTags->startBatch();
                 relMembers->startBatch();
                 baliseTags->startBatch();
                 GeoString s;
