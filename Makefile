@@ -1,6 +1,6 @@
 #CC=clang++ 
 CC= g++
-cc=$(CC)  -O2 -g  -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 
+cc=$(CC)  -O2 -s -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 
 #cc=$(CC) -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64
 
 
@@ -12,6 +12,8 @@ helpers/Sequence.hpp \
 helpers/Rectangle.hpp \
 helpers/config.hpp \
 helpers/FileIndex.hpp \
+helpers/ExtThread.hpp \
+helpers/NonGrowableQueue.hpp \
 helpers/hash.hpp \
 GeoBox.hpp
 
@@ -59,7 +61,7 @@ TcpConnection.o \
 MapDisplay.o \
 StringBuffer.o 
 
-libs=-lpthread  -lboost_system -lboost_thread -lz -latomic -lstdc++fs
+libs=-lpthread  -lz -latomic -lstdc++fs
 
 all: renumber compile index geoserver
 
