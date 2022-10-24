@@ -3,7 +3,7 @@ WORKDIR /geoserver
 #COPY data /geoserver/data
 RUN apt update
 RUN apt upgrade
-RUN apt install -yq g++ lbzip2 libboost-all-dev libbz2-dev git wget make unzip bash
+RUN apt install -yq g++ lbzip2 libbz2-dev git wget make unzip bash libz-dev
 RUN rm -rf /var/lib/apt/lists/*
 RUN git clone https://github.com/abeylot/geodataserver.git
 RUN mkdir data
