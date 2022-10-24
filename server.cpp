@@ -1,10 +1,8 @@
-#include <boost/thread/thread.hpp>
-#include <boost/lockfree/queue.hpp>
-
+#include <atomic>
 #include <iostream>
 #include <string>
 #include <unistd.h>
-#include <signal.h>
+//#include <signal.h>
 #include <stdlib.h>
 #include <ctime>
 #include "messaging/HttpProtocol.hpp"
@@ -14,7 +12,11 @@
 #include "services/ServiceInterface.hpp"
 #include "services/ServicesFactory.hpp"
 #include "helpers/TcpListener.hpp"
+#include "helpers/NonGrowableQueue.hpp"
+#include <csignal>
+#include "helpers/ExtThread.hpp"
 
+#define MAX_PENDING_REQUESTS 100
 
 /**************************************************************************************************************************/
 /**************************************************************************************************************************/
@@ -22,10 +24,15 @@
 
 ParmsXmlVisitor params;
 std::atomic<int> pending(0);
+volatile bool sigstop;
+void sig_handler(int sig)
+{
+	sigstop = true;
+}
 
 struct Listener
 {
-  explicit  Listener(boost::lockfree::queue<TcpConnection*>* queue) : queue(queue)
+  explicit  Listener(NonGrowableQueue<TcpConnection*, MAX_PENDING_REQUESTS>* queue) : queue(queue)
     {
     }
 
@@ -34,36 +41,38 @@ struct Listener
     {
         std::cout << "Listening on port : " << params.getNumParam("ServerPort", 8081) << "\n";
         listener.init(params.getNumParam("ServerPort", 8081),100);
-        while(!boost::this_thread::interruption_requested())
+        while(!ExtThreads::stop_requested())
         {
             TcpConnection *cnx = listener.waitForClient();
-            
-            if(pending < 100)
-            {   
-                queue->push(cnx);
-            } else {
-                std::cerr << "too much pending requests, client rejected !\n";
-                delete cnx;  
+            if(cnx)
+            {
+                if(pending < MAX_PENDING_REQUESTS)
+                {   
+                    queue->push(cnx);
+                } else {
+                    std::cerr << "too much pending requests, client rejected !\n";
+                    delete cnx;  
+                }
             }
-        }
+		}
         std::cout << "Listener end\n";
         return 0;
     }
 private:
-    boost::lockfree::queue<TcpConnection*>* queue;
+    NonGrowableQueue<TcpConnection*, MAX_PENDING_REQUESTS>* queue;
     TcpListener listener;
 };
 
 
 template<typename MSG> struct Reader
 {
-    Reader(boost::lockfree::queue<MSG*>* queue,boost::lockfree::queue<TcpConnection*>* queueS) : queueS(queueS),queue(queue)
+    Reader(NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* queue,NonGrowableQueue<TcpConnection*, MAX_PENDING_REQUESTS>* queueS) : queueS(queueS),queue(queue)
     {
     }
     int operator()()
     {
         HttpEncoder encoder;
-        while(!boost::this_thread::interruption_requested())
+        while(!ExtThreads::stop_requested())
         {
             while(!queueS->empty())
             {
@@ -87,6 +96,7 @@ template<typename MSG> struct Reader
                     catch (const std::exception& e)
                     {
                         std::cerr << e.what() << "\n";
+                        pending--;
                         delete s;
                     }
                 }
@@ -98,23 +108,23 @@ template<typename MSG> struct Reader
     }
 
 private:
-    boost::lockfree::queue<TcpConnection*>* queueS;
-    boost::lockfree::queue<MSG*>* queue;
+    NonGrowableQueue<TcpConnection*, MAX_PENDING_REQUESTS>* queueS;
+    NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* queue;
 };
 
 template<typename MSG> struct Writer
 {
     HttpProtocol p;
     HttpEncoder encoder;
-    explicit Writer(boost::lockfree::queue<MSG*>* queue) :  queue(queue)
+    explicit Writer(NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* queue) :  queue(queue)
     {
     }
     int operator()()
     {
         MSG* m;
-        while(!boost::this_thread::interruption_requested())
+        while(!ExtThreads::stop_requested())
         {
-            while(queue->pop(m)&&!boost::this_thread::interruption_requested())
+            while(queue->pop(m)&&!ExtThreads::stop_requested())
             {
                 try
                 {
@@ -129,6 +139,7 @@ template<typename MSG> struct Writer
                 catch (const std::exception& e)
                 {
                     std::cerr << e.what() << "\n";
+                    pending--;
                 }
             }
             usleep(10000);
@@ -138,7 +149,7 @@ template<typename MSG> struct Writer
     }
 
 private:
-    boost::lockfree::queue<MSG*>* queue;
+    NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* queue;
 };
 
 template<typename MSG> struct Exec
@@ -149,7 +160,7 @@ template<typename MSG> struct Exec
     std::map<std::string, std::string>* symbols;
     std::map<std::string, std::string>* charconvs;
     //std::map<std::string, std::string>* patterns;
-    Exec(boost::lockfree::queue<MSG*>* inqueue,boost::lockfree::queue<MSG*>* outqueue,
+    Exec(NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* inqueue,NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* outqueue,
          std::string file,
          uint microSleep,std::vector<IndexDesc*>* idxL,
          std::map<std::string, std::string>* symbs,
@@ -164,9 +175,9 @@ template<typename MSG> struct Exec
     {
         CompiledDataManager mger(file, idxList, symbols, charconvs);
         MSG* m;
-        while(!boost::this_thread::interruption_requested())
+        while(!ExtThreads::stop_requested())
         {
-            while(inqueue->pop(m)&&!boost::this_thread::interruption_requested())
+            while(inqueue->pop(m)&&!ExtThreads::stop_requested())
             {
                 try
                 {
@@ -214,8 +225,8 @@ template<typename MSG> struct Exec
     }
 
 private:
-    boost::lockfree::queue<MSG*>* inqueue;
-    boost::lockfree::queue<MSG*>* outqueue;
+    NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* inqueue;
+    NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* outqueue;
     std::string file;
     uint microSleep;
 
@@ -251,12 +262,11 @@ int main(int argc, char *argv[])
     }
 
 
-    boost::lockfree::queue<Msg*> myInQueue(3);
-    boost::lockfree::queue<Msg*> myOutQueue(3);
-    boost::lockfree::queue<TcpConnection*> mySessionQueue(3);
+    NonGrowableQueue<Msg*, MAX_PENDING_REQUESTS> myInQueue;
+    NonGrowableQueue<Msg*, MAX_PENDING_REQUESTS> myOutQueue;
+    NonGrowableQueue<TcpConnection*, MAX_PENDING_REQUESTS> mySessionQueue;
 
     Listener listener(&mySessionQueue);
-    boost::thread_group g;
     uint microSleep = 30000;
     Reader<Msg> reader1(&myInQueue, &mySessionQueue);
     Reader<Msg> reader2(&myInQueue, &mySessionQueue);
@@ -265,30 +275,30 @@ int main(int argc, char *argv[])
     {
         Exec<Msg> exec(&myInQueue, &myOutQueue, argv[1], microSleep, /*&index*/ &(indexes[i]), &(symbols[i]), &(charconvs[i]));
         microSleep *= 2;
-        g.create_thread(exec);
+        ExtThreads::launch_thread(exec);
     }
     std::cout << "launching " << params.getNumParam("WriterThreads", 10) << " Writer threads \n";
     for(int i=0; i < params.getNumParam("WriterThreads", 10); i++)
     {
         Writer<Msg> writer(&myOutQueue);
-        g.create_thread(writer);
+        ExtThreads::launch_thread(writer);
     }
-    g.create_thread(reader1);
-    g.create_thread(reader2);
-    g.create_thread(listener);
+    ExtThreads::launch_thread(reader1);
+    ExtThreads::launch_thread(reader2);
+    ExtThreads::launch_thread(listener);
 
 
     /*
      * Manage signals;
      */
-    bool shallContinue = true;
-    while(shallContinue)
+    sigstop = false; 
+    std::signal(SIGINT,sig_handler);
+    while(!sigstop)
     {
         usleep(1000);
     }
 
-    g.interrupt_all();
-    g.join_all();
-
+    ExtThreads::request_all_to_stop();
+    ExtThreads::request_all_to_join();
 
 }

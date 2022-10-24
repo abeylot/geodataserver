@@ -78,6 +78,12 @@ int TcpListener::init(int portNumber, int timeOut)
 
     _FileDescr = iSock;
 
+    struct timeval tv;
+    tv.tv_sec = _TimeOut / 1000;
+    tv.tv_usec = _TimeOut % 1000;
+    setsockopt(_FileDescr, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv,sizeof(struct timeval));
+
+
     return 0;
 }
 
@@ -90,7 +96,7 @@ TcpConnection* TcpListener::waitForClient(void)
      */
     if ((iClientSock = accept(_FileDescr, NULL, NULL)) < 0)
     {
-        printf("accept error %d \n",iClientSock);
+        //printf("accept error %d \n",iClientSock);
         return NULL;
     }
     //printf("accept success %d \n",iClientSock);
