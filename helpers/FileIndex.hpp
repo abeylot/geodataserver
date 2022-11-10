@@ -436,6 +436,50 @@ public:
         delete[] sort_buffer;
     }
 
+    void memsort(uint64_t begin, uint64_t end, Record<ITEM,KEY>* sort_buffer)
+    {
+        //std::cerr << "memsort " << begin <<" "<< end <<"\n";
+		if((end - begin) < 1) return;
+		if((end - begin) == 1)
+		{
+			int comp = fileIndexComp<ITEM,KEY>(&sort_buffer[end], &sort_buffer[begin]);
+			if ( comp > 0)
+			{
+				Record<ITEM,KEY> tmp = sort_buffer[end];
+				sort_buffer[end] = sort_buffer[begin];
+				sort_buffer[begin] = tmp;
+			}
+			return;
+		}
+		else
+		{
+			Record<ITEM,KEY> tmp;
+			uint64_t min = begin + 1;
+			uint64_t max = end;
+			uint64_t ipivot = begin;
+			while(max > min)
+			{
+				while((min != end) && fileIndexComp<ITEM,KEY>(&sort_buffer[min], &sort_buffer[begin]) < 0) min++;
+				while((max != begin + 1) && fileIndexComp<ITEM,KEY>(&sort_buffer[max] , &sort_buffer[begin]) >= 0) max--;
+				if(max > min)
+				{
+					tmp = sort_buffer[min];
+					sort_buffer[max] = sort_buffer[min] ;
+					sort_buffer[min] = tmp;
+					min++;
+					max--;
+				}
+			}
+			ipivot = min - 1;
+			tmp = sort_buffer[ipivot];
+			sort_buffer[ipivot] = sort_buffer[begin];
+			sort_buffer[begin] = tmp;
+			if(ipivot > begin) memsort(begin, ipivot - 1, sort_buffer); 
+			if(ipivot < end) memsort(ipivot + 1, end, sort_buffer); 
+		}
+	}
+		 
+
     /**
      * @brief sort index part.
      * 
@@ -444,6 +488,7 @@ public:
      * @param sort_buffer 
      * @param buffer_size 
      */
+      
     void sort(uint64_t begin, uint64_t end, Record<ITEM,KEY>* sort_buffer, uint64_t buffer_size)
     {
         std::cerr << "sort " << begin <<" "<< end <<"\n";
@@ -454,7 +499,10 @@ public:
             std::cout << "read data \n";
             pFile.oread((char*)sort_buffer, begin * recSize, recSize * count);
             std::cout << "sort data \n";
-            std::qsort(&sort_buffer[0], count, recSize,fileIndexComp<ITEM,KEY>);
+            
+            //std::qsort(&sort_buffer[0], count, recSize,fileIndexComp<ITEM,KEY>);
+            memsort(begin, end, sort_buffer);
+            
             std::cout << "write data \n";
             pFile.owrite((char*)sort_buffer, begin * recSize, recSize * count );
             sortedSize += count;
