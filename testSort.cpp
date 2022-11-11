@@ -27,17 +27,28 @@ FileIndex<value,key>* testIndex;
 int main(int argc, char *argv[])
 {
     testIndex = new FileIndex<value,key>("testIndex", true);
-    fwrite("A,",2,1,testIndex->pFile);
-    fwrite("B,",2,1,testIndex->pFile);
-    fwrite("C,",2,1,testIndex->pFile);
-    fwrite("D,",2,1,testIndex->pFile);
-    fwrite("E,",2,1,testIndex->pFile);
-    fwrite("F,",2,1,testIndex->pFile);
-    fwrite("G,",2,1,testIndex->pFile);
-    fwrite("H,",2,1,testIndex->pFile);
-    fwrite("I,",2,1,testIndex->pFile);
-    fwrite("J,",2,1,testIndex->pFile);
-    fwrite("K,",2,1,testIndex->pFile);
-    testIndex->fileSize = 11;
+    /*fwrite("A,",2,1,testIndex->pFile.fh);
+    fwrite("B,",2,1,testIndex->pFile.fh);
+    fwrite("C,",2,1,testIndex->pFile.fh);
+    fwrite("D,",2,1,testIndex->pFile.fh);
+    fwrite("E,",2,1,testIndex->pFile.fh);
+    fwrite("F,",2,1,testIndex->pFile.fh);
+    fwrite("G,",2,1,testIndex->pFile.fh);
+    fwrite("H,",2,1,testIndex->pFile.fh);
+    fwrite("I,",2,1,testIndex->pFile.fh);
+    fwrite("J,",2,1,testIndex->pFile.fh);
+    fwrite("K,",2,1,testIndex->pFile.fh);
+    testIndex->fileSize = 11;*/
+    testIndex->append({'F'},{' '});
+    testIndex->append({'A'},{' '});
+    testIndex->append({'H'},{' '});
+    testIndex->append({'Z'},{' '});
+    testIndex->append({'B'},{' '});
+    testIndex->append({'2'},{' '});
+    testIndex->append({'Y'},{' '});
+    testIndex->append({'P'},{' '});
+    testIndex->append({'V'},{' '});
+    testIndex->append({'A'},{' '});
+    testIndex->flush();
     testIndex->sort();
 }

@@ -436,6 +436,14 @@ public:
         delete[] sort_buffer;
     }
 
+    void swap(Record<ITEM,KEY>* a, Record<ITEM,KEY>* b)
+    {
+		Record<ITEM,KEY> c;
+		memcpy(&c, a, recSize);
+		memcpy(a, b, recSize);
+		memcpy(b, &c, recSize);
+	}
+
     void memsort(uint64_t begin, uint64_t end, Record<ITEM,KEY>* sort_buffer)
     {
         //std::cerr << "memsort " << begin <<" "<< end <<"\n";
@@ -445,9 +453,10 @@ public:
 			int comp = fileIndexComp<ITEM,KEY>(&sort_buffer[end], &sort_buffer[begin]);
 			if ( comp > 0)
 			{
-				Record<ITEM,KEY> tmp = sort_buffer[end];
-				sort_buffer[end] = sort_buffer[begin];
-				sort_buffer[begin] = tmp;
+				swap(sort_buffer + end, sort_buffer + begin);
+				//Record<ITEM,KEY> tmp = sort_buffer[end];
+				//sort_buffer[end] = sort_buffer[begin];
+				//sort_buffer[begin] = tmp;
 			}
 			return;
 		}
@@ -459,13 +468,14 @@ public:
 			uint64_t ipivot = begin;
 			while(max > min)
 			{
-				while((min != end) && fileIndexComp<ITEM,KEY>(&sort_buffer[min], &sort_buffer[begin]) < 0) min++;
-				while((max != begin + 1) && fileIndexComp<ITEM,KEY>(&sort_buffer[max] , &sort_buffer[begin]) >= 0) max--;
+				while((min != end) && fileIndexComp<ITEM,KEY>(&sort_buffer[min], &sort_buffer[begin]) <= 0) min++;
+				while((max != begin + 1) && fileIndexComp<ITEM,KEY>(&sort_buffer[max] , &sort_buffer[begin]) > 0) max--;
 				if(max > min)
 				{
-					tmp = sort_buffer[min];
-					sort_buffer[max] = sort_buffer[min] ;
-					sort_buffer[min] = tmp;
+					//tmp = sort_buffer[min];
+					//sort_buffer[min] = sort_buffer[max] ;
+					//sort_buffer[max] = tmp;
+					swap(sort_buffer + min, sort_buffer +max);
 					min++;
 					max--;
 				}
