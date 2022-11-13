@@ -16,7 +16,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <map>
-
+#include <assert.h>
 struct GeoFile
 {
     int fh = -1;
@@ -374,7 +374,7 @@ public:
         {
             flush();
         }
-        if(key < last_inserted) sorted = false;
+        if((fileSize) && (key < last_inserted)) sorted = false;
         last_inserted = record.key;
     }
 
@@ -414,7 +414,7 @@ public:
         std::cerr << "sorting  " << fileSize << " elements \n";
         if(!fileSize) return;
         sortedSize = 0;
-        uint64_t buffer_size = 0xFFFFFFFFFFULL / (3*recSize);
+        uint64_t buffer_size = 0xFFFFULL / (3*recSize);
         Record<ITEM,KEY>* sort_buffer = NULL;
 //#ifdef  _SC_PAGE_SIZE
 //        size_t memory = sysconf(_SC_PAGE_SIZE) * sysconf(_SC_AVPHYS_PAGES) ;
@@ -433,6 +433,7 @@ public:
         }
         
         sort(0,fileSize-1, sort_buffer, buffer_size);
+        sorted = true;
         delete[] sort_buffer;
     }
 
@@ -444,48 +445,47 @@ public:
 		memcpy(b, &c, recSize);
 	}
 
-    void memsort(uint64_t begin, uint64_t end, Record<ITEM,KEY>* sort_buffer)
+    void memsort(int64_t begin, int64_t end, Record<ITEM,KEY>* sort_buffer)
     {
-        //std::cerr << "memsort " << begin <<" "<< end <<"\n";
+        std::cout << "memsort " << begin <<" "<< end <<"\n";
 		if((end - begin) < 1) return;
 		if((end - begin) == 1)
 		{
 			int comp = fileIndexComp<ITEM,KEY>(&sort_buffer[end], &sort_buffer[begin]);
-			if ( comp > 0)
+			if ( comp < 0)
 			{
 				swap(sort_buffer + end, sort_buffer + begin);
-				//Record<ITEM,KEY> tmp = sort_buffer[end];
-				//sort_buffer[end] = sort_buffer[begin];
-				//sort_buffer[begin] = tmp;
 			}
 			return;
 		}
 		else
 		{
-			Record<ITEM,KEY> tmp;
-			uint64_t min = begin + 1;
-			uint64_t max = end;
-			uint64_t ipivot = begin;
-			while(max > min)
+			int64_t lessers = 0;
+			int64_t biggers = 0;
+			int64_t total = end - begin;
+			int64_t ipivot = begin;
+			while(total > (biggers + lessers))
 			{
-				while((min != end) && fileIndexComp<ITEM,KEY>(&sort_buffer[min], &sort_buffer[begin]) <= 0) min++;
-				while((max != begin + 1) && fileIndexComp<ITEM,KEY>(&sort_buffer[max] , &sort_buffer[begin]) > 0) max--;
-				if(max > min)
+				while((total > (biggers + lessers))
+				&& (begin + 1 + lessers <= end)
+				&& (sort_buffer[begin + 1 + lessers].key < sort_buffer[begin].key)) lessers++;
+				while((total > (biggers + lessers))
+				&& (end - biggers >= begin + 1)
+				&& (sort_buffer[end - biggers ].key > sort_buffer[begin].key)) biggers++;
+				if(total > (biggers + lessers + 1))
 				{
-					//tmp = sort_buffer[min];
-					//sort_buffer[min] = sort_buffer[max] ;
-					//sort_buffer[max] = tmp;
-					swap(sort_buffer + min, sort_buffer +max);
-					min++;
-					max--;
+					swap(sort_buffer + (begin+1+lessers), sort_buffer + (end - biggers));
+					biggers++;
+					lessers++;
+				} else if (total == (biggers + lessers + 1)) {
+					if(sort_buffer[begin + 1 + lessers].key < sort_buffer[begin].key) lessers++;
+					else biggers++;
 				}
 			}
-			ipivot = min - 1;
-			tmp = sort_buffer[ipivot];
-			sort_buffer[ipivot] = sort_buffer[begin];
-			sort_buffer[begin] = tmp;
-			if(ipivot > begin) memsort(begin, ipivot - 1, sort_buffer); 
-			if(ipivot < end) memsort(ipivot + 1, end, sort_buffer); 
+			ipivot = begin + lessers;
+			swap(sort_buffer + ipivot, sort_buffer + begin);
+			if((ipivot + 1)< end) memsort(ipivot + 1, end, sort_buffer); 
+			if(ipivot > (begin + 1)) memsort(begin, ipivot - 1, sort_buffer); 
 		}
 	}
 		 
@@ -503,7 +503,7 @@ public:
     {
         std::cerr << "sort " << begin <<" "<< end <<"\n";
         uint64_t count = (end - begin) + 1;
-        if((end - begin) < (3ULL*buffer_size))
+        if((end - begin + 1) < (3ULL*buffer_size))
         {
             std::cout << "enough memory, performing qsort \n";
             std::cout << "read data \n";
@@ -511,7 +511,7 @@ public:
             std::cout << "sort data \n";
             
             //std::qsort(&sort_buffer[0], count, recSize,fileIndexComp<ITEM,KEY>);
-            memsort(begin, end, sort_buffer);
+            memsort(0, count - 1, sort_buffer);
             
             std::cout << "write data \n";
             pFile.owrite((char*)sort_buffer, begin * recSize, recSize * count );
@@ -528,6 +528,7 @@ public:
         Record<ITEM,KEY>* plusGrands = sort_buffer + buffer_size;
         Record<ITEM,KEY>* autres = sort_buffer + 2ULL*buffer_size;
         Record<ITEM,KEY> pivot;
+        //Record<ITEM,KEY> tmp;
         get(end, &pivot);
         uint64_t autresCount = end - begin;
         uint64_t plusGrandsCount = 0;
@@ -555,11 +556,22 @@ public:
                     plusGrands[plusGrandsBufferCount ++] = autres[autresBufferCount];
                     //plusGrandsBufferCount++;
                 }
-                else
+                else if(comp < 0)
                 {
                     plusPetits[plusPetitsBufferCount ++] = autres[autresBufferCount];
                     //plusPetitsBufferCount++;
                 }
+                else
+                {
+					if(plusGrandsBufferCount> plusPetitsBufferCount)
+					{
+						plusPetits[plusPetitsBufferCount ++] = autres[autresBufferCount];
+					}
+					else
+					{
+                        plusGrands[plusGrandsBufferCount ++] = autres[autresBufferCount];
+					} 
+				}
             }
             std::cout << "divided items \n";
 
@@ -606,6 +618,27 @@ public:
 
         }
         sortedSize++;
+        //bool cont = true;
+        /*while((plusGrandsCount > 1 )&& cont)
+        {
+			get(end - (plusGrandsCount - 1), &tmp);
+			if (tmp.key == pivot.key)
+			{	
+			    plusGrandsCount --;
+			    sortedSize ++;
+			}
+			else cont = false;
+		}
+        while((plusPetitsCount > 1 )&& cont)
+        {
+			get(begin + plusPetitsCount - 1, &tmp);
+			if (tmp.key == pivot.key)
+			{	
+			    plusPetitsCount --;
+			    sortedSize ++;
+			}
+			else cont = false;
+		}*/
         std::cerr << "*** *** *** *** sorted " << sortedSize << " out of " << fileSize << "\n";
         if(plusGrandsCount > 1) sort(end - (plusGrandsCount - 1), end, sort_buffer, buffer_size);
         else if(!plusGrandsCount) sortedSize++;
