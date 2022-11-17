@@ -414,21 +414,29 @@ public:
         std::cerr << "sorting  " << fileSize << " elements \n";
         if(!fileSize) return;
         sortedSize = 0;
-        uint64_t buffer_size = (recSize * fileSize + 3) / 3;
+        uint64_t buffer_size = (fileSize + 3) / 3;
         Record<ITEM,KEY>* sort_buffer = NULL;
 //#ifdef  _SC_PAGE_SIZE
 //        size_t memory = sysconf(_SC_PAGE_SIZE) * sysconf(_SC_AVPHYS_PAGES) ;
 //        buffer_size = (memory / 4) / (3*recSize);
-//#endif     
+//#endif
+        bool resized = false;     
         while(sort_buffer == NULL)
         {
-            buffer_size /= 2;
             try
             {
                 sort_buffer = new Record<ITEM,KEY>[buffer_size*3];
             } catch(std::bad_alloc& ba)
             {
                 std::cout << "buffer_size : " << buffer_size << "too big\n";
+                buffer_size /= 2;
+                resized = true;
+            }
+            if(resized == true)
+            {
+                delete[] sort_buffer;
+                buffer_size /= 2;
+                sort_buffer = new Record<ITEM,KEY>[buffer_size*3];
             }
         }
         
