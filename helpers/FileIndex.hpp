@@ -414,21 +414,29 @@ public:
         std::cerr << "sorting  " << fileSize << " elements \n";
         if(!fileSize) return;
         sortedSize = 0;
-        uint64_t buffer_size = 0xFFFFULL / (3*recSize);
+        uint64_t buffer_size = (fileSize + 3) / 3;
         Record<ITEM,KEY>* sort_buffer = NULL;
 //#ifdef  _SC_PAGE_SIZE
 //        size_t memory = sysconf(_SC_PAGE_SIZE) * sysconf(_SC_AVPHYS_PAGES) ;
 //        buffer_size = (memory / 4) / (3*recSize);
-//#endif     
+//#endif
+        bool resized = false;     
         while(sort_buffer == NULL)
         {
-            buffer_size /= 2;
             try
             {
                 sort_buffer = new Record<ITEM,KEY>[buffer_size*3];
             } catch(std::bad_alloc& ba)
             {
                 std::cout << "buffer_size : " << buffer_size << "too big\n";
+                buffer_size /= 2;
+                resized = true;
+            }
+            if(resized == true)
+            {
+                delete[] sort_buffer;
+                buffer_size /= 2;
+                sort_buffer = new Record<ITEM,KEY>[buffer_size*3];
             }
         }
         
@@ -447,7 +455,7 @@ public:
 
     void memsort(int64_t begin, int64_t end, Record<ITEM,KEY>* sort_buffer)
     {
-        std::cout << "memsort " << begin <<" "<< end <<"\n";
+        //std::cout << "memsort " << begin <<" "<< end <<"\n";
 		if((end - begin) < 1) return;
 		if((end - begin) == 1)
 		{
@@ -539,14 +547,14 @@ public:
             uint64_t plusGrandsBufferCount=0;
             uint64_t autresBufferCount=0;
             uint64_t toRead = buffer_size;
-            std::cout << "reading " << toRead << "items from file \n";
+            //std::cout << "reading " << toRead << "items from file \n";
             if(toRead > autresCount) toRead = autresCount;
             pFile.oread((char*)autres, (end - (toRead  + plusGrandsCount)) * recSize, recSize * toRead );
             autresBufferCount = toRead;
             plusPetitsBufferCount = 0;
             plusGrandsBufferCount = 0;
             autresCount -= toRead;
-            std::cout << "dividing items \n";
+            //std::cout << "dividing items \n";
             while(autresBufferCount > 0)
             {
                 autresBufferCount --;
@@ -573,28 +581,28 @@ public:
 					} 
 				}
             }
-            std::cout << "divided items \n";
+            //std::cout << "divided items \n";
 
             if(plusGrandsBufferCount)
             {
-                std::cout << plusGrandsBufferCount << " items where bigger writing them to file\n";
+                //std::cout << plusGrandsBufferCount << " items where bigger writing them to file\n";
                 pFile.owrite((char*)plusGrands, (end - (plusGrandsCount + plusGrandsBufferCount - 1)) * recSize, recSize * plusGrandsBufferCount);
             }
             plusGrandsCount += plusGrandsBufferCount;
-            std::cout << plusPetitsBufferCount << " items where smaller writing them to file\n";
+            //std::cout << plusPetitsBufferCount << " items where smaller writing them to file\n";
             if(autresCount  < plusPetitsBufferCount)
             {
                 std::cout << " cache " << autresCount << " items \n";
                 pFile.oread((char*)autres, (begin + plusPetitsCount) * recSize, recSize * autresCount);
                 if(plusPetitsBufferCount)
                 {
-                    std:: cout << "write smallers \n";
+                    //std:: cout << "write smallers \n";
                     pFile.owrite((char*)plusPetits, (begin + plusPetitsCount) * recSize, recSize * plusPetitsBufferCount);
                     plusPetitsCount += plusPetitsBufferCount;
                 }
                 if(autresCount)
                 {
-                    std:: cout << "write cached \n";
+                    //std:: cout << "write cached \n";
                     pFile.owrite((char*)autres, (begin+plusPetitsCount) * recSize, recSize * autresCount);
                 }
 
@@ -604,16 +612,16 @@ public:
                 if(plusPetitsBufferCount)
                 {
 
-                    std::cout << " cache " << plusPetitsCount << " items \n";
+                    //std::cout << " cache " << plusPetitsCount << " items \n";
                     pFile.oread((char*)autres, (begin + plusPetitsCount) * recSize, recSize * plusPetitsBufferCount);
-                    std:: cout << "write smallers \n";
+                    //std:: cout << "write smallers \n";
                     pFile.owrite((char*)plusPetits, (begin + plusPetitsCount) * recSize, recSize * plusPetitsBufferCount);
                     plusPetitsCount += plusPetitsBufferCount;
-                    std:: cout << "write cached \n";
+                    //std:: cout << "write cached \n";
                     pFile.owrite((char*)autres, (end - (plusGrandsCount + plusPetitsBufferCount)) * recSize, recSize * plusPetitsBufferCount);
                 }
             }
-            std:: cout << "write pivot at the right place \n";
+            //std:: cout << "write pivot at the right place \n";
             pFile.owrite((char*)&pivot, (end  - (plusGrandsCount)) * recSize, recSize);
 
         }
