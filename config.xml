@@ -921,8 +921,14 @@
       <condition closed="both" tagKey="amenity">
            <class value="default"  zIndex="1" textZIndex="10" textStyle="#amenityName"/>
       </condition>
+      <condition closed="both" tagKey="historic">
+           <class value="default"  zIndex="1" textZIndex="10" textStyle="#amenityName"/>
+      </condition>
       </restriction>
       <restriction zLevels="19">
+      <condition closed="both" tagKey="historic">
+           <class value="default"  zIndex="1" textZIndex="10" textStyle="#amenityName"/>
+      </condition>
       <condition closed="both" tagKey="amenity">
            <class value="post_office"      zIndex="50001" symbol="post_office" textStyle="#amenityName" textZIndex="1"/>
            <class value="bar"              zIndex="50001" symbol="bar"         textStyle="#amenityName" textZIndex="1"/>
