@@ -382,7 +382,7 @@ struct XmlVisitor
             nodeRecord.y = Coordinates::toNormalizedLat(b->keyValues["lat"]);
             nodeRecord.tstart = baliseTags->startCount;
             nodeRecord.tsize = baliseTags->itemCount  - baliseTags->startCount;
-            nodeIndex->append(nodeRecord);
+            if(nodeRecord.tsize) nodeIndex->append(nodeRecord);
         }
         else if (b->baliseName == BALISENAME_ND)
         {
