@@ -6,6 +6,7 @@
 #define BALISENAME_RELATION  "relation"
 #define BALISENAME_NODE      "node"
 #define BALISENAME_WAY       "way"
+#define BALISENAME_tag       "tag"
 
 using namespace fidx;
 struct XmlVisitor
@@ -13,6 +14,7 @@ struct XmlVisitor
     uint64_t relid;
     uint64_t wayid;
     uint64_t nodid;
+    uint64_t tags;
 
     FileIndex<uint64_t, uint64_t> *relationIdIndex;
     FileIndex<uint64_t, uint64_t> *wayIdIndex;
@@ -24,6 +26,7 @@ struct XmlVisitor
         relid = 0;
         wayid = 0;
         nodid = 0;
+        tags = 0;
         relationIdIndex = new FileIndex<uint64_t,uint64_t>((rep + "relationIdIndex") .c_str(), true);
         wayIdIndex      = new FileIndex<uint64_t,uint64_t>((rep +"wayIdIndex").c_str(), true);
         nodeIdIndex     = new FileIndex<GeoPointNumberIndex, uint64_t>((rep + "nodeIdIndex").c_str(), true);
@@ -61,18 +64,29 @@ struct XmlVisitor
         {
 
             relationIdIndex->append(atoll((b->keyValues["id"]).c_str()), relid++);
+            tags=0;
         }
         else if (b->baliseName == BALISENAME_WAY)
         {
 
             wayIdIndex->append(atoll((b->keyValues["id"]).c_str()), wayid++);
+            tags=0;
         }
+        
+        else if (b->baliseName == BALISENAME_TAG)
+        {
+
+            tags++;;
+        }
+        
         else if (b->baliseName == BALISENAME_NODE)
         {
 
             nodeIdIndex->append(atoll((b->keyValues["id"]).c_str()),
-                (GeoPointNumberIndex){ nodid++, Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])}
+                (GeoPointNumberIndex){ nodid, Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])}
             );
+            if(tags) nodid++;
+            tags = 0;
         }
     }
 };
