@@ -6,7 +6,7 @@
 #define BALISENAME_RELATION  "relation"
 #define BALISENAME_NODE      "node"
 #define BALISENAME_WAY       "way"
-#define BALISENAME_tag       "tag"
+#define BALISENAME_TAG       "tag"
 
 using namespace fidx;
 struct XmlVisitor
@@ -82,10 +82,14 @@ struct XmlVisitor
         else if (b->baliseName == BALISENAME_NODE)
         {
 
-            nodeIdIndex->append(atoll((b->keyValues["id"]).c_str()),
-                (GeoPointNumberIndex){ nodid, Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])}
-            );
-            if(tags) nodid++;
+            if(tags)
+            {
+                nodeIdIndex->append(atoll((b->keyValues["id"]).c_str()),
+                    (GeoPointNumberIndex){ nodid++, Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])});
+			} else {
+                nodeIdIndex->append(atoll((b->keyValues["id"]).c_str()),
+                    (GeoPointNumberIndex){ 0, Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])});
+			}
             tags = 0;
         }
     }
