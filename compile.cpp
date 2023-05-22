@@ -381,7 +381,14 @@ struct XmlVisitor
             nodeRecord.x = Coordinates::toNormalizedLon(b->keyValues["lon"]);
             nodeRecord.y = Coordinates::toNormalizedLat(b->keyValues["lat"]);
             nodeRecord.tstart = baliseTags->startCount;
-            nodeRecord.tsize = baliseTags->itemCount  - baliseTags->startCount;
+
+            if((baliseTags->itemCount  - baliseTags->startCount) > 0xFFFF){
+			    std::cerr << "too much tags for node \n";
+			    nodeRecord.tsize = 0xFFFF;
+			} else {     
+                nodeRecord.tsize = baliseTags->itemCount  - baliseTags->startCount;
+			}
+			
             if(nodeRecord.tsize) nodeIndex->append(nodeRecord);
         }
         else if (b->baliseName == BALISENAME_ND)
@@ -392,9 +399,23 @@ struct XmlVisitor
             isWay = false;
             GeoWayIndex wayRecord;
             wayRecord.pstart = wayPoints->startCount;
-            wayRecord.psize = wayPoints->itemCount  - wayPoints->startCount;
+
+            if((wayPoints->itemCount  - wayPoints->startCount) > 0xFFFF){
+			    std::cerr << "too much nodes for way \n";
+			    wayRecord.psize = 0xFFFF;
+			} else {     
+                wayRecord.psize = wayPoints->itemCount  - wayPoints->startCount;
+			}        
+
             wayRecord.tstart = baliseTags->startCount;
-            wayRecord.tsize = baliseTags->itemCount  - baliseTags->startCount;
+
+            if((baliseTags->itemCount  - baliseTags->startCount) > 0xFFFF){
+			    std::cerr << "too much tags for way \n";
+			    wayRecord.tsize = 0xFFFF;
+			} else {     
+                wayRecord.tsize = baliseTags->itemCount  - baliseTags->startCount;
+			}
+
             wayIndex->append(wayRecord);
         }
         else if (b->baliseName == BALISENAME_MEMBER)
@@ -405,9 +426,22 @@ struct XmlVisitor
             isRel = false;
             GeoIndex relationRecord;
             relationRecord.tstart = baliseTags->startCount;
-            relationRecord.tsize = baliseTags->itemCount  - baliseTags->startCount;
+
+            if((baliseTags->itemCount  - baliseTags->startCount) > 0xFFFF){
+			    std::cerr << "too much tags for way \n";
+			    relationRecord.tsize = 0xFFFF;
+			} else {     
+                relationRecord.tsize = baliseTags->itemCount  - baliseTags->startCount;
+			}
+
             relationRecord.mstart = relMembers->startCount;
-            relationRecord.msize = relMembers->itemCount  - relMembers->startCount;
+
+            if((relMembers->itemCount  - relMembers->startCount) > 0xFFFF){
+			    std::cerr << "too much tags for way \n";
+			    relationRecord.msize = 0xFFFF;
+			} else {                    
+                relationRecord.msize = relMembers->itemCount  - relMembers->startCount;
+			}
             relationIndex->append(relationRecord);
         }
     }

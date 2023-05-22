@@ -280,11 +280,11 @@ namespace fidx
   * @tparam KEY  key of index.
   */
 
-template <class ITEM,class KEY> struct Record
+template <class ITEM,class KEY> struct __attribute__((packed)) Record 
 {
     KEY key;
     ITEM value;
-};
+} ;
 
 // fonction de comparaison
 // à spécialiser si l'opérateur de comparaison n'est pas disponible

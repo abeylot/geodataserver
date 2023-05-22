@@ -1,20 +1,19 @@
 #ifndef GEOTYPES_HPP
 #define GEOTYPES_HPP
-#pragma pack (push, 1)
 enum BaliseType {relation, point, way, unknown };
 
 /**
  * @brief Structure to store geographic data Relation in indexes.
  * 
  */
-struct GeoIndex
+struct __attribute__((packed)) GeoIndex
 {
     // start position of tags in tag file
     uint64_t tstart;
     // size of tags data in tag file.
-    uint32_t tsize;
+    uint16_t tsize;
     // size of members data
-    uint32_t msize;
+    uint16_t msize;
     // start position of members
     uint64_t mstart;
 };
@@ -22,7 +21,7 @@ struct GeoIndex
  * @brief structure to store geographic Point data in indexes.
  * 
  */
-struct GeoPointIndex
+struct __attribute__((packed)) GeoPointIndex 
 {
     // internal format  longitude
     uint32_t x;
@@ -31,20 +30,20 @@ struct GeoPointIndex
     // start position of tags in tag file
     uint64_t tstart;
     // size of tags data in tag file.
-    uint32_t tsize;
+    uint16_t tsize;
 };
 /**
  * @brief structure to store Way data in indexes file
  * 
  */
-struct GeoWayIndex
+struct __attribute__((packed)) GeoWayIndex 
 {
     // start position of points data in point data file
     uint64_t pstart;
     // size of points data in point data file
-    uint32_t psize;
+    uint16_t psize;
     // size of tags data in tag file.
-    uint32_t tsize;
+    uint16_t tsize;
     // start position of tags in tag file
     uint64_t tstart;
 };
@@ -52,7 +51,7 @@ struct GeoWayIndex
  * @brief Points data structure.
  * 
  */
-struct GeoPoint
+struct __attribute__((packed)) GeoPoint 
 {
     // internal format  longitude
     uint32_t x;
@@ -78,7 +77,7 @@ inline bool operator==(GeoPoint const& a, GeoPoint const& b)
  * @brief geographic member data.
  * 
  */
-struct GeoMember
+struct __attribute__((packed)) GeoMember
 {
     // type of data
     BaliseType type;
@@ -90,7 +89,7 @@ struct GeoMember
  * @brief struct to store tag strings.
  * 
  */
-struct GeoString
+struct __attribute__((packed)) GeoString 
 {
     char _buffer[256];
     unsigned char _length;
@@ -122,11 +121,10 @@ struct GeoString
  * @brief struct to store geopoint data with it's id
  * 
  */
-struct GeoPointNumberIndex
+struct __attribute__((packed)) GeoPointNumberIndex 
 {
     uint64_t number;
     uint32_t x;
     uint32_t y;
 };
-#pragma pack (pop)
 #endif
