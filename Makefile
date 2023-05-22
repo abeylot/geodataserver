@@ -73,11 +73,11 @@ index: index.cpp $(headersCommon) Coordinates.o CompiledDataManager.o Rectangle.
 
 Coordinates.o: Coordinates.cpp Coordinates.hpp
 	$(cc) -c Coordinates.cpp -o Coordinates.o
-	
-compile: Coordinates.o compile.cpp $(headersCommon)	
+
+compile: Coordinates.o compile.cpp $(headersCommon)
 	$(cc) compile.cpp Coordinates.o -o compile
 
-CompiledDataManager.o: CompiledDataManager.hpp CompiledDataManager.cpp
+CompiledDataManager.o: CompiledDataManager.hpp CompiledDataManager.cpp $(headersCommon)
 	$(cc) -c CompiledDataManager.cpp -o CompiledDataManager.o
 
 hash.o: helpers/hash.hpp helpers/hash.cpp
