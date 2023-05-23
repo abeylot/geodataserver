@@ -74,13 +74,13 @@ struct Selector
     std::string tagValue;
 };
 
-struct IndexEntry
+struct __attribute__((packed)) IndexEntry
 {
 	uint64_t id;
 	Rectangle r;
 };
 
-struct IndexRange
+struct __attribute__((packed)) IndexRange
 {
 	uint64_t first;
 	uint64_t last;

@@ -1,6 +1,6 @@
 #ifndef GEOTYPES_HPP
 #define GEOTYPES_HPP
-enum BaliseType {relation, point, way, unknown };
+enum __attribute__((packed)) BaliseType {relation, point, way, unknown };
 
 /**
  * @brief Structure to store geographic data Relation in indexes.

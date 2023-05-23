@@ -1,7 +1,7 @@
 #ifndef RECTANGLE_HPP
 #define RECTANGLE_HPP
 #include  <cstdint>
-struct Rectangle
+struct __attribute__((packed)) Rectangle
 {
     uint32_t x0;
     uint32_t y0;

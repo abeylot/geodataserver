@@ -237,6 +237,15 @@ private:
 
 int main(int argc, char *argv[])
 {
+	std::cout << "GeoPoint " << sizeof(GeoPoint) << "\n";
+	std::cout << "GeoIndex " << sizeof(GeoIndex) << "\n";
+	std::cout << "GeoPointIndex " << sizeof(GeoPointIndex) << "\n";
+	std::cout << "GeoWayIndex " << sizeof(GeoWayIndex) << "\n";
+	std::cout << "GeoMember " << sizeof(GeoMember) << "\n";
+	std::cout << "GeoString " << sizeof(GeoString) << "\n";
+	std::cout << "IndexEntry " << sizeof(IndexEntry) << "\n";
+	std::cout << "IndexRange " << sizeof(IndexRange) << "\n";
+
     if(argc != 2)
     {
         std::cerr << "path argument is missing\n";
