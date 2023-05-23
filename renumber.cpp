@@ -106,4 +106,5 @@ int main(int argc, char *argv[])
     XmlVisitor* v = new XmlVisitor(std::string(argv[1]));
     XmlFileParser<XmlVisitor>::parseXmlFile(stdin,*v);
     delete v;
+    return 0;
 }
