@@ -922,12 +922,18 @@
            <class value="default"  zIndex="1" textZIndex="10" textStyle="#amenityName"/>
       </condition>
       <condition closed="both" tagKey="historic">
-           <class value="default"  zIndex="1" textZIndex="10" textStyle="#amenityName"/>
+           <class value="default"  zIndex="1" textZIndex="8" textStyle="#amenityName"/>
+      </condition>
+      <condition closed="both" tagKey="tourism">
+           <class value="default"  zIndex="1" textZIndex="9" textStyle="#amenityName"/>
       </condition>
       </restriction>
       <restriction zLevels="19">
       <condition closed="both" tagKey="historic">
-           <class value="default"  zIndex="1" textZIndex="10" textStyle="#amenityName"/>
+           <class value="default"  zIndex="1" textZIndex="8" textStyle="#amenityName"/>
+      </condition>
+      <condition closed="both" tagKey="tourism">
+           <class value="default"  zIndex="1" textZIndex="9" textStyle="#amenityName"/>
       </condition>
       <condition closed="both" tagKey="amenity">
            <class value="post_office"      zIndex="50001" symbol="post_office" textStyle="#amenityName" textZIndex="1"/>
@@ -949,6 +955,9 @@
 
    <index type="way" name="amenityWayIdx">
       <restriction zLevels="17,18,19">
+      <condition closed="both" tagKey="tourism">
+           <class value="default"  zIndex="1" textZIndex="9" textStyle="#amenityName"/>
+      </condition>
       <condition closed="yes" tagKey="amenity">
            <class value="clinic"  zIndex="50001" symbol="hospital" />
            <class value="hospital"  zIndex="50001" symbol="hospital" />
@@ -961,6 +970,9 @@
 
    <index type="relation" name="amenityRelationIdx">
       <restriction zLevels="17,18,19">
+      <condition closed="both" tagKey="tourism">
+           <class value="default"  zIndex="1" textZIndex="9" textStyle="#amenityName"/>
+      </condition>
       <condition closed="yes" tagKey="amenity">
            <class value="parking"  zIndex="50001" style="#parking" symbol="parking" />
            <class value="parking_entrance"  zIndex="50001" symbol="parking"/>
