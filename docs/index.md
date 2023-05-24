@@ -31,7 +31,7 @@ Fast for small scales ( high zoom levels ) but can take 10 or 20 seconds for lar
 #### first install some dependancies
     sudo apt update
     sudo apt upgrade
-    sudo apt install g++ lbzip2 libboost-all-dev libbz2-dev git
+    sudo apt install g++ lbzip2 libbz2-dev git
     
 #### clone c++ code :
     cd $HOME
