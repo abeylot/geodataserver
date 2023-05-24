@@ -11,7 +11,7 @@ see [here](/docs/index.md).
 2. at least 4gb memory
 2. a fast 500gb ssd for whole world or some gb free space for smaller maps
 ## dependencies
-1. boost-threads
+1. ~~boost-threads~~
 2. libzlib
 ##
 ![sample](/docs/sample2.jpg)
