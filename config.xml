@@ -24,7 +24,7 @@
     </pattern>    
 
     <!-- areas -->
-    <style id="water"            value="fill:skyblue; fill-rule:evenodd"/>
+    <style id="water"            value="fill:skyblue; fill-rule:evenodd; filter: drop-shadow( 0px 0px 1px rgba(0, 0, 0, .4))"/>
     <style id="grass"            value="fill:#AAFFAA;; fill-rule:evenodd"/>
     <style id="forest"           value="fill:#99DD99;; fill-rule:evenodd"/>
     <style id="ice"              value="fill:lightgrey;; fill-rule:evenodd"/>
@@ -33,10 +33,11 @@
     <style id="reef"             value="fill:url(#reefPattern); fill-rule:evenodd"/>
     <style id="sand"             value="fill:moccasin; fill-rule:evenodd"/>
     <style id="mud"              value="fill:url(#mudPattern); fill-rule:evenodd"/>
-    <style id="building"         value="fill:linen;opacity:0.9;stroke:BurlyWood ;stroke-width:1; fill-rule:evenodd"/>
-    <style id="historicBuilding" value="fill:mistyrose;opacity:0.7;stroke:#B13014 ;stroke-width:1; fill-rule:evenodd"/>
+    <style id="building"         value="fill:linen;opacity:0.9;stroke:BurlyWood ;stroke-width:1; fill-rule:evenodd; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))"/>
+    <style id="historicBuilding" value="fill:mistyrose;opacity:0.7;stroke:#B13014 ;stroke-width:1; fill-rule:evenodd; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))"/>
     <style id="zone"             value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:5,5; fill-rule:evenodd"/>
     <style id="parking"          value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:1,5; fill-rule:evenodd"/>
+    <style id="bridge"           value="fill:linen;stroke:grey; stroke-width:1; fill-rule:evenodd"/>
     
     
 
@@ -46,9 +47,9 @@
     <style id="ferryLine" value="fill:none;stroke:blue; stroke-width:1;opacity:0.7"/>
     <style id="waterLine" value="fill:none;stroke:skyblue; stroke-width:1"/>
     <style id="hedge"      value="fill:none;stroke:#99DD99; stroke-width:4; stroke-dasharray:0.1,5;stroke-linecap:round;opacity:0.7;"/>
-    <style id="treeLineS"  value="fill:none;stroke:#99DD99; stroke-width:8; stroke-dasharray:0.1,16;stroke-linecap:round;opacity:0.7;"/>
-    <style id="treeLineM"  value="fill:none;stroke:#99DD99; stroke-width:16; stroke-dasharray:0.1,32;stroke-linecap:round;opacity:0.7;"/>
-    <style id="treeLineL"  value="fill:none;stroke:#99DD99; stroke-width:32; stroke-dasharray:0.1,64;stroke-linecap:round;opacity:0.7;"/>
+    <style id="treeLineS"  value="fill:none;stroke:#99DD99; stroke-width:8; stroke-dasharray:0.1,16;stroke-linecap:round;opacity:0.7; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))"/>
+    <style id="treeLineM"  value="fill:none;stroke:#99DD99; stroke-width:16; stroke-dasharray:0.1,32;stroke-linecap:round;opacity:0.7; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))"/>
+    <style id="treeLineL"  value="fill:none;stroke:#99DD99; stroke-width:32; stroke-dasharray:0.1,64;stroke-linecap:round;opacity:0.7; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))"/>
     
     <style id="road"       value="fill:none; stroke:#BBBBBB;stroke-linecap:round;"/>
     <style id="path"       value="fill:none; stroke:#BBBBBB;stroke-linecap:butt; stroke-dasharray:5,2; stroke-width:2"/>
@@ -87,20 +88,20 @@
 
     <!-- Symbols -->
 
-    <symbol id="stone" width="16" height="16" transform="translate(-8 -8)">
-        <circle  cx="8"  cy="8"  r="8"  style="fill:darkgrey;opacity:0.7;" />
+    <symbol id="stone" width="20" height="20" transform="translate(-10 -10)">
+        <circle  cx="10"  cy="10"  r="8"  style="fill:darkgrey;opacity:0.7; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))" />
     </symbol>
 
-    <symbol id="treeS" width="8" height="8" transform="translate(-4 -4)">
-        <circle  cx="4"  cy="4"  r="4"  style="fill:#99DD99;opacity:0.7;" />
+    <symbol id="treeS" width="12" height="12" transform="translate(-6 -6)">
+        <circle  cx="6"  cy="6"  r="4"  style="fill:#99DD99;opacity:0.7; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))" />
     </symbol>
 
-    <symbol id="treeM" width="16" height="16" transform="translate(-8 -8)">
-        <circle  cx="8"  cy="8"  r="8"  style="fill:#99DD99;opacity:0.7;" />
+    <symbol id="treeM" width="20" height="20" transform="translate(-10 -10)">
+        <circle  cx="10"  cy="10"  r="8"  style="fill:#99DD99;opacity:0.7; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))" />
     </symbol>
 
-    <symbol id="treeB" width="32" height="32" transform="translate(-16 -16)">
-        <circle  cx="16"  cy="16"  r="16"  style="fill:#99DD99;opacity:0.7;" />
+    <symbol id="treeB" width="36" height="36" transform="translate(-18 -18)">
+        <circle  cx="18"  cy="18"  r="16"  style="fill:#99DD99;opacity:0.7; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))" />
     </symbol>
 
     <symbol id="parking" width="16" height="16" transform="translate(-8 -8)" >
@@ -572,14 +573,6 @@
         <select tagKey="heritage" tagValue="*"/>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                <class value="default" zIndex="2901" textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber" style="#historicBuilding"/>
-            </condition>
-            <condition tagKey="type"    closed="yes">
-                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
-            </condition>
-        </restriction>
-        <restriction zLevels="17,18,19">
-            <condition tagKey="building" closed="yes">
                 <class value="default" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
             </condition>
             <condition tagKey="type"    closed="yes">
@@ -592,14 +585,6 @@
         <exclude tagKey="location" tagValue="underground"/>
         <exclude tagKey="heritage" tagValue="*"/>
         <select tagKey="historic" tagValue="*"/>
-        <restriction zLevels="17,18,19">
-            <condition tagKey="building" closed="yes">
-                <class value="default" zIndex="2901" textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber" style="#historicBuilding"/>
-            </condition>
-            <condition tagKey="type"    closed="yes">
-                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
-            </condition>
-        </restriction>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
                 <class value="default" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
@@ -616,14 +601,6 @@
         <exclude tagKey="heritage" tagValue="*"/>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                <class value="default" zIndex="2900" textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber" style="#building"/>
-            </condition>
-            <condition tagKey="type"    closed="yes">
-                <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#building"/>
-            </condition>
-        </restriction>
-        <restriction zLevels="17,18,19">
-            <condition tagKey="building" closed="yes">
                 <class value="default" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#building"/>
             </condition>
             <condition tagKey="type"    closed="yes">
@@ -636,14 +613,6 @@
         <select tagKey="historic" tagValue="*"/>
         <exclude tagKey="location" tagValue="underground"/>
         <exclude tagKey="heritage" tagValue="*"/>
-        <restriction zLevels="17,18,19">
-            <condition tagKey="building" closed="yes">
-                    <class value="default"       zIndex="2901" style="#historicBuilding" textZIndex="0" textField="addr:housenumber" textStyle="#houseNumber"/> 
-            </condition>
-            <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2901" style="#historicBuilding"/>
-            </condition>
-        </restriction>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
                     <class value="default"       textField="addr:housenumber"    textZIndex="0" textStyle="#houseNumber"      zIndex="2901" style="#historicBuilding"/>
@@ -659,14 +628,6 @@
         <select tagKey="heritage" tagValue="*"/>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                    <class value="default"       zIndex="2901" style="#historicBuilding" textField="addr:housenumber" textZIndex="0" textStyle="#houseNumber"/> 
-            </condition>
-            <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2901" style="#historicBuilding"/>
-            </condition>
-        </restriction>
-        <restriction zLevels="17,18,19">
-            <condition tagKey="building" closed="yes">
                     <class value="default"       textField="addr:housenumber"    textZIndex="0" textStyle="#houseNumber"      zIndex="2901" style="#historicBuilding"/>
             </condition>
             <condition tagKey="type" closed="yes">
@@ -680,18 +641,15 @@
         <exclude tagKey="location" tagValue="underground"/>
         <restriction zLevels="17,18,19">
             <condition tagKey="building" closed="yes">
-                    <class value="default"       zIndex="2900" style="#building" textZIndex="0" textField="addr:housenumber" textStyle="#houseNumber"/> 
+                    <class value="default"       textField="addr:housenumber"    textZIndex="0" textStyle="#houseNumber"      zIndex="2900" style="#building"/>
             </condition>
             <condition tagKey="type" closed="yes">
                 <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2900" style="#building"/>
             </condition>
         </restriction>
-        <restriction zLevels="17,18,19">
-            <condition tagKey="building" closed="yes">
-                    <class value="default"       textField="addr:housenumber"    textZIndex="0" textStyle="#houseNumber"      zIndex="2900" style="#building"/>
-            </condition>
-            <condition tagKey="type" closed="yes">
-                <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2900" style="#building"/>
+        <restriction zLevels="14,15,16,17,18,19">
+            <condition tagKey="man_made" closed="yes">
+                <class value="bridge"  textZIndex="0" textStyle="#greyAreaName"     zIndex="1001" style="#bridge"/>
             </condition>
         </restriction>
     </index>
@@ -1019,6 +977,7 @@
       </restriction>
    </index>
    <geoloc>
+       <!-- appropriate conversions for french language -->
 	   <charconv from="à" to="a"/>
 	   <charconv from="â" to="a"/>
 	   <charconv from="Â" to="a"/>
