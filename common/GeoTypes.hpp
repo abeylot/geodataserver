@@ -41,7 +41,7 @@ struct __attribute__((packed)) GeoWayIndex
     // start position of points data in point data file
     uint64_t pstart;
     // size of points data in point data file
-    uint16_t psize;
+    uint32_t psize;
     // size of tags data in tag file.
     uint16_t tsize;
     // start position of tags in tag file

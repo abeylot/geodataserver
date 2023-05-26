@@ -24,7 +24,7 @@
     </pattern>    
 
     <!-- areas -->
-    <style id="water"            value="fill:skyblue; fill-rule:evenodd; filter: drop-shadow( 0px 0px 1px rgba(0, 0, 0, .4))"/>
+    <style id="water"            value="fill:skyblue; fill-rule:evenodd;"/>
     <style id="grass"            value="fill:#AAFFAA;; fill-rule:evenodd"/>
     <style id="forest"           value="fill:#99DD99;; fill-rule:evenodd"/>
     <style id="ice"              value="fill:lightgrey;; fill-rule:evenodd"/>
