@@ -10,19 +10,21 @@
 #include <math.h>
 #include <sstream>
 
+#define LAYER_MULT 100000
 
-Shape* SvgRenderer::getShape(CssClass* c)
+Shape* SvgRenderer::getShape(CssClass* c, unsigned char layer)
 {
-	auto it = shapes.find(c);
+	auto it = shapes.find(c->rank + layer * LAYER_MULT);
 	if(it == shapes.end())
 	{
-		Shape* s = new Shape;
-		shapes[c] = s;
-		return s;
+		shapes[c->rank + layer * LAYER_MULT] = new myShape;
+		shapes[c->rank + layer * LAYER_MULT]->c = c; 
+		shapes[c->rank + layer * LAYER_MULT]->layer = layer; 
+		return &(shapes[c->rank + layer * LAYER_MULT]->s);
 	}
 	else
 	{
-		return it->second;
+		return &(it->second->s);
 	}
 	
 }
@@ -202,7 +204,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
 										size_x,
 										size_y,
 										*cl,
-										*getShape(cl)
+										*getShape(cl, item->layer)
 										);
 							}
 						else
@@ -216,14 +218,14 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
 										);
 						}
 						
-						it = resMap.find(cl->zIndex);
+						auto it = resMap.find(cl->zIndex + item->layer * LAYER_MULT);
                         if(it != resMap.end())
                         {
                             it->second += tmp;
                         }
                         else
                         {
-                            resMap[cl->zIndex] = tmp;
+                            resMap[cl->zIndex + item->layer * LAYER_MULT] = tmp;
                         }
                         if((lbl.text.length() > 0) && (lbl.fontsize > 5))
                             label_vector.push_back(lbl);
@@ -264,7 +266,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
 											size_x,
 											size_y,
 											*cl,
-											*getShape(cl)
+											*getShape(cl, item->layer)
 											);
 							}
 							else
@@ -277,14 +279,14 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
 											);
 							}
 
-                            it = resMap.find(cl->zIndex);
+                            auto it = resMap.find(cl->zIndex + item->layer * LAYER_MULT);
                             if(it != resMap.end())
                             {
                                 it->second += tmp;
                             }
                             else
                             {
-                                resMap[cl->zIndex] = tmp;
+                                resMap[cl->zIndex + item->layer * LAYER_MULT] = tmp;
                             }
                             if((lbl.text.length() > 0) && (lbl.fontsize > 5))
                                 label_vector.push_back(lbl);
@@ -303,18 +305,18 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
 			rect,
 			size_x,
 			size_y,
-			* (it.first),
-			* (it.second)
+			*(it.second->c),
+			it.second->s
 			);
+			auto it2 = resMap.find(it.second->c->zIndex + it.second->layer * LAYER_MULT);
 			delete it.second;
-			auto it2 = resMap.find(it.first->zIndex);
 			if(it2 != resMap.end())
 			{
 				it2->second = tmp + it2->second;
 			}
 			else
 			{
-				resMap[it.first->zIndex] = tmp;
+				resMap[it.second->c->zIndex + it.second->layer * LAYER_MULT] = tmp;
 			}
 		}
 		shapes.clear();

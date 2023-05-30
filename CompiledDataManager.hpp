@@ -53,6 +53,7 @@ struct Tags
 struct Point
 {
     uint64_t id;
+    char layer;
     uint32_t x;
     uint32_t y;
     Tags tags;
@@ -65,6 +66,7 @@ struct Point
 struct Way
 {
     uint64_t id;
+    char layer;
     Rectangle rect;
     GeoPoint* points;
     uint64_t pointsCount;
@@ -111,6 +113,7 @@ struct Shape
 struct Relation
 {
     uint64_t id;
+    char layer;
     Rectangle rect;
     std::vector<Relation*> relations;
     std::vector<Way*> ways;

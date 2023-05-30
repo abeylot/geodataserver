@@ -26,6 +26,11 @@ Way* CompiledDataManager::loadWay(uint64_t id, bool fast)
             }
         }
         fillTags(w->tags,record.tstart,record.tsize);
+        w->layer=6; 
+        if(w->tags["layer"] != "")
+        {
+			w->layer += atoi( w->tags["layer"].c_str());
+		}
         return w;
     }
     else return NULL;
@@ -38,10 +43,15 @@ Point* CompiledDataManager::loadPoint(uint64_t id)
     if(found)
     {
         Point* p = new Point();
+        p->layer = 6;
         p->id = id;
         p->x = record.x;
         p->y = record.y;
         fillTags(p->tags,record.tstart,record.tsize);
+        if(p->tags["layer"] != "")
+        {
+			p->layer += atoi( p->tags["layer"].c_str());
+		}
         return p;
     }
     else return NULL;
@@ -67,6 +77,11 @@ Relation* CompiledDataManager::loadRelation(uint64_t id, short recurs, bool fast
         r->rect.x0 = r->rect.x1 = UINT32_C(0xFFFFFFFF);
         r->rect.y0 = r->rect.y1 = UINT32_C(0xFFFFFFFF);
         fillTags(r->tags,record.tstart,record.tsize);
+        r->layer = 6;
+        if(r->tags["layer"] != "")
+        {
+			r->layer += atoi( r->tags["layer"].c_str());
+		}
         if(r->tags["type"] == "land_area")
         {
             r->isPyramidal = true;

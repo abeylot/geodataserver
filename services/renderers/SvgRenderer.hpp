@@ -33,6 +33,13 @@ struct label_s
 	}
 };
 
+struct myShape
+{
+	CssClass* c;
+	char      layer;
+	Shape     s;
+};
+
 class SvgRenderer
 {
 private:
@@ -43,11 +50,11 @@ private:
     uint32_t zmMask;
     hh::THashIntegerTable relationHash, wayHash, nodeHash;
     short indexId;   
-    std::map<int,std::string> resMap;
+    std::map<long ,std::string> resMap;
     std::map<int,std::string>::iterator it;
     std::string tmp = "";
     std::vector<label_s> label_vector;
-    std::map<CssClass*, Shape*> shapes;
+    std::map<uint64_t, myShape*> shapes;
     std::set<std::string> cssClasses;
     std::string _locale, _defaultColor;
     char _locales[32][2];
@@ -97,7 +104,7 @@ public:
     std::string render(label_s& lbl, Relation& myWay,Rectangle rect, uint32_t sizex, uint32_t sizey, CssClass& cl, Shape& s);
     std::string render(label_s& lbl, Point& myNode,  Rectangle rect,uint32_t  sizex, uint32_t sizey, CssClass& cl);
     std::string renderShape(Rectangle rect,uint32_t  sizex, uint32_t sizey, CssClass& cl, Shape& s);
-    Shape* getShape(CssClass* cssClass);
+    Shape* getShape(CssClass* c, unsigned char layer);
     template<class ITEM> void iterate(const IndexDesc& idxDesc, const Rectangle& r);
     template<class ITEM> CssClass* getCssClass(const IndexDesc& idx, ITEM& b, short zoom, bool closed);
 };
