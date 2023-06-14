@@ -206,73 +206,73 @@ namespace fidx
 
    /*const std::map<std::string,std::string> substitutions = 
    {
-	   {"à", "a"},
-	   {"â", "a"},
-	   {"Â", "a"},
-	   {"é", "e"},
-	   {"è", "e"},
-	   {"ê", "e"},
-	   {"ë", "e"},
-	   {"È", "e"},
-	   {"È", "e"},
+       {"à", "a"},
+       {"â", "a"},
+       {"Â", "a"},
+       {"é", "e"},
+       {"è", "e"},
+       {"ê", "e"},
+       {"ë", "e"},
+       {"È", "e"},
+       {"È", "e"},
        {"Ê", "e"},
-	   {"î", "i"},
-	   {"ï", "i"},
-	   {"ô", "o"},
-	   {"œ", "oe"},
-	   {"û", "u"},
-	   {"ç", "c"}	   
+       {"î", "i"},
+       {"ï", "i"},
+       {"ô", "o"},
+       {"œ", "oe"},
+       {"û", "u"},
+       {"ç", "c"}       
    };*/
 
    inline uint64_t makeLexicalKey(const char* value_, size_t value_size_, const std::map<std::string, std::string>&substitutions)
    {
-	    char value[128];
-	    size_t value_size = 0;
-	    for(unsigned int i = 0; i < 128 && i < value_size_;)
-	    {
-		    size_t utf_8_len = 1;
-		    if((value_[i] & 0b11110000) ==  0b11110000) 	utf_8_len = 4;
-		    else if ((value_[i] & 0b11110000) ==  0b11100000) utf_8_len = 3; 
-		    else if ((value_[i] & 0b11110000) ==  0b11000000) utf_8_len = 2;
-		    std::string in = "";
-		    for(unsigned int j = i; (j < (utf_8_len + i)) && j < value_size_ ; j++)
-		    {
-		       in += value_[j];
-		    }
-		    auto it = substitutions.find(in);
-		    std::string out = in;
-		    i += in.length();
-		    if(it != substitutions.end())
-		    {
-				 out = it->second;
-			}
-			for(size_t k = 0; k < out.length();k++)	value[value_size++] = tolower(out[k]);
-		} 
-		uint64_t key = 0;
-		/*if(value_size > 0) { key += tolower(value[0]);}
-		key <<= 3;
-		if(value_size > 1) { key += tolower(value[1]);}
-		key <<= 3;
-		if(value_size > 2) { key += tolower(value[2]);}
-		key <<= 3;
-		if(value_size > 3) { key += tolower(value[3]);}
-		key <<= 3;
-		if(value_size > 4) { key += tolower(value[4]);}
-		key <<= 3;
-		if(value_size > 5) { key += tolower(value[5]);}
-		key <<= 3;
-		if(value_size > 6) { key += tolower(value[6]);}
-		key <<= 3;
-		if(value_size > 7) { key += tolower(value[7]);}*/
-		char* key_c = (char*) &key; 
-		for(unsigned int i = 0; i < value_size; i++)
-		{
-			key_c[i%8] = key_c[i%8] ^ value[i]; 
-		}
-		return key;
+        char value[128];
+        size_t value_size = 0;
+        for(unsigned int i = 0; i < 128 && i < value_size_;)
+        {
+            size_t utf_8_len = 1;
+            if((value_[i] & 0b11110000) ==  0b11110000)     utf_8_len = 4;
+            else if ((value_[i] & 0b11110000) ==  0b11100000) utf_8_len = 3; 
+            else if ((value_[i] & 0b11110000) ==  0b11000000) utf_8_len = 2;
+            std::string in = "";
+            for(unsigned int j = i; (j < (utf_8_len + i)) && j < value_size_ ; j++)
+            {
+               in += value_[j];
+            }
+            auto it = substitutions.find(in);
+            std::string out = in;
+            i += in.length();
+            if(it != substitutions.end())
+            {
+                 out = it->second;
+            }
+            for(size_t k = 0; k < out.length();k++)    value[value_size++] = tolower(out[k]);
+        } 
+        uint64_t key = 0;
+        /*if(value_size > 0) { key += tolower(value[0]);}
+        key <<= 3;
+        if(value_size > 1) { key += tolower(value[1]);}
+        key <<= 3;
+        if(value_size > 2) { key += tolower(value[2]);}
+        key <<= 3;
+        if(value_size > 3) { key += tolower(value[3]);}
+        key <<= 3;
+        if(value_size > 4) { key += tolower(value[4]);}
+        key <<= 3;
+        if(value_size > 5) { key += tolower(value[5]);}
+        key <<= 3;
+        if(value_size > 6) { key += tolower(value[6]);}
+        key <<= 3;
+        if(value_size > 7) { key += tolower(value[7]);}*/
+        char* key_c = (char*) &key; 
+        for(unsigned int i = 0; i < value_size; i++)
+        {
+            key_c[i%8] = key_c[i%8] ^ value[i]; 
+        }
+        return key;
    }
 
-	
+    
  /**
   * @brief Record for index file.
   * 
@@ -447,56 +447,56 @@ public:
 
     void swap(Record<ITEM,KEY>* a, Record<ITEM,KEY>* b)
     {
-		Record<ITEM,KEY> c;
-		memcpy(&c, a, recSize);
-		memcpy(a, b, recSize);
-		memcpy(b, &c, recSize);
-	}
+        Record<ITEM,KEY> c;
+        memcpy(&c, a, recSize);
+        memcpy(a, b, recSize);
+        memcpy(b, &c, recSize);
+    }
 
     void memsort(int64_t begin, int64_t end, Record<ITEM,KEY>* sort_buffer)
     {
         //std::cout << "memsort " << begin <<" "<< end <<"\n";
-		if((end - begin) < 1) return;
-		if((end - begin) == 1)
-		{
-			int comp = fileIndexComp<ITEM,KEY>(&sort_buffer[end], &sort_buffer[begin]);
-			if ( comp < 0)
-			{
-				swap(sort_buffer + end, sort_buffer + begin);
-			}
-			return;
-		}
-		else
-		{
-			int64_t lessers = 0;
-			int64_t biggers = 0;
-			int64_t total = end - begin;
-			int64_t ipivot = begin;
-			while(total > (biggers + lessers))
-			{
-				while((total > (biggers + lessers))
-				&& (begin + 1 + lessers <= end)
-				&& (sort_buffer[begin + 1 + lessers].key < sort_buffer[begin].key)) lessers++;
-				while((total > (biggers + lessers))
-				&& (end - biggers >= begin + 1)
-				&& (sort_buffer[end - biggers ].key > sort_buffer[begin].key)) biggers++;
-				if(total > (biggers + lessers + 1))
-				{
-					swap(sort_buffer + (begin+1+lessers), sort_buffer + (end - biggers));
-					biggers++;
-					lessers++;
-				} else if (total == (biggers + lessers + 1)) {
-					if(sort_buffer[begin + 1 + lessers].key < sort_buffer[begin].key) lessers++;
-					else biggers++;
-				}
-			}
-			ipivot = begin + lessers;
-			swap(sort_buffer + ipivot, sort_buffer + begin);
-			if((ipivot + 1)< end) memsort(ipivot + 1, end, sort_buffer); 
-			if(ipivot > (begin + 1)) memsort(begin, ipivot - 1, sort_buffer); 
-		}
-	}
-		 
+        if((end - begin) < 1) return;
+        if((end - begin) == 1)
+        {
+            int comp = fileIndexComp<ITEM,KEY>(&sort_buffer[end], &sort_buffer[begin]);
+            if ( comp < 0)
+            {
+                swap(sort_buffer + end, sort_buffer + begin);
+            }
+            return;
+        }
+        else
+        {
+            int64_t lessers = 0;
+            int64_t biggers = 0;
+            int64_t total = end - begin;
+            int64_t ipivot = begin;
+            while(total > (biggers + lessers))
+            {
+                while((total > (biggers + lessers))
+                && (begin + 1 + lessers <= end)
+                && (sort_buffer[begin + 1 + lessers].key < sort_buffer[begin].key)) lessers++;
+                while((total > (biggers + lessers))
+                && (end - biggers >= begin + 1)
+                && (sort_buffer[end - biggers ].key > sort_buffer[begin].key)) biggers++;
+                if(total > (biggers + lessers + 1))
+                {
+                    swap(sort_buffer + (begin+1+lessers), sort_buffer + (end - biggers));
+                    biggers++;
+                    lessers++;
+                } else if (total == (biggers + lessers + 1)) {
+                    if(sort_buffer[begin + 1 + lessers].key < sort_buffer[begin].key) lessers++;
+                    else biggers++;
+                }
+            }
+            ipivot = begin + lessers;
+            swap(sort_buffer + ipivot, sort_buffer + begin);
+            if((ipivot + 1)< end) memsort(ipivot + 1, end, sort_buffer); 
+            if(ipivot > (begin + 1)) memsort(begin, ipivot - 1, sort_buffer); 
+        }
+    }
+
 
     /**
      * @brief sort index part.
@@ -571,15 +571,15 @@ public:
                 }
                 else
                 {
-					if(plusGrandsBufferCount> plusPetitsBufferCount)
-					{
-						plusPetits[plusPetitsBufferCount ++] = autres[autresBufferCount];
-					}
-					else
-					{
+                    if(plusGrandsBufferCount> plusPetitsBufferCount)
+                    {
+                        plusPetits[plusPetitsBufferCount ++] = autres[autresBufferCount];
+                    }
+                    else
+                    {
                         plusGrands[plusGrandsBufferCount ++] = autres[autresBufferCount];
-					} 
-				}
+                    } 
+                }
             }
             //std::cout << "divided items \n";
 
@@ -629,24 +629,24 @@ public:
         //bool cont = true;
         /*while((plusGrandsCount > 1 )&& cont)
         {
-			get(end - (plusGrandsCount - 1), &tmp);
-			if (tmp.key == pivot.key)
-			{	
-			    plusGrandsCount --;
-			    sortedSize ++;
-			}
-			else cont = false;
-		}
+            get(end - (plusGrandsCount - 1), &tmp);
+            if (tmp.key == pivot.key)
+            {    
+                plusGrandsCount --;
+                sortedSize ++;
+            }
+            else cont = false;
+        }
         while((plusPetitsCount > 1 )&& cont)
         {
-			get(begin + plusPetitsCount - 1, &tmp);
-			if (tmp.key == pivot.key)
-			{	
-			    plusPetitsCount --;
-			    sortedSize ++;
-			}
-			else cont = false;
-		}*/
+            get(begin + plusPetitsCount - 1, &tmp);
+            if (tmp.key == pivot.key)
+            {    
+                plusPetitsCount --;
+                sortedSize ++;
+            }
+            else cont = false;
+        }*/
         std::cerr << "*** *** *** *** sorted " << sortedSize << " out of " << fileSize << "\n";
         if(plusGrandsCount > 1) sort(end - (plusGrandsCount - 1), end, sort_buffer, buffer_size);
         else if(!plusGrandsCount) sortedSize++;

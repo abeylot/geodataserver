@@ -15,7 +15,7 @@ struct __attribute__((packed)) Rectangle
         if (y0 < b.y0) return false;
         if (x1 > b.x1) return false;
         if (y1 > b.y1) return false;
-	    return true;
+            return true;
     }
 };
 Rectangle operator*(Rectangle const& a, double const& b);
@@ -32,7 +32,7 @@ inline bool operator < (Rectangle const& a, Rectangle const& b)
     if (a.x1 < b.x1) return true;
     else if (a.x1 != b.x1) return false;
     if (a.y1 < b.y1) return true;
-	return false;
+        return false;
 }
 inline bool operator == (Rectangle const& a, Rectangle const& b)
 {
@@ -40,7 +40,7 @@ inline bool operator == (Rectangle const& a, Rectangle const& b)
     if (a.y0 != b.y0) return false;
     if (a.x1 != b.x1) return false;
     if (a.y1 != b.y1) return false;
-	return true;
+        return true;
 }
 
 #endif

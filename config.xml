@@ -66,10 +66,10 @@
     <style id="districtName" value="fill:red;font-family:sans-serif;opacity:0.7;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
     <style id="countyName"   value="fill:red;font-family:sans-serif;opacity:0.7;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
 
-    <style id="maroonAreaName"  value="fill:maroon;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
-    <style id="greenAreaName"   value="fill:green;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
-    <style id="blueAreaName"    value="fill:blue;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
-    <style id="greyAreaName"    value="fill:grey;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="maroonAreaName"  value="fill:maroon;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="greenAreaName"   value="fill:green;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="blueAreaName"    value="fill:blue;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="greyAreaName"    value="fill:grey;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
     
     <style id="capitalName"     value="fill:maroon;font-family:sans-serif;opacity:0.7; font-size:16px; font-weight:bold;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
     <style id="subCapitalName"  value="fill:maroon;font-family:sans-serif;opacity:0.7; font-size:15px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
@@ -421,7 +421,7 @@
                 <class value="waterway"                  zIndex="101" textZIndex="25" style="#water" />
             </condition>
             <condition tagKey="route" closed="both">
-                <class value="bus"      textWidth="4" textStyle="fill:green;font-family:sans-serif"      zIndex="2500" style="fill:none; stroke:green;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
+                <class value="bus"      textWidth="4" textStyle="fill:green;font-family:sans-serif"      zIndex="25000000" style="fill:none; stroke:green;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
                 <class value="ferry"       textWidth="4" textStyle="#ferryLineName"      zIndex="1000" textZIndex="2000" style="#ferryLine"/>
             </condition>
         </restriction>

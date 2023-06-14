@@ -27,7 +27,7 @@ std::atomic<int> pending(0);
 volatile bool sigstop;
 void sig_handler(int sig)
 {
-	sigstop = true;
+    sigstop = true;
 }
 
 struct Listener
@@ -54,7 +54,7 @@ struct Listener
                     delete cnx;  
                 }
             }
-		}
+        }
         std::cout << "Listener end\n";
         return 0;
     }
@@ -130,7 +130,7 @@ template<typename MSG> struct Writer
                 {
                     std::string* s = encoder.decode(m);
                     p.putMessage(*s,m->getConnection());
-					usleep(10000);
+                    usleep(10000);
                     delete s;
                     delete m->getConnection();
                     delete m;
@@ -237,14 +237,14 @@ private:
 
 int main(int argc, char *argv[])
 {
-	std::cout << "GeoPoint " << sizeof(GeoPoint) << "\n";
-	std::cout << "GeoIndex " << sizeof(GeoIndex) << "\n";
-	std::cout << "GeoPointIndex " << sizeof(GeoPointIndex) << "\n";
-	std::cout << "GeoWayIndex " << sizeof(GeoWayIndex) << "\n";
-	std::cout << "GeoMember " << sizeof(GeoMember) << "\n";
-	std::cout << "GeoString " << sizeof(GeoString) << "\n";
-	std::cout << "IndexEntry " << sizeof(IndexEntry) << "\n";
-	std::cout << "IndexRange " << sizeof(IndexRange) << "\n";
+    std::cout << "GeoPoint " << sizeof(GeoPoint) << "\n";
+    std::cout << "GeoIndex " << sizeof(GeoIndex) << "\n";
+    std::cout << "GeoPointIndex " << sizeof(GeoPointIndex) << "\n";
+    std::cout << "GeoWayIndex " << sizeof(GeoWayIndex) << "\n";
+    std::cout << "GeoMember " << sizeof(GeoMember) << "\n";
+    std::cout << "GeoString " << sizeof(GeoString) << "\n";
+    std::cout << "IndexEntry " << sizeof(IndexEntry) << "\n";
+    std::cout << "IndexRange " << sizeof(IndexRange) << "\n";
 
     if(argc != 2)
     {

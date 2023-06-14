@@ -29,8 +29,8 @@ Way* CompiledDataManager::loadWay(uint64_t id, bool fast)
         w->layer=6; 
         if(w->tags["layer"] != "")
         {
-			w->layer += atoi( w->tags["layer"].c_str());
-		}
+            w->layer += atoi( w->tags["layer"].c_str());
+        }
         return w;
     }
     else return NULL;
@@ -50,8 +50,8 @@ Point* CompiledDataManager::loadPoint(uint64_t id)
         fillTags(p->tags,record.tstart,record.tsize);
         if(p->tags["layer"] != "")
         {
-			p->layer += atoi( p->tags["layer"].c_str());
-		}
+            p->layer += atoi( p->tags["layer"].c_str());
+        }
         return p;
     }
     else return NULL;
@@ -80,8 +80,8 @@ Relation* CompiledDataManager::loadRelation(uint64_t id, short recurs, bool fast
         r->layer = 6;
         if(r->tags["layer"] != "")
         {
-			r->layer += atoi( r->tags["layer"].c_str());
-		}
+            r->layer += atoi( r->tags["layer"].c_str());
+        }
         if(r->tags["type"] == "land_area")
         {
             r->isPyramidal = true;
@@ -183,14 +183,14 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
         }*/
         for (auto it = r.shape.lines.begin(); it != r.shape.lines.end(); )
         {
-        	if (!(*it)->isClosed())
-        	{
-        		delete (*it);
-            	it = r.shape.lines.erase(it);
-        	}
-        	else
-        	{
-            	++it;
+            if (!(*it)->isClosed())
+            {
+                delete (*it);
+                it = r.shape.lines.erase(it);
+            }
+            else
+            {
+                ++it;
             }
         }
     }
@@ -211,7 +211,7 @@ bool Line::isClosed()
 
 void Line::crop(Rectangle& r)
 {
-	if (pointsCount < 3) return;
+    if (pointsCount < 3) return;
     uint64_t i;
     GeoPoint* newPoints;
     uint64_t newPointsCount = 0;
@@ -296,7 +296,7 @@ void Line::crop(Rectangle& r)
 
 void Way::fillrec()
 {
-	if (!pointsCount) return;
+    if (!pointsCount) return;
     rect.x0 = rect.x1 = points[0].x;
     rect.y0 = rect.y1 = points[0].y;
     for(unsigned int i = 0; i < pointsCount; i++)

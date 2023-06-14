@@ -1,5 +1,9 @@
 #ifndef GEOTYPES_HPP
 #define GEOTYPES_HPP
+
+
+
+
 enum __attribute__((packed)) BaliseType {relation, point, way, unknown };
 
 /**
@@ -41,7 +45,7 @@ struct __attribute__((packed)) GeoWayIndex
     // start position of points data in point data file
     uint64_t pstart;
     // size of points data in point data file
-    uint32_t psize;
+    uint16_t psize;
     // size of tags data in tag file.
     uint16_t tsize;
     // start position of tags in tag file
@@ -58,6 +62,8 @@ struct __attribute__((packed)) GeoPoint
     // internal format  latitude
     uint32_t y;
 };
+
+
 
 /**
  * @brief geopoint equality operator.
@@ -124,7 +130,6 @@ struct __attribute__((packed)) GeoString
 struct __attribute__((packed)) GeoPointNumberIndex 
 {
     uint64_t number;
-    uint32_t x;
-    uint32_t y;
+    GeoPoint p;
 };
 #endif
