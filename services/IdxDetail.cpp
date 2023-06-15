@@ -12,8 +12,8 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
     if (start != "") istart = atoll(start.c_str());
     if(istart >= 1000)
     {
-		resp += "<a href=\"get?name=" +name+ "&start="+std::to_string(istart - 1000)+"\"/> page up </a>\n";
-	}
+        resp += "<a href=\"get?name=" +name+ "&start="+std::to_string(istart - 1000)+"\"/> page up </a>\n";
+    }
     uint64_t i = istart;
     for(IndexDesc* desc : *(mger.indexes))
     {
@@ -97,8 +97,8 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
     }
     if(i == istart + 1000)
     {
-		resp += "<a href=\"get?name=" +name+ "&start="+std::to_string(i)+"\"/> page down! </a>\n";
-	}
+        resp += "<a href=\"get?name=" +name+ "&start="+std::to_string(i)+"\"/> page down! </a>\n";
+    }
     resp += "</body></html>";
     encoder.addContent(rep,resp);
     return rep;

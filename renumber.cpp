@@ -86,10 +86,10 @@ struct XmlVisitor
             {
                 nodeIdIndex->append(atoll((b->keyValues["id"]).c_str()),
                     (GeoPointNumberIndex){ nodid++, Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])});
-			} else {
+            } else {
                 nodeIdIndex->append(atoll((b->keyValues["id"]).c_str()),
                     (GeoPointNumberIndex){ 0, Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])});
-			}
+            }
             tags = 0;
         }
     }

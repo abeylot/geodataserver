@@ -88,19 +88,19 @@ int main(int argc, char *argv[])
             
             if(tag_size == 4 && (strncmp(tag, "name", tag_size) == 0) && value_size)
             {
-				std::string my_string(value, value_size); 
-				std::replace( my_string.begin(), my_string.end(), '-', ' ');
+                std::string my_string(value, value_size); 
+                std::replace( my_string.begin(), my_string.end(), '-', ' ');
                 stringstream my_stream(my_string);
                 std::string word; 
                 while(std::getline(my_stream,word,' '))
                 {
-					size_t found = word.find("&apos;");
-					while(found != std::string::npos)
-					{
-					    std::string word2 = word.substr(0,found) + "'" + word.substr(found + 6,word.length());
-						word = word2;
-					    found = word.find("&apos;");
-					}
+                    size_t found = word.find("&apos;");
+                    while(found != std::string::npos)
+                    {
+                        std::string word2 = word.substr(0,found) + "'" + word.substr(found + 6,word.length());
+                        word = word2;
+                        found = word.find("&apos;");
+                    }
                     textIndexRelation.append(fidx::makeLexicalKey(word.c_str(), word.length(), v.charconvs),{i, r->rect});
                 }
             }
@@ -186,8 +186,8 @@ int main(int argc, char *argv[])
 
             if(tag_size == 4 && (strncmp(tag, "name", tag_size) == 0) && value_size)
             {
-				std::string my_string(value, value_size); 
-				std::replace( my_string.begin(), my_string.end(), '-', ' ');
+                std::string my_string(value, value_size); 
+                std::replace( my_string.begin(), my_string.end(), '-', ' ');
                 stringstream my_stream(my_string);
                 std::string word;
                 while(std::getline(my_stream,word,' '))
@@ -278,8 +278,8 @@ int main(int argc, char *argv[])
 
             if(tag_size == 4 && (strncmp(tag, "name", tag_size) == 0) && value_size)
             {
-				std::string my_string(value, value_size); 
-				std::replace( my_string.begin(), my_string.end(), '-', ' ');
+                std::string my_string(value, value_size); 
+                std::replace( my_string.begin(), my_string.end(), '-', ' ');
                 stringstream my_stream(my_string);
                 std::string word;
                 while(std::getline(my_stream,word,' '))
@@ -348,17 +348,17 @@ int main(int argc, char *argv[])
     
     for(uint64_t i=0; i < textIndexNode.getSize(); i++)
     {
-		Record<IndexEntry,uint64_t> rec;
-		textIndexNode.get(i, &rec);
-		if(i!=0 && last_key != rec.key)
-		{
-			stop_id = i - 1;
+        Record<IndexEntry,uint64_t> rec;
+        textIndexNode.get(i, &rec);
+        if(i!=0 && last_key != rec.key)
+        {
+            stop_id = i - 1;
             textIndexNodeRange.append(last_key,{start_id, stop_id});
             start_id = i;
-		}
-		last_key = rec.key;
-	}
-	textIndexNodeRange.flush();
+        }
+        last_key = rec.key;
+    }
+    textIndexNodeRange.flush();
 
     last_key = 0;
     start_id = 0;
@@ -366,17 +366,17 @@ int main(int argc, char *argv[])
     
     for(uint64_t i=0; i < textIndexWay.getSize(); i++)
     {
-		Record<IndexEntry,uint64_t> rec;
-		textIndexWay.get(i, &rec);
-		if(i!=0 && last_key != rec.key)
-		{
-			stop_id = i - 1;
+        Record<IndexEntry,uint64_t> rec;
+        textIndexWay.get(i, &rec);
+        if(i!=0 && last_key != rec.key)
+        {
+            stop_id = i - 1;
             textIndexWayRange.append(last_key,{start_id, stop_id});
             start_id = i;
-		}
-		last_key = rec.key;
-	}
-	textIndexWayRange.flush();
+        }
+        last_key = rec.key;
+    }
+    textIndexWayRange.flush();
 
     last_key = 0;
     start_id = 0;
@@ -384,17 +384,17 @@ int main(int argc, char *argv[])
     
     for(uint64_t i=0; i < textIndexRelation.getSize(); i++)
     {
-		Record<IndexEntry,uint64_t> rec;
-		textIndexRelation.get(i, &rec);
-		if(i!=0 && last_key != rec.key)
-		{
-			stop_id = i - 1;
+        Record<IndexEntry,uint64_t> rec;
+        textIndexRelation.get(i, &rec);
+        if(i!=0 && last_key != rec.key)
+        {
+            stop_id = i - 1;
             textIndexRelationRange.append(last_key,{start_id, stop_id});
             start_id = i;
-		}
-		last_key = rec.key;
-	}
-	textIndexRelationRange.flush();
+        }
+        last_key = rec.key;
+    }
+    textIndexRelationRange.flush();
 
     return 0;
 }

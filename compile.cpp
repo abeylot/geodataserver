@@ -569,6 +569,8 @@ struct XmlVisitor
                             m.type = way;
                             m.id = wayIndex->itemCount - 1;
                             relMembers->append(m);
+                            wayPoints->startBatch();
+                            wayPoints->append(p); // glue the last point of the way to the first one of next way.
                         }
                     }
 

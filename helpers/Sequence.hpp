@@ -231,7 +231,7 @@ private:
                     p.stringNode = "";
                 }
             }
-	        else
+            else
             {
                  p.stringNode += sq.c[0];
                  //std::cout << " -----[" << stringNode << "]\n";
@@ -301,7 +301,7 @@ private:
                 {
                     p.baliseName[p.baliseNameLen] = 0;
                     p.curBalise->baliseName = p.baliseName;
-                    visitor.startTag(*	tagStack, p.curBalise);
+                    visitor.startTag(*    tagStack, p.curBalise);
                     tagStack->push_back(p.curBalise);
                 }
                 else

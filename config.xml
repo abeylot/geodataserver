@@ -656,15 +656,15 @@
 
 
     <index type="way" name="railwayIdxHighRes">
-		<exclude tagKey="tunnel" tagValue="yes"/>
-		<exclude tagKey="layer" tagValue="-1"/>
-		<exclude tagKey="layer" tagValue="-2"/>
-		<exclude tagKey="layer" tagValue="-3"/>
-		<exclude tagKey="layer" tagValue="-4"/>
-		<exclude tagKey="layer" tagValue="-5"/>
-		<exclude tagKey="layer" tagValue="-6"/>
-		<exclude tagKey="layer" tagValue="-7"/>
-		<exclude tagKey="layer" tagValue="-8"/>
+        <exclude tagKey="tunnel" tagValue="yes"/>
+        <exclude tagKey="layer" tagValue="-1"/>
+        <exclude tagKey="layer" tagValue="-2"/>
+        <exclude tagKey="layer" tagValue="-3"/>
+        <exclude tagKey="layer" tagValue="-4"/>
+        <exclude tagKey="layer" tagValue="-5"/>
+        <exclude tagKey="layer" tagValue="-6"/>
+        <exclude tagKey="layer" tagValue="-7"/>
+        <exclude tagKey="layer" tagValue="-8"/>
         <restriction zLevels="13,14,15">
             <condition tagKey="railway" closed="both">
                 <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:lightgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
@@ -978,22 +978,22 @@
    </index>
    <geoloc>
        <!-- appropriate conversions for french language -->
-	   <charconv from="à" to="a"/>
-	   <charconv from="â" to="a"/>
-	   <charconv from="Â" to="a"/>
-	   <charconv from="é" to="e"/>
-	   <charconv from="è" to="e"/>
-	   <charconv from="ê" to="e"/>
-	   <charconv from="ë" to="e"/>
-	   <charconv from="È" to="e"/>
-	   <charconv from="È" to="e"/>
+       <charconv from="à" to="a"/>
+       <charconv from="â" to="a"/>
+       <charconv from="Â" to="a"/>
+       <charconv from="é" to="e"/>
+       <charconv from="è" to="e"/>
+       <charconv from="ê" to="e"/>
+       <charconv from="ë" to="e"/>
+       <charconv from="È" to="e"/>
+       <charconv from="È" to="e"/>
        <charconv from="Ê" to="e"/>
-	   <charconv from="î" to="i"/>
-	   <charconv from="ï" to="i"/>
-	   <charconv from="ô" to="o"/>
-	   <charconv from="œ" to="oe"/>
-	   <charconv from="û" to="u"/>
-	   <charconv from="ç" to="c"/>
+       <charconv from="î" to="i"/>
+       <charconv from="ï" to="i"/>
+       <charconv from="ô" to="o"/>
+       <charconv from="œ" to="oe"/>
+       <charconv from="û" to="u"/>
+       <charconv from="ç" to="c"/>
    </geoloc>
 
 </config>

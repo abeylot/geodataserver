@@ -10,7 +10,7 @@ MapDisplay::~MapDisplay()
 
 Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
 {
-	bool pin = false;
+    bool pin = false;
     std::string longitude = "-1.554136";
     std::string latitude = "47.218637";
     std::string zoom = "12";
@@ -107,10 +107,10 @@ Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
     resp.replace(resp.find("#zoom#"),6,zoom);
     if(pin)
     {
-		resp.replace(resp.find("#pin#"),5,"var marker = L.marker(["+latitude+","+longitude+"]).addTo(map);");
+        resp.replace(resp.find("#pin#"),5,"var marker = L.marker(["+latitude+","+longitude+"]).addTo(map);");
     } else {
-		resp.replace(resp.find("#pin#"),5,"");
-	}
+        resp.replace(resp.find("#pin#"),5,"");
+    }
     Msg* rep = new Msg;
     encoder.build200Header(rep, "text/html");
     encoder.addContent(rep,resp);

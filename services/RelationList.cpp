@@ -17,9 +17,9 @@ Msg* RelationList::processRequest(Msg* request, CompiledDataManager& mger)
         //dump = false;
         /*for(Balise* c : b->childs) {
           if(c->baliseName == BALISENAME_TAGSHORT) {
-        	  //if((c->keyValues["k"] =="admin_level") && (c->keyValues["v"] == "2")) {
-        		  dump = true;
-        	  //}
+              //if((c->keyValues["k"] =="admin_level") && (c->keyValues["v"] == "2")) {
+                  dump = true;
+              //}
 
           }
         }*/
@@ -38,7 +38,7 @@ Msg* RelationList::processRequest(Msg* request, CompiledDataManager& mger)
               )
               )
               {
-            	  resp += c->keyValues["k"] +"="+ c->keyValues["v"]; resp +=" ";
+                  resp += c->keyValues["k"] +"="+ c->keyValues["v"]; resp +=" ";
               }
             }*/
             std::string name = r->tags["name"];

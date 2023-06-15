@@ -10,34 +10,34 @@
 struct label_s
 {
     uint64_t id;
-	int zindex;
-	std::string text;
+    int zindex;
+    std::string text;
     std::string ref;
-	int style;
-	int64_t pos_x, pos_y;
-	double angle;
-	unsigned int fontsize;
-	label_s():id{0},zindex{0},text{""},ref{""},style{0},pos_x{0},pos_y{0},angle{0},fontsize{0}
-	{}
-	void clear()
-	{
-		id = 0;
-		zindex = 0;
-		text = "";
-		ref = "";
-		style = 0;
-		pos_x = 0;
-		pos_y = 0;
-		angle = 0;
-		fontsize = 0;
-	}
+    int style;
+    int64_t pos_x, pos_y;
+    double angle;
+    unsigned int fontsize;
+    label_s():id{0},zindex{0},text{""},ref{""},style{0},pos_x{0},pos_y{0},angle{0},fontsize{0}
+    {}
+    void clear()
+    {
+        id = 0;
+        zindex = 0;
+        text = "";
+        ref = "";
+        style = 0;
+        pos_x = 0;
+        pos_y = 0;
+        angle = 0;
+        fontsize = 0;
+    }
 };
 
 struct myShape
 {
-	CssClass* c;
-	char      layer;
-	Shape     s;
+    CssClass* c;
+    char      layer;
+    Shape     s;
 };
 
 class SvgRenderer

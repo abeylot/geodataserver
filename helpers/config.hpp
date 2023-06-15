@@ -25,39 +25,39 @@ struct CssClass
     bool opened;
     std::string makeStyle(double ppm)
     {
-		std::string result = style;
-		int iWidth = 0;
-		if(width != "") iWidth = std::stoi(width);
-		if (iWidth)
-		{
-			result = "stroke-width:"+ std::to_string((int)(iWidth*ppm))+";" + result;
-		}
-		return result;
-	}
+        std::string result = style;
+        int iWidth = 0;
+        if(width != "") iWidth = std::stoi(width);
+        if (iWidth)
+        {
+            result = "stroke-width:"+ std::to_string((int)(iWidth*ppm))+";" + result;
+        }
+        return result;
+    }
     std::string makeTextStyle(double ppm)
     {
-		std::string result = textStyle;
-		int iWidth = 0;
-		if(textWidth != "") iWidth = std::stoi(textWidth);
-		if (iWidth)
-		{
+        std::string result = textStyle;
+        int iWidth = 0;
+        if(textWidth != "") iWidth = std::stoi(textWidth);
+        if (iWidth)
+        {
             result = "font-size:"+ std::to_string((int)(iWidth*ppm))+ "px;" + result;
-		}
-		return result;
-	}
-	std::string makeClass(std::string clName, double ppm, bool evenOdd)
-	{
-		//std::string result = "";
-		std::string result = "/*" + tagValue + "*/\n";
-		std::string tStyle = makeTextStyle(ppm);
-		std::string oStyle = makeStyle(ppm);
-		std::string fillRule="fill-rule:";
-		/*if(evenOdd) fillRule +="evenodd;";
-		else*/ fillRule += "nonzero;";
-		if(tStyle != "") result += "text." + clName +  "{" + tStyle + "}\n";
-		if(oStyle != "") result += "path." + clName +  "{" +fillRule + oStyle + "}\n";
-		return result;
-	}
+        }
+        return result;
+    }
+    std::string makeClass(std::string clName, double ppm, bool evenOdd)
+    {
+        //std::string result = "";
+        std::string result = "/*" + tagValue + "*/\n";
+        std::string tStyle = makeTextStyle(ppm);
+        std::string oStyle = makeStyle(ppm);
+        std::string fillRule="fill-rule:";
+        /*if(evenOdd) fillRule +="evenodd;";
+        else*/ fillRule += "nonzero;";
+        if(tStyle != "") result += "text." + clName +  "{" + tStyle + "}\n";
+        if(oStyle != "") result += "path." + clName +  "{" +fillRule + oStyle + "}\n";
+        return result;
+    }
 };
 
 struct Condition
@@ -76,14 +76,14 @@ struct Selector
 
 struct __attribute__((packed)) IndexEntry
 {
-	uint64_t id;
-	Rectangle r;
+    uint64_t id;
+    Rectangle r;
 };
 
 struct __attribute__((packed)) IndexRange
 {
-	uint64_t first;
-	uint64_t last;
+    uint64_t first;
+    uint64_t last;
 };
 
 struct IndexDesc
@@ -329,20 +329,20 @@ struct XmlVisitor
         }
         else if(b->baliseName == "charconv")
         {
-			if(!b->keyValues["from"].empty())
-			{
-			    charconvs[b->keyValues["from"]] = b->keyValues["to"];
-			}
-		}
+            if(!b->keyValues["from"].empty())
+            {
+                charconvs[b->keyValues["from"]] = b->keyValues["to"];
+            }
+        }
     }
 
     void stringNode(std::vector<SeqBalise*>& tagStack, std::string& s)
     {
-		if(symbolId != "")
-		{
-			symbolStr += s;
-			//std::cout << "[" << s << "]\n";
-		}
+        if(symbolId != "")
+        {
+            symbolStr += s;
+            //std::cout << "[" << s << "]\n";
+        }
     }
 
 

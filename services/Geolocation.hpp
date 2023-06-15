@@ -18,12 +18,12 @@ struct SearchContext
 
 struct weightedArea
 {
-	Rectangle r;
-	int64_t score;
-	std::string found;
-	std::vector<uint64_t> relations;
-	GeoPoint pin;
-	//std::list<uint64_t> words;
+    Rectangle r;
+    int64_t score;
+    std::string found;
+    std::vector<uint64_t> relations;
+    GeoPoint pin;
+    //std::list<uint64_t> words;
 };
 
 

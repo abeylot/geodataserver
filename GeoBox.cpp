@@ -203,26 +203,26 @@ uint64_t mergeBits (uint32_t a, uint32_t b)
 }
 bool hasgoodMask(Rectangle r)
 {
-	uint32_t dif_x, dif_y;
+    uint32_t dif_x, dif_y;
 
-	if(r.x0 > r.x1) dif_x = r.x0 - r.x1;
-	else dif_x = r.x1 - r.x0;
+    if(r.x0 > r.x1) dif_x = r.x0 - r.x1;
+    else dif_x = r.x1 - r.x0;
 
-	if(r.y0 > r.y1) dif_y = r.y0 - r.y1;
-	else dif_y = r.y1 - r.y0;
-	
-	uint64_t diff = mergeBits(dif_x, dif_y);
-	uint64_t p0 =   mergeBits(r.x0, r.y0);
-	uint64_t p1 =   mergeBits(r.x1, r.y1);
-	uint64_t xordiff = p0^p1;
+    if(r.y0 > r.y1) dif_y = r.y0 - r.y1;
+    else dif_y = r.y1 - r.y0;
+    
+    uint64_t diff = mergeBits(dif_x, dif_y);
+    uint64_t p0 =   mergeBits(r.x0, r.y0);
+    uint64_t p1 =   mergeBits(r.x1, r.y1);
+    uint64_t xordiff = p0^p1;
 
-	short mask = 0;
-	while(diff){diff = diff >> 1; mask++;}
+    short mask = 0;
+    while(diff){diff = diff >> 1; mask++;}
 
-	short maskXor = 0;
-	while(xordiff){xordiff = xordiff >> 1; maskXor++;}
+    short maskXor = 0;
+    while(xordiff){xordiff = xordiff >> 1; maskXor++;}
 
-	return ( maskXor <= (mask + 1) );
+    return ( maskXor <= (mask + 1) );
 }
 
 
@@ -632,10 +632,10 @@ GeoBoxSet makeGeoBoxSet(Rectangle rect)
 
     /*if(hasgoodMask(rect))
     {
-		result.count = 1;
-		result.boxes[0] = makeGeoBox(rect);
-		return result;
-	}*/
+        result.count = 1;
+        result.boxes[0] = makeGeoBox(rect);
+        return result;
+    }*/
     
     Rectangle a,b,c,d,r[4];
     short rcount = 0;
@@ -665,8 +665,8 @@ GeoBoxSet makeGeoBoxSet(Rectangle rect)
     {
         if(dividey(rect,a,b))
         {
-			r[rcount++] = a;
-			r[rcount++] = b;
+            r[rcount++] = a;
+            r[rcount++] = b;
         }
         else
         {

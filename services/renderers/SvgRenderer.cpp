@@ -14,19 +14,19 @@
 
 Shape* SvgRenderer::getShape(CssClass* c, unsigned char layer)
 {
-	auto it = shapes.find(c->rank + layer * LAYER_MULT);
-	if(it == shapes.end())
-	{
-		shapes[c->rank + layer * LAYER_MULT] = new myShape;
-		shapes[c->rank + layer * LAYER_MULT]->c = c; 
-		shapes[c->rank + layer * LAYER_MULT]->layer = layer; 
-		return &(shapes[c->rank + layer * LAYER_MULT]->s);
-	}
-	else
-	{
-		return &(it->second->s);
-	}
-	
+    auto it = shapes.find(c->rank + layer * LAYER_MULT);
+    if(it == shapes.end())
+    {
+        shapes[c->rank + layer * LAYER_MULT] = new myShape;
+        shapes[c->rank + layer * LAYER_MULT]->c = c; 
+        shapes[c->rank + layer * LAYER_MULT]->layer = layer; 
+        return &(shapes[c->rank + layer * LAYER_MULT]->s);
+    }
+    else
+    {
+        return &(it->second->s);
+    }
+    
 }
 
 bool compare(const label_s& l2, const label_s& l1)
@@ -50,88 +50,88 @@ bool compare(const label_s& l2, const label_s& l1)
 
 std::string cutString(std::string text, int x, int y, int dy)
 {
-	bool first = true;
-	if(text.length() < MAX_TEXT_LEN) return text; 
-	std::string result;
-	int iline = 0;
+    bool first = true;
+    if(text.length() < MAX_TEXT_LEN) return text; 
+    std::string result;
+    int iline = 0;
     int ilines = 0;
     std::string txt = text;
     while(true)
     {
         ilines++;
-		if(txt.length() < MAX_TEXT_LEN )
+        if(txt.length() < MAX_TEXT_LEN )
         {
             break;
         }
-		size_t pos = txt.find(' ', MIN_TEXT_LEN);
-		if(pos == std::string::npos)
-		    pos = txt.find('/', MIN_TEXT_LEN);
-		if(pos == std::string::npos)
-		    pos = txt.find('-', MIN_TEXT_LEN);
-		if(pos == std::string::npos)
-		{
-			pos = MAX_TEXT_LEN;
-		}
+        size_t pos = txt.find(' ', MIN_TEXT_LEN);
+        if(pos == std::string::npos)
+            pos = txt.find('/', MIN_TEXT_LEN);
+        if(pos == std::string::npos)
+            pos = txt.find('-', MIN_TEXT_LEN);
+        if(pos == std::string::npos)
+        {
+            pos = MAX_TEXT_LEN;
+        }
         txt = txt.substr(pos);
     }
     
     int y0 = y - (dy*(ilines - 1)) / 2;
 
-	while(true)
-	{
-		if(text.length() < MAX_TEXT_LEN )
+    while(true)
+    {
+        if(text.length() < MAX_TEXT_LEN )
         {
             return result + "</tspan><tspan  x=\""+std::to_string(x)+"\" y=\""+std::to_string(y0 + dy*iline)+"\">"+text+ "</tspan>";
         }
-		if(!first)
+        if(!first)
         {
             result += "</tspan>";
         }
-		result += "<tspan  x=\""+std::to_string(x)+"\" y=\""+std::to_string(y0 + dy*iline )+"\">";
-		size_t pos = text.find(' ', MIN_TEXT_LEN);
-		if(pos == std::string::npos)
-		    pos = text.find('/', MIN_TEXT_LEN);
-		if(pos == std::string::npos)
-		    pos = text.find('-', MIN_TEXT_LEN);
-		if(pos != std::string::npos)
-		{
-		    result += text.substr(0,pos);
-		    text = text.substr(pos);
-		}
-		else
-		{
-			result += text + "</tspan>";
-			return result;
-		}
-		first = false;
-		iline++;
-	}
-}	
+        result += "<tspan  x=\""+std::to_string(x)+"\" y=\""+std::to_string(y0 + dy*iline )+"\">";
+        size_t pos = text.find(' ', MIN_TEXT_LEN);
+        if(pos == std::string::npos)
+            pos = text.find('/', MIN_TEXT_LEN);
+        if(pos == std::string::npos)
+            pos = text.find('-', MIN_TEXT_LEN);
+        if(pos != std::string::npos)
+        {
+            result += text.substr(0,pos);
+            text = text.substr(pos);
+        }
+        else
+        {
+            result += text + "</tspan>";
+            return result;
+        }
+        first = false;
+        iline++;
+    }
+}    
 
 size_t cutString(std::string txt)
 {
-	if(txt.length() < MAX_TEXT_LEN) return txt.length(); 
+    if(txt.length() < MAX_TEXT_LEN) return txt.length(); 
     size_t result = 0;
     while(true)
     {
-		if(txt.length() < MAX_TEXT_LEN )
+        if(txt.length() < MAX_TEXT_LEN )
         {
             break;
         }
-		size_t pos = txt.find(' ', MIN_TEXT_LEN);
-		if(pos == std::string::npos)
-		    pos = txt.find('/', MIN_TEXT_LEN);
-		if(pos == std::string::npos)
-		    pos = txt.find('-', MIN_TEXT_LEN);
-		if(pos == std::string::npos)
-		{
-			pos = MAX_TEXT_LEN;
-		}
-		if((pos) > result) result = pos;
+        size_t pos = txt.find(' ', MIN_TEXT_LEN);
+        if(pos == std::string::npos)
+            pos = txt.find('/', MIN_TEXT_LEN);
+        if(pos == std::string::npos)
+            pos = txt.find('-', MIN_TEXT_LEN);
+        if(pos == std::string::npos)
+        {
+            pos = MAX_TEXT_LEN;
+        }
+        if((pos) > result) result = pos;
         txt = txt.substr(pos);
     }
     return result;
-}	
+}    
 
 
 
@@ -149,22 +149,22 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                   
     if constexpr(std::is_same<ITEM,Relation>())
     {
-		 hash = &relationHash;
-	     gSet = makeGeoBoxSet(rect*1.25);
-	     rect2 = rect*1.25;
-	}	
+         hash = &relationHash;
+         gSet = makeGeoBoxSet(rect*1.25);
+         rect2 = rect*1.25;
+    }    
     if constexpr(std::is_same<ITEM,Way>())
     {
-		 hash = &wayHash;
-	     gSet = makeGeoBoxSet(rect*1.25);
-	     rect2 = rect*1.25;
-	}
+         hash = &wayHash;
+         gSet = makeGeoBoxSet(rect*1.25);
+         rect2 = rect*1.25;
+    }
     if constexpr(std::is_same<ITEM,Point>())
     {
-		 hash = &nodeHash;
-	     gSet = makeGeoBoxSet(rect*2);
-	     rect2 = rect*2;
-	} 
+         hash = &nodeHash;
+         gSet = makeGeoBoxSet(rect*2);
+         rect2 = rect*2;
+    } 
     for(short i = 0; i < gSet.count; i++)
     {
         GeoBox g;
@@ -196,29 +196,29 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                     label_s lbl;
                     if(cl)
                     {
-						if constexpr(! std::is_same<ITEM, Point>())
-						{
-							item->rect = record.value.r;
-							tmp = render(lbl, *item,
-										rect,
-										size_x,
-										size_y,
-										*cl,
-										*getShape(cl, item->layer)
-										);
-							}
-						else
-						{
-							tmp = render(lbl, *item,
-										rect,
-										size_x,
-										size_y,
-										*cl
-										
-										);
-						}
-						
-						auto it = resMap.find(cl->zIndex + item->layer * LAYER_MULT);
+                        if constexpr(! std::is_same<ITEM, Point>())
+                        {
+                            item->rect = record.value.r;
+                            tmp = render(lbl, *item,
+                                        rect,
+                                        size_x,
+                                        size_y,
+                                        *cl,
+                                        *getShape(cl, item->layer)
+                                        );
+                            }
+                        else
+                        {
+                            tmp = render(lbl, *item,
+                                        rect,
+                                        size_x,
+                                        size_y,
+                                        *cl
+                                        
+                                        );
+                        }
+                        
+                        auto it = resMap.find(cl->zIndex + item->layer * LAYER_MULT);
                         if(it != resMap.end())
                         {
                             it->second += tmp;
@@ -258,26 +258,26 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
 
                         if(cl)
                         {
-							if constexpr(! std::is_same<ITEM, Point>())
-							{
-							    item->rect = record.value.r;
-								tmp = render(lbl, *item,
-											rect,
-											size_x,
-											size_y,
-											*cl,
-											*getShape(cl, item->layer)
-											);
-							}
-							else
-							{
-								tmp = render(lbl, *item,
-											rect,
-											size_x,
-											size_y,
-											*cl
-											);
-							}
+                            if constexpr(! std::is_same<ITEM, Point>())
+                            {
+                                item->rect = record.value.r;
+                                tmp = render(lbl, *item,
+                                            rect,
+                                            size_x,
+                                            size_y,
+                                            *cl,
+                                            *getShape(cl, item->layer)
+                                            );
+                            }
+                            else
+                            {
+                                tmp = render(lbl, *item,
+                                            rect,
+                                            size_x,
+                                            size_y,
+                                            *cl
+                                            );
+                            }
 
                             auto it = resMap.find(cl->zIndex + item->layer * LAYER_MULT);
                             if(it != resMap.end())
@@ -298,35 +298,35 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
         }
     }
     if constexpr(! std::is_same<ITEM, Point>())
-	{
-		for(auto it : shapes)
-		{
-			tmp = renderShape(
-			rect,
-			size_x,
-			size_y,
-			*(it.second->c),
-			it.second->s
-			);
-			auto it2 = resMap.find(it.second->c->zIndex + it.second->layer * LAYER_MULT);
-			delete it.second;
-			if(it2 != resMap.end())
-			{
-				it2->second = tmp + it2->second;
-			}
-			else
-			{
-				resMap[it.second->c->zIndex + it.second->layer * LAYER_MULT] = tmp;
-			}
-		}
-		shapes.clear();
-	}
+    {
+        for(auto it : shapes)
+        {
+            tmp = renderShape(
+            rect,
+            size_x,
+            size_y,
+            *(it.second->c),
+            it.second->s
+            );
+            auto it2 = resMap.find(it.second->c->zIndex + it.second->layer * LAYER_MULT);
+            delete it.second;
+            if(it2 != resMap.end())
+            {
+                it2->second = tmp + it2->second;
+            }
+            else
+            {
+                resMap[it.second->c->zIndex + it.second->layer * LAYER_MULT] = tmp;
+            }
+        }
+        shapes.clear();
+    }
 }
 
 
 std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t sizey, std::string tag)
 {
-	cssClasses.clear();
+    cssClasses.clear();
     size_x = sizex;
     size_y = sizey;
     std::string libs = "";
@@ -498,7 +498,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                } 
                cssClasses.insert("c"+std::to_string(v->style));
 
-		}
+        }
     }
 
 
@@ -528,7 +528,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             if(found) break;
         }
         if(found) result << pattern.second;
-	}    
+    }    
 
     result << "</defs>";
 
@@ -541,13 +541,13 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
         {
             for(CssClass* cl : cd->classes)
             {
-				if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
-				{    
-				    result << cl->makeClass("c" + std::to_string(cl->rank), ppm, (idxDesc->type == "relation"));
-				}
-			}
-		}
-	}    
+                if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
+                {    
+                    result << cl->makeClass("c" + std::to_string(cl->rank), ppm, (idxDesc->type == "relation"));
+                }
+            }
+        }
+    }    
     result << "</style>\n";
     
     for (IndexDesc* idxDesc : *(mger->indexes))
@@ -556,8 +556,8 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
         {
             for(CssClass* cl : cd->classes)
             {
-				if( cssClasses.find("sym#"+cl->symbol) != cssClasses.end())
-				{
+                if( cssClasses.find("sym#"+cl->symbol) != cssClasses.end())
+                {
                     if (cl->symbol != "")
                     {
                         if(mger->symbols->find(cl->symbol) != mger->symbols->end())
@@ -567,10 +567,10 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                             
                         }
                     }   
-				}
-			}
-		}
-	} 
+                }
+            }
+        }
+    } 
     
     
     
@@ -635,7 +635,7 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
                 }
             }
         }
-	}
+    }
     result << " \" class=\"c" << cl.rank << "\" />\n";
     cssClasses.insert("c"+std::to_string(cl.rank));
     result.flush();
@@ -652,9 +652,9 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     std::string inherited_name = "";
     if(!lbl.text.empty())
     {
-		inherited_name = lbl.text;//when called by relation render
-		//std::cout << inherited_name << "\n";
-	}    
+        inherited_name = lbl.text;//when called by relation render
+        //std::cout << inherited_name << "\n";
+    }    
     lbl.text = "";    
     lbl.ref = "";    
     lbl.pos_x = lbl.angle = lbl.pos_y=0;
@@ -704,10 +704,10 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         if(name == "") name = myWay.tags["name"];
     }
     if(inherited_name != "") {
-		if(inherited_name == "void") name ="";
-		else name = inherited_name;
-		//std::cout << inherited_name << "\n";
-	}
+        if(inherited_name == "void") name ="";
+        else name = inherited_name;
+        //std::cout << inherited_name << "\n";
+    }
     bool first = true;
     double length = 0;
     double halfLength = 0;
@@ -918,10 +918,10 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
     if(cl.style != "")
     {
     
-		if(cl.opened)
-		{
+        if(cl.opened)
+        {
             std::string name = "";
-		    if(cl.textStyle != "")
+            if(cl.textStyle != "")
             {
                 if(textField != "name")
                 {
@@ -938,31 +938,31 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                     }
                     if(name == "") name = myRelation.tags["name"];
                 }
-			}
-			
+            }
+            
             label_s lbl2;
             lbl2.text = name;
             if(lbl2.text == "") lbl2.text = "void";
-			for(Way* myWay : myRelation.ways)
-			{
-				myWay->fillrec();
-				if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
+            for(Way* myWay : myRelation.ways)
+            {
+                myWay->fillrec();
+                if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
 
-				result << render(lbl2,*myWay, rect, szx, szy, cl, s);
-				label_vector.push_back(lbl2);
-			}
-		}
-		else
-		{
-			if(draw)
-			{
-				result << "<path  d=\"";
-				for(Line* l: myRelation.shape.lines)
-				{
+                result << render(lbl2,*myWay, rect, szx, szy, cl, s);
+                label_vector.push_back(lbl2);
+            }
+        }
+        else
+        {
+            if(draw)
+            {
+                result << "<path  d=\"";
+                for(Line* l: myRelation.shape.lines)
+                {
                     Rectangle r1 = rect*1.25;
                     //l->crop(r1);
                     //s.mergePoints(l->points, l->pointsCount);
-					l->crop(r1);
+                    l->crop(r1);
                     bool first = true;
                     int x=0;
                     int y=0;
@@ -987,9 +987,9 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                             }
                         }
                     }
-				}
+                }
                 result << " \" class=\"c" << cl.rank <<"\" />\n";
-			}
+            }
             cssClasses.insert("c"+std::to_string(cl.rank));
             if(cl.textStyle != "")
             {
@@ -1029,7 +1029,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                 }
             }
         }
-	}
+    }
     
     if(cl.symbol != "")
     {
@@ -1138,19 +1138,19 @@ template<class ITEM> CssClass* SvgRenderer::getCssClass(const IndexDesc& idx, IT
     for (Condition* cd : idx.conditions)
     {
 
-		bool cond = false;
+        bool cond = false;
 
         if constexpr(std::is_same<ITEM,Relation>() || std::is_same<ITEM,Way>())
         {
-			cond = ((closed && cd->closed)||(!closed && cd->opened)) && (item.tags[cd->tagKey.c_str()] != "");
-	    }
-	    
-	    
+            cond = ((closed && cd->closed)||(!closed && cd->opened)) && (item.tags[cd->tagKey.c_str()] != "");
+        }
+        
+        
         if constexpr(std::is_same<ITEM,Point>())
         {
-			cond = (item.tags[cd->tagKey.c_str()] != "");
-	    }
-	    
+            cond = (item.tags[cd->tagKey.c_str()] != "");
+        }
+        
 
         if (cond)
         {
