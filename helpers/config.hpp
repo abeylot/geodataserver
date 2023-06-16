@@ -193,6 +193,8 @@ struct XmlVisitor
             (b->baliseName == "pattern")
             ||
             (b->baliseName == "marker")
+            ||
+            (b->baliseName == "filter")
            )
         {
             //shortcuts[b->keyValues["ref"]] = b->keyValues["value"];
@@ -313,6 +315,8 @@ struct XmlVisitor
             (b->baliseName == "pattern")
             ||
             (b->baliseName == "marker")
+            ||
+            (b->baliseName == "filter")
            )
         {
             symbols[symbolId] = symbolStr;

@@ -445,7 +445,7 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
     {
         Relation* item;
         mger.load(item, relid, true);
-        GeoPoint pin;
+        GeoPoint pin = {0,0};
 
         std::string sType = item->tags["type"];
         if(street_number && sType == "street")

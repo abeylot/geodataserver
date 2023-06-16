@@ -23,10 +23,17 @@
              <circle cx="4" cy="4" r="2" stroke-width="0" fill="darkgrey" />
     </pattern>    
 
+    <pattern id="forestPattern" width="16" height="16" patternUnits="userSpaceOnUse" >
+             <rect x="0" y="0" width="16" height="16" fill="#99DD99"/>
+             <circle cx="4" cy="7" r="3" stroke-width="0" fill="#95D099" />
+             <circle cx="8" cy="8" r="5" stroke-width="0" fill="#90D090" />
+             <circle cx="12" cy="10" r="4" stroke-width="0" fill="#99D095" />
+    </pattern>    
+
     <!-- areas -->
     <style id="water"            value="fill:skyblue; fill-rule:evenodd;"/>
-    <style id="grass"            value="fill:#AAFFAA;; fill-rule:evenodd"/>
-    <style id="forest"           value="fill:#99DD99;; fill-rule:evenodd"/>
+    <style id="grass"            value="fill:#AAFFAA; fill-rule:evenodd"/>
+    <style id="forest"           value="fill:url(#forestPattern); fill-rule:evenodd"/>
     <style id="ice"              value="fill:lightgrey;; fill-rule:evenodd"/>
     <style id="concrete"         value="fill:whitesmoke;; fill-rule:evenodd"/>
     <style id="stone"            value="fill:url(#reefPattern); fill-rule:evenodd"/>
@@ -56,6 +63,8 @@
     <style id="stairs"     value="fill:none; stroke:#BBBBBB;stroke-linecap:butt; stroke-dasharray:2,2; stroke-width:2"/>
     <style id="redRoad"    value="fill:none; stroke:red;stroke-linecap:round;stroke-width:2"/>
     <style id="orangeRoad" value="fill:none; stroke:orange;stroke-linecap:round;stroke-width:2"/>
+
+    <style id="coast"      value="fill:none;stroke:Teal ;stroke-width:1; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))"/>
 
 
 
@@ -500,6 +509,11 @@
                 <class value="quarry"                    zIndex="100" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>    
                 <class value="marina"                    zIndex="100" style="#zone"     textZIndex="20" textStyle="#maroonAreaName"/>
             </condition>
+
+            <condition tagKey="natural" closed="no">
+                <class value="coastline"               zIndex="1000"  style="#coast"/>
+            </condition>
+
             <condition tagKey="natural" closed="yes">
                 <class value="reef"                     zIndex="100" style="#reef"   textZIndex="20" textStyle="#maroonAreaName"/>    
                 <class value="wood"                     zIndex="100" style="#forest" textZIndex="20" textStyle="#maroonAreaName"/>    
@@ -563,6 +577,9 @@
         <restriction zLevels="11,12">
             <condition tagKey="waterway" closed="no">
                 <class value="default"                  zIndex="101" style="#waterLine" />
+            </condition>
+            <condition tagKey="natural" closed="no">
+                <class value="coastline"               zIndex="101"  style="#coast"/>
             </condition>
         </restriction>
     </index>

@@ -451,18 +451,19 @@ struct XmlVisitor
     std::string filename_shp = filename+".shp";
     std::string filename_dbf = filename+".dbf";
     FILE* shp = fopen(filename_shp.c_str(),"r");
-    FILE* dbf = fopen(filename_dbf.c_str(),"r");
-    if(dbf == NULL)
-    {
-       std::cerr << "dbf file missing \n";
-       return;
-    } 
-    
     if(shp == NULL)
     {
        std::cerr << "shp file missing \n";
        return;
     } 
+    FILE* dbf = fopen(filename_dbf.c_str(),"r");
+    if(dbf == NULL)
+    {
+       std::cerr << "dbf file missing \n";
+       fclose(shp);
+       return;
+    } 
+    
     
     unsigned char header[100], recordheader[8];
     uint64_t len = fread(header,100,1,shp);
