@@ -37,7 +37,7 @@
     <style id="historicBuilding" value="fill:mistyrose;opacity:0.7;stroke:#B13014 ;stroke-width:1; fill-rule:evenodd; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))"/>
     <style id="zone"             value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:5,5; fill-rule:evenodd"/>
     <style id="parking"          value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:1,5; fill-rule:evenodd"/>
-    <style id="bridge"           value="fill:linen;stroke:grey; stroke-width:1; fill-rule:evenodd"/>
+    <style id="bridge"           value="fill:#999999;stroke:grey; stroke-width:1; fill-rule:evenodd;opacity:0.7"/>
     
     
 
