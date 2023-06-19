@@ -164,7 +164,8 @@ template<typename MSG> struct Exec
          std::string file,
          uint microSleep,std::vector<IndexDesc*>* idxL,
          std::map<std::string, std::string>* symbs,
-         std::map<std::string, std::string>* convs ) : inqueue(inqueue), outqueue(outqueue), file(file), microSleep(microSleep)
+         std::map<std::string, std::string>* convs,
+         CompiledDataManager& mger ) : inqueue(inqueue), outqueue(outqueue), file(file), microSleep(microSleep), mger(mger)
     {
         idxList = idxL;
         symbols = symbs;
@@ -173,7 +174,6 @@ template<typename MSG> struct Exec
     }
     int operator()()
     {
-        CompiledDataManager mger(file, idxList, symbols, charconvs);
         MSG* m;
         while(!ExtThreads::stop_requested())
         {
@@ -229,7 +229,7 @@ private:
     NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* outqueue;
     std::string file;
     uint microSleep;
-
+    CompiledDataManager& mger;
 };
 
 
@@ -257,18 +257,16 @@ int main(int argc, char *argv[])
     XmlFileParser<ParmsXmlVisitor>::parseXmlFile(config,params);
     fclose(config);
 
-    std::vector<IndexDesc*>* indexes = new std::vector<IndexDesc*>[params.getNumParam("ExecThreads", 5)];
-    std::map<std::string, std::string>* symbols = new std::map<std::string, std::string>[params.getNumParam("ExecThreads", 5)];
-    std::map<std::string, std::string>* charconvs = new std::map<std::string, std::string>[params.getNumParam("ExecThreads", 5)];
-    for(int i = 0; i < params.getNumParam("ExecThreads", 5); i++)
-    {
-        XmlVisitor v(indexes[i], false, std::string(argv[1]));
-        config = fopen((std::string(argv[1]) + "/config.xml").c_str(),"r");
-        XmlFileParser<XmlVisitor>::parseXmlFile(config,v);
-        symbols[i] = v.symbols;
-        charconvs[i] = v.charconvs;
-        fclose(config);
-    }
+    std::vector<IndexDesc*> indexes;
+    std::map<std::string, std::string> symbols;
+    std::map<std::string, std::string> charconvs;
+
+    XmlVisitor v(indexes, false, std::string(argv[1]));
+    config = fopen((std::string(argv[1]) + "/config.xml").c_str(),"r");
+    XmlFileParser<XmlVisitor>::parseXmlFile(config,v);
+    symbols = v.symbols;
+    charconvs = v.charconvs;
+    fclose(config);
 
 
     NonGrowableQueue<Msg*, MAX_PENDING_REQUESTS> myInQueue;
@@ -280,9 +278,19 @@ int main(int argc, char *argv[])
     Reader<Msg> reader1(&myInQueue, &mySessionQueue);
     Reader<Msg> reader2(&myInQueue, &mySessionQueue);
     std::cout << "launching " << params.getNumParam("ExecThreads", 5) << " Exec threads \n";
+
+    CompiledDataManager mger(std::string(argv[1]), &indexes, &symbols, &charconvs);
+
+
     for(int i=0; i < params.getNumParam("ExecThreads", 5); i++)
     {
-        Exec<Msg> exec(&myInQueue, &myOutQueue, argv[1], microSleep, /*&index*/ &(indexes[i]), &(symbols[i]), &(charconvs[i]));
+        Exec<Msg> exec(&myInQueue,
+                       &myOutQueue,
+                       std::string(argv[1]),
+                       microSleep,
+                       &(indexes),
+                       &(symbols),
+                       &(charconvs), mger);
         microSleep *= 2;
         ExtThreads::launch_thread(exec);
     }

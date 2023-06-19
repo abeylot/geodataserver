@@ -17,6 +17,9 @@
 #include <unistd.h>
 #include <map>
 #include <assert.h>
+#include <thread>
+#include <mutex>
+
 struct GeoFile
 {
     int fh = -1;
@@ -323,6 +326,7 @@ template<class ITEM, class KEY> class FileIndex
     uint64_t recSize;
     uint64_t sortedSize;
     std::unordered_map<uint64_t, Record<ITEM, KEY>> cache;
+    std::mutex cache_mutex;
 public:
     uint64_t fileSize;
     GeoFile pFile;
@@ -664,6 +668,7 @@ public:
  */
     bool  getAndCache(uint64_t pos, Record<ITEM,KEY>* result)
     {
+        std::lock_guard<std::mutex> guard(cache_mutex);
         auto it = cache.find(pos);
         if(it == cache.end())
         {
