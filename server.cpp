@@ -237,6 +237,8 @@ private:
 
 int main(int argc, char *argv[])
 {
+    std::cout << "Version : " << VERSION << "\n";
+    std::cout << "Git Version : " << "$id:$" << "\n";
     std::cout << "GeoPoint " << sizeof(GeoPoint) << "\n";
     std::cout << "GeoIndex " << sizeof(GeoIndex) << "\n";
     std::cout << "GeoPointIndex " << sizeof(GeoPointIndex) << "\n";

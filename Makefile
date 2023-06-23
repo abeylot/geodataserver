@@ -1,6 +1,10 @@
 #CC=clang++ 
+
+GIT_VERSION = "$(shell git describe --tags)"
+
 CC= g++
-cc=$(CC)  -O2 -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 
+cc=$(CC)  -O2 -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\" 
+
 #cc=$(CC) -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64
 
 
