@@ -238,14 +238,13 @@ private:
 int main(int argc, char *argv[])
 {
     std::cout << "Version : " << VERSION << "\n";
-    std::cout << "Git Version : " << "$id:$" << "\n";
-    std::cout << "GeoPoint " << sizeof(GeoPoint) << "\n";
-    std::cout << "GeoIndex " << sizeof(GeoIndex) << "\n";
-    std::cout << "GeoPointIndex " << sizeof(GeoPointIndex) << "\n";
-    std::cout << "GeoWayIndex " << sizeof(GeoWayIndex) << "\n";
-    std::cout << "GeoMember " << sizeof(GeoMember) << "\n";
-    std::cout << "GeoString " << sizeof(GeoString) << "\n";
-    std::cout << "IndexEntry " << sizeof(IndexEntry) << "\n";
+    std::cout << "GeoPoint length:" << sizeof(GeoPoint) << "\n";
+    std::cout << "GeoIndex length:" << sizeof(GeoIndex) << "\n";
+    std::cout << "GeoPointIndex length:" << sizeof(GeoPointIndex) << "\n";
+    std::cout << "GeoWayIndex length:" << sizeof(GeoWayIndex) << "\n";
+    std::cout << "GeoMember length:" << sizeof(GeoMember) << "\n";
+    std::cout << "GeoString length:" << sizeof(GeoString) << "\n";
+    std::cout << "IndexEntry length:" << sizeof(IndexEntry) << "\n";
     std::cout << "IndexRange " << sizeof(IndexRange) << "\n";
 
     if(argc != 2)
