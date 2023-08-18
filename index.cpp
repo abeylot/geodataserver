@@ -192,6 +192,13 @@ int main(int argc, char *argv[])
                 std::string word;
                 while(std::getline(my_stream,word,' '))
                 {
+                    size_t found = word.find("&apos;");
+                    while(found != std::string::npos)
+                    {
+                        std::string word2 = word.substr(0,found) + "'" + word.substr(found + 6,word.length());
+                        word = word2;
+                        found = word.find("&apos;");
+                    }
                     textIndexWay.append(fidx::makeLexicalKey(word.c_str(), word.length(), v.charconvs),{i, w->rect});
                 }
             }
@@ -284,7 +291,14 @@ int main(int argc, char *argv[])
                 std::string word;
                 while(std::getline(my_stream,word,' '))
                 {
-                    textIndexNode.append(fidx::makeLexicalKey(word.c_str(), word.length(), v.charconvs),{i, r->rect});
+                    size_t found = word.find("&apos;");
+                    while(found != std::string::npos)
+                    {
+                        std::string word2 = word.substr(0,found) + "'" + word.substr(found + 6,word.length());
+                        word = word2;
+                        found = word.find("&apos;");
+                    }
+                    textIndexNode.append(fidx::makeLexicalKey(word.c_str(), word.length(), v.charconvs),{i, {p->x, p->y, p->x, p->y}});
                 }
             }
             

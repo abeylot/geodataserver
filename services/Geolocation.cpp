@@ -8,14 +8,6 @@ const uint64_t UNDEFINED_ID = 0xFFFFFFFFFFFFFFFF;
 const int64_t  WORST_SCORE  = -999999999;
 const int64_t  MAX_RESULTS  = 50;
 
-bool weightedAreaCompare (const weightedArea& first, const weightedArea& second)
-{
-  if ( first.score < second.score ) return false;
-  if ( first.score > second.score ) return true;
-  if ( (first.r.x1 - first.r.x0)*(first.r.y1 - first.r.y0) < (second.r.x1 - second.r.x0)*(second.r.y1 - second.r.y0) ) return false;
-  return true;
-}
-
 int64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
 {
     int64_t result = 0;
@@ -198,7 +190,10 @@ inline bool operator < (textSearchIds const& a, textSearchIds const& b)
 }
 
 
-
+bool compare_weight (const weightedArea first, const weightedArea second)
+{
+  return ( first.score > second.score );
+}
 
 std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDataManager& mger)
 {
@@ -255,7 +250,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
             rstop  = eR.value.last;
         }
         
-        std::cout << ((nstop - nstart) + (wstop - wstart) + (rstop -rstart)) << "\n";
+        std::cout << (nstop - nstart) << "," <<  (wstop - wstart) << "," << (rstop -rstart) << "\n";
         
         if((foundN || foundW || foundR) &&
         ((nstop - nstart) + (wstop - wstart) + (rstop -rstart)) < 100000
@@ -416,20 +411,13 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
         }
         if(best_areas.size() == 0)
         {
-            int64_t best_score = WORST_SCORE;
-            int64_t best_score2 = WORST_SCORE;
-            int64_t best_score3 = WORST_SCORE;
-            for(auto a : areas) {if (a.score > best_score) best_score = a.score;} 
-            for(auto a : areas) {if (a.score > best_score2 && a.score != best_score) best_score2 = a.score;} 
-            for(auto a : areas) {if (a.score > best_score3 && a.score != best_score2 && a.score != best_score) best_score3 = a.score;} 
-
+            areas.sort(compare_weight);
             for(auto a : areas)
             {
-                if (
-                (a.score == best_score)
-                ||(a.score == best_score2)
-                ||(a.score == best_score3)
-                ) best_areas.push_back(a);
+                unsigned int i = 0;
+                i++;
+                best_areas.push_back(a);
+                if (i >= 100000)  break;
             }
             break;
         }
@@ -638,7 +626,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 
     
       weightedArea result;
-      best_areas.sort(weightedAreaCompare);
+      best_areas.sort(compare_weight);
       
       
       if(best_areas.size()) result = *(best_areas.begin()); 
