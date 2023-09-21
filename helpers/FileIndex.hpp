@@ -310,6 +310,7 @@ template<class ITEM, class KEY> class FileIndex
     uint64_t keySize;
     uint64_t sortedSize;
     std::unordered_map<uint64_t, Record<ITEM, KEY>> cache;
+    std::unordered_map<uint64_t, KEY> cacheKey;
     std::mutex cache_mutex;
 public:
     uint64_t fileSize;
@@ -717,7 +718,7 @@ public:
  * @return true 
  * @return false 
  */
-    bool  getAndCache(uint64_t pos, Record<ITEM,KEY>* result)
+    bool  getAndCache_deprecated(uint64_t pos, Record<ITEM,KEY>* result)
     {
         std::lock_guard<std::mutex> guard(cache_mutex);
         auto it = cache.find(pos);
@@ -726,6 +727,26 @@ public:
             if(get(pos, result))
             {
                 cache[pos] = *result;
+                return true;
+            }
+            else return false;
+        }
+        else
+        {
+            *result = it->second;
+            return true;
+        }
+    }
+
+    bool  getAndCacheKey(uint64_t pos, KEY* result)
+    {
+        std::lock_guard<std::mutex> guard(cache_mutex);
+        auto it = cacheKey.find(pos);
+        if(it == cacheKey.end())
+        {
+            if(getKey(pos, result))
+            {
+                cacheKey[pos] = *result;
                 return true;
             }
             else return false;
@@ -750,7 +771,7 @@ public:
     {
         if( pos >= getSize())
         {
-            std::cerr << "object not found ! " << (int) pos << (int) getSize() << "/n";
+            //std::cerr << "object not found ! " << (int) pos << (int) getSize() << "/n";
             return false;
         }
         itemFile.oread((char*)result, pos*itemSize, itemSize);
@@ -761,7 +782,7 @@ public:
     {
         if( pos >= getSize())
         {
-            std::cerr << "key not found ! " << (int) pos << (int) getSize() << "/n";
+            //std::cerr << "key not found ! " << (int) pos << (int) getSize() << "/n";
             return false;
         }
         keyFile.oread((char*)result, pos*keySize, keySize);
@@ -806,22 +827,25 @@ public:
         uint64_t iMin = 0;
         uint64_t iMax = getSize() - 1;
         short level = 0;
+        KEY myKey;
 
-        getAndCache(iMin, result);
-        if( result->key == key)
+        getAndCacheKey(iMin, &myKey);
+        if( myKey == key)
         {
+            get(iMin, result);
             return true;
         }
-        if( result->key > key)
+        if( myKey > key)
         {
             return false;
         }
-        getAndCache(iMax, result);
-        if( result->key == key)
+        getAndCacheKey(iMax, &myKey);
+        if( myKey == key)
         {
+            get(iMin, result);
             return true;
         }
-        if( result->key < key)
+        if( myKey < key)
         {
             return false;
         }
@@ -831,15 +855,15 @@ public:
         {
             level++;
             uint64_t iPivot = (iMin + iMax) >> 1;
-            if(level < FILEINDEX_CACHELEVEL) getAndCache(iPivot,result);
-            else get(iPivot, result);
-            if(result->key > key)
+            if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&myKey);
+            else getKey(iPivot, &myKey);
+            if(myKey > key)
             {
                 iMax = iPivot;
             }
-            else if(result->key == key)
+            else if(myKey == key)
             {
-                
+                get(iPivot, result);
                 return true;
             }
             else
@@ -865,7 +889,7 @@ public:
         iMin = 0;
         uint64_t iMax = getSize() - 1;
         short level = 0;
-        getAndCache(iMin, &result);
+        getAndCacheKey(iMin, &(result.key));
         if( result.key == key)
         {
             return true;
@@ -876,7 +900,7 @@ public:
             return true;
         }
 
-        getAndCache(iMax, &result);
+        getAndCacheKey(iMax, &(result.key));
         if( result.key < key)
         {
             iMin = iMax;
@@ -887,8 +911,8 @@ public:
         {
             level++;
             uint64_t iPivot = (iMin + (iMax -iMin)/2);
-            if(level < FILEINDEX_CACHELEVEL) getAndCache(iPivot,&result);
-            else get(iPivot, &result);
+            if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&(result.key));
+            else getKey(iPivot, &(result.key));
             if(result.key >= key) iMax = iPivot;
             else iMin = iPivot;
         }
