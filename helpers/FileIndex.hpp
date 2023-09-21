@@ -207,25 +207,7 @@ struct GeoFile
 namespace fidx
 {
 
-   /*const std::map<std::string,std::string> substitutions = 
-   {
-       {"à", "a"},
-       {"â", "a"},
-       {"Â", "a"},
-       {"é", "e"},
-       {"è", "e"},
-       {"ê", "e"},
-       {"ë", "e"},
-       {"È", "e"},
-       {"È", "e"},
-       {"Ê", "e"},
-       {"î", "i"},
-       {"ï", "i"},
-       {"ô", "o"},
-       {"œ", "oe"},
-       {"û", "u"},
-       {"ç", "c"}       
-   };*/
+
 
    inline uint64_t makeLexicalKey(const char* value_, size_t value_size_, const std::map<std::string, std::string>&substitutions)
    {
@@ -304,8 +286,8 @@ template <class ITEM, class KEY> int fileIndexComp(const void* a, const void* b)
 {
     Record<ITEM,KEY>* ga = (Record<ITEM,KEY>*) a;
     Record<ITEM,KEY>* gb = (Record<ITEM,KEY>*) b;
-    if( ga->key < gb->key ) return -1;
-    else if( ga->key > gb->key ) return 1;
+    if( ga->key > gb->key ) return -1;
+    else if( ga->key < gb->key ) return 1;
     return 0;
 }
 
@@ -321,15 +303,18 @@ template<class ITEM, class KEY> class FileIndex
     bool sorted;
     KEY last_inserted;
     std::string filename;
-    Record<ITEM, KEY> *buffer;
+    ITEM* itemBuffer;
+    KEY*  keyBuffer;
     unsigned long bufferCount;
-    uint64_t recSize;
+    uint64_t itemSize;
+    uint64_t keySize;
     uint64_t sortedSize;
     std::unordered_map<uint64_t, Record<ITEM, KEY>> cache;
     std::mutex cache_mutex;
 public:
     uint64_t fileSize;
-    GeoFile pFile;
+    GeoFile itemFile;
+    GeoFile keyFile;
     
     bool isSorted(){return sorted;}
     
@@ -342,12 +327,21 @@ public:
     FileIndex(std::string filename_, bool replace) : filename(filename_)
     {
 
-        pFile.open(filename, replace);
-        buffer = NULL;
-        if (replace)  buffer = new Record<ITEM,KEY>[FILEINDEX_RAWFLUSHSIZE];
+        itemFile.open(filename, replace);
+        keyFile.open(filename + "_key", replace);
+
+        itemBuffer = NULL;
+        keyBuffer  = NULL;
+        
+        if (replace)
+        {
+            itemBuffer = new ITEM[FILEINDEX_RAWFLUSHSIZE];
+            keyBuffer  = new KEY[FILEINDEX_RAWFLUSHSIZE];
+        }
         bufferCount = 0;
-        recSize = sizeof(Record<ITEM,KEY>);
-        fileSize = pFile.length()/recSize;
+        itemSize = sizeof(ITEM);
+        keySize  = sizeof(KEY);
+        fileSize = itemFile.length()/itemSize;
         sortedSize = 0;
         sorted = true;
     }
@@ -358,7 +352,8 @@ public:
      */
     virtual ~FileIndex()
     {
-        if(buffer != NULL) delete[] buffer;
+        if(keyBuffer != NULL) delete[] keyBuffer;
+        if(itemBuffer != NULL) delete[] itemBuffer;
     }
 
 /**
@@ -369,17 +364,20 @@ public:
  */
     void append(KEY key, ITEM item)
     {
-        Record<ITEM,KEY> record;
-        record.key = key;
-        record.value = item;
-        buffer[bufferCount] = record;
+        //Record<ITEM,KEY> record;
+        //record.key = key;
+        //record.value = item;
+
+        itemBuffer[bufferCount] = item;
+        keyBuffer[bufferCount] = key;
         bufferCount ++;
+  
         if (bufferCount == FILEINDEX_RAWFLUSHSIZE)
         {
             flush();
         }
         if((fileSize) && (key < last_inserted)) sorted = false;
-        last_inserted = record.key;
+        last_inserted = key;
     }
 
 
@@ -389,9 +387,10 @@ public:
  */
     void flush()
     {
-        pFile.append((char*)&buffer[0], recSize * bufferCount);
+        itemFile.append((char*)&itemBuffer[0], itemSize * bufferCount);
+        keyFile.append((char*)&keyBuffer[0], keySize * bufferCount);
         bufferCount = 0;
-        fileSize = pFile.length()/recSize;
+        fileSize = itemFile.length()/itemSize;
     }
 /**
  * @brief swap items in index
@@ -399,13 +398,21 @@ public:
  * @param item1
  * @param item2 
  */
-    void swap(uint64_t item1, uint64_t item2)
+    void swap(uint64_t n1, uint64_t n2)
     {
-        Record<ITEM,KEY> rec1, rec2;
-        pFile.oread((char*)&rec1, item1 * recSize, recSize);
-        pFile.oread((char*)&rec2, item2 * recSize, recSize);
-        pFile.owrite((char*)&rec2, item1 * recSize, recSize);
-        pFile.owrite((char*)&rec1, item2 * recSize, recSize);
+        ITEM  item1, item2;
+        KEY   key1, key2;
+
+        itemFile.oread((char*)&item1, n1 * itemSize, itemSize);
+        itemFile.oread((char*)&item2, n2 * itemSize, itemSize);
+        itemFile.owrite((char*)&item2, n1 * itemSize, itemSize);
+        itemFile.owrite((char*)&item1, n2 * itemSize, itemSize);
+
+        keyFile.oread((char*)&key1, n1 * keySize, keySize);
+        keyFile.oread((char*)&key2, n2 * keySize, keySize);
+        keyFile.owrite((char*)&key2, n1 * keySize, keySize);
+        keyFile.owrite((char*)&key1, n2 * keySize, keySize);
+
     }
 
     /**
@@ -419,17 +426,16 @@ public:
         if(!fileSize) return;
         sortedSize = 0;
         uint64_t buffer_size = (fileSize + 3) / 3;
-        Record<ITEM,KEY>* sort_buffer = NULL;
-//#ifdef  _SC_PAGE_SIZE
-//        size_t memory = sysconf(_SC_PAGE_SIZE) * sysconf(_SC_AVPHYS_PAGES) ;
-//        buffer_size = (memory / 4) / (3*recSize);
-//#endif
+        ITEM* item_sort_buffer = NULL;
+        KEY*  key_sort_buffer = NULL;
+
         bool resized = false;     
-        while(sort_buffer == NULL)
+        while(item_sort_buffer == NULL || key_sort_buffer == NULL)
         {
             try
             {
-                sort_buffer = new Record<ITEM,KEY>[buffer_size*3];
+              item_sort_buffer = new ITEM[buffer_size*3];
+              key_sort_buffer  = new KEY[buffer_size*3];
             } catch(std::bad_alloc& ba)
             {
                 std::cout << "buffer_size : " << buffer_size << "too big\n";
@@ -438,35 +444,45 @@ public:
             }
             if(resized == true)
             {
-                delete[] sort_buffer;
+                delete[] item_sort_buffer;
+                delete[] key_sort_buffer;
                 buffer_size /= 2;
-                sort_buffer = new Record<ITEM,KEY>[buffer_size*3];
+                item_sort_buffer = new ITEM[buffer_size*3];
+                key_sort_buffer  = new KEY[buffer_size*3];
             }
         }
-        
-        sort(0,fileSize-1, sort_buffer, buffer_size);
+        sort(0,fileSize-1, key_sort_buffer, item_sort_buffer, buffer_size);
         sorted = true;
-        delete[] sort_buffer;
+        delete[] key_sort_buffer;
+        delete[] item_sort_buffer;
     }
 
-    void swap(Record<ITEM,KEY>* a, Record<ITEM,KEY>* b)
+    void swapItem(ITEM* a, ITEM* b)
     {
-        Record<ITEM,KEY> c;
-        memcpy(&c, a, recSize);
-        memcpy(a, b, recSize);
-        memcpy(b, &c, recSize);
+        ITEM c;
+        memcpy(&c, a, itemSize);
+        memcpy(a, b, itemSize);
+        memcpy(b, &c, itemSize);
     }
 
-    void memsort(int64_t begin, int64_t end, Record<ITEM,KEY>* sort_buffer)
+    void swapKey(KEY* a, KEY* b)
+    {
+        KEY c;
+        memcpy(&c, a, keySize);
+        memcpy(a, b, keySize);
+        memcpy(b, &c, keySize);
+    }
+
+    void memsort(int64_t begin, int64_t end, KEY* key_sort_buffer, ITEM* item_sort_buffer)
     {
         //std::cout << "memsort " << begin <<" "<< end <<"\n";
         if((end - begin) < 1) return;
         if((end - begin) == 1)
         {
-            int comp = fileIndexComp<ITEM,KEY>(&sort_buffer[end], &sort_buffer[begin]);
-            if ( comp < 0)
+            if ( key_sort_buffer[end] < key_sort_buffer[begin] )
             {
-                swap(sort_buffer + end, sort_buffer + begin);
+                swapKey(key_sort_buffer + end, key_sort_buffer + begin);
+                swapItem(item_sort_buffer + end, item_sort_buffer + begin);
             }
             return;
         }
@@ -480,24 +496,28 @@ public:
             {
                 while((total > (biggers + lessers))
                 && (begin + 1 + lessers <= end)
-                && (sort_buffer[begin + 1 + lessers].key < sort_buffer[begin].key)) lessers++;
+                && (key_sort_buffer[begin + 1 + lessers] < key_sort_buffer[begin])) lessers++;
                 while((total > (biggers + lessers))
                 && (end - biggers >= begin + 1)
-                && (sort_buffer[end - biggers ].key > sort_buffer[begin].key)) biggers++;
+                && (key_sort_buffer[end - biggers ] > key_sort_buffer[begin])) biggers++;
                 if(total > (biggers + lessers + 1))
                 {
-                    swap(sort_buffer + (begin+1+lessers), sort_buffer + (end - biggers));
+                    swapKey(key_sort_buffer + (begin+1+lessers), key_sort_buffer + (end - biggers));
+                    swapItem(item_sort_buffer + (begin+1+lessers), item_sort_buffer + (end - biggers));
+
                     biggers++;
                     lessers++;
                 } else if (total == (biggers + lessers + 1)) {
-                    if(sort_buffer[begin + 1 + lessers].key < sort_buffer[begin].key) lessers++;
+                    if(key_sort_buffer[begin + 1 + lessers] < key_sort_buffer[begin]) lessers++;
                     else biggers++;
                 }
             }
             ipivot = begin + lessers;
-            swap(sort_buffer + ipivot, sort_buffer + begin);
-            if((ipivot + 1)< end) memsort(ipivot + 1, end, sort_buffer); 
-            if(ipivot > (begin + 1)) memsort(begin, ipivot - 1, sort_buffer); 
+            swapKey(key_sort_buffer + ipivot, key_sort_buffer + begin);
+            swapItem(item_sort_buffer + ipivot, item_sort_buffer + begin);
+            
+            if((ipivot + 1)< end) memsort(ipivot + 1, end, key_sort_buffer, item_sort_buffer); 
+            if(ipivot > (begin + 1)) memsort(begin, ipivot - 1, key_sort_buffer, item_sort_buffer); 
         }
     }
 
@@ -511,7 +531,7 @@ public:
      * @param buffer_size 
      */
       
-    void sort(uint64_t begin, uint64_t end, Record<ITEM,KEY>* sort_buffer, uint64_t buffer_size)
+    void sort(uint64_t begin, uint64_t end, KEY* key_sort_buffer, ITEM* item_sort_buffer, uint64_t buffer_size)
     {
         std::cerr << "sort " << begin <<" "<< end <<"\n";
         uint64_t count = (end - begin) + 1;
@@ -519,14 +539,16 @@ public:
         {
             std::cout << "enough memory, performing qsort \n";
             std::cout << "read data \n";
-            pFile.oread((char*)sort_buffer, begin * recSize, recSize * count);
+            itemFile.oread((char*)item_sort_buffer, begin * itemSize, itemSize * count);
+            keyFile.oread((char*)key_sort_buffer, begin * keySize, keySize * count);
             std::cout << "sort data \n";
             
             //std::qsort(&sort_buffer[0], count, recSize,fileIndexComp<ITEM,KEY>);
-            memsort(0, count - 1, sort_buffer);
+            memsort(0, count - 1, key_sort_buffer, item_sort_buffer);
             
             std::cout << "write data \n";
-            pFile.owrite((char*)sort_buffer, begin * recSize, recSize * count );
+            keyFile.owrite((char*)key_sort_buffer, begin * keySize, keySize * count );
+            itemFile.owrite((char*)item_sort_buffer, begin * itemSize, itemSize * count );
             sortedSize += count;
             std::cerr << "*** *** *** *** sorted " << sortedSize << " out of " << fileSize << "\n";
             return;
@@ -536,12 +558,22 @@ public:
             uint64_t i = (end + begin) / 2;
             swap(i,end);
         }
-        Record<ITEM,KEY>* plusPetits = sort_buffer;
-        Record<ITEM,KEY>* plusGrands = sort_buffer + buffer_size;
-        Record<ITEM,KEY>* autres = sort_buffer + 2ULL*buffer_size;
-        Record<ITEM,KEY> pivot;
+
+        ITEM* item_plusPetits = item_sort_buffer;
+        ITEM* item_plusGrands = item_sort_buffer + buffer_size;
+        ITEM* item_autres = item_sort_buffer + 2ULL*buffer_size;
+
+        KEY* key_plusPetits = key_sort_buffer;
+        KEY* key_plusGrands = key_sort_buffer + buffer_size;
+        KEY* key_autres = key_sort_buffer + 2ULL*buffer_size;
+        
+        KEY curKey;
+        ITEM curItem;
+
+
         //Record<ITEM,KEY> tmp;
-        get(end, &pivot);
+        getKey(end, &curKey);
+        getItem(end, &curItem);
         uint64_t autresCount = end - begin;
         uint64_t plusGrandsCount = 0;
         uint64_t plusPetitsCount = 0;
@@ -553,7 +585,10 @@ public:
             uint64_t toRead = buffer_size;
             //std::cout << "reading " << toRead << "items from file \n";
             if(toRead > autresCount) toRead = autresCount;
-            pFile.oread((char*)autres, (end - (toRead  + plusGrandsCount)) * recSize, recSize * toRead );
+
+            itemFile.oread((char*)item_autres, (end - (toRead  + plusGrandsCount)) * itemSize, itemSize * toRead );
+            keyFile.oread((char*)key_autres, (end - (toRead  + plusGrandsCount)) * keySize, keySize * toRead );
+
             autresBufferCount = toRead;
             plusPetitsBufferCount = 0;
             plusGrandsBufferCount = 0;
@@ -562,26 +597,31 @@ public:
             while(autresBufferCount > 0)
             {
                 autresBufferCount --;
-                int comp = fileIndexComp<ITEM,KEY>(&autres[autresBufferCount], &pivot);
-                if(comp > 0)
+                if(key_autres[autresBufferCount] >  curKey)
                 {
-                    plusGrands[plusGrandsBufferCount ++] = autres[autresBufferCount];
-                    //plusGrandsBufferCount++;
+                    key_plusGrands[plusGrandsBufferCount] = key_autres[autresBufferCount];
+                    item_plusGrands[plusGrandsBufferCount] = item_autres[autresBufferCount];
+                    plusGrandsBufferCount++;
                 }
-                else if(comp < 0)
+                else if(key_autres[autresBufferCount] <  curKey)
                 {
-                    plusPetits[plusPetitsBufferCount ++] = autres[autresBufferCount];
-                    //plusPetitsBufferCount++;
+                    key_plusPetits[plusPetitsBufferCount] = key_autres[autresBufferCount];
+                    item_plusPetits[plusPetitsBufferCount] = item_autres[autresBufferCount];
+                    plusPetitsBufferCount++;
                 }
                 else
                 {
                     if(plusGrandsBufferCount> plusPetitsBufferCount)
                     {
-                        plusPetits[plusPetitsBufferCount ++] = autres[autresBufferCount];
+                        key_plusPetits[plusPetitsBufferCount] = key_autres[autresBufferCount];
+                        item_plusPetits[plusPetitsBufferCount] = item_autres[autresBufferCount];
+                        plusPetitsBufferCount++;
                     }
                     else
                     {
-                        plusGrands[plusGrandsBufferCount ++] = autres[autresBufferCount];
+                        key_plusGrands[plusGrandsBufferCount] = key_autres[autresBufferCount];
+                        item_plusGrands[plusGrandsBufferCount] = item_autres[autresBufferCount];
+                        plusGrandsBufferCount ++;
                     } 
                 }
             }
@@ -590,24 +630,30 @@ public:
             if(plusGrandsBufferCount)
             {
                 //std::cout << plusGrandsBufferCount << " items where bigger writing them to file\n";
-                pFile.owrite((char*)plusGrands, (end - (plusGrandsCount + plusGrandsBufferCount - 1)) * recSize, recSize * plusGrandsBufferCount);
+                itemFile.owrite((char*)item_plusGrands, (end - (plusGrandsCount + plusGrandsBufferCount - 1)) * itemSize, itemSize * plusGrandsBufferCount);
+                keyFile.owrite((char*)key_plusGrands, (end - (plusGrandsCount + plusGrandsBufferCount - 1)) * keySize, keySize * plusGrandsBufferCount);
             }
             plusGrandsCount += plusGrandsBufferCount;
             //std::cout << plusPetitsBufferCount << " items where smaller writing them to file\n";
             if(autresCount  < plusPetitsBufferCount)
             {
                 std::cout << " cache " << autresCount << " items \n";
-                pFile.oread((char*)autres, (begin + plusPetitsCount) * recSize, recSize * autresCount);
+
+                itemFile.oread((char*)item_autres, (begin + plusPetitsCount) * itemSize, itemSize * autresCount);
+                keyFile.oread((char*)key_autres, (begin + plusPetitsCount) * keySize, keySize * autresCount);
+
                 if(plusPetitsBufferCount)
                 {
                     //std:: cout << "write smallers \n";
-                    pFile.owrite((char*)plusPetits, (begin + plusPetitsCount) * recSize, recSize * plusPetitsBufferCount);
+                    itemFile.owrite((char*)item_plusPetits, (begin + plusPetitsCount) * itemSize, itemSize * plusPetitsBufferCount);
+                    keyFile.owrite((char*)key_plusPetits, (begin + plusPetitsCount) * keySize, keySize * plusPetitsBufferCount);
                     plusPetitsCount += plusPetitsBufferCount;
                 }
                 if(autresCount)
                 {
                     //std:: cout << "write cached \n";
-                    pFile.owrite((char*)autres, (begin+plusPetitsCount) * recSize, recSize * autresCount);
+                    itemFile.owrite((char*)item_autres, (begin+plusPetitsCount) * itemSize, itemSize * autresCount);
+                    keyFile.owrite((char*)key_autres, (begin+plusPetitsCount) * keySize, keySize * autresCount);
                 }
 
             }
@@ -617,16 +663,21 @@ public:
                 {
 
                     //std::cout << " cache " << plusPetitsCount << " items \n";
-                    pFile.oread((char*)autres, (begin + plusPetitsCount) * recSize, recSize * plusPetitsBufferCount);
+                    itemFile.oread((char*)item_autres, (begin + plusPetitsCount) * itemSize, itemSize * plusPetitsBufferCount);
+                    keyFile.oread((char*)key_autres, (begin + plusPetitsCount) * keySize, keySize * plusPetitsBufferCount);
                     //std:: cout << "write smallers \n";
-                    pFile.owrite((char*)plusPetits, (begin + plusPetitsCount) * recSize, recSize * plusPetitsBufferCount);
+                    itemFile.owrite((char*)item_plusPetits, (begin + plusPetitsCount) * itemSize, itemSize * plusPetitsBufferCount);
+                    keyFile.owrite((char*)key_plusPetits, (begin + plusPetitsCount) * keySize, keySize * plusPetitsBufferCount);
+ 
                     plusPetitsCount += plusPetitsBufferCount;
                     //std:: cout << "write cached \n";
-                    pFile.owrite((char*)autres, (end - (plusGrandsCount + plusPetitsBufferCount)) * recSize, recSize * plusPetitsBufferCount);
+                    itemFile.owrite((char*)item_autres, (end - (plusGrandsCount + plusPetitsBufferCount)) * itemSize, itemSize * plusPetitsBufferCount);
+                    keyFile.owrite((char*)key_autres, (end - (plusGrandsCount + plusPetitsBufferCount)) * keySize, keySize * plusPetitsBufferCount);
                 }
             }
             //std:: cout << "write pivot at the right place \n";
-            pFile.owrite((char*)&pivot, (end  - (plusGrandsCount)) * recSize, recSize);
+            itemFile.owrite((char*)&(curItem), (end  - (plusGrandsCount)) * itemSize, itemSize);
+            keyFile.owrite((char*)&(curKey), (end  - (plusGrandsCount)) * keySize, keySize);
 
         }
         sortedSize++;
@@ -652,9 +703,9 @@ public:
             else cont = false;
         }*/
         std::cerr << "*** *** *** *** sorted " << sortedSize << " out of " << fileSize << "\n";
-        if(plusGrandsCount > 1) sort(end - (plusGrandsCount - 1), end, sort_buffer, buffer_size);
+        if(plusGrandsCount > 1) sort(end - (plusGrandsCount - 1), end, key_sort_buffer, item_sort_buffer, buffer_size);
         else if(!plusGrandsCount) sortedSize++;
-        if(plusPetitsCount > 1) sort(begin, begin + plusPetitsCount - 1, sort_buffer, buffer_size);
+        if(plusPetitsCount > 1) sort(begin, begin + plusPetitsCount - 1, key_sort_buffer, item_sort_buffer, buffer_size);
         else if(!plusPetitsCount) sortedSize++;
     }
 
@@ -694,15 +745,43 @@ public:
  * @return true 
  * @return false 
  */
+
+    inline bool  getItem(uint64_t pos, ITEM* result )
+    {
+        if( pos >= getSize())
+        {
+            std::cerr << "object not found ! " << (int) pos << (int) getSize() << "/n";
+            return false;
+        }
+        itemFile.oread((char*)result, pos*itemSize, itemSize);
+        return true;
+    }
+
+    inline bool  getKey(uint64_t pos, KEY* result )
+    {
+        if( pos >= getSize())
+        {
+            std::cerr << "key not found ! " << (int) pos << (int) getSize() << "/n";
+            return false;
+        }
+        keyFile.oread((char*)result, pos*keySize, keySize);
+        return true;
+    }
+
+
+
     inline bool  get(uint64_t pos, Record<ITEM,KEY>* result )
     {
         if( pos >= getSize())
         {
             return false;
         }
-        pFile.oread((char*)result, pos*recSize, recSize);
+        itemFile.oread((char*)(&(result->value)), pos*itemSize, itemSize);
+        keyFile.oread((char*)(&(result->key)), pos*keySize, keySize);
         return true;
     }
+
+
 
 /**
  * @brief get index size.
