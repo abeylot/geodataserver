@@ -80,6 +80,15 @@ struct __attribute__((packed)) IndexEntry
     Rectangle r;
 };
 
+struct __attribute__((packed)) IndexEntryMasked
+{
+    uint64_t id;
+    Rectangle r;
+    uint32_t zmMask;
+};
+
+
+
 struct __attribute__((packed)) IndexRange
 {
     uint64_t first;
@@ -93,7 +102,7 @@ struct IndexDesc
     std::vector<Condition*> conditions;
     std::vector<Selector*> selectors;
     std::vector<Selector*> excludeSelectors;
-    fidx::FileIndex<IndexEntry,GeoBox>* idx;
+    fidx::FileIndex<IndexEntryMasked,GeoBox>* idx;
     uint32_t mask;
 };
 
@@ -219,7 +228,7 @@ struct XmlVisitor
             idx->name = b->keyValues["name"];
             std::string fName = root + "/" + b->keyValues["name"];
             //std::cout << "opening " << fName << "\n";
-            idx->idx = new fidx::FileIndex<IndexEntry,GeoBox>(fName, ccre);
+            idx->idx = new fidx::FileIndex<IndexEntryMasked,GeoBox>(fName, ccre);
             idx->mask = 0;
             idxMask = 0;
         }

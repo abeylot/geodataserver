@@ -265,7 +265,7 @@ namespace fidx
   * @tparam KEY  key of index.
   */
 
-template <class ITEM,class KEY> struct __attribute__((packed)) Record 
+template <class ITEM,class KEY> struct Record 
 {
     KEY key;
     ITEM value;
@@ -309,7 +309,7 @@ template<class ITEM, class KEY> class FileIndex
     uint64_t itemSize;
     uint64_t keySize;
     uint64_t sortedSize;
-    std::unordered_map<uint64_t, Record<ITEM, KEY>> cache;
+    //std::unordered_map<uint64_t, Record<ITEM, KEY>> cache;
     std::unordered_map<uint64_t, KEY> cacheKey;
     std::mutex cache_mutex;
 public:
@@ -718,7 +718,7 @@ public:
  * @return true 
  * @return false 
  */
-    bool  getAndCache_deprecated(uint64_t pos, Record<ITEM,KEY>* result)
+    /*bool  getAndCache_deprecated(uint64_t pos, Record<ITEM,KEY>* result)
     {
         std::lock_guard<std::mutex> guard(cache_mutex);
         auto it = cache.find(pos);
@@ -736,7 +736,7 @@ public:
             *result = it->second;
             return true;
         }
-    }
+    }*/
 
     bool  getAndCacheKey(uint64_t pos, KEY* result)
     {

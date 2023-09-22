@@ -147,8 +147,8 @@ int main(int argc, char *argv[])
                     for(int j = 0; j < g.count; j++)
                     {
                         if(r->isClosed) zmMask |= 0X100000LL;
-                        g.boxes[j].zmMask = zmMask;
-                        d->idx->append(g.boxes[j],{i, r->rect});
+                        //g.boxes[j].zmMask = zmMask;
+                        d->idx->append(g.boxes[j],{i, r->rect, zmMask});
                     }
                 }
             }
@@ -244,8 +244,8 @@ int main(int argc, char *argv[])
                     for(int j = 0; j < g.count; j++)
                     {
                         if(closed) zmMask |= 0X100000LL;
-                        g.boxes[j].zmMask = zmMask;
-                        d->idx->append(g.boxes[j],{i, w->rect});
+                        //g.boxes[j].zmMask = zmMask;
+                        d->idx->append(g.boxes[j],{i, w->rect, zmMask});
                     }
                 }
             }
@@ -337,8 +337,8 @@ int main(int argc, char *argv[])
                 if(kept)
                 {
                     GeoBox g = makeGeoBox(p->x,p->y);
-                    g.zmMask = zmMask;
-                    d->idx->append(g,{i,{p->x, p->y, p->x, p->y}});
+                    //g.zmMask = zmMask;
+                    d->idx->append(g,{i,{p->x, p->y, p->x, p->y}, zmMask});
                 }
             }
         }

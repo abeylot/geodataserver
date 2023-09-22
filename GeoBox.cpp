@@ -201,29 +201,7 @@ uint64_t mergeBits (uint32_t a, uint32_t b)
 
     return result;
 }
-bool hasgoodMask(Rectangle r)
-{
-    uint32_t dif_x, dif_y;
 
-    if(r.x0 > r.x1) dif_x = r.x0 - r.x1;
-    else dif_x = r.x1 - r.x0;
-
-    if(r.y0 > r.y1) dif_y = r.y0 - r.y1;
-    else dif_y = r.y1 - r.y0;
-    
-    uint64_t diff = mergeBits(dif_x, dif_y);
-    uint64_t p0 =   mergeBits(r.x0, r.y0);
-    uint64_t p1 =   mergeBits(r.x1, r.y1);
-    uint64_t xordiff = p0^p1;
-
-    short mask = 0;
-    while(diff){diff = diff >> 1; mask++;}
-
-    short maskXor = 0;
-    while(xordiff){xordiff = xordiff >> 1; maskXor++;}
-
-    return ( maskXor <= (mask + 1) );
-}
 
 
 uint32_t getX (uint64_t pos)
@@ -303,37 +281,37 @@ uint32_t getY (uint64_t pos)
 
 uint32_t getXmin(GeoBox& a)
 {
-    return getX(a.pos);
+    return getX(a.get_pos());
 }
 
 uint32_t getYmin(GeoBox& a)
 {
-    return getY(a.pos);
+    return getY(a.get_pos());
 }
 
 uint32_t getXmax(GeoBox& a)
 {
-    uint64_t pos = a.pos;
+    uint64_t pos = a.get_pos();
     uint64_t mask = UINT64_C(0xFFFFFFFFFFFFFFFF);
-    mask = mask >> (64 - (a.maskLength));
+    mask = mask >> (64 - (a.get_maskLength()));
     pos |= mask;
     return getX(pos);
 }
 
 uint32_t getYmax(GeoBox& a)
 {
-    uint64_t pos = a.pos;
+    uint64_t pos = a.get_pos();
     uint64_t mask = UINT64_C(0xFFFFFFFFFFFFFFFF);
-    mask = mask >> (64 - (a.maskLength));
+    mask = mask >> (64 - (a.get_maskLength()));
     pos |= mask;
     return getY(pos);
 }
 
 bool geoBoxContains(GeoBox* a, GeoBox* b)
 {
-    if(a->maskLength < b->maskLength) return false;
-    uint64_t mask = UINT64_C(0xFFFFFFFFFFFFFFFF) << a->maskLength;
-    if((a->pos & mask) == (b->pos & mask)) return true;
+    if(a->get_maskLength() < b->get_maskLength()) return false;
+    uint64_t mask = UINT64_C(0xFFFFFFFFFFFFFFFF) << a->get_maskLength();
+    if((a->get_pos() & mask) == (b->get_pos() & mask)) return true;
     return false;
 }
 
@@ -364,10 +342,10 @@ bool operator<=(GeoBox const& a, GeoBox const& b)
 
 short compareGeoBox(GeoBox const* a, GeoBox const* b)
 {
-    if(a->pos > b->pos) return 1;
-    if(a->pos < b->pos) return -1;
-    if(a->maskLength > b->maskLength) return -1;
-    if(a->maskLength < b->maskLength) return 1;
+    if(a->get_pos() > b->get_pos()) return 1;
+    if(a->get_pos() < b->get_pos()) return -1;
+    if(a->get_maskLength() > b->get_maskLength()) return -1;
+    if(a->get_maskLength() < b->get_maskLength()) return 1;
     return 0;
 }
 
@@ -511,7 +489,7 @@ bool dividey(Rectangle r, Rectangle& bottom, Rectangle& top)
 GeoBox makeGeoBox(Rectangle rect)
 {
     GeoBox result;
-    result.maskLength = 0;
+    result.set_maskLength(0);
     uint32_t minx,maxx,miny,maxy;
     if(rect.x0 < rect.x1)
     {
@@ -600,16 +578,16 @@ GeoBox makeGeoBox(Rectangle rect)
     if(delta & UINT64_BIT62) mask_length = 63;
     if(delta & UINT64_BIT63) mask_length = 64;
     uint64_t mask64 = UINT64_C(0XFFFFFFFFFFFFFFFF) << mask_length;
-    result.pos = minpos & mask64;
-    result.maskLength = mask_length;
+    result.set_pos (minpos & mask64);
+    result.set_maskLength (mask_length);
     return result;
 }
 
 GeoBox makeGeoBox(uint32_t x1, uint32_t y1)
 {
     GeoBox result;
-    result.maskLength = 0;
-    result.pos = mergeBits(x1, y1);
+    result.set_maskLength(0);
+    result.set_pos(mergeBits(x1, y1));
     return result;
 }
 

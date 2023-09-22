@@ -19,8 +19,8 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
     {
         if(desc->name == name )
         {
-            fidx::FileIndex<IndexEntry,GeoBox>* idx = desc->idx;
-            fidx::Record<IndexEntry, GeoBox> record;
+            fidx::FileIndex<IndexEntryMasked,GeoBox>* idx = desc->idx;
+            fidx::Record<IndexEntryMasked, GeoBox> record;
             //GeoIndex p;
             if(desc->type == "relation")
             {
@@ -37,7 +37,7 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
                     std::string name = r->tags["name"];
                     std::string type = r->tags["type"];
                     resp += "name:" + name + " type:" + type;
-                    resp += "<a href=\"/relation/get?id=" + std::to_string(r->id) + "\">"+ std::to_string(i) +"</a>:: pos :" + std::to_string(record.key.pos)+ ":: mask :" + std::to_string(record.key.maskLength)+"::"+std::to_string(record.key.zmMask)+":: id :" + std::to_string(record.value.id);
+                    resp += "<a href=\"/relation/get?id=" + std::to_string(r->id) + "\">"+ std::to_string(i) +"</a>:: pos :" + std::to_string(record.key.get_pos())+ ":: mask :" + std::to_string(record.key.get_maskLength())+"::"+std::to_string(record.value.zmMask)+":: id :" + std::to_string(record.value.id);
                     resp += "<br/>";
                     i++;
                     delete r;
@@ -49,7 +49,7 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
                 {
                     Point* p = mger.loadPoint(record.value.id);
                     std::string name = p->tags["name"];
-                    resp += std::to_string(i) + ":: pos :" + std::to_string(record.key.pos)+ "::"+name+":: mask :" + std::to_string(record.key.maskLength)+"::"+std::to_string(record.key.zmMask)+":: id :" + std::to_string(record.value.id);
+                    resp += std::to_string(i) + ":: pos :" + std::to_string(record.key.get_pos())+ "::"+name+":: mask :" + std::to_string(record.key.get_maskLength())+"::"+std::to_string(record.value.zmMask)+":: id :" + std::to_string(record.value.id);
                     resp += "::" + name +"<br/>";
         
                     uint64_t used = 0;
@@ -87,7 +87,7 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
                     Way* r = mger.loadWay(record.value.id);
                     std::string name = r->tags["name"];
                     resp += "name:" + name ;
-                    resp += " <a href=\"/way/get?id=" + std::to_string(r->id) + "\">"+ std::to_string(i) +"</a>:: pos :" + std::to_string(record.key.pos)+ ":: mask :" + std::to_string(record.key.maskLength)+"::"+std::to_string(record.key.zmMask)+ ":: id :" + std::to_string(record.value.id);
+                    resp += " <a href=\"/way/get?id=" + std::to_string(r->id) + "\">"+ std::to_string(i) +"</a>:: pos :" + std::to_string(record.key.get_pos())+ ":: mask :" + std::to_string(record.key.get_maskLength())+"::"+std::to_string(record.value.zmMask)+ ":: id :" + std::to_string(record.value.id);
                     resp +="<br/>";
                     i++;
                 }
