@@ -221,9 +221,9 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
     
     for(auto myword : words)
     {
-        fidx::Record<IndexRange, uint64_t> eN;
-        fidx::Record<IndexRange, uint64_t> eW;
-        fidx::Record<IndexRange, uint64_t> eR;
+        IndexRange eN;
+        IndexRange eW;
+        IndexRange eR;
 
 
 
@@ -236,18 +236,18 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
         
         if (foundN)
         {
-            nstart = eN.value.first;
-            nstop  = eN.value.last;
+            nstart = eN.first;
+            nstop  = eN.last;
         }
         if (foundW)
         {
-            wstart = eW.value.first;
-            wstop  = eW.value.last;
+            wstart = eW.first;
+            wstop  = eW.last;
         }
         if (foundR)
         {
-            rstart = eR.value.first;
-            rstop  = eR.value.last;
+            rstart = eR.first;
+            rstop  = eR.last;
         }
         
         std::cout << (nstop - nstart) << "," <<  (wstop - wstart) << "," << (rstop -rstart) << "\n";

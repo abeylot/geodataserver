@@ -822,7 +822,7 @@ public:
  * @return true 
  * @return false 
  */
-    bool find(KEY key, Record<ITEM,KEY>* result)
+    bool find(KEY key, ITEM* result)
     {
         uint64_t iMin = 0;
         uint64_t iMax = getSize() - 1;
@@ -832,7 +832,7 @@ public:
         getAndCacheKey(iMin, &myKey);
         if( myKey == key)
         {
-            get(iMin, result);
+            getItem(iMin, result);
             return true;
         }
         if( myKey > key)
@@ -842,7 +842,7 @@ public:
         getAndCacheKey(iMax, &myKey);
         if( myKey == key)
         {
-            get(iMin, result);
+            getItem(iMin, result);
             return true;
         }
         if( myKey < key)
@@ -863,7 +863,7 @@ public:
             }
             else if(myKey == key)
             {
-                get(iPivot, result);
+                getItem(iPivot, result);
                 return true;
             }
             else
