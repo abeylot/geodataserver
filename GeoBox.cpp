@@ -133,9 +133,9 @@ uint64_t mergeBits (uint32_t a, uint32_t b)
 
     uint64_t result = 0;
 
-    if( a & UINT32_BIT0) result |= UINT64_BIT0;
-    if( a & UINT32_BIT1) result |= UINT64_BIT2;
-    if( a & UINT32_BIT2) result |= UINT64_BIT4;
+    //if( a & UINT32_BIT0) result |= UINT64_BIT0;
+    //if( a & UINT32_BIT1) result |= UINT64_BIT2;
+    //if( a & UINT32_BIT2) result |= UINT64_BIT4;
     if( a & UINT32_BIT3) result |= UINT64_BIT6;
     if( a & UINT32_BIT4) result |= UINT64_BIT8;
     if( a & UINT32_BIT5) result |= UINT64_BIT10;
@@ -166,9 +166,9 @@ uint64_t mergeBits (uint32_t a, uint32_t b)
     if( a & UINT32_BIT30) result |= UINT64_BIT60;
     if( a & UINT32_BIT31) result |= UINT64_BIT62;
 
-    if( b & UINT32_BIT0) result |= UINT64_BIT1;
-    if( b & UINT32_BIT1) result |= UINT64_BIT3;
-    if( b & UINT32_BIT2) result |= UINT64_BIT5;
+    //if( b & UINT32_BIT0) result |= UINT64_BIT1;
+    //if( b & UINT32_BIT1) result |= UINT64_BIT3;
+    //if( b & UINT32_BIT2) result |= UINT64_BIT5;
     if( b & UINT32_BIT3) result |= UINT64_BIT7;
     if( b & UINT32_BIT4) result |= UINT64_BIT9;
     if( b & UINT32_BIT5) result |= UINT64_BIT11;
@@ -207,9 +207,9 @@ uint64_t mergeBits (uint32_t a, uint32_t b)
 uint32_t getX (uint64_t pos)
 {
     uint32_t result = 0;
-    if( pos & UINT64_BIT0) result |= UINT32_BIT0;
-    if( pos & UINT64_BIT2) result |= UINT32_BIT1;
-    if( pos & UINT64_BIT4) result |= UINT32_BIT2;
+    //if( pos & UINT64_BIT0) result |= UINT32_BIT0;
+    //if( pos & UINT64_BIT2) result |= UINT32_BIT1;
+    //if( pos & UINT64_BIT4) result |= UINT32_BIT2;
     if( pos & UINT64_BIT6) result |= UINT32_BIT3;
     if( pos & UINT64_BIT8) result |= UINT32_BIT4;
     if( pos & UINT64_BIT10) result |= UINT32_BIT5;
@@ -244,9 +244,9 @@ uint32_t getX (uint64_t pos)
 uint32_t getY (uint64_t pos)
 {
     uint32_t result = 0;
-    if( pos & UINT64_BIT1) result |= UINT32_BIT0;
-    if( pos & UINT64_BIT3) result |= UINT32_BIT1;
-    if( pos & UINT64_BIT5) result |= UINT32_BIT2;
+    //if( pos & UINT64_BIT1) result |= UINT32_BIT0;
+    //if( pos & UINT64_BIT3) result |= UINT32_BIT1;
+    //if( pos & UINT64_BIT5) result |= UINT32_BIT2;
     if( pos & UINT64_BIT7) result |= UINT32_BIT3;
     if( pos & UINT64_BIT9) result |= UINT32_BIT4;
     if( pos & UINT64_BIT11) result |= UINT32_BIT5;
@@ -352,10 +352,10 @@ short compareGeoBox(GeoBox const* a, GeoBox const* b)
 bool dividex(Rectangle r, Rectangle& left, Rectangle& right)
 {
     uint32_t delta = r.x0 ^ r.x1;
-    short mask_length;
-    if(delta & UINT32_BIT0) mask_length = 1;
-    if(delta & UINT32_BIT1) mask_length = 2;
-    if(delta & UINT32_BIT2) mask_length = 3;
+    short mask_length = 3;
+    //if(delta & UINT32_BIT0) mask_length = 1;
+    //if(delta & UINT32_BIT1) mask_length = 2;
+    //if(delta & UINT32_BIT2) mask_length = 3;
     if(delta & UINT32_BIT3) mask_length = 4;
     if(delta & UINT32_BIT4) mask_length = 5;
     if(delta & UINT32_BIT5) mask_length = 6;
@@ -419,11 +419,11 @@ bool dividex(Rectangle r, Rectangle& left, Rectangle& right)
 bool dividey(Rectangle r, Rectangle& bottom, Rectangle& top)
 {
     uint32_t delta = r.y0 ^ r.y1;
-    short mask_length;
+    short mask_length = 3;
     
-    if(delta & UINT32_BIT0) mask_length = 1;
-    if(delta & UINT32_BIT1) mask_length = 2;
-    if(delta & UINT32_BIT2) mask_length = 3;
+    //if(delta & UINT32_BIT0) mask_length = 1;
+    //if(delta & UINT32_BIT1) mask_length = 2;
+    //if(delta & UINT32_BIT2) mask_length = 3;
     if(delta & UINT32_BIT3) mask_length = 4;
     if(delta & UINT32_BIT4) mask_length = 5;
     if(delta & UINT32_BIT5) mask_length = 6;
@@ -512,10 +512,10 @@ GeoBox makeGeoBox(Rectangle rect)
     uint64_t minpos = mergeBits(minx, miny);
     uint64_t maxpos = mergeBits(maxx, maxy);
     uint64_t delta = minpos ^ maxpos;
-    short mask_length = 0;
-    if(delta & UINT64_BIT0) mask_length = 1;
-    if(delta & UINT64_BIT1) mask_length = 2;
-    if(delta & UINT64_BIT2) mask_length = 3;
+    short mask_length = 3;
+    //if(delta & UINT64_BIT0) mask_length = 1;
+    //if(delta & UINT64_BIT1) mask_length = 2;
+    //if(delta & UINT64_BIT2) mask_length = 3;
     if(delta & UINT64_BIT3) mask_length = 4;
     if(delta & UINT64_BIT4) mask_length = 5;
     if(delta & UINT64_BIT5) mask_length = 6;
@@ -586,7 +586,7 @@ GeoBox makeGeoBox(Rectangle rect)
 GeoBox makeGeoBox(uint32_t x1, uint32_t y1)
 {
     GeoBox result;
-    result.set_maskLength(0);
+    result.set_maskLength(3);
     result.set_pos(mergeBits(x1, y1));
     return result;
 }
