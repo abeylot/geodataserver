@@ -287,14 +287,14 @@ struct XmlVisitor
         else if (b->baliseName == BALISENAME_ND)
         {
             uint64_t ref = atoll(b->keyValues["ref"].c_str());
-            fidx::Record<GeoPointNumberIndex, uint64_t> recp;
+            GeoPointNumberIndex recp;
             bool res = nodeIdIndex->find(ref, &recp);
             if (res)
             {
                 /*GeoPoint p;
                 p.x = recp.value.p.x;
                 p.y = recp.value.p.y;*/
-                wayPoints->append(recp.value.p);
+                wayPoints->append(recp.p);
             }
         }
         else if (b->baliseName == BALISENAME_WAY)
@@ -314,11 +314,11 @@ struct XmlVisitor
             {
                 m.type = point;
                 uint64_t ref = atoll(b->keyValues["ref"].c_str());
-                fidx::Record<GeoPointNumberIndex, uint64_t> recp;
+                GeoPointNumberIndex recp;
                 bool res = nodeIdIndex->find(ref, &recp);
                 if(res)
                 {
-                    m.id = recp.value.number;
+                    m.id = recp.number;
                 }
                 else
                 {
@@ -330,11 +330,11 @@ struct XmlVisitor
             else if(b->keyValues["type"] == "way")
             {
                 m.type = way;
-                fidx::Record<uint64_t, uint64_t> recp;
+                uint64_t recp;
                 bool res = wayIdIndex->find(ref, &recp);
                 if(res)
                 {
-                    m.id = recp.value;
+                    m.id = recp;
                 }
                 else
                 {
@@ -345,11 +345,11 @@ struct XmlVisitor
             else if(b->keyValues["type"] == "relation")
             {   
                 m.type = relation;
-                fidx::Record<uint64_t, uint64_t> recp;
+                uint64_t recp;
                 bool res = relationIdIndex->find(ref, &recp);
                 if(res)
                 {
-                    m.id = recp.value;
+                    m.id = recp;
                 }
                 else
                 {

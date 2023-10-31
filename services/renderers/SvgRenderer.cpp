@@ -169,30 +169,30 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
     {
         GeoBox g;
         g = gSet.boxes[i];
-        short  mask = g.maskLength;
+        short  mask = g.get_maskLength();
 
         GeoBox maxGeoBox;
         maxGeoBox = g;
 
         if(mask < 63) {
             uint64_t myMask = UINT64_C(0x1) << (mask);
-            maxGeoBox.pos = maxGeoBox.pos + myMask;
+            maxGeoBox.set_pos(maxGeoBox.get_pos() + myMask);
         } else {
-            maxGeoBox.pos=0xFFFFFFFFFFFFFFFF;
+            maxGeoBox.set_pos(0xFFFFFFFFFFFFFFFF);
         }
 
-        fidx::Record<IndexEntry, GeoBox> record;
+        fidx::Record<IndexEntryMasked, GeoBox> record;
         uint64_t start;
         if(idxDesc.idx->findLastLesser(g, start))
         while(idxDesc.idx->get(start, &record) && (record.key <= maxGeoBox))
         {
-            if((record.key.zmMask &  zmMask )&&((record.value.r * (rect2)).isValid()))
+            if((record.value.zmMask &  zmMask )&&((record.value.r * (rect2)).isValid()))
             {
                 if( hash->addIfUnique(record.value.id*100 + indexId))
                 {
                     ITEM* item = NULL;
                     mger->load(item, record.value.id, true);
-                    CssClass* cl = getCssClass(idxDesc, *item, zoom, record.key.zmMask & 0X100000LL);
+                    CssClass* cl = getCssClass(idxDesc, *item, zoom, record.value.zmMask & 0X100000LL);
                     label_s lbl;
                     if(cl)
                     {
@@ -235,25 +235,25 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
             }
             start++;
         }
-        mask = g.maskLength;
+        mask = g.get_maskLength();
         short max = 64;
         while(mask++ < max )
         {
             GeoBox maxGeoBox2 = g;
-            maxGeoBox2.maskLength = mask;
+            maxGeoBox2.set_maskLength(mask);
             uint64_t myMask = UINT64_C(0xFFFFFFFFFFFFFFFF) << mask;
-            maxGeoBox2.pos = maxGeoBox2.pos & myMask;
+            maxGeoBox2.set_pos(maxGeoBox2.get_pos() & myMask);
             if(idxDesc.idx->findLastLesser(maxGeoBox2, start))
             while(idxDesc.idx->get(start++, &record) && (record.key <= maxGeoBox2))
             {
                 if( hash->addIfUnique(record.value.id*100 +indexId))
                 {
-                    if((record.key.zmMask &  zmMask ) && ((record.value.r * (rect2) ).isValid()))
+                    if((record.value.zmMask &  zmMask ) && ((record.value.r * (rect2) ).isValid()))
                     {
                         ITEM* item = NULL;
                         mger->load(item, record.value.id, true);
 
-                        CssClass* cl = getCssClass(idxDesc, *item, zoom, record.key.zmMask & 0X100000LL);
+                        CssClass* cl = getCssClass(idxDesc, *item, zoom, record.value.zmMask & 0X100000LL);
                         label_s lbl;
 
                         if(cl)

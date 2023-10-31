@@ -3,12 +3,20 @@
 #include <cstdint>
 //#include "helpers/FileIndex.hpp"
 #include "helpers/Rectangle.hpp"
-
-struct GeoBox
+#define POS_MASKING_ UINT64_C(0b1111111111111111111111111111111111111111111111111111111111000000)
+#define MAS_MASKING_ UINT64_C(0b0000000000000000000000000000000000000000000000000000000000111111)
+class GeoBox
 {
-    uint64_t pos;
-    int8_t maskLength;
-    uint32_t zmMask;
+    private :
+    uint64_t _data;
+    //uint64_t _pos;
+    //int8_t _maskLength;
+    
+    public :
+    uint64_t get_pos() const {return _data & POS_MASKING_;}
+    uint8_t get_maskLength() const {return _data & MAS_MASKING_;}
+    void set_pos(uint64_t pos){_data = (_data & MAS_MASKING_) + (pos & POS_MASKING_);}
+    void set_maskLength(uint8_t m){_data = m + (_data & POS_MASKING_);}
 };
 
 struct GeoBoxSet
@@ -42,7 +50,6 @@ bool operator>=(GeoBox const& a, GeoBox const& b);
 bool operator<=(GeoBox const& a, GeoBox const& b);
 
 
-bool hasgoodMask(Rectangle r);
 
 
 #endif
