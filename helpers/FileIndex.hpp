@@ -19,6 +19,7 @@
 #include <assert.h>
 #include <thread>
 #include <mutex>
+#include <sys/sysinfo.h>
 
 struct GeoFile
 {
@@ -423,10 +424,23 @@ public:
 
     void sort()
     {
-        std::cerr << "sorting  " << fileSize << " elements \n";
+        struct sysinfo info;
+        int res = sysinfo(&info);
+        uint64_t max_mem = 500000000ULL; // 500 mbytes
+        if(res == 0)
+        {
+            max_mem = (((unsigned long) info.freeram) * (( unsigned long) info.mem_unit)) / 2;
+        } 
+
+        std::cerr << "ram :" << (((unsigned long) info.freeram) * (( unsigned long) info.mem_unit)) / (1048 * 1048) << "mb, sorting  " << fileSize << " elements \n";
         if(!fileSize) return;
         sortedSize = 0;
+        
         uint64_t buffer_size = (fileSize + 3) / 3;
+        
+        uint64_t max_bsize = max_mem / ((sizeof(ITEM) + sizeof(KEY))*3);
+        if(buffer_size > max_bsize) buffer_size = max_bsize;
+        
         ITEM* item_sort_buffer = NULL;
         KEY*  key_sort_buffer = NULL;
 
