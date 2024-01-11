@@ -23,7 +23,6 @@
 /**************************************************************************************************************************/
 
 ParmsXmlVisitor params;
-std::atomic<int> pending(0);
 volatile bool sigstop;
 void sig_handler(int sig)
 {
@@ -46,10 +45,8 @@ struct Listener
             TcpConnection *cnx = listener.waitForClient();
             if(cnx)
             {
-                if(pending < MAX_PENDING_REQUESTS)
-                {   
-                    queue->push(cnx);
-                } else {
+                if(!queue->push(cnx))
+                {
                     std::cerr << "too much pending requests, client rejected !\n";
                     delete cnx;  
                 }
@@ -89,14 +86,16 @@ template<typename MSG> struct Reader
                         {
                             Msg* msg = encoder.encode(&m);
                             msg->setConnection(s);
-                            queue->push(msg);
-                            pending++;
+                            if(!queue->push(msg))
+                            {
+                                 std::cerr << "too much pending requests, message rejected !\n";
+                                 delete msg;
+                            } 
                         }
                     }
                     catch (const std::exception& e)
                     {
                         std::cerr << e.what() << "\n";
-                        pending--;
                         delete s;
                     }
                 }
@@ -134,12 +133,10 @@ template<typename MSG> struct Writer
                     delete s;
                     delete m->getConnection();
                     delete m;
-                    pending --;
                 }
                 catch (const std::exception& e)
                 {
                     std::cerr << e.what() << "\n";
-                    pending--;
                 }
             }
             usleep(10000);
@@ -210,7 +207,11 @@ template<typename MSG> struct Exec
                         encoder.build500Header(rep);
                     }
                     rep->setConnection(m->getConnection());
-                    outqueue->push(rep);
+                    if(!outqueue->push(rep))
+                    {
+                         std::cerr << "too much pending responses, response rejected !\n";
+                         delete rep;
+                    }
                     delete m;
                 }
                 catch (const std::exception& e)
