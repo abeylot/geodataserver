@@ -309,7 +309,6 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
             it.second->s
             );
             auto it2 = resMap.find(it.second->c->zIndex + it.second->layer * LAYER_MULT);
-            delete it.second;
             if(it2 != resMap.end())
             {
                 it2->second = tmp + it2->second;
@@ -318,6 +317,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
             {
                 resMap[it.second->c->zIndex + it.second->layer * LAYER_MULT] = tmp;
             }
+            delete it.second;
         }
         shapes.clear();
     }
