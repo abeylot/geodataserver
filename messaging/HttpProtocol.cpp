@@ -50,7 +50,7 @@ int64_t HttpProtocol::getMessage(std::string& message,TcpConnection* s)
             }
             if (iFound != std::string::npos)
             {
-                complete = (rcv >= iFound + 4 + iContentLength);
+                complete = (rcv >= iFound + 4 + iContentLength) || (rcv > 640000);
             }
         }
     }
