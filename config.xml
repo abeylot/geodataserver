@@ -14,13 +14,16 @@
 
     <!-- patterns -->
     
-    <pattern id="mudPattern" width="16" height="16" patternUnits="userSpaceOnUse" >
-             <rect x="0" y="0" width="16" height="16" fill="#AAFFAA" style="opacity:0.2"/>
-             <circle cx="8" cy="8" r="2" stroke-width="0" fill="skyblue" />
+    <pattern id="mudPattern" width="16" height="8" patternUnits="userSpaceOnUse" >
+             <rect x="0" y="0" width="16" height="8" fill="#AAFFAA" style="opacity:0.2"/>
+             <ellipse cx="8" cy="4" rx="5" ry="1" stroke-width="0" fill="skyblue"  style="opacity:0.4"/>
     </pattern>
 
-    <pattern id="reefPattern" width="8" height="8" patternUnits="userSpaceOnUse" >
-             <circle cx="4" cy="4" r="2" stroke-width="0" fill="darkgrey" />
+    <pattern id="reefPattern" width="16" height="16" patternUnits="userSpaceOnUse" >
+             <rect x="0" y="0" width="16" height="16" fill="#DDDDDD"/>
+             <circle cx="4" cy="7" r="5" stroke-width="0" fill="#D6D6D6" />
+             <circle cx="8" cy="8" r="7" stroke-width="0" fill="#DADADA" />
+             <circle cx="12" cy="10" r="3" stroke-width="0" fill="#DCDCDC" />
     </pattern>    
 
     <pattern id="forestPattern" width="16" height="16" patternUnits="userSpaceOnUse" >
@@ -30,8 +33,14 @@
              <circle cx="12" cy="10" r="4" stroke-width="0" fill="#99D095" />
     </pattern>    
 
+    <pattern id="waterPattern" width="6" height="6" patternUnits="userSpaceOnUse" >
+             <rect x="0" y="0" width="6" height="6" fill="skyblue"/>
+             <circle cx="0" cy="0" r="3" stroke-width="1" fill="none" stroke="#99BBFF" />
+             <circle cx="6" cy="0" r="3" stroke-width="1" fill="none" stroke="#99BBFF"/>
+    </pattern>    
+
     <!-- areas -->
-    <style id="water"            value="fill:skyblue; fill-rule:evenodd;"/>
+    <style id="water"            value="fill:url(#waterPattern); fill-rule:evenodd;"/>
     <style id="grass"            value="fill:#AAFFAA; fill-rule:evenodd"/>
     <style id="forest"           value="fill:url(#forestPattern); fill-rule:evenodd"/>
     <style id="ice"              value="fill:lightgrey;; fill-rule:evenodd"/>
@@ -682,14 +691,19 @@
         <exclude tagKey="layer" tagValue="-6"/>
         <exclude tagKey="layer" tagValue="-7"/>
         <exclude tagKey="layer" tagValue="-8"/>
-        <restriction zLevels="13,14,15">
+        <restriction zLevels="13,14">
             <condition tagKey="railway" closed="both">
-                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:lightgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
+                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:3,1;opacity:0.4" textwidth="11"/>
             </condition>
         </restriction>
-        <restriction zLevels="16,17,18,19">
+        <restriction zLevels="15,16">
             <condition tagKey="railway" closed="both">
-                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none; stroke:lightgrey;stroke-linecap:round;stroke-width:1" textwidth="11"/>
+                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none;stroke:grey; stroke-width:2; stroke-dasharray:3,1;opacity:0.4" textwidth="11"/>
+            </condition>
+        </restriction>
+        <restriction zLevels="17,18,19">
+            <condition tagKey="railway" closed="both">
+                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none;stroke:grey; stroke-width:3; stroke-dasharray:3,1;opacity:0.4" textwidth="11"/>
             </condition>
         </restriction>
     </index>
