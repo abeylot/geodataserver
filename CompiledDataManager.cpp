@@ -26,7 +26,7 @@ Way* CompiledDataManager::loadWay(uint64_t id, bool fast)
             }
         }
         fillTags(w->tags,record.tstart,record.tsize);
-        w->layer=6; 
+        w->layer=6;
         if(w->tags["layer"] != "")
         {
             w->layer += atoi( w->tags["layer"].c_str());
@@ -209,107 +209,7 @@ bool Line::isClosed()
     return closed;
 }
 
-void Line::crop(Rectangle& r)
-{
-    if (pointsCount < 3) return;
-    uint64_t i;
-    GeoPoint* newPoints;
-    uint64_t newPointsCount = 0;
-    bool discarded;
-    newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-    newPoints[0] = points[0];
-    newPointsCount++;
-    for(i = 1; i < (pointsCount - 1); i++)
-    {
-        discarded = false;
-        if((points[i-1].x < r.x0)&&(points[i].x < r.x0)&&(points[i+1].x < r.x0)) discarded = true;
-        if(!discarded)
-        {
-            newPoints[newPointsCount] = points[i];
-            newPointsCount++;
-        }
-    }
-    newPoints[newPointsCount] = points[pointsCount - 1];
-    newPointsCount++;
-    free(points);
-    points = newPoints;
-    pointsCount = newPointsCount;
-
-    newPointsCount = 0;
-    newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-    newPoints[0] = points[0];
-    newPointsCount++;
-    for(i = 1; i < (pointsCount - 1); i++)
-    {
-        discarded = false;
-        if((points[i-1].x > r.x1)&&(points[i].x > r.x1)&&(points[i+1].x > r.x1)) discarded = true;
-        if(!discarded)
-        {
-            newPoints[newPointsCount] = points[i];
-            newPointsCount++;
-        }
-    }
-    newPoints[newPointsCount] = points[pointsCount - 1];
-    newPointsCount++;
-    free(points);
-    points = newPoints;
-    pointsCount = newPointsCount;
-    newPointsCount = 0;
-    newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-    newPoints[0] = points[0];
-    newPointsCount++;
-    for(i = 1; i < (pointsCount - 1); i++)
-    {
-        discarded = false;
-        if((points[i-1].y < r.y0)&&(points[i].y < r.y0)&&(points[i+1].y < r.y0)) discarded = true;
-        if(!discarded)
-        {
-            newPoints[newPointsCount] = points[i];
-            newPointsCount++;
-        }
-    }
-    newPoints[newPointsCount] = points[pointsCount - 1];
-    newPointsCount++;
-    free(points);
-    points = newPoints;
-    pointsCount = newPointsCount;
-    newPointsCount = 0;
-    newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-    newPoints[0] = points[0];
-    newPointsCount++;
-    for(i = 1; i < (pointsCount - 1); i++)
-    {
-        discarded = false;
-        if((points[i-1].y > r.y1)&&(points[i].y > r.y1)&&(points[i+1].y > r.y1)) discarded = true;
-        if(!discarded)
-        {
-            newPoints[newPointsCount] = points[i];
-            newPointsCount++;
-        }
-    }
-    newPoints[newPointsCount] = points[pointsCount - 1];
-    newPointsCount++;
-    free(points);
-    points = newPoints;
-    pointsCount = newPointsCount;
-}
-
-void Way::fillrec()
-{
-    if (!pointsCount) return;
-    rect.x0 = rect.x1 = points[0].x;
-    rect.y0 = rect.y1 = points[0].y;
-    for(unsigned int i = 0; i < pointsCount; i++)
-    {
-        if(points[i].x < rect.x0) rect.x0 = points[i].x;
-        if(points[i].x > rect.x1) rect.x1 = points[i].x;
-        if(points[i].y < rect.y0) rect.y0 = points[i].y;
-        if(points[i].y > rect.y1) rect.y1 = points[i].y;
-    }
-
-}
-
-void Way::crop(Rectangle& r)
+void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
 {
     if(pointsCount < 3) return;
     uint64_t i;
@@ -391,6 +291,34 @@ void Way::crop(Rectangle& r)
     free(points);
     points = newPoints;
     pointsCount = newPointsCount;
+}
+
+
+
+void Line::crop(Rectangle& r)
+{
+    do_crop(points, pointsCount, r);
+}
+
+void Way::fillrec()
+{
+    if (!pointsCount) return;
+    rect.x0 = rect.x1 = points[0].x;
+    rect.y0 = rect.y1 = points[0].y;
+    for(unsigned int i = 0; i < pointsCount; i++)
+    {
+        if(points[i].x < rect.x0) rect.x0 = points[i].x;
+        if(points[i].x > rect.x1) rect.x1 = points[i].x;
+        if(points[i].y < rect.y0) rect.y0 = points[i].y;
+        if(points[i].y > rect.y1) rect.y1 = points[i].y;
+    }
+
+}
+
+
+void Way::crop(Rectangle& r)
+{
+    do_crop(points, pointsCount, r);
 }
 
 
