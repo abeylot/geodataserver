@@ -18,15 +18,15 @@ Shape* SvgRenderer::getShape(CssClass* c, unsigned char layer)
     if(it == shapes.end())
     {
         shapes[c->rank + layer * LAYER_MULT] = new myShape;
-        shapes[c->rank + layer * LAYER_MULT]->c = c; 
-        shapes[c->rank + layer * LAYER_MULT]->layer = layer; 
+        shapes[c->rank + layer * LAYER_MULT]->c = c;
+        shapes[c->rank + layer * LAYER_MULT]->layer = layer;
         return &(shapes[c->rank + layer * LAYER_MULT]->s);
     }
     else
     {
         return &(it->second->s);
     }
-    
+
 }
 
 bool compare(const label_s& l2, const label_s& l1)
@@ -51,7 +51,7 @@ bool compare(const label_s& l2, const label_s& l1)
 std::string cutString(std::string text, int x, int y, int dy)
 {
     bool first = true;
-    if(text.length() < MAX_TEXT_LEN) return text; 
+    if(text.length() < MAX_TEXT_LEN) return text;
     std::string result;
     int iline = 0;
     int ilines = 0;
@@ -74,7 +74,7 @@ std::string cutString(std::string text, int x, int y, int dy)
         }
         txt = txt.substr(pos);
     }
-    
+
     int y0 = y - (dy*(ilines - 1)) / 2;
 
     while(true)
@@ -106,11 +106,11 @@ std::string cutString(std::string text, int x, int y, int dy)
         first = false;
         iline++;
     }
-}    
+}
 
 size_t cutString(std::string txt)
 {
-    if(txt.length() < MAX_TEXT_LEN) return txt.length(); 
+    if(txt.length() < MAX_TEXT_LEN) return txt.length();
     size_t result = 0;
     while(true)
     {
@@ -131,7 +131,7 @@ size_t cutString(std::string txt)
         txt = txt.substr(pos);
     }
     return result;
-}    
+}
 
 
 
@@ -146,13 +146,13 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
     static_assert(std::is_same<ITEM,Relation>() ||
                   std::is_same<ITEM,Way>() ||
                   std::is_same<ITEM,Point>(), " Type unsuported for template method");
-                  
+
     if constexpr(std::is_same<ITEM,Relation>())
     {
          hash = &relationHash;
          gSet = makeGeoBoxSet(rect*1.25);
          rect2 = rect*1.25;
-    }    
+    }
     if constexpr(std::is_same<ITEM,Way>())
     {
          hash = &wayHash;
@@ -164,7 +164,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
          hash = &nodeHash;
          gSet = makeGeoBoxSet(rect*2);
          rect2 = rect*2;
-    } 
+    }
     for(short i = 0; i < gSet.count; i++)
     {
         GeoBox g;
@@ -214,10 +214,10 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                                         size_x,
                                         size_y,
                                         *cl
-                                        
+
                                         );
                         }
-                        
+
                         auto it = resMap.find(cl->zIndex + item->layer * LAYER_MULT);
                         if(it != resMap.end())
                         {
@@ -354,9 +354,9 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 
     std::string resultString;
     std::string textsString;
-    
-    StringBuffer result(resultString); 
-    StringBuffer texts(textsString); 
+
+    StringBuffer result(resultString);
+    StringBuffer texts(textsString);
 
     result << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?> <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
     result << "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 " << sizex << " " << sizey << "\">\n";
@@ -376,18 +376,18 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 
     std::sort(label_vector.begin(), label_vector.end(),compare);
 
-    std::vector<label_s> to_print;    
+    std::vector<label_s> to_print;
 
-    
+
     for(auto t=label_vector.begin(); t!=label_vector.end(); ++t)
     {
         bool to_show = true;
-        
+
         for(auto v = label_vector.begin(); v!=t; ++v)
         {
             int ilt = cutString(t->text);
             int ilv = cutString(v->text);
-            
+
             int dx = v->pos_x - t->pos_x;
             int dy = v->pos_y - t->pos_y;
             if(dx < 0) dx = -dx;
@@ -403,54 +403,54 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             {
                 to_show = false;
                 break;
-            } 
+            }
 
             double xa,xb,xc,xd,ya,yb,yc,yd;
-            
-            
+
+
             double lt = t->fontsize*0.5*ilt;
             double lv = v->fontsize*0.5*ilv;
-            
+
             xa = v->pos_x + lv*(cos(v->angle));
             ya = v->pos_y + lv*(sin(v->angle));
             xb = v->pos_x - lv*(cos(v->angle));
             yb = v->pos_y - lv*(sin(v->angle));
-            
+
             xc = t->pos_x + lt*(cos(t->angle));
             yc = t->pos_y + lt*(sin(t->angle));
             xd = t->pos_x - lt*(cos(t->angle));
             yd = t->pos_y - lt*(sin(t->angle));
-            
+
             double xab = xb - xa;
             double yab = yb - ya;
-            
+
             double xac = xc - xa;
             double yac = yc -ya;
 
             double xad = xd - xa;
             double yad = yd -ya;
-            
+
             double pvectabac = (xab * yac) - (yab * xac);
             double pvectabad = (xab * yad) - (yab * xad);
-            
+
             bool diffsidecd = (pvectabac*pvectabad < 0);
-            
+
             double xcd = xd - xc;
             double ycd = yd - yc;
-            
+
             double xca = -xac;
             double yca = -yac;
-            
+
             double xcb = xb -xc;
             double ycb = yb - yc;
-            
+
             double pvectcdca = (xcd*yca) - (ycd*xca);
             double pvectcdcb = (xcd*ycb) - (ycd*xcb);
-            
-            bool diffsideab = (pvectcdca * pvectcdcb) < 0;  
-            
-            
-            
+
+            bool diffsideab = (pvectcdca * pvectcdcb) < 0;
+
+
+
             if(diffsideab && diffsidecd)
             {
                     to_show = false;
@@ -495,7 +495,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                       << ")\">"
                       << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
                       << "</text>\n";
-               } 
+               }
                cssClasses.insert("c"+std::to_string(v->style));
 
         }
@@ -503,7 +503,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 
 
     result << "<defs>";
-    
+
     for( auto pattern : *(mger->symbols))
     {
         bool found = false;
@@ -514,10 +514,10 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                 for(CssClass* cl : cd->classes)
                 {
                     if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
-                    {    
+                    {
                         std::string style = cl->makeClass("c" + std::to_string(cl->rank), ppm, (idxDesc->type == "relation"));
                         if(style.find("url(#"+pattern.first) != std::string::npos)
-                        {   
+                        {
                             found = true;
                         }
                     }
@@ -528,7 +528,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             if(found) break;
         }
         if(found) result << pattern.second;
-    }    
+    }
 
     result << "</defs>";
 
@@ -542,14 +542,14 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             for(CssClass* cl : cd->classes)
             {
                 if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
-                {    
+                {
                     result << cl->makeClass("c" + std::to_string(cl->rank), ppm, (idxDesc->type == "relation"));
                 }
             }
         }
-    }    
+    }
     result << "</style>\n";
-    
+
     for (IndexDesc* idxDesc : *(mger->indexes))
     {
         for (Condition* cd : idxDesc->conditions)
@@ -564,16 +564,16 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                         {
                             result << (*(mger->symbols))[cl->symbol];
                             cssClasses.erase("sym#"+cl->symbol);
-                            
+
                         }
-                    }   
+                    }
                 }
             }
         }
-    } 
-    
-    
-    
+    }
+
+
+
     result << "<rect width=\"" << (sizex + 1) << "\" height=\"" << (sizey + 1) << "\" fill=\""+_defaultColor+"\"/>\n";
 
 
@@ -604,7 +604,7 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
 
     if(cl.width.length()) width = std::stoi(cl.width);
     if(width && ((width*ppm) <  0.25)) return "";
- 
+
 
     if(s.lines.size() == 0) return "";
     result << "<path  d=\"";
@@ -654,19 +654,19 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     {
         inherited_name = lbl.text;//when called by relation render
         //std::cout << inherited_name << "\n";
-    }    
-    lbl.text = "";    
-    lbl.ref = "";    
+    }
+    lbl.text = "";
+    lbl.ref = "";
     lbl.pos_x = lbl.angle = lbl.pos_y=0;
-    lbl.style = 0;    
+    lbl.style = 0;
     lbl.zindex = cl.textZIndex;
     std::string resultString;
     StringBuffer result(resultString);
-    
+
     double symb_angle = 0;
     int64_t symb_x = 0;
     int64_t symb_y = 0;
-    
+
     double oldx = -1;
     double oldy = -1;
     double x=0;
@@ -699,7 +699,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
             std::string tmp = std::string("name:") + std::string(_locales[i],2);
             name = myWay.tags[tmp.c_str()];
             if (name != "") break;
-            
+
         }
         if(name == "") name = myWay.tags["name"];
     }
@@ -771,7 +771,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     first = true;
     unsigned int  start = ( (myWay.pointsCount - 1) * 2 ) / 3;
     if(start > (myWay.pointsCount - 2)) start = myWay.pointsCount - 2;
-         
+
     for(unsigned int i = start ; i < myWay.pointsCount; i++)
     {
         int64_t xx = myWay.points[i].x;
@@ -790,8 +790,8 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 if((dfx == 0) && (dfy > 0)) symb_angle = M_PI / 2;
                 else if((dfx == 0) && (dfy <= 0)) symb_angle = - M_PI / 2;
                 else symb_angle = atan2(dfy , dfx);
-                
-                
+
+
                 break;
             }
             first = false;
@@ -800,7 +800,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     if(draw)
     {
         myWay.crop(r1);
-        s.mergePoints(myWay.points, myWay.pointsCount);
+        if(myWay.pointsCount > 1) s.mergePoints(myWay.points, myWay.pointsCount);
     }
     lbl.fontsize = 12;
     std::size_t found = cl.textStyle.find("font-size:");
@@ -812,7 +812,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     {
        lbl.fontsize = 0;
     }
-        
+
     if((textWidth*ppm >= 6) || (lbl.fontsize >= 6))
     {
         if((name != "" ) && (textStyle != "") && cl.opened)
@@ -829,7 +829,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                        lbl.zindex = cl.textZIndex;
                        lbl.style = cl.rank;
                        lbl.text=name;
-                       
+
                        lbl.ref = std::to_string(myWay.id);
                        lbl.style = cl.rank;
                        lbl.text=name;
@@ -861,8 +861,8 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
             }
         }
     }
-    
-    
+
+
     if((cl.symbol != "") && !cl.opened)
     {
         int64_t xxx = (myWay.rect.x0 + myWay.rect.x1) / 2;
@@ -903,21 +903,22 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
 std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rect,uint32_t szx, uint32_t szy, CssClass& cl, Shape& s)
 {
     lbl.id = myRelation.id  + UINT64_C(0xB000000000000000);;
-    lbl.fontsize = 12;    
-    lbl.text = "";    
-    lbl.ref = "";    
-    lbl.pos_x = lbl.pos_y = lbl.angle = 0;    
-    lbl.style = 0;    
+    lbl.fontsize = 12;
+    lbl.text = "";
+    lbl.ref = "";
+    lbl.pos_x = lbl.pos_y = lbl.angle = 0;
+    lbl.style = 0;
     lbl.zindex = cl.textZIndex;
     std::string resultString = "";
     StringBuffer result(resultString);
     std::string textField = "name";
     if(!(cl.textField == "")) textField = cl.textField;
     bool draw = ((myRelation.rect)*rect).isValid();
-    
+    bool keep = false;
+
     if(cl.style != "")
     {
-    
+
         if(cl.opened)
         {
             std::string name = "";
@@ -934,12 +935,12 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                         std::string tmp = std::string("name:") + std::string(_locales[i],2);
                         name = myRelation.tags[tmp.c_str()];
                         if (name != "") break;
-            
+
                     }
                     if(name == "") name = myRelation.tags["name"];
                 }
             }
-            
+
             label_s lbl2;
             lbl2.text = name;
             if(lbl2.text == "") lbl2.text = "void";
@@ -947,7 +948,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
             {
                 myWay->fillrec();
                 if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
-
+                keep = true;
                 result << render(lbl2,*myWay, rect, szx, szy, cl, s);
                 label_vector.push_back(lbl2);
             }
@@ -963,11 +964,13 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                     //l->crop(r1);
                     //s.mergePoints(l->points, l->pointsCount);
                     l->crop(r1);
+                    if(l->pointsCount < 2) continue;
                     bool first = true;
                     int x=0;
                     int y=0;
                     for(unsigned int i = 0 ; i < l->pointsCount; i++)
                     {
+                        keep = true;
                         int64_t xx = l->points[i].x;
                         int64_t yy = l->points[i].y;
                         int oldx = x;
@@ -1005,7 +1008,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                         std::string tmp = std::string("name:") + std::string(_locales[i],2);
                         name = myRelation.tags[tmp.c_str()];
                         if (name != "") break;
-            
+
                     }
                     if(name == "") name = myRelation.tags["name"];
                 }
@@ -1030,7 +1033,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
             }
         }
     }
-    
+
     if(cl.symbol != "")
     {
         int64_t xxx = (myRelation.rect.x0 + myRelation.rect.x1) / 2;
@@ -1041,7 +1044,8 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
         cssClasses.insert("sym#"+cl.symbol);
     }
     result.flush();
-    return resultString;
+    if(keep) return resultString;
+    else return "";
 }
 
 
@@ -1050,11 +1054,11 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
 {
 
     lbl.id = myNode.id  + UINT64_C(0xC000000000000000);
-    lbl.fontsize = 12;    
-    lbl.text = "";    
-    lbl.ref = "";    
-    lbl.pos_x = lbl.pos_y = lbl.angle = 0;    
-    lbl.style = 0;    
+    lbl.fontsize = 12;
+    lbl.text = "";
+    lbl.ref = "";
+    lbl.pos_x = lbl.pos_y = lbl.angle = 0;
+    lbl.style = 0;
     lbl.zindex = cl.textZIndex;
     std::string resultString = "";
     StringBuffer result(resultString);
@@ -1067,7 +1071,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         std::string fieldName = "name";
         if (cl.textField != "") fieldName = cl.textField;
         name = myNode.tags[fieldName.c_str()];
-        
+
         if(fieldName != "name")
         {
             name = myNode.tags[fieldName.c_str()];
@@ -1079,13 +1083,13 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
                 std::string tmp = std::string("name:") + std::string(_locales[i],2);
                 name = myNode.tags[tmp.c_str()];
                 if (name != "") break;
-            
+
             }
             if(name == "") name = myNode.tags["name"];
         }
-        
+
         lbl.text = name;
-        
+
         std::size_t found = cl.textStyle.find("font-size:");
         if(found != std::string::npos)
         {
@@ -1144,13 +1148,13 @@ template<class ITEM> CssClass* SvgRenderer::getCssClass(const IndexDesc& idx, IT
         {
             cond = ((closed && cd->closed)||(!closed && cd->opened)) && (item.tags[cd->tagKey.c_str()] != "");
         }
-        
-        
+
+
         if constexpr(std::is_same<ITEM,Point>())
         {
             cond = (item.tags[cd->tagKey.c_str()] != "");
         }
-        
+
 
         if (cond)
         {

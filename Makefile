@@ -1,11 +1,11 @@
-#CC=clang++ 
+#CC=clang++
 
 GIT_VERSION = "$(shell git describe --tags)"
 
 CC= g++
-cc=$(CC)  -O2 -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\" 
+cc=$(CC)  -O2 -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\"
 
-#cc=$(CC) -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64
+#cc=$(CC) -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\"
 
 
 headersCommon=CompiledDataManager.hpp \
@@ -63,7 +63,7 @@ Msg.o \
 TcpListener.o \
 TcpConnection.o \
 MapDisplay.o \
-StringBuffer.o 
+StringBuffer.o
 
 libs=-lpthread  -lz -latomic -lstdc++fs
 
@@ -100,7 +100,7 @@ Rectangle.o: helpers/Rectangle.hpp helpers/Rectangle.cpp
 
 GeoBox.o: GeoBox.hpp GeoBox.cpp
 	$(cc) -c GeoBox.cpp -o GeoBox.o
-	
+
 Ping.o: services/Ping.cpp services/Ping.hpp $(headersCommon) $(headersServer)
 	$(cc) -c services/Ping.cpp -o Ping.o
 
@@ -124,7 +124,7 @@ WayDetail.o: services/WayDetail.cpp services/WayDetail.hpp $(headersCommon) $(he
 
 ServicesFactory.o: services/ServicesFactory.cpp services/ServicesFactory.hpp $(headersCommon) $(headersServer)
 	$(cc) -c services/ServicesFactory.cpp -o ServicesFactory.o
-	
+
 HttpProtocol.o: messaging/HttpProtocol.cpp messaging/HttpProtocol.hpp $(headersCommon) $(headersServer)
 	$(cc) -c messaging/HttpProtocol.cpp   -o HttpProtocol.o
 
@@ -142,13 +142,13 @@ Tile.o: services/Tile.cpp services/Tile.hpp $(headersCommon) $(headersServer)
 
 
 SvgRenderer.o: services/renderers/SvgRenderer.cpp services/renderers/SvgRenderer.hpp $(headersCommon) $(headersServer)
-	$(cc) -c services/renderers/SvgRenderer.cpp   -o SvgRenderer.o	
+	$(cc) -c services/renderers/SvgRenderer.cpp   -o SvgRenderer.o
 
 MapDisplay.o: services/MapDisplay.cpp services/MapDisplay.hpp $(headersCommon) $(headersServer)
-	$(cc) -c services/MapDisplay.cpp   -o MapDisplay.o	
+	$(cc) -c services/MapDisplay.cpp   -o MapDisplay.o
 
 geoserver: server.cpp $(headersCommon) $(headersServer) $(objectsCommon) $(objectsServer)
-	$(cc) server.cpp $(objectsCommon) $(objectsServer) -o geoserver $(libs)	
+	$(cc) server.cpp $(objectsCommon) $(objectsServer) -o geoserver $(libs)
 
 StringBuffer.o: helpers/StringBuffer.cpp helpers/StringBuffer.hpp
 	$(cc) -c helpers/StringBuffer.cpp             -o StringBuffer.o

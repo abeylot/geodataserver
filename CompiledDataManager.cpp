@@ -291,6 +291,146 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     free(points);
     points = newPoints;
     pointsCount = newPointsCount;
+
+    if(pointsCount == 2 && points[0] == points[1])
+    {
+        pointsCount = 0;
+        return;
+    }
+/*
+    bool closed = (points[0] == points[pointsCount - 1]);
+    //uint64_t i;
+    //GeoPoint* newPoints;
+    //uint64_t newPointsCount = 0;
+    //bool discarded;
+
+    newPoints = static_cast<GeoPoint*> (malloc ((2 * pointsCount +1)* sizeof(GeoPoint)));
+    newPointsCount = 0;
+    bool isinside = (points[0].x >= r.x0);
+    if(isinside) newPoints[newPointsCount++] = points[0];
+    for(i = 1; i < pointsCount; i++)
+    {
+        bool isinsidenew = (points[i].x >= r.x0);
+        if((!isinside && isinsidenew) || (isinside && !isinsidenew))
+        {
+            double ratio = ((double)(points[i].x) - (double)(r.x0)) / ((double)(points[i].x) - (double)(points[i-1].x));
+            uint32_t new_x = r.x0;;
+            uint32_t new_y = (uint32_t)((1-ratio)*points[i-1].y + ratio*points[i].y);
+            newPoints[newPointsCount++] = {new_x, new_y};
+        }
+        if(isinsidenew)
+        {
+            newPoints[newPointsCount++] = points[i];
+        }
+        isinside = isinsidenew;
+    }
+
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
+
+    if(pointsCount == 2 && points[0] == points[1])
+    {
+        pointsCount = 0;
+        return;
+    }
+
+
+    newPoints = static_cast<GeoPoint*> (malloc ((2 * pointsCount +1)* sizeof(GeoPoint)));
+    newPointsCount = 0;
+    isinside = (points[0].x <= r.x1);
+    if(isinside) newPoints[newPointsCount++] = points[0];
+    for(i = 1; i < pointsCount; i++)
+    {
+        bool isinsidenew = (points[i].x <= r.x1);
+        if((!isinside && isinsidenew) || (isinside && !isinsidenew))
+        {
+            double ratio = ((double)(points[i].x) - (double)(r.x1)) / ((double)(points[i].x) - (double)(points[i-1].x));
+            uint32_t new_x = r.x1;;
+            uint32_t new_y = (uint32_t)((1-ratio)*points[i-1].y + ratio*points[i].y);
+            newPoints[newPointsCount++] = {new_x, new_y};
+        }
+        if(isinsidenew)
+        {
+            newPoints[newPointsCount++] = points[i];
+        }
+        isinside = isinsidenew;
+    }
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
+
+    if(pointsCount == 2 && points[0] == points[1])
+    {
+        pointsCount = 0;
+        return;
+    }
+
+    newPoints = static_cast<GeoPoint*> (malloc ((2 * pointsCount +1)* sizeof(GeoPoint)));
+    newPointsCount = 0;
+    isinside = (points[0].y >= r.y0);
+    if(isinside) newPoints[newPointsCount++] = points[0];
+    for(i = 1; i < pointsCount; i++)
+    {
+        bool isinsidenew = (points[i].y >= r.y0);
+        if((!isinside && isinsidenew) || (isinside && !isinsidenew))
+        {
+            double ratio = ((double)(points[i].y) - (double)(r.y0)) / ((double)(points[i].y) - (double)(points[i-1].y));
+            uint32_t new_y = r.y0;;
+            uint32_t new_x = (uint32_t)((1-ratio)*points[i-1].x + ratio*points[i].x);
+            newPoints[newPointsCount++] = {new_x, new_y};
+        }
+        if(isinsidenew)
+        {
+            newPoints[newPointsCount++] = points[i];
+        }
+        isinside = isinsidenew;
+    }
+
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
+
+    if(pointsCount == 2 && points[0] == points[1])
+    {
+        pointsCount = 0;
+        return;
+    }
+
+
+
+    newPoints = static_cast<GeoPoint*> (malloc ((2 * pointsCount +1)* sizeof(GeoPoint)));
+    newPointsCount = 0;
+    isinside = (points[0].y <= r.y1);
+    if(isinside) newPoints[newPointsCount++] = points[0];
+    for(i = 1; i < pointsCount; i++)
+    {
+        bool isinsidenew = (points[i].y <= r.y1);
+        if((!isinside && isinsidenew) || (isinside && !isinsidenew))
+        {
+            double ratio = ((double)(points[i].y) - (double)(r.y1)) / ((double)(points[i].y) - (double)(points[i-1].y));
+            uint32_t new_y = r.y1;;
+            uint32_t new_x = (uint32_t)((1-ratio)*points[i-1].x + ratio*points[i].x);
+            newPoints[newPointsCount++] = {new_x, new_y};
+        }
+        if(isinsidenew)
+        {
+            newPoints[newPointsCount++] = points[i];
+        }
+        isinside = isinsidenew;
+    }
+    free(points);
+
+    if(closed && pointsCount && !(newPoints[0] == newPoints[newPointsCount - 1])) newPoints[newPointsCount++] = newPoints[0];
+
+    points = newPoints;
+    pointsCount = newPointsCount;
+
+    if(pointsCount == 2 && points[0] == points[1])
+    {
+        pointsCount = 0;
+        return;
+    }*/
 }
 
 
