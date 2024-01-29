@@ -245,6 +245,29 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     points = newPoints;
     pointsCount = newPointsCount;
 
+    // remove useless points for min x
+
+    newPointsCount = 0;
+    newPoints = static_cast<GeoPoint*> (malloc ((pointsCount + 1) * sizeof(GeoPoint)));
+    for(i = 0; i < pointsCount; i++)
+    {
+        if(points[i].x >= r.x0)
+        {
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
+        }
+    }
+    free(points);
+
+    if(closed && !(newPoints[0] == newPoints[newPointsCount-1]))
+    {
+        newPoints[newPointsCount] = newPoints[0];
+        newPointsCount++;
+    }
+    points = newPoints;
+    pointsCount = newPointsCount;
+
+
     // add intersections with max x
 
     newPoints = static_cast<GeoPoint*> (malloc ((2 * pointsCount +1)* sizeof(GeoPoint)));
@@ -265,6 +288,36 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
         isinside = isinsidenew;
     }
     free(points);
+
+    if(closed && !(newPoints[0] == newPoints[newPointsCount-1]))
+    {
+        newPoints[newPointsCount] = newPoints[0];
+        newPointsCount++;
+    }
+
+    points = newPoints;
+    pointsCount = newPointsCount;
+
+    // remove useless points for max x
+
+    newPointsCount = 0;
+    newPoints = static_cast<GeoPoint*> (malloc ((pointsCount + 1) * sizeof(GeoPoint)));
+    for(i = 0; i < pointsCount; i++)
+    {
+        if(points[i].x <= r.x1)
+        {
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
+        }
+    }
+    free(points);
+
+    if(closed && !(newPoints[0] == newPoints[newPointsCount-1]))
+    {
+        newPoints[newPointsCount] = newPoints[0];
+        newPointsCount++;
+    }
+
     points = newPoints;
     pointsCount = newPointsCount;
 
@@ -288,6 +341,22 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
         isinside = isinsidenew;
     }
 
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
+
+    // remove useless points for min y
+
+    newPointsCount = 0;
+    newPoints = static_cast<GeoPoint*> (malloc ((pointsCount + 1) * sizeof(GeoPoint)));
+    for(i = 0; i < pointsCount; i++)
+    {
+        if(points[i].y >= r.y0)
+        {
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
+        }
+    }
     free(points);
     points = newPoints;
     pointsCount = newPointsCount;
@@ -317,93 +386,25 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     points = newPoints;
     pointsCount = newPointsCount;
 
-    // remove useless points for min x
-
-    newPointsCount = 0;
-    bool discarded;
-    newPoints = static_cast<GeoPoint*> (malloc ((pointsCount * sizeof(GeoPoint))));
-    newPoints[0] = points[0];
-    newPointsCount++;
-    for(i = 1; i < (pointsCount - 1); i++)
-    {
-        discarded = false;
-        if((points[i-1].x <= r.x0)&&(points[i].x < r.x0)&&(points[i+1].x <= r.x0)) discarded = true;
-        if(!discarded)
-        {
-            newPoints[newPointsCount] = points[i];
-            newPointsCount++;
-        }
-    }
-    newPoints[newPointsCount] = points[pointsCount - 1];
-    newPointsCount++;
-
-
-    free(points);
-    points = newPoints;
-    pointsCount = newPointsCount;
-
-    // remove useless points for max x
-
-    newPointsCount = 0;
-    newPoints = static_cast<GeoPoint*> (malloc ((pointsCount * sizeof(GeoPoint))));
-    newPoints[0] = points[0];
-    newPointsCount++;
-    for(i = 1; i < (pointsCount - 1); i++)
-    {
-        discarded = false;
-        if((points[i-1].x >= r.x1)&&(points[i].x > r.x1)&&(points[i+1].x >= r.x1)) discarded = true;
-        if(!discarded)
-        {
-            newPoints[newPointsCount] = points[i];
-            newPointsCount++;
-        }
-    }
-    newPoints[newPointsCount] = points[pointsCount - 1];
-    newPointsCount++;
-    free(points);
-    points = newPoints;
-    pointsCount = newPointsCount;
-
-    // remove useless points for min y
-
-    newPointsCount = 0;
-    newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-    newPoints[0] = points[0];
-    newPointsCount++;
-    for(i = 1; i < (pointsCount - 1); i++)
-    {
-        discarded = false;
-        if((points[i-1].y <= r.y0)&&(points[i].y < r.y0)&&(points[i+1].y <= r.y0)) discarded = true;
-        if(!discarded)
-        {
-            newPoints[newPointsCount] = points[i];
-            newPointsCount++;
-        }
-    }
-    newPoints[newPointsCount] = points[pointsCount - 1];
-    newPointsCount++;
-    free(points);
-    points = newPoints;
-    pointsCount = newPointsCount;
 
     // remove useless points for max y
 
     newPointsCount = 0;
-    newPoints = static_cast<GeoPoint*>( malloc (pointsCount * sizeof(GeoPoint)));
-    newPoints[0] = points[0];
-    newPointsCount++;
-    for(i = 1; i < (pointsCount - 1); i++)
+    newPoints = static_cast<GeoPoint*>( malloc ((pointsCount + 1) * sizeof(GeoPoint)));
+    for(i = 0; i < pointsCount; i++)
     {
-        discarded = false;
-        if((points[i-1].y >= r.y1)&&(points[i].y > r.y1)&&(points[i+1].y >= r.y1)) discarded = true;
-        if(!discarded)
+        if(points[i].y <= r.y1)
         {
             newPoints[newPointsCount] = points[i];
             newPointsCount++;
         }
     }
-    newPoints[newPointsCount] = points[pointsCount - 1];
-    newPointsCount++;
+    if(closed && !(newPoints[0] == newPoints[newPointsCount-1]))
+    {
+        newPoints[newPointsCount] = newPoints[0];
+        newPointsCount++;
+    }
+
     free(points);
     points = newPoints;
     pointsCount = newPointsCount;

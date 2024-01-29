@@ -39,6 +39,40 @@
              <circle cx="6" cy="0" r="3" stroke-width="1" fill="none" stroke="#99BBFF"/>
     </pattern>
 
+
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       id="shadow">
+      <feFlood
+         flood-opacity="0.4"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood12" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite14" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="3"
+         result="blur"
+         id="feGaussianBlur16" />
+      <feOffset
+         dx="2"
+         dy="2"
+         result="offset"
+         id="feOffset18" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite20" />
+    </filter>
+
+
     <!-- areas -->
     <style id="water"            value="fill:url(#waterPattern); fill-rule:evenodd;"/>
     <style id="grass"            value="fill:#AAFFAA; fill-rule:evenodd"/>
@@ -49,8 +83,8 @@
     <style id="reef"             value="fill:url(#reefPattern); fill-rule:evenodd;opacity:0.4"/>
     <style id="sand"             value="fill:moccasin; fill-rule:evenodd; opacity:0.4"/>
     <style id="mud"              value="fill:url(#mudPattern); fill-rule:evenodd"/>
-    <style id="building"         value="fill:linen;opacity:0.9;stroke:BurlyWood ;stroke-width:1; fill-rule:evenodd; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))"/>
-    <style id="historicBuilding" value="fill:mistyrose;opacity:0.7;stroke:#B13014 ;stroke-width:1; fill-rule:evenodd; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))"/>
+    <style id="building"         value="fill:linen;opacity:0.9;stroke:BurlyWood ;stroke-width:1; fill-rule:evenodd; filter: url(#shadow)"/>
+    <style id="historicBuilding" value="fill:mistyrose;opacity:0.7;stroke:#B13014 ;stroke-width:1; fill-rule:evenodd; filter: url(#shadow)"/>
     <style id="zone"             value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:5,5; fill-rule:evenodd"/>
     <style id="parking"          value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:1,5; fill-rule:evenodd"/>
     <style id="bridge"           value="fill:#999999;stroke:grey; stroke-width:1; fill-rule:evenodd;opacity:0.7"/>
@@ -63,9 +97,9 @@
     <style id="ferryLine" value="fill:none;stroke:blue; stroke-width:1;opacity:0.1"/>
     <style id="waterLine" value="fill:none;stroke:skyblue; stroke-width:1"/>
     <style id="hedge"      value="fill:none;stroke:#99DD99; stroke-width:4; stroke-dasharray:0.1,5;stroke-linecap:round;opacity:0.7;"/>
-    <style id="treeLineS"  value="fill:none;stroke:#99DD99; stroke-width:8; stroke-dasharray:0.1,16;stroke-linecap:round;opacity:0.7; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))"/>
-    <style id="treeLineM"  value="fill:none;stroke:#99DD99; stroke-width:16; stroke-dasharray:0.1,32;stroke-linecap:round;opacity:0.7; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))"/>
-    <style id="treeLineL"  value="fill:none;stroke:#99DD99; stroke-width:32; stroke-dasharray:0.1,64;stroke-linecap:round;opacity:0.7; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))"/>
+    <style id="treeLineS"  value="fill:none;stroke:#99DD99; stroke-width:8; stroke-dasharray:0.1,16;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
+    <style id="treeLineM"  value="fill:none;stroke:#99DD99; stroke-width:16; stroke-dasharray:0.1,32;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
+    <style id="treeLineL"  value="fill:none;stroke:#99DD99; stroke-width:32; stroke-dasharray:0.1,64;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
 
     <style id="road"       value="fill:none; stroke:#BBBBBB;stroke-linecap:round;"/>
     <style id="path"       value="fill:none; stroke:#BBBBBB;stroke-linecap:butt; stroke-dasharray:5,2; stroke-width:2"/>
@@ -73,7 +107,7 @@
     <style id="redRoad"    value="fill:none; stroke:red;stroke-linecap:round;stroke-width:2"/>
     <style id="orangeRoad" value="fill:none; stroke:orange;stroke-linecap:round;stroke-width:2"/>
 
-    <style id="coast"      value="fill:none;stroke:Teal ;stroke-width:1; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))"/>
+    <style id="coast"      value="fill:none;stroke:Teal ;stroke-width:1; filter: url(#shadow)"/>
 
 
 
@@ -107,19 +141,19 @@
     <!-- Symbols -->
 
     <symbol id="stone" width="20" height="20" transform="translate(-10 -10)">
-        <circle  cx="10"  cy="10"  r="8"  style="fill:darkgrey;opacity:0.7; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))" />
+        <circle  cx="10"  cy="10"  r="8"  style="fill:darkgrey;opacity:0.7; filter: url(#shadow)" />
     </symbol>
 
     <symbol id="treeS" width="12" height="12" transform="translate(-6 -6)">
-        <circle  cx="6"  cy="6"  r="4"  style="fill:#99DD99;opacity:0.7; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))" />
+        <circle  cx="6"  cy="6"  r="4"  style="fill:#99DD99;opacity:0.7; filter: url(#shadow)" />
     </symbol>
 
     <symbol id="treeM" width="20" height="20" transform="translate(-10 -10)">
-        <circle  cx="10"  cy="10"  r="8"  style="fill:#99DD99;opacity:0.7; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))" />
+        <circle  cx="10"  cy="10"  r="8"  style="fill:#99DD99;opacity:0.7; filter: url(#shadow)" />
     </symbol>
 
     <symbol id="treeB" width="36" height="36" transform="translate(-18 -18)">
-        <circle  cx="18"  cy="18"  r="16"  style="fill:#99DD99;opacity:0.7; filter: drop-shadow( 2px 2px 1px rgba(0, 0, 0, .4))" />
+        <circle  cx="18"  cy="18"  r="16"  style="fill:#99DD99;opacity:0.7; filter: url(#shadow)" />
     </symbol>
 
     <symbol id="parking" width="16" height="16" transform="translate(-8 -8)" >

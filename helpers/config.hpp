@@ -16,7 +16,7 @@ struct CssClass
     std::string textField;
     std::string symbol;
     std::string pattern;
-    
+
     int zIndex;
     int textZIndex;
     int rank;
@@ -47,8 +47,8 @@ struct CssClass
     }
     std::string makeClass(std::string clName, double ppm, bool evenOdd)
     {
-        //std::string result = "";
-        std::string result = "/*" + tagValue + "*/\n";
+        std::string result = "";
+        //std::string result = "/*" + tagValue + "*/\n";
         std::string tStyle = makeTextStyle(ppm);
         std::string oStyle = makeStyle(ppm);
         std::string fillRule="fill-rule:";
@@ -164,8 +164,8 @@ struct XmlVisitor
     uint32_t mask, idxMask;
     std::string symbolId;
     std::string symbolStr="";
-    
-    
+
+
 //    std::string patternId;
 //    std::string patternStr="";
 
