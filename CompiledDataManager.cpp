@@ -211,103 +211,22 @@ bool Line::isClosed()
 
 void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
 {
-    if(pointsCount < 3) return;
     uint64_t i;
     GeoPoint* newPoints;
     uint64_t newPointsCount = 0;
-    bool discarded;
-    newPoints = static_cast<GeoPoint*> (malloc ((pointsCount * sizeof(GeoPoint))));
-    newPoints[0] = points[0];
-    newPointsCount++;
-    for(i = 1; i < (pointsCount - 1); i++)
-    {
-        discarded = false;
-        if((points[i-1].x < r.x0)&&(points[i].x < r.x0)&&(points[i+1].x < r.x0)) discarded = true;
-        if(!discarded)
-        {
-            newPoints[newPointsCount] = points[i];
-            newPointsCount++;
-        }
-    }
-    newPoints[newPointsCount] = points[pointsCount - 1];
-    newPointsCount++;
-    free(points);
-    points = newPoints;
-    pointsCount = newPointsCount;
-    newPointsCount = 0;
-    newPoints = static_cast<GeoPoint*> (malloc ((pointsCount * sizeof(GeoPoint))));
-    newPoints[0] = points[0];
-    newPointsCount++;
-    for(i = 1; i < (pointsCount - 1); i++)
-    {
-        discarded = false;
-        if((points[i-1].x > r.x1)&&(points[i].x > r.x1)&&(points[i+1].x > r.x1)) discarded = true;
-        if(!discarded)
-        {
-            newPoints[newPointsCount] = points[i];
-            newPointsCount++;
-        }
-    }
-    newPoints[newPointsCount] = points[pointsCount - 1];
-    newPointsCount++;
-    free(points);
-    points = newPoints;
-    pointsCount = newPointsCount;
-    newPointsCount = 0;
-    newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
-    newPoints[0] = points[0];
-    newPointsCount++;
-    for(i = 1; i < (pointsCount - 1); i++)
-    {
-        discarded = false;
-        if((points[i-1].y < r.y0)&&(points[i].y < r.y0)&&(points[i+1].y < r.y0)) discarded = true;
-        if(!discarded)
-        {
-            newPoints[newPointsCount] = points[i];
-            newPointsCount++;
-        }
-    }
-    newPoints[newPointsCount] = points[pointsCount - 1];
-    newPointsCount++;
-    free(points);
-    points = newPoints;
-    pointsCount = newPointsCount;
-    newPointsCount = 0;
-    newPoints = static_cast<GeoPoint*>( malloc (pointsCount * sizeof(GeoPoint)));
-    newPoints[0] = points[0];
-    newPointsCount++;
-    for(i = 1; i < (pointsCount - 1); i++)
-    {
-        discarded = false;
-        if((points[i-1].y > r.y1)&&(points[i].y > r.y1)&&(points[i+1].y > r.y1)) discarded = true;
-        if(!discarded)
-        {
-            newPoints[newPointsCount] = points[i];
-            newPointsCount++;
-        }
-    }
-    newPoints[newPointsCount] = points[pointsCount - 1];
-    newPointsCount++;
-    free(points);
-    points = newPoints;
-    pointsCount = newPointsCount;
+    bool isinside;
 
-    if(pointsCount == 2 && points[0] == points[1])
-    {
-        pointsCount = 0;
-        return;
-    }
-/*
+    if(pointsCount < 3) return;
+
+
     bool closed = (points[0] == points[pointsCount - 1]);
-    //uint64_t i;
-    //GeoPoint* newPoints;
-    //uint64_t newPointsCount = 0;
-    //bool discarded;
+
+    // add intersections with min x
 
     newPoints = static_cast<GeoPoint*> (malloc ((2 * pointsCount +1)* sizeof(GeoPoint)));
     newPointsCount = 0;
-    bool isinside = (points[0].x >= r.x0);
-    if(isinside) newPoints[newPointsCount++] = points[0];
+    isinside = (points[0].x >= r.x0);
+    newPoints[newPointsCount++] = points[0];
     for(i = 1; i < pointsCount; i++)
     {
         bool isinsidenew = (points[i].x >= r.x0);
@@ -315,13 +234,10 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
         {
             double ratio = ((double)(points[i].x) - (double)(r.x0)) / ((double)(points[i].x) - (double)(points[i-1].x));
             uint32_t new_x = r.x0;;
-            uint32_t new_y = (uint32_t)((1-ratio)*points[i-1].y + ratio*points[i].y);
+            uint32_t new_y = ratio * points[i-1].y  + (1 - ratio) * points[i].y;
             newPoints[newPointsCount++] = {new_x, new_y};
         }
-        if(isinsidenew)
-        {
-            newPoints[newPointsCount++] = points[i];
-        }
+        newPoints[newPointsCount++] = points[i];
         isinside = isinsidenew;
     }
 
@@ -329,17 +245,12 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     points = newPoints;
     pointsCount = newPointsCount;
 
-    if(pointsCount == 2 && points[0] == points[1])
-    {
-        pointsCount = 0;
-        return;
-    }
-
+    // add intersections with max x
 
     newPoints = static_cast<GeoPoint*> (malloc ((2 * pointsCount +1)* sizeof(GeoPoint)));
     newPointsCount = 0;
     isinside = (points[0].x <= r.x1);
-    if(isinside) newPoints[newPointsCount++] = points[0];
+    newPoints[newPointsCount++] = points[0];
     for(i = 1; i < pointsCount; i++)
     {
         bool isinsidenew = (points[i].x <= r.x1);
@@ -347,24 +258,17 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
         {
             double ratio = ((double)(points[i].x) - (double)(r.x1)) / ((double)(points[i].x) - (double)(points[i-1].x));
             uint32_t new_x = r.x1;;
-            uint32_t new_y = (uint32_t)((1-ratio)*points[i-1].y + ratio*points[i].y);
+            uint32_t new_y = ratio * points[i-1].y  + (1 - ratio) * points[i].y;
             newPoints[newPointsCount++] = {new_x, new_y};
         }
-        if(isinsidenew)
-        {
-            newPoints[newPointsCount++] = points[i];
-        }
+        newPoints[newPointsCount++] = points[i];
         isinside = isinsidenew;
     }
     free(points);
     points = newPoints;
     pointsCount = newPointsCount;
 
-    if(pointsCount == 2 && points[0] == points[1])
-    {
-        pointsCount = 0;
-        return;
-    }
+    // add intersections with min y
 
     newPoints = static_cast<GeoPoint*> (malloc ((2 * pointsCount +1)* sizeof(GeoPoint)));
     newPointsCount = 0;
@@ -377,13 +281,10 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
         {
             double ratio = ((double)(points[i].y) - (double)(r.y0)) / ((double)(points[i].y) - (double)(points[i-1].y));
             uint32_t new_y = r.y0;;
-            uint32_t new_x = (uint32_t)((1-ratio)*points[i-1].x + ratio*points[i].x);
+            uint32_t new_x = ratio * points[i-1].x  + (1 - ratio) * points[i].x;
             newPoints[newPointsCount++] = {new_x, new_y};
         }
-        if(isinsidenew)
-        {
-            newPoints[newPointsCount++] = points[i];
-        }
+        newPoints[newPointsCount++] = points[i];
         isinside = isinsidenew;
     }
 
@@ -391,13 +292,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     points = newPoints;
     pointsCount = newPointsCount;
 
-    if(pointsCount == 2 && points[0] == points[1])
-    {
-        pointsCount = 0;
-        return;
-    }
-
-
+    // add intersections with max y
 
     newPoints = static_cast<GeoPoint*> (malloc ((2 * pointsCount +1)* sizeof(GeoPoint)));
     newPointsCount = 0;
@@ -410,19 +305,106 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
         {
             double ratio = ((double)(points[i].y) - (double)(r.y1)) / ((double)(points[i].y) - (double)(points[i-1].y));
             uint32_t new_y = r.y1;;
-            uint32_t new_x = (uint32_t)((1-ratio)*points[i-1].x + ratio*points[i].x);
+            uint32_t new_x = ratio * points[i-1].x  + (1 - ratio) * points[i].x;
             newPoints[newPointsCount++] = {new_x, new_y};
         }
-        if(isinsidenew)
-        {
-            newPoints[newPointsCount++] = points[i];
-        }
+        newPoints[newPointsCount++] = points[i];
         isinside = isinsidenew;
     }
     free(points);
 
-    if(closed && pointsCount && !(newPoints[0] == newPoints[newPointsCount - 1])) newPoints[newPointsCount++] = newPoints[0];
 
+    points = newPoints;
+    pointsCount = newPointsCount;
+
+    // remove useless points for min x
+
+    newPointsCount = 0;
+    bool discarded;
+    newPoints = static_cast<GeoPoint*> (malloc ((pointsCount * sizeof(GeoPoint))));
+    newPoints[0] = points[0];
+    newPointsCount++;
+    for(i = 1; i < (pointsCount - 1); i++)
+    {
+        discarded = false;
+        if((points[i-1].x <= r.x0)&&(points[i].x < r.x0)&&(points[i+1].x <= r.x0)) discarded = true;
+        if(!discarded)
+        {
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
+        }
+    }
+    newPoints[newPointsCount] = points[pointsCount - 1];
+    newPointsCount++;
+
+
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
+
+    // remove useless points for max x
+
+    newPointsCount = 0;
+    newPoints = static_cast<GeoPoint*> (malloc ((pointsCount * sizeof(GeoPoint))));
+    newPoints[0] = points[0];
+    newPointsCount++;
+    for(i = 1; i < (pointsCount - 1); i++)
+    {
+        discarded = false;
+        if((points[i-1].x >= r.x1)&&(points[i].x > r.x1)&&(points[i+1].x >= r.x1)) discarded = true;
+        if(!discarded)
+        {
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
+        }
+    }
+    newPoints[newPointsCount] = points[pointsCount - 1];
+    newPointsCount++;
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
+
+    // remove useless points for min y
+
+    newPointsCount = 0;
+    newPoints = static_cast<GeoPoint*> (malloc (pointsCount * sizeof(GeoPoint)));
+    newPoints[0] = points[0];
+    newPointsCount++;
+    for(i = 1; i < (pointsCount - 1); i++)
+    {
+        discarded = false;
+        if((points[i-1].y <= r.y0)&&(points[i].y < r.y0)&&(points[i+1].y <= r.y0)) discarded = true;
+        if(!discarded)
+        {
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
+        }
+    }
+    newPoints[newPointsCount] = points[pointsCount - 1];
+    newPointsCount++;
+    free(points);
+    points = newPoints;
+    pointsCount = newPointsCount;
+
+    // remove useless points for max y
+
+    newPointsCount = 0;
+    newPoints = static_cast<GeoPoint*>( malloc (pointsCount * sizeof(GeoPoint)));
+    newPoints[0] = points[0];
+    newPointsCount++;
+    for(i = 1; i < (pointsCount - 1); i++)
+    {
+        discarded = false;
+        if((points[i-1].y >= r.y1)&&(points[i].y > r.y1)&&(points[i+1].y >= r.y1)) discarded = true;
+        if(!discarded)
+        {
+            newPoints[newPointsCount] = points[i];
+            newPointsCount++;
+        }
+    }
+    newPoints[newPointsCount] = points[pointsCount - 1];
+    newPointsCount++;
+    free(points);
     points = newPoints;
     pointsCount = newPointsCount;
 
@@ -430,7 +412,8 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     {
         pointsCount = 0;
         return;
-    }*/
+    }
+
 }
 
 
