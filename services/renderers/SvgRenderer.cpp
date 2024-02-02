@@ -625,13 +625,13 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
             {
                 if(first)
                 {
-                    result << "M" << (int32_t)(x) << " " << (int32_t)(y)  << " ";
+                    result << "M" << (int32_t)(x) << " " << (int32_t)(y);
                     first = false;
                 }
                 else
                 {
                     if((trunc(x) != trunc(oldx)) || (trunc(y) != trunc(oldy))|| i == (l->pointsCount - 1))
-                        result << "L" << (int32_t)(x) << " " << (int32_t)(y) << " ";
+                        result << "L" << (int32_t)(x) << " " << (int32_t)(y) ;
                 }
             }
         }
@@ -981,12 +981,12 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                         {
                             if(first)
                             {
-                                result << "M" << (int32_t)(x) << " " << (int32_t)(y) << " ";
+                                result << "M" << (int32_t)(x) << " " << (int32_t)(y);
                                 first = false;
                             }
                             else
                             {
-                                result << "L" << (int32_t)(x) << " " << (int32_t)(y) << " ";
+                                result << "L" << (int32_t)(x) << " " << (int32_t)(y);
                             }
                         }
                     }
