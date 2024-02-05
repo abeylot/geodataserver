@@ -108,8 +108,9 @@ std::string cutString(std::string text, int x, int y, int dy)
     }
 }
 
-size_t cutString(std::string txt)
+size_t cutString(std::string txt, int& ilines)
 {
+    ilines = 1;
     if(txt.length() < MAX_TEXT_LEN) return txt.length();
     size_t result = 0;
     while(true)
@@ -118,6 +119,7 @@ size_t cutString(std::string txt)
         {
             break;
         }
+        ilines++;
         size_t pos = txt.find(' ', MIN_TEXT_LEN);
         if(pos == std::string::npos)
             pos = txt.find('/', MIN_TEXT_LEN);
@@ -384,17 +386,19 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
         bool to_show = true;
 
         double xc,xd,yc,yd;
-        int ilt = cutString(t->text);
+        int ilines;
+        int ilt = cutString(t->text, ilines);
         double lt = t->fontsize*0.5*ilt;
+        double ht = t->fontsize*0.5*ilines;
 
-        xc = t->pos_x + lt*(cos(t->angle));
-        yc = t->pos_y + lt*(sin(t->angle));
-        xd = t->pos_x - lt*(cos(t->angle));
-        yd = t->pos_y - lt*(sin(t->angle));
+        xc = t->pos_x + lt*(cos(t->angle)) - ht*(sin(t->angle));;
+        yc = t->pos_y + lt*(sin(t->angle)) + ht*(cos(t->angle));;
+        xd = t->pos_x - lt*(cos(t->angle)) + ht*(sin(t->angle));;
+        yd = t->pos_y - lt*(sin(t->angle)) - ht*(cos(t->angle));;
 
         for(auto v = label_vector.begin(); v!=t; ++v)
         {
-            int ilv = cutString(v->text);
+            int ilv = cutString(v->text, ilines);
 
             int dx = v->pos_x - t->pos_x;
             int dy = v->pos_y - t->pos_y;
@@ -417,11 +421,12 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 
 
             double lv = v->fontsize*0.5*ilv;
+            double hv = v->fontsize*0.5*ilines;
 
-            xa = v->pos_x + lv*(cos(v->angle));
-            ya = v->pos_y + lv*(sin(v->angle));
-            xb = v->pos_x - lv*(cos(v->angle));
-            yb = v->pos_y - lv*(sin(v->angle));
+            xa = v->pos_x + lv*(cos(v->angle)) - hv*(sin(v->angle));
+            ya = v->pos_y + lv*(sin(v->angle)) + hv*(cos(v->angle));
+            xb = v->pos_x - lv*(cos(v->angle)) + hv*(sin(v->angle));
+            yb = v->pos_y - lv*(sin(v->angle)) - hv*(cos(v->angle));
 
 
             double xab = xb - xa;
