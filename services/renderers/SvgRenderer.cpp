@@ -383,9 +383,17 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
     {
         bool to_show = true;
 
+        double xc,xd,yc,yd;
+        int ilt = cutString(t->text);
+        double lt = t->fontsize*0.5*ilt;
+
+        xc = t->pos_x + lt*(cos(t->angle));
+        yc = t->pos_y + lt*(sin(t->angle));
+        xd = t->pos_x - lt*(cos(t->angle));
+        yd = t->pos_y - lt*(sin(t->angle));
+
         for(auto v = label_vector.begin(); v!=t; ++v)
         {
-            int ilt = cutString(t->text);
             int ilv = cutString(v->text);
 
             int dx = v->pos_x - t->pos_x;
@@ -405,10 +413,9 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                 break;
             }
 
-            double xa,xb,xc,xd,ya,yb,yc,yd;
+            double xa,ya,xb,yb;
 
 
-            double lt = t->fontsize*0.5*ilt;
             double lv = v->fontsize*0.5*ilv;
 
             xa = v->pos_x + lv*(cos(v->angle));
@@ -416,10 +423,6 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             xb = v->pos_x - lv*(cos(v->angle));
             yb = v->pos_y - lv*(sin(v->angle));
 
-            xc = t->pos_x + lt*(cos(t->angle));
-            yc = t->pos_y + lt*(sin(t->angle));
-            xd = t->pos_x - lt*(cos(t->angle));
-            yd = t->pos_y - lt*(sin(t->angle));
 
             double xab = xb - xa;
             double yab = yb - ya;
@@ -459,7 +462,28 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
 
 
         }
-        if(to_show) to_print.push_back(*t);
+
+        double lbl_max_x = xd;
+        if (xc > xd) lbl_max_x = xc;
+
+        double lbl_min_x = xd;
+        if (xc < xd) lbl_min_x = xc;
+
+        double lbl_max_y = yd;
+        if (yc > yd) lbl_max_y = yc;
+
+        double lbl_min_y = yd;
+        if (yc < yd) lbl_min_y = yc;
+
+        bool in_map_square = (
+                             ( lbl_max_x >= 0 )
+                             &&(lbl_min_x <= size_x)
+                             &&(lbl_max_y >= 0)
+                             &&(lbl_min_y <= size_y)
+                             );
+
+
+        if(to_show && in_map_square ) to_print.push_back(*t);
     }
 
     for(auto v=to_print.begin(); v!=to_print.end(); ++v)
