@@ -11,9 +11,7 @@
 class HttpProtocol
 {
 private:
-#ifdef doMemoryCheck
-    Helpers::CheckedObject< HttpProtocol > bidon;
-#endif
+    static constexpr int MAX_CONTENT_LENGTH = 32000;
 public:
     HttpProtocol ();
     virtual ~HttpProtocol ();
