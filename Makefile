@@ -3,9 +3,9 @@
 GIT_VERSION = "$(shell git describe --tags)"
 
 CC= g++
-#cc=$(CC)  -O2 -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\"
+cc=$(CC)  -O2 -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\"
 
-cc=$(CC) -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\"
+#cc=$(CC) -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\"
 
 
 headersCommon=CompiledDataManager.hpp \
@@ -65,7 +65,7 @@ TcpConnection.o \
 MapDisplay.o \
 StringBuffer.o
 
-#libs=-lpthread  -lz -latomic -lstdc++fs -fsanitize=address -static-libsan
+#libs=-lpthread  -lz -latomic -lstdc++fs -fsanitize=thread -static-libsan
 libs=-lpthread  -lz -latomic -lstdc++fs
 
 all: renumber compile index geoserver

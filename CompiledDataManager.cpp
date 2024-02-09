@@ -243,6 +243,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
 
     free(points);
     points = newPoints;
+    assert(newPointsCount <= 2 * pointsCount +1);
     pointsCount = newPointsCount;
 
     // remove useless points for min x
@@ -265,6 +266,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
         newPointsCount++;
     }
     points = newPoints;
+    assert(newPointsCount <= pointsCount);
     pointsCount = newPointsCount;
 
 
@@ -295,6 +297,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
         newPointsCount++;
     }
 
+    assert(newPointsCount <= 2 * pointsCount +1);
     points = newPoints;
     pointsCount = newPointsCount;
 
@@ -318,6 +321,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
         newPointsCount++;
     }
 
+    assert(newPointsCount <= pointsCount);
     points = newPoints;
     pointsCount = newPointsCount;
 
@@ -342,6 +346,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     }
 
     free(points);
+    assert(newPointsCount <= 2 * pointsCount +1);
     points = newPoints;
     pointsCount = newPointsCount;
 
@@ -358,6 +363,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
         }
     }
     free(points);
+    assert(newPointsCount <= pointsCount);
     points = newPoints;
     pointsCount = newPointsCount;
 

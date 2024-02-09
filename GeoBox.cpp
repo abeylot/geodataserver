@@ -408,19 +408,19 @@ bool dividex(Rectangle r, Rectangle& left, Rectangle& right)
     left.x0 = minx;
     left.x1 = pivotx - 1;
     left.y0 = r.y0;
-    left.y1 = r.y1; 
+    left.y1 = r.y1;
 
     right.x0 = pivotx;
     right.x1 = maxx;
     right.y0 = r.y0;
     right.y1 = r.y1;
-    return true; 
+    return true;
 }
 bool dividey(Rectangle r, Rectangle& bottom, Rectangle& top)
 {
     uint32_t delta = r.y0 ^ r.y1;
     short mask_length = 3;
-    
+
     //if(delta & UINT32_BIT0) mask_length = 1;
     //if(delta & UINT32_BIT1) mask_length = 2;
     //if(delta & UINT32_BIT2) mask_length = 3;
@@ -476,13 +476,13 @@ bool dividey(Rectangle r, Rectangle& bottom, Rectangle& top)
     bottom.y0 = miny;
     bottom.y1 = pivoty - 1;
     bottom.x0 = r.x0;
-    bottom.x1 = r.x1; 
+    bottom.x1 = r.x1;
 
     top.y0 = pivoty;
     top.y1 = maxy;
     top.x0 = r.x0;
     top.x1 = r.x1;
-    return true; 
+    return true;
 }
 
 
@@ -499,7 +499,7 @@ GeoBox makeGeoBox(Rectangle rect)
         minx = rect.x1;
         maxx = rect.x0;
     }
-    
+
     if(rect.y0 < rect.y1)
     {
         miny = rect.y0;
@@ -508,7 +508,7 @@ GeoBox makeGeoBox(Rectangle rect)
         miny = rect.y1;
         maxy = rect.y0;
     }
-    
+
     uint64_t minpos = mergeBits(minx, miny);
     uint64_t maxpos = mergeBits(maxx, maxy);
     uint64_t delta = minpos ^ maxpos;
@@ -603,9 +603,8 @@ Rectangle getRectangle(GeoBox& g)
 
 GeoBoxSet makeGeoBoxSet(Rectangle rect)
 {
-    
+
     GeoBoxSet result;
-    memset(&result, 0, sizeof(result));
     result.count = 0;
 
     /*if(hasgoodMask(rect))
@@ -614,10 +613,10 @@ GeoBoxSet makeGeoBoxSet(Rectangle rect)
         result.boxes[0] = makeGeoBox(rect);
         return result;
     }*/
-    
+
     Rectangle a,b,c,d,r[4];
     short rcount = 0;
-    
+
     if(dividex(rect,a,b))
     {
         if(dividey(a,c,d))

@@ -11,8 +11,9 @@ class GeoBox
     uint64_t _data;
     //uint64_t _pos;
     //int8_t _maskLength;
-    
+
     public :
+    GeoBox():_data(0){};
     uint64_t get_pos() const {return _data & POS_MASKING_;}
     uint8_t get_maskLength() const {return _data & MAS_MASKING_;}
     void set_pos(uint64_t pos){_data = (_data & MAS_MASKING_) + (pos & POS_MASKING_);}

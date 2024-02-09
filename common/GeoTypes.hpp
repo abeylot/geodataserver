@@ -8,7 +8,7 @@ enum __attribute__((packed)) BaliseType {relation, point, way, unknown };
 
 /**
  * @brief Structure to store geographic data Relation in indexes.
- * 
+ *
  */
 struct __attribute__((packed)) GeoIndex
 {
@@ -23,9 +23,9 @@ struct __attribute__((packed)) GeoIndex
 };
 /**
  * @brief structure to store geographic Point data in indexes.
- * 
+ *
  */
-struct __attribute__((packed)) GeoPointIndex 
+struct __attribute__((packed)) GeoPointIndex
 {
     // internal format  longitude
     uint32_t x;
@@ -38,9 +38,9 @@ struct __attribute__((packed)) GeoPointIndex
 };
 /**
  * @brief structure to store Way data in indexes file
- * 
+ *
  */
-struct __attribute__((packed)) GeoWayIndex 
+struct __attribute__((packed)) GeoWayIndex
 {
     // start position of points data in point data file
     uint64_t pstart;
@@ -53,9 +53,9 @@ struct __attribute__((packed)) GeoWayIndex
 };
 /**
  * @brief Points data structure.
- * 
+ *
  */
-struct __attribute__((packed)) GeoPoint 
+struct __attribute__((packed)) GeoPoint
 {
     // internal format  longitude
     uint32_t x;
@@ -67,7 +67,7 @@ struct __attribute__((packed)) GeoPoint
 
 /**
  * @brief geopoint equality operator.
- * 
+ *
  * @param a point a
  * @param b point b
  * @return true if a == b
@@ -81,7 +81,7 @@ inline bool operator==(GeoPoint const& a, GeoPoint const& b)
 
 /**
  * @brief geographic member data.
- * 
+ *
  */
 struct __attribute__((packed)) GeoMember
 {
@@ -93,13 +93,13 @@ struct __attribute__((packed)) GeoMember
 
 /**
  * @brief struct to store tag strings.
- * 
+ *
  */
-struct __attribute__((packed)) GeoString 
+struct __attribute__((packed)) GeoString
 {
     char _buffer[256];
     unsigned char _length;
-    
+
     GeoString & operator=(const std::string &s)
     {
         if(s.length() <= 255) _length = s.length();
@@ -107,12 +107,12 @@ struct __attribute__((packed)) GeoString
         memcpy(_buffer, s.c_str(),_length);
         return *this;
     }
-    
+
     GeoString()
     {
         _length=0;
     }
-    
+
     inline uint64_t size()
     {
         return _length;
@@ -125,9 +125,9 @@ struct __attribute__((packed)) GeoString
 
 /**
  * @brief struct to store geopoint data with it's id
- * 
+ *
  */
-struct __attribute__((packed)) GeoPointNumberIndex 
+struct __attribute__((packed)) GeoPointNumberIndex
 {
     uint64_t number;
     GeoPoint p;
