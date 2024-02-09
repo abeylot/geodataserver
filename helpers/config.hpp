@@ -66,6 +66,10 @@ struct Condition
     std::vector<CssClass*> classes;
     bool closed;
     bool opened;
+    ~Condition()
+    {
+        for(auto c : classes) delete c;
+    }
 };
 
 struct Selector
@@ -104,6 +108,13 @@ struct IndexDesc
     std::vector<Selector*> excludeSelectors;
     fidx::FileIndex<IndexEntryMasked,GeoBox>* idx;
     uint32_t mask;
+    ~IndexDesc()
+    {
+        for(auto a : conditions) delete a;
+        for(auto b : selectors) delete b;
+        for(auto c: excludeSelectors) delete c;
+        delete idx;
+    }
 };
 
 struct ParmsXmlVisitor

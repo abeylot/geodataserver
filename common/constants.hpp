@@ -8,12 +8,6 @@
 #define BALISENAME_ND        "nd"
 #define BALISENAME_MEMBER    "member"
 
-#define BALISENAME_RELATIONSHORT  "r"
-#define BALISENAME_NODESHORT      "n"
-#define BALISENAME_WAYSHORT       "w"
-#define BALISENAME_TAGSHORT       "t"
-#define BALISENAME_NDSHORT        "d"
-#define BALISENAME_MEMBERSHORT    "m"
 
 #define PI  3.14159265359
 

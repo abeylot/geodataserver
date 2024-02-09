@@ -10,7 +10,6 @@
 
 HttpEncoder::HttpEncoder()
 {
-    iIdent = 1;
 }
 
 HttpEncoder::~HttpEncoder()

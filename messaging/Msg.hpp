@@ -5,13 +5,6 @@
 #ifndef Msg_hpp
 #define Msg_hpp
 
-#define RECORD_SEPARATOR    (char)0x1E
-#define BLOCK_SEPARATOR     (char)0x1D
-#define RCD_INITIAL_SIZE          0x10
-#define RCD_COMP                  0x0F
-
-
-const char identO_hpp[] = "$Id: Msg.hpp,v 1.18 2013/10/08 08:06:54 aby Exp $";
 
 #include <string>
 #include <vector>
@@ -24,6 +17,8 @@ const char identO_hpp[] = "$Id: Msg.hpp,v 1.18 2013/10/08 08:06:54 aby Exp $";
 class Record
 {
 private:
+    static constexpr int RCD_INITIAL_SIZE = 0x10;
+    static constexpr int RCD_COMP = 0x0F;
     std::vector<std::string> Blocks;
     uint64_t size;
 

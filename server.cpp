@@ -48,7 +48,7 @@ struct Listener
                 if(!queue->push(cnx))
                 {
                     std::cerr << "too much pending requests, client rejected !\n";
-                    delete cnx;  
+                    delete cnx;
                 }
             }
         }
@@ -90,7 +90,7 @@ template<typename MSG> struct Reader
                             {
                                  std::cerr << "too much pending requests, message rejected !\n";
                                  delete msg;
-                            } 
+                            }
                         }
                     }
                     catch (const std::exception& e)
@@ -310,7 +310,7 @@ int main(int argc, char *argv[])
     /*
      * Manage signals;
      */
-    sigstop = false; 
+    sigstop = false;
     std::signal(SIGINT,sig_handler);
     while(!sigstop)
     {
@@ -319,5 +319,6 @@ int main(int argc, char *argv[])
 
     ExtThreads::request_all_to_stop();
     ExtThreads::request_all_to_join();
+    for(auto i : indexes) delete i;
 
 }
