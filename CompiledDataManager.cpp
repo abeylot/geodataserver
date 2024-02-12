@@ -260,7 +260,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     }
     free(points);
 
-    if(closed && !(newPoints[0] == newPoints[newPointsCount-1]))
+    if(closed && (newPointsCount > 0) && !(newPoints[0] == newPoints[newPointsCount-1]))
     {
         newPoints[newPointsCount] = newPoints[0];
         newPointsCount++;
@@ -291,12 +291,6 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     }
     free(points);
 
-    if(closed && !(newPoints[0] == newPoints[newPointsCount-1]))
-    {
-        newPoints[newPointsCount] = newPoints[0];
-        newPointsCount++;
-    }
-
     assert(newPointsCount <= 2 * pointsCount +1);
     points = newPoints;
     pointsCount = newPointsCount;
@@ -315,7 +309,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     }
     free(points);
 
-    if(closed && !(newPoints[0] == newPoints[newPointsCount-1]))
+    if(closed && (newPointsCount > 0) && !(newPoints[0] == newPoints[newPointsCount-1]))
     {
         newPoints[newPointsCount] = newPoints[0];
         newPointsCount++;
@@ -363,6 +357,14 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
         }
     }
     free(points);
+
+    if(closed && (newPointsCount > 0) && !(newPoints[0] == newPoints[newPointsCount-1]))
+    {
+        newPoints[newPointsCount] = newPoints[0];
+        newPointsCount++;
+    }
+
+
     assert(newPointsCount <= pointsCount);
     points = newPoints;
     pointsCount = newPointsCount;
@@ -405,7 +407,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
             newPointsCount++;
         }
     }
-    if(closed && !(newPoints[0] == newPoints[newPointsCount-1]))
+    if(closed && (newPointsCount > 0) && !(newPoints[0] == newPoints[newPointsCount-1]))
     {
         newPoints[newPointsCount] = newPoints[0];
         newPointsCount++;

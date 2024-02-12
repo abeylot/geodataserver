@@ -129,7 +129,7 @@ template<typename MSG> struct Writer
                 {
                     std::string* s = encoder.decode(m);
                     p.putMessage(*s,m->getConnection());
-                    usleep(10000);
+                    //usleep(10000);
                     delete s;
                     delete m->getConnection();
                     delete m;
