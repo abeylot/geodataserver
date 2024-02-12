@@ -214,7 +214,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     uint64_t i;
     GeoPoint* newPoints;
     uint64_t newPointsCount = 0;
-    bool isinside;
+    bool isinside = false;
 
     if(pointsCount < 3) return;
 
@@ -268,7 +268,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     points = newPoints;
     assert(newPointsCount <= pointsCount);
     pointsCount = newPointsCount;
-
+    if(pointsCount == 0) return;
 
     // add intersections with max x
 
@@ -318,6 +318,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     assert(newPointsCount <= pointsCount);
     points = newPoints;
     pointsCount = newPointsCount;
+    if(pointsCount == 0) return;
 
     // add intersections with min y
 
@@ -368,6 +369,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     assert(newPointsCount <= pointsCount);
     points = newPoints;
     pointsCount = newPointsCount;
+    if(pointsCount == 0) return;
 
     // add intersections with max y
 
