@@ -19,28 +19,28 @@ using namespace fidx;
 
 int main(int argc, char *argv[])
 {
-    
+
     if(argc != 2)
     {
         std::cerr << "path argument is missing\n";
         exit(1);
     }
 
-    
+
     std::vector<IndexDesc*> indexes;
 
     XmlVisitor v(indexes, true, argv[1]);
-    
+
     std::string fileRoot = std::string(argv[1]) + "/";
-    
+
     fidx::FileIndex<IndexEntry,uint64_t> textIndexNode(fileRoot + "textIndexNode"    , true);
     fidx::FileIndex<IndexEntry,uint64_t> textIndexWay(fileRoot + "textIndexWay"     , true);
     fidx::FileIndex<IndexEntry,uint64_t> textIndexRelation(fileRoot + "textIndexRelation", true);
-    
+
     fidx::FileIndex<IndexRange,uint64_t> textIndexNodeRange(fileRoot + "textIndexNodeRange"    , true);
     fidx::FileIndex<IndexRange,uint64_t> textIndexWayRange(fileRoot + "textIndexWayRange"     , true);
     fidx::FileIndex<IndexRange,uint64_t> textIndexRelationRange(fileRoot + "textIndexRelationRange", true);
-    
+
     std::string file = argv[1];
     file += "/config.xml";
     FILE* config = fopen(file.c_str(),"r");
@@ -85,13 +85,13 @@ int main(int argc, char *argv[])
             used++;
             value = r->tags.data+used;
             used += value_size;
-            
+
             if(tag_size == 4 && (strncmp(tag, "name", tag_size) == 0) && value_size)
             {
-                std::string my_string(value, value_size); 
+                std::string my_string(value, value_size);
                 std::replace( my_string.begin(), my_string.end(), '-', ' ');
                 stringstream my_stream(my_string);
-                std::string word; 
+                std::string word;
                 while(std::getline(my_stream,word,' '))
                 {
                     size_t found = word.find("&apos;");
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
                     textIndexRelation.append(fidx::makeLexicalKey(word.c_str(), word.length(), v.charconvs),{i, r->rect});
                 }
             }
-            
+
             for( IndexDesc *d : indexes)
             {
                 bool kept =false;
@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
 
             if(tag_size == 4 && (strncmp(tag, "name", tag_size) == 0) && value_size)
             {
-                std::string my_string(value, value_size); 
+                std::string my_string(value, value_size);
                 std::replace( my_string.begin(), my_string.end(), '-', ' ');
                 stringstream my_stream(my_string);
                 std::string word;
@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
                     textIndexWay.append(fidx::makeLexicalKey(word.c_str(), word.length(), v.charconvs),{i, w->rect});
                 }
             }
-            
+
             for( IndexDesc *d : indexes)
             {
                 bool kept =false;
@@ -270,7 +270,7 @@ int main(int argc, char *argv[])
 
             char* tag = NULL;
             char* value = NULL;
-    
+
             unsigned char tag_size = 0;
             unsigned char value_size = 0;
 
@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
 
             if(tag_size == 4 && (strncmp(tag, "name", tag_size) == 0) && value_size)
             {
-                std::string my_string(value, value_size); 
+                std::string my_string(value, value_size);
                 std::replace( my_string.begin(), my_string.end(), '-', ' ');
                 stringstream my_stream(my_string);
                 std::string word;
@@ -301,7 +301,7 @@ int main(int argc, char *argv[])
                     textIndexNode.append(fidx::makeLexicalKey(word.c_str(), word.length(), v.charconvs),{i, {p->x, p->y, p->x, p->y}});
                 }
             }
-            
+
             for( IndexDesc *d : indexes)
             {
                 bool kept =false;
@@ -359,7 +359,7 @@ int main(int argc, char *argv[])
     uint64_t last_key = 0;
     uint64_t start_id = 0;
     uint64_t stop_id = 0;
-    
+
     for(uint64_t i=0; i < textIndexNode.getSize(); i++)
     {
         Record<IndexEntry,uint64_t> rec;
@@ -377,7 +377,7 @@ int main(int argc, char *argv[])
     last_key = 0;
     start_id = 0;
     stop_id = 0;
-    
+
     for(uint64_t i=0; i < textIndexWay.getSize(); i++)
     {
         Record<IndexEntry,uint64_t> rec;
@@ -395,7 +395,7 @@ int main(int argc, char *argv[])
     last_key = 0;
     start_id = 0;
     stop_id = 0;
-    
+
     for(uint64_t i=0; i < textIndexRelation.getSize(); i++)
     {
         Record<IndexEntry,uint64_t> rec;
@@ -409,6 +409,6 @@ int main(int argc, char *argv[])
         last_key = rec.key;
     }
     textIndexRelationRange.flush();
-
+    for (auto i : indexes) delete i;
     return 0;
 }

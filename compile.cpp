@@ -55,7 +55,7 @@ struct dbf_header
     {
         record_size = tmp[0] + tmp[1] * 0xFF;
     }
-    
+
     if(fread(&filler1, 22, 1, f) != 1) return -1;
 
     if(fread(tmp, 1, 1, f) != 1) return -1;
@@ -75,7 +75,7 @@ struct dbf_header
         count++;
         if(fread(tmp, 1, 1, f) != 1) return -1;
     }
-    std::cout << "\n"; 
+    std::cout << "\n";
     field_count = count;
     return 0;
    }
@@ -132,7 +132,7 @@ struct ShpVisitor
     void endTag(std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
     }
-    
+
     void stringNode(const std::vector<SeqBalise*>& tagStack, std::string& s)
     {
     }
@@ -257,6 +257,8 @@ struct XmlVisitor
         delete nodeIdIndex;
 
         delete wayPoints;
+        delete relMembers;
+        delete baliseTags;
     }
 
     void log(uint64_t done)
@@ -343,7 +345,7 @@ struct XmlVisitor
                 }
             }
             else if(b->keyValues["type"] == "relation")
-            {   
+            {
                 m.type = relation;
                 uint64_t recp;
                 bool res = relationIdIndex->find(ref, &recp);
@@ -385,10 +387,10 @@ struct XmlVisitor
             if((baliseTags->itemCount  - baliseTags->startCount) > 0xFFFF){
                 std::cerr << "too much tags for node \n";
                 nodeRecord.tsize = 0xFFFF;
-            } else {     
+            } else {
                 nodeRecord.tsize = baliseTags->itemCount  - baliseTags->startCount;
             }
-            
+
             if(nodeRecord.tsize) nodeIndex->append(nodeRecord);
         }
         else if (b->baliseName == BALISENAME_ND)
@@ -405,14 +407,14 @@ struct XmlVisitor
                 wayRecord.psize = 0xFFFF;
             } else {
                 wayRecord.psize = wayPoints->itemCount  - wayPoints->startCount;
-            }        
+            }
 
             wayRecord.tstart = baliseTags->startCount;
 
             if((baliseTags->itemCount  - baliseTags->startCount) > 0xFFFF){
                 std::cerr << "too much tags for way \n";
                 wayRecord.tsize = 0xFFFF;
-            } else {     
+            } else {
                 wayRecord.tsize = baliseTags->itemCount  - baliseTags->startCount;
             }
 
@@ -430,7 +432,7 @@ struct XmlVisitor
             if((baliseTags->itemCount  - baliseTags->startCount) > 0xFFFF){
                 std::cerr << "too much tags for way \n";
                 relationRecord.tsize = 0xFFFF;
-            } else {     
+            } else {
                 relationRecord.tsize = baliseTags->itemCount  - baliseTags->startCount;
             }
 
@@ -439,7 +441,7 @@ struct XmlVisitor
             if((relMembers->itemCount  - relMembers->startCount) > 0xFFFF){
                 std::cerr << "too much tags for way \n";
                 relationRecord.msize = 0xFFFF;
-            } else {                    
+            } else {
                 relationRecord.msize = relMembers->itemCount  - relMembers->startCount;
             }
             relationIndex->append(relationRecord);
@@ -455,16 +457,16 @@ struct XmlVisitor
     {
        std::cerr << "shp file missing \n";
        return;
-    } 
+    }
     FILE* dbf = fopen(filename_dbf.c_str(),"r");
     if(dbf == NULL)
     {
        std::cerr << "dbf file missing \n";
        fclose(shp);
        return;
-    } 
-    
-    
+    }
+
+
     unsigned char header[100], recordheader[8];
     uint64_t len = fread(header,100,1,shp);
 
@@ -485,7 +487,7 @@ struct XmlVisitor
             uint64_t len = fread(recordcontent,2, recordlength, shp);
             if(len == 0) std::cerr << "read error !\n";
             uint64_t shapetype = getUnsignedInteger32(recordcontent, false);
-                       
+
             if(shapetype == 1)
             {
                 baliseTags->startBatch();
@@ -547,12 +549,12 @@ struct XmlVisitor
                             y = atan(exp(y * M_PI / 20037508.34)) * (360 / M_PI) - 90;
                         }
                         else
-                        { 
+                        {
                             x = getDouble(recordcontent + offset);
                             y = getDouble(recordcontent + offset + 8);
                         }
                         GeoPoint p;
-                        
+
                         p.x = Coordinates::toNormalizedLon(std::to_string(x));
                         p.y = Coordinates::toNormalizedLat(std::to_string(y));
                         wayPoints->append(p);
@@ -616,7 +618,7 @@ int main(int argc, char *argv[])
         std::cerr << "path argument is missing\n";
         exit(1);
     }
-    
+
     std::string rep = std::string(argv[1]);
 
     XmlVisitor* v = new XmlVisitor(rep);

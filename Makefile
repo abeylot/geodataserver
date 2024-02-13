@@ -65,7 +65,7 @@ TcpConnection.o \
 MapDisplay.o \
 StringBuffer.o
 
-#libs=-lpthread  -lz -latomic -lstdc++fs -fsanitize=thread -static-libsan
+#libs=-lpthread  -lz -latomic -lstdc++fs -fsanitize=address -static-libsan
 libs=-lpthread  -lz -latomic -lstdc++fs
 
 all: renumber compile index geoserver
