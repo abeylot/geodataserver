@@ -24,7 +24,7 @@
 
 ParmsXmlVisitor params;
 volatile bool sigstop;
-void sig_handler(int sig)
+void sig_handler([[maybe_unused]]int sig)
 {
     sigstop = true;
 }

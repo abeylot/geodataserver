@@ -1,5 +1,5 @@
 #include "IdxList.hpp"
-Msg* IdxList::processRequest(Msg* request, CompiledDataManager& mger)
+Msg* IdxList::processRequest([[maybe_unused]] Msg* request, CompiledDataManager& mger)
 {
     std::string resp = "<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>";
     Msg* rep = new Msg;

@@ -42,15 +42,15 @@ int def(std::string& source, FILE* dest)
         {
             strm.avail_in = CHUNK;
             memcpy(in, source.c_str() + pos, CHUNK);
-            pos += CHUNK; 
+            pos += CHUNK;
         }
         else
         {
             strm.avail_in = length - pos;
             memcpy(in, source.c_str() + pos, length - pos);
             pos = length;
-            do_stop = true;             
-        } 
+            do_stop = true;
+        }
         /*if (ferror(source)) {
             (void)deflateEnd(&strm);
             return Z_ERRNO;
@@ -116,15 +116,15 @@ int def(std::string& source, std::string& dest)
         {
             strm.avail_in = CHUNK;
             memcpy(in, source.c_str() + pos, CHUNK);
-            pos += CHUNK; 
+            pos += CHUNK;
         }
         else
         {
             strm.avail_in = length - pos;
             memcpy(in, source.c_str() + pos, length - pos);
             pos = length;
-            do_stop = true;             
-        } 
+            do_stop = true;
+        }
         flush = do_stop ? Z_FINISH : Z_NO_FLUSH;
         strm.next_in = in;
 
@@ -197,6 +197,7 @@ int inf(FILE *source, std::string& dest)
             switch (ret) {
             case Z_NEED_DICT:
                 ret = Z_DATA_ERROR;     /* and fall through */
+                [[fallthrough]];
             case Z_DATA_ERROR:
             case Z_MEM_ERROR:
                 (void)inflateEnd(&strm);
@@ -230,7 +231,7 @@ double tiley2lat(int y, int z)
     return 180.0 / M_PI * atan(0.5 * (exp(n) - exp(-n)));
 }
 
-Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
+Msg* Tile::processRequest([[maybe_unused]] Msg* request, CompiledDataManager& mger)
 {
     char filename[250];
 
@@ -288,14 +289,14 @@ Msg* Tile::processRequest(Msg* request, CompiledDataManager& mger)
             res.append(buffer, len);
                 }
         }
-        
+
     }
     if(filefound)
     {
     //printf("USING CACHE !\n");
         fclose(in);
         encoder.addContent(rep,res);
-    }else{    
+    }else{
         std::string dir1 = mger.path + "/cache/" + std::to_string(_z);
         std::string dir2 = dir1 + "/" + std::to_string(_x);
 

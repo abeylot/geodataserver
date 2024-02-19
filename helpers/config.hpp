@@ -45,7 +45,7 @@ struct CssClass
         }
         return result;
     }
-    std::string makeClass(std::string clName, double ppm, bool evenOdd)
+    std::string makeClass(std::string clName, double ppm)
     {
         std::string result = "";
         //std::string result = "/*" + tagValue + "*/\n";
@@ -120,8 +120,8 @@ struct IndexDesc
 struct ParmsXmlVisitor
 {
     std::map<std::string, std::string> parameters;
-    void log(uint64_t done){};
-    void startTag(std::vector<SeqBalise*>& tagStack, SeqBalise* b)
+    void log([[maybe_unused]] uint64_t done){};
+    void startTag([[maybe_unused]] std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
         if (b->baliseName == "parameter")
         {
@@ -129,11 +129,11 @@ struct ParmsXmlVisitor
         }
 
     }
-    void endTag(std::vector<SeqBalise*>& tagStack, SeqBalise* b)
+    void endTag([[maybe_unused]] std::vector<SeqBalise*>& tagStack, [[maybe_unused]] SeqBalise* b)
     {
     }
 
-    void stringNode(std::vector<SeqBalise*>& tagStack, std::string& s)
+    void stringNode([[maybe_unused]] std::vector<SeqBalise*>& tagStack, [[maybe_unused]] std::string& s)
     {
     }
 
@@ -197,11 +197,11 @@ struct XmlVisitor
     ~XmlVisitor()
     {
     }
-    void log(uint64_t done)
+    void log([[maybe_unused]] uint64_t done)
     {
     }
 
-    void startTag(std::vector<SeqBalise*>& tagStack, SeqBalise* b)
+    void startTag([[maybe_unused]]std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
         if (b->baliseName == "style")
         {
@@ -323,7 +323,7 @@ struct XmlVisitor
         }
     }
 
-    void endTag(std::vector<SeqBalise*>& tagStack, SeqBalise* b)
+    void endTag([[maybe_unused]] std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
         if ( symbolId != "")
         {
@@ -360,7 +360,7 @@ struct XmlVisitor
         }
     }
 
-    void stringNode(std::vector<SeqBalise*>& tagStack, std::string& s)
+    void stringNode([[maybe_unused]] std::vector<SeqBalise*>& tagStack, std::string& s)
     {
         if(symbolId != "")
         {

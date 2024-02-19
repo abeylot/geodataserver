@@ -544,7 +544,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
                 {
                     if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
                     {
-                        std::string style = cl->makeClass("c" + std::to_string(cl->rank), ppm, (idxDesc->type == "relation"));
+                        std::string style = cl->makeClass("c" + std::to_string(cl->rank), ppm);
                         if(style.find("url(#"+pattern.first) != std::string::npos)
                         {
                             found = true;
@@ -572,7 +572,7 @@ std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t si
             {
                 if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
                 {
-                    result << cl->makeClass("c" + std::to_string(cl->rank), ppm, (idxDesc->type == "relation"));
+                    result << cl->makeClass("c" + std::to_string(cl->rank), ppm);
                 }
             }
         }

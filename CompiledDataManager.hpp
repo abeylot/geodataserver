@@ -28,7 +28,7 @@ struct Tags
 
             unsigned char tag_size = 0;
             unsigned char value_size = 0;
-            
+
             tag_size = (unsigned char) data[used];
             used++;
             tag = data + used;
@@ -165,7 +165,7 @@ public :
     std::map<std::string, std::string>* symbols;
     std::map<std::string, std::string>* charconvs;
     //std::map<std::string, std::string>* patterns;
-    
+
     std::string path;
 
     CompiledDataManager(std::string name,std::vector<IndexDesc*>* conf, std::map<std::string, std::string>* symbs = NULL, std::map<std::string, std::string>* convs = NULL)
@@ -183,7 +183,7 @@ public :
         relMembers= new fidx::FileRawData<GeoMember>((name + "/relMembers").c_str(),false);
         baliseTags = new fidx::FileRawVarData<GeoString>((name + "/baliseTags").c_str(),false);
 
-       
+
 
         textIndexNode =     new fidx::FileIndex<IndexEntry,uint64_t> ((name + "/textIndexNode"    ).c_str(), false);
         textIndexWay =      new fidx::FileIndex<IndexEntry,uint64_t> ((name + "/textIndexWay"     ).c_str(), false);
@@ -216,7 +216,7 @@ public :
     //Relation* loadRelation(uint64_t id);
     Relation* loadRelationFast(uint64_t id);
     Relation* loadRelation(uint64_t id, short recurs = 2, bool fast = false);
-    
+
 
     inline void load(Relation*& r, uint64_t id, bool fast)
     {
@@ -228,7 +228,7 @@ public :
         w = loadWay(id, fast);
     }
 
-    inline void load(Point*& p, uint64_t id, bool fast)
+    inline void load(Point*& p, uint64_t id, [[maybe_unused]] bool fast)
     {
         p =  loadPoint(id);
     }

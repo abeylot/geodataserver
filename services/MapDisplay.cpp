@@ -8,13 +8,13 @@ MapDisplay::~MapDisplay()
 {
 }
 
-Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
+Msg* MapDisplay::processRequest(Msg* request, [[maybe_unused]] CompiledDataManager& mger)
 {
     bool pin = false;
     std::string longitude = "-1.554136";
     std::string latitude = "47.218637";
     std::string zoom = "12";
-    
+
     std::string resp =
         "<!DOCTYPE html>"
         "<html>"
@@ -42,8 +42,8 @@ Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
         "</style>"
         "</head>"
         "<body>"
-        
-        "<div id=\"form\">" 
+
+        "<div id=\"form\">"
         "<form method=\"post\" action=\"/geoloc\" accept-charset=\"utf-8\">"
         "<label>Locate :"
         "<input name=\"name\" >"
@@ -55,10 +55,10 @@ Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
         "<option value=\"xml\">xml</option>"
         "</select>"
         "</form></div>"
-        
-        
+
+
         "<div id=\"map\"></div>"
- 
+
         "<script type=\"text/javascript\">"
         "var map = L.map('map', {zoomControl: false}).setView([#lat#, #lon#], #zoom#);"
         "L.tileLayer('/{z}/{x}/{y}.svg', {"
@@ -66,10 +66,10 @@ Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
         "    maxZoom: 19"
         "}).addTo(map);#pin#"
         "</script>"
-        "</body>" 
+        "</body>"
         "</html>";
-    
-    
+
+
     if (request->getRecord(2)->getNamedValue("lattitude") != "")
     {
         latitude = request->getRecord(2)->getNamedValue("lattitude");
@@ -78,7 +78,7 @@ Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
     {
         latitude = request->getRecord(1)->getNamedValue("lattitude");
     }
-    
+
     if (request->getRecord(2)->getNamedValue("longitude") != "")
     {
         longitude = request->getRecord(2)->getNamedValue("longitude");
@@ -87,7 +87,7 @@ Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
     {
         longitude = request->getRecord(1)->getNamedValue("longitude");
     }
-    
+
     if (request->getRecord(2)->getNamedValue("zoom") != "")
     {
         zoom = request->getRecord(2)->getNamedValue("zoom");
@@ -101,7 +101,7 @@ Msg* MapDisplay::processRequest(Msg* request, CompiledDataManager& mger)
     {
         pin = true;
     }
-    
+
     resp.replace(resp.find("#lon#"),5,longitude);
     resp.replace(resp.find("#lat#"),5,latitude);
     resp.replace(resp.find("#zoom#"),6,zoom);

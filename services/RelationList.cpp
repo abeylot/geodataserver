@@ -3,7 +3,7 @@
 #include "../common/constants.hpp"
 #include <stdlib.h>
 
-Msg* RelationList::processRequest(Msg* request, CompiledDataManager& mger)
+Msg* RelationList::processRequest([[maybe_unused]] Msg* request, CompiledDataManager& mger)
 {
     //GeoBox geoBox;
     // DataManager mger;

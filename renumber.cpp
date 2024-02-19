@@ -52,13 +52,13 @@ struct XmlVisitor
     {
         std::cerr << " done " << (done >> UINT64_C(20)) << "Mio.\t relations " << relid << "\tways " << wayid << "\tnodes " << nodid<< "\n" << std::flush;
     }
-    void startTag(const std::vector<SeqBalise*>& tagStack, SeqBalise* b)
+    void startTag([[maybe_unused]] const std::vector<SeqBalise*>& tagStack, [[maybe_unused]] SeqBalise* b)
     {
     }
-    void stringNode(const std::vector<SeqBalise*>& tagStack, std::string& s)
+    void stringNode([[maybe_unused]] const std::vector<SeqBalise*>& tagStack, [[maybe_unused]] std::string& s)
     {
     }
-    void endTag(const std::vector<SeqBalise*>& tagStack, SeqBalise* b)
+    void endTag([[maybe_unused]] const std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
         if (b->baliseName == BALISENAME_RELATION)
         {
@@ -72,23 +72,23 @@ struct XmlVisitor
             wayIdIndex->append(atoll((b->keyValues["id"]).c_str()), wayid++);
             tags=0;
         }
-        
+
         else if (b->baliseName == BALISENAME_TAG)
         {
 
             tags++;;
         }
-        
+
         else if (b->baliseName == BALISENAME_NODE)
         {
 
             if(tags)
             {
-                nodeIdIndex->append(atoll((b->keyValues["id"]).c_str()),
-                    (GeoPointNumberIndex){ nodid++, Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])});
+                GeoPointNumberIndex pt{ nodid++, Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])};
+                nodeIdIndex->append(atoll((b->keyValues["id"]).c_str()),pt);
             } else {
-                nodeIdIndex->append(atoll((b->keyValues["id"]).c_str()),
-                    (GeoPointNumberIndex){ 0, Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])});
+                GeoPointNumberIndex pt{ 0, Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])};
+                nodeIdIndex->append(atoll((b->keyValues["id"]).c_str()),pt);
             }
             tags = 0;
         }

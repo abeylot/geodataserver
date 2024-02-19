@@ -120,8 +120,8 @@ struct shp_file
 struct ShpVisitor
 {
     std::vector<shp_file> shpFiles;
-    void log(uint64_t done){};
-    void startTag(std::vector<SeqBalise*>& tagStack, SeqBalise* b)
+    void log([[maybe_unused]] uint64_t done){};
+    void startTag([[maybe_unused]] std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
         if (b->baliseName == "shp_file")
         {
@@ -129,11 +129,11 @@ struct ShpVisitor
         }
 
     }
-    void endTag(std::vector<SeqBalise*>& tagStack, SeqBalise* b)
+    void endTag([[maybe_unused]] std::vector<SeqBalise*>& tagStack, [[maybe_unused]] SeqBalise* b)
     {
     }
 
-    void stringNode(const std::vector<SeqBalise*>& tagStack, std::string& s)
+    void stringNode([[maybe_unused]] const std::vector<SeqBalise*>& tagStack,[[maybe_unused]] std::string& s)
     {
     }
 };
@@ -202,7 +202,7 @@ struct XmlVisitor
     uint64_t wayid;
     uint64_t nodid;
 
-    bool isRel = false;;
+    bool isRel = false;
     bool isWay = false;
     bool isNod = false;
 
@@ -266,11 +266,11 @@ struct XmlVisitor
         std::cerr << " done " << (done >> UINT64_C(20)) << "Mio.\t relations " << relationIndex->itemCount << "\tways " << wayIndex->itemCount << "\tnodes " << nodeIndex->itemCount<< "\n" << std::flush;
     }
 
-    void stringNode(const std::vector<SeqBalise*>& tagStack, std::string& s)
+    void stringNode([[maybe_unused]] const std::vector<SeqBalise*>& tagStack, [[maybe_unused]] std::string& s)
     {
     }
 
-    void startTag(const std::vector<SeqBalise*>& tagStack, SeqBalise* b)
+    void startTag([[maybe_unused]] const std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
         if ((b->baliseName == BALISENAME_TAG)&&(isNod || isWay || isRel))
         {
@@ -371,7 +371,7 @@ struct XmlVisitor
         }
     }
 
-    void endTag(const std::vector<SeqBalise*>& tagStack, SeqBalise* b)
+    void endTag([[maybe_unused]] const std::vector<SeqBalise*>& tagStack, SeqBalise* b)
     {
         if (b->baliseName == BALISENAME_TAG)
         {
