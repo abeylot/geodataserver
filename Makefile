@@ -9,8 +9,7 @@ BUILD=build
 #cc=$(CC) -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\"
 
 #headers with no matching .cpp
-headersCommon=CompiledDataManager.hpp \
-common/constants.hpp \
+headersCommon=common/constants.hpp \
 common/GeoTypes.hpp \
 helpers/Sequence.hpp \
 helpers/config.hpp \

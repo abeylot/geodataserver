@@ -1,11 +1,11 @@
-!/bin/bash
+#!/bin/bash
 #This script shall be run in data directory
-set -x 
+set -x
 echo "set environment variable to geodataserver binaries path"
-export GEOBIN="../geodataserver"
+export GEOBIN="../geodataserver/build"
 
 echo "set environment variable to openstreet map file to download"
-export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.bz2 
+export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.bz2
 #below, entire world, test with a smaller file first
 #planet.openstreetmap.org/planet/planet-latest.osm.bz2
 
@@ -16,7 +16,7 @@ export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.b
 if [ ! -d "cache" ]; then
 
     echo "copy config.xml file to data path"
-    cp $GEOBIN/config.xml .
+    cp $GEOBIN/../config.xml .
 
     echo "get coastline data, to be able to draw seas."
     wget osmdata.openstreetmap.de/download/water-polygons-split-4326.zip

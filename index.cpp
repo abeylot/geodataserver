@@ -44,6 +44,13 @@ int main(int argc, char *argv[])
     std::string file = argv[1];
     file += "/config.xml";
     FILE* config = fopen(file.c_str(),"r");
+
+    if(!config)
+    {
+        std::cout << "config.xml file not found, exiting !!!\n";
+        exit(1);
+    }
+
     XmlFileParser<XmlVisitor>::parseXmlFile(config,v);
     fclose(config);
     CompiledDataManager mger(argv[1], &indexes);
