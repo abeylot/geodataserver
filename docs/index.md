@@ -53,6 +53,7 @@ You may change downloaded openstreetmap file in prepare.sh script.
 example data file is pays-de-la-loire-latest.osm.bz2 ( part from france ) which will be fast processed.
 #### Launch tile server :  
 ~~$HOME/geodataserver/geoserver $HOME/geodataserver/data~~
+
     $HOME/geodataserver/build/geoserver $HOME/geodataserver/data
 
 server is listening on port 8081<br/>
