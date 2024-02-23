@@ -9,8 +9,14 @@
 #define BALISENAME_TAG       "tag"
 
 using namespace fidx;
-struct XmlVisitor
+class XmlVisitor
 {
+private:
+
+    XmlVisitor(const XmlVisitor&);
+    XmlVisitor& operator=(const XmlVisitor&);
+
+public:
     uint64_t relid;
     uint64_t wayid;
     uint64_t nodid;
@@ -20,16 +26,15 @@ struct XmlVisitor
     FileIndex<uint64_t, uint64_t> *wayIdIndex;
     FileIndex<GeoPointNumberIndex, uint64_t> *nodeIdIndex;
 
-    XmlVisitor(std::string rep)
+    explicit XmlVisitor(const std::string& rep)
     {
-        rep += "/";
         relid = 0;
         wayid = 0;
         nodid = 0;
         tags = 0;
-        relationIdIndex = new FileIndex<uint64_t,uint64_t>((rep + "relationIdIndex") .c_str(), true);
-        wayIdIndex      = new FileIndex<uint64_t,uint64_t>((rep +"wayIdIndex").c_str(), true);
-        nodeIdIndex     = new FileIndex<GeoPointNumberIndex, uint64_t>((rep + "nodeIdIndex").c_str(), true);
+        relationIdIndex = new FileIndex<uint64_t,uint64_t>((rep + "/relationIdIndex") .c_str(), true);
+        wayIdIndex      = new FileIndex<uint64_t,uint64_t>((rep +"/wayIdIndex").c_str(), true);
+        nodeIdIndex     = new FileIndex<GeoPointNumberIndex, uint64_t>((rep + "/nodeIdIndex").c_str(), true);
     }
 
     ~XmlVisitor()

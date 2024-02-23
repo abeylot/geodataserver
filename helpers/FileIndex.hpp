@@ -25,7 +25,7 @@ struct GeoFile
 {
     int fh = -1;
     std::string name;
-    void open(std::string fname, bool create)
+    void open(const std::string& fname, bool create)
     {
         name = fname;
         if(create)
@@ -33,6 +33,11 @@ struct GeoFile
             fh = open64(name.c_str(),O_CREAT|O_TRUNC|O_RDWR, S_IWUSR | S_IREAD);
         } else {
             fh = open64(name.c_str(),O_RDONLY);
+            if(!fh)
+            {
+                std::cout << name << " not found !"<< "\n";
+                exit(1);
+            }
             posix_fadvise(fh, 0, 0, POSIX_FADV_RANDOM | POSIX_FADV_NOREUSE);
         }
         if (fh < 0)
@@ -40,9 +45,9 @@ struct GeoFile
             throw std::runtime_error("Unable to open file : " + name);
         }
     }
-    
+
     virtual ~GeoFile(){if(fh >=0) close(fh);}
-    
+
     void owrite(char* buffer, uint64_t offset, uint64_t length)
     {
         uint64_t got = 0;
@@ -54,7 +59,7 @@ struct GeoFile
                 throw std::runtime_error("Unable to write file : " + name);
             } else {
                 length -= count;
-                got += count; 
+                got += count;
             }
         }
     }
@@ -70,11 +75,11 @@ struct GeoFile
                 throw std::runtime_error("Unable to read file : " + name);
             } else {
                 length -= count;
-                got += count; 
+                got += count;
             }
         }
     }
-    
+
     void append(char* buffer, uint64_t length)
     {
         int64_t len = lseek64(fh, 0, SEEK_END);
@@ -82,7 +87,7 @@ struct GeoFile
         {
             throw std::runtime_error("Unable to seek file : " + name);
         }
-        
+
         uint64_t got = 0;
         while(length)
         {
@@ -92,11 +97,11 @@ struct GeoFile
                  throw std::runtime_error("Unable to write file : " + name);
             } else {
                 length -= count;
-                got += count; 
+                got += count;
             }
         }
     }
-    
+
     uint64_t length()
     {
         int64_t len = lseek64(fh, 0, SEEK_END);
@@ -104,16 +109,16 @@ struct GeoFile
         {
             throw std::runtime_error("Unable to seek file : " + name);
         }
-        
+
         return len;
     }
-};  
+};
 #else
 struct GeoFile
 {
     FILE* fh = -1;
     std::string name;
-    void open(std::string fname, bool create)
+    void open(const std::string& fname, bool create)
     {
         name = fname;
         if(create)
@@ -128,9 +133,9 @@ struct GeoFile
             throw std::runtime_error("Unable to open file : " + name);
         }
     }
-    
+
     virtual ~GeoFile(){if(fh !=0) close(fh);}
-    
+
     void owrite(char* buffer, uint64_t offset, uint64_t length)
     {
         uint64_t got = 0;
@@ -146,7 +151,7 @@ struct GeoFile
                 throw std::runtime_error("Unable to write file : " + name);
             } else {
                 length -= count;
-                got += count; 
+                got += count;
             }
         }
     }
@@ -166,11 +171,11 @@ struct GeoFile
                    throw std::runtime_error("Unable to read file : " + name);
             } else {
                 length -= count;
-                got += count; 
+                got += count;
             }
         }
     }
-    
+
     void append(char* buffer, uint64_t length)
     {
         uint64_t got = 0;
@@ -186,21 +191,21 @@ struct GeoFile
                 throw std::runtime_error("Unable to write file : " + name);
             } else {
                 length -= count;
-                got += count; 
+                got += count;
             }
         }
     }
-    
+
     uint64_t length()
     {
         if(fseeko(fh, 0, SEEK_END))
         {
             throw std::runtime_error("Unable to seek file : " + name);
         }
-        
+
         return ftello(fh);
     }
-};  
+};
 #endif
 
 // IMPORTANT KEY et ITEM doivent être des types 'triviaux'
@@ -218,7 +223,7 @@ namespace fidx
         {
             size_t utf_8_len = 1;
             if((value_[i] & 0b11110000) ==  0b11110000)     utf_8_len = 4;
-            else if ((value_[i] & 0b11110000) ==  0b11100000) utf_8_len = 3; 
+            else if ((value_[i] & 0b11110000) ==  0b11100000) utf_8_len = 3;
             else if ((value_[i] & 0b11110000) ==  0b11000000) utf_8_len = 2;
             std::string in = "";
             for(unsigned int j = i; (j < (utf_8_len + i)) && j < value_size_ ; j++)
@@ -233,7 +238,7 @@ namespace fidx
                  out = it->second;
             }
             for(size_t k = 0; k < out.length();k++)    value[value_size++] = tolower(out[k]);
-        } 
+        }
         uint64_t key = 0;
         /*if(value_size > 0) { key += tolower(value[0]);}
         key <<= 3;
@@ -250,23 +255,23 @@ namespace fidx
         if(value_size > 6) { key += tolower(value[6]);}
         key <<= 3;
         if(value_size > 7) { key += tolower(value[7]);}*/
-        char* key_c = (char*) &key; 
+        char* key_c = (char*) &key;
         for(unsigned int i = 0; i < value_size; i++)
         {
-            key_c[i%8] = key_c[i%8] ^ value[i]; 
+            key_c[i%8] = key_c[i%8] ^ value[i];
         }
         return key;
    }
 
-    
+
  /**
   * @brief Record for index file.
-  * 
+  *
   * @tparam ITEM item to store.
   * @tparam KEY  key of index.
   */
 
-template <class ITEM,class KEY> struct Record 
+template <class ITEM,class KEY> struct Record
 {
     KEY key;
     ITEM value;
@@ -275,13 +280,13 @@ template <class ITEM,class KEY> struct Record
 // fonction de comparaison
 // à spécialiser si l'opérateur de comparaison n'est pas disponible
 /**
- * @brief 
- * 
- * @tparam ITEM 
- * @tparam KEY 
- * @param a 
- * @param b 
- * @return int comparison result as memcmp. 
+ * @brief
+ *
+ * @tparam ITEM
+ * @tparam KEY
+ * @param a
+ * @param b
+ * @return int comparison result as memcmp.
  */
 template <class ITEM, class KEY> int fileIndexComp(const void* a, const void* b)
 {
@@ -294,9 +299,9 @@ template <class ITEM, class KEY> int fileIndexComp(const void* a, const void* b)
 
 /**
  * @brief File index descriptor.
- * 
- * @tparam ITEM 
- * @tparam KEY 
+ *
+ * @tparam ITEM
+ * @tparam KEY
  */
 template<class ITEM, class KEY> class FileIndex
 {
@@ -313,20 +318,22 @@ template<class ITEM, class KEY> class FileIndex
     //std::unordered_map<uint64_t, Record<ITEM, KEY>> cache;
     std::unordered_map<uint64_t, KEY> cacheKey;
     std::mutex cache_mutex;
+    FileIndex(const FileIndex&);
+    FileIndex& operator = (const FileIndex&);
 public:
     uint64_t fileSize;
     GeoFile itemFile;
     GeoFile keyFile;
-    
+
     bool isSorted(){return sorted;}
-    
+
     /**
      * @brief Construct a new File Index object.
-     * 
+     *
      * @param filename_  name of the fiile.
      * @param replace    true if file shall be created.
      */
-    FileIndex(std::string filename_, bool replace) : filename(filename_)
+    FileIndex(const std::string& filename_, bool replace) : filename(filename_)
     {
 
         itemFile.open(filename, replace);
@@ -334,7 +341,7 @@ public:
 
         itemBuffer = NULL;
         keyBuffer  = NULL;
-        
+
         if (replace)
         {
             itemBuffer = new ITEM[FILEINDEX_RAWFLUSHSIZE];
@@ -350,7 +357,7 @@ public:
 
     /**
      * @brief Destroy the File Index object
-     * 
+     *
      */
     virtual ~FileIndex()
     {
@@ -360,11 +367,11 @@ public:
 
 /**
  * @brief append item to index.
- * 
- * @param key 
- * @param item 
+ *
+ * @param key
+ * @param item
  */
-    void append(KEY key, ITEM item)
+    void append(const KEY& key, const ITEM& item)
     {
         //Record<ITEM,KEY> record;
         //record.key = key;
@@ -373,7 +380,7 @@ public:
         itemBuffer[bufferCount] = item;
         keyBuffer[bufferCount] = key;
         bufferCount ++;
-  
+
         if (bufferCount == FILEINDEX_RAWFLUSHSIZE)
         {
             flush();
@@ -385,7 +392,7 @@ public:
 
 /**
  * @brief flush index file to disk.
- * 
+ *
  */
     void flush()
     {
@@ -396,9 +403,9 @@ public:
     }
 /**
  * @brief swap items in index
- * 
+ *
  * @param item1
- * @param item2 
+ * @param item2
  */
     void swap(uint64_t n1, uint64_t n2)
     {
@@ -419,7 +426,7 @@ public:
 
     /**
      * @brief sort index
-     * 
+     *
      */
 
     void sort()
@@ -430,21 +437,21 @@ public:
         if(res == 0)
         {
             max_mem = (((unsigned long) info.freeram) * (( unsigned long) info.mem_unit)) / 2;
-        } 
+        }
 
         std::cerr << "ram :" << (((unsigned long) info.freeram) * (( unsigned long) info.mem_unit)) / (1048 * 1048) << "mb, sorting  " << fileSize << " elements \n";
         if(!fileSize) return;
         sortedSize = 0;
-        
+
         uint64_t buffer_size = (fileSize + 3) / 3;
-        
+
         uint64_t max_bsize = max_mem / ((sizeof(ITEM) + sizeof(KEY))*3);
         if(buffer_size > max_bsize) buffer_size = max_bsize;
-        
+
         ITEM* item_sort_buffer = NULL;
         KEY*  key_sort_buffer = NULL;
 
-        bool resized = false;     
+        bool resized = false;
         while(item_sort_buffer == NULL || key_sort_buffer == NULL)
         {
             try
@@ -530,22 +537,22 @@ public:
             ipivot = begin + lessers;
             swapKey(key_sort_buffer + ipivot, key_sort_buffer + begin);
             swapItem(item_sort_buffer + ipivot, item_sort_buffer + begin);
-            
-            if((ipivot + 1)< end) memsort(ipivot + 1, end, key_sort_buffer, item_sort_buffer); 
-            if(ipivot > (begin + 1)) memsort(begin, ipivot - 1, key_sort_buffer, item_sort_buffer); 
+
+            if((ipivot + 1)< end) memsort(ipivot + 1, end, key_sort_buffer, item_sort_buffer);
+            if(ipivot > (begin + 1)) memsort(begin, ipivot - 1, key_sort_buffer, item_sort_buffer);
         }
     }
 
 
     /**
      * @brief sort index part.
-     * 
-     * @param begin 
-     * @param end 
-     * @param sort_buffer 
-     * @param buffer_size 
+     *
+     * @param begin
+     * @param end
+     * @param sort_buffer
+     * @param buffer_size
      */
-      
+
     void sort(uint64_t begin, uint64_t end, KEY* key_sort_buffer, ITEM* item_sort_buffer, uint64_t buffer_size)
     {
         std::cerr << "sort " << begin <<" "<< end <<"\n";
@@ -557,10 +564,10 @@ public:
             itemFile.oread((char*)item_sort_buffer, begin * itemSize, itemSize * count);
             keyFile.oread((char*)key_sort_buffer, begin * keySize, keySize * count);
             std::cout << "sort data \n";
-            
+
             //std::qsort(&sort_buffer[0], count, recSize,fileIndexComp<ITEM,KEY>);
             memsort(0, count - 1, key_sort_buffer, item_sort_buffer);
-            
+
             std::cout << "write data \n";
             keyFile.owrite((char*)key_sort_buffer, begin * keySize, keySize * count );
             itemFile.owrite((char*)item_sort_buffer, begin * itemSize, itemSize * count );
@@ -581,7 +588,7 @@ public:
         KEY* key_plusPetits = key_sort_buffer;
         KEY* key_plusGrands = key_sort_buffer + buffer_size;
         KEY* key_autres = key_sort_buffer + 2ULL*buffer_size;
-        
+
         KEY curKey;
         ITEM curItem;
 
@@ -637,7 +644,7 @@ public:
                         key_plusGrands[plusGrandsBufferCount] = key_autres[autresBufferCount];
                         item_plusGrands[plusGrandsBufferCount] = item_autres[autresBufferCount];
                         plusGrandsBufferCount ++;
-                    } 
+                    }
                 }
             }
             //std::cout << "divided items \n";
@@ -683,7 +690,7 @@ public:
                     //std:: cout << "write smallers \n";
                     itemFile.owrite((char*)item_plusPetits, (begin + plusPetitsCount) * itemSize, itemSize * plusPetitsBufferCount);
                     keyFile.owrite((char*)key_plusPetits, (begin + plusPetitsCount) * keySize, keySize * plusPetitsBufferCount);
- 
+
                     plusPetitsCount += plusPetitsBufferCount;
                     //std:: cout << "write cached \n";
                     itemFile.owrite((char*)item_autres, (end - (plusGrandsCount + plusPetitsBufferCount)) * itemSize, itemSize * plusPetitsBufferCount);
@@ -701,7 +708,7 @@ public:
         {
             get(end - (plusGrandsCount - 1), &tmp);
             if (tmp.key == pivot.key)
-            {    
+            {
                 plusGrandsCount --;
                 sortedSize ++;
             }
@@ -711,7 +718,7 @@ public:
         {
             get(begin + plusPetitsCount - 1, &tmp);
             if (tmp.key == pivot.key)
-            {    
+            {
                 plusPetitsCount --;
                 sortedSize ++;
             }
@@ -726,11 +733,11 @@ public:
 
 /**
  * @brief Get And Cache object
- * 
- * @param pos 
- * @param result 
- * @return true 
- * @return false 
+ *
+ * @param pos
+ * @param result
+ * @return true
+ * @return false
  */
     /*bool  getAndCache_deprecated(uint64_t pos, Record<ITEM,KEY>* result)
     {
@@ -774,11 +781,11 @@ public:
 
 /**
  * @brief get object from index.
- * 
- * @param pos 
- * @param result 
- * @return true 
- * @return false 
+ *
+ * @param pos
+ * @param result
+ * @return true
+ * @return false
  */
 
     inline bool  getItem(uint64_t pos, ITEM* result )
@@ -820,8 +827,8 @@ public:
 
 /**
  * @brief get index size.
- * 
- * @return uint64_t 
+ *
+ * @return uint64_t
  */
     uint64_t getSize()
     {
@@ -830,11 +837,11 @@ public:
 
 /**
  * @brief search key in index.
- * 
- * @param key 
- * @param result 
- * @return true 
- * @return false 
+ *
+ * @param key
+ * @param result
+ * @return true
+ * @return false
  */
     bool find(KEY key, ITEM* result)
     {
@@ -863,7 +870,7 @@ public:
         {
             return false;
         }
-        
+
 
         while((iMax - iMin) > 1)
         {
@@ -889,12 +896,12 @@ public:
     };
 
     /**
-     * @brief find last index id lesser than key. 
-     * 
-     * @param key 
-     * @param iMin 
-     * @return true 
-     * @return false 
+     * @brief find last index id lesser than key.
+     *
+     * @param key
+     * @param iMin
+     * @return true
+     * @return false
      */
 
     bool findLastLesser(KEY key, uint64_t& iMin)
@@ -937,8 +944,8 @@ public:
 
 /**
  * @brief index without key (key is record number).
- * 
- * @tparam ITEM 
+ *
+ * @tparam ITEM
  */
 template<class ITEM> class FileRawIndex
 {
@@ -949,13 +956,15 @@ private:
     unsigned long bufferCount;
     uint64_t recSize;
     uint64_t fileSize;
+    FileRawIndex(const FileRawIndex&);
+    FileRawIndex& operator = (const FileRawIndex&);
 public:
     uint64_t itemCount;
     /**
      * @brief Construct a new FileRawIndex object
-     * 
-     * @param filename 
-     * @param replace 
+     *
+     * @param filename
+     * @param replace
      */
     FileRawIndex(std::string filename, bool replace) : filename(filename)
     {
@@ -971,7 +980,7 @@ public:
     }
     /**
      * @brief Destroy the File Raw Index object
-     * 
+     *
      */
     virtual ~FileRawIndex()
     {
@@ -979,10 +988,10 @@ public:
     }
 /**
  * @brief append record.
- * 
- * @param record 
+ *
+ * @param record
  */
-    void append(ITEM record)
+    void append(const ITEM& record)
     {
         buffer[bufferCount] = record;
         bufferCount ++;
@@ -995,7 +1004,7 @@ public:
     }
 /**
  * @brief flush index file.
- * 
+ *
  */
     void flush()
     {
@@ -1023,11 +1032,14 @@ public:
 
 /**
  * @brief file index for variable count of records data
- * 
- * @tparam ITEM 
+ *
+ * @tparam ITEM
  */
 template<class ITEM> class FileRawData
 {
+private:
+    FileRawData(const FileRawData&);
+    FileRawData& operator = (const FileRawData&);
 public:
     uint64_t startPos;
     GeoFile pFile;
@@ -1040,9 +1052,9 @@ public:
 public:
 /**
  * @brief Construct a new File Raw Data object
- * 
- * @param filename 
- * @param replace 
+ *
+ * @param filename
+ * @param replace
  */
     FileRawData(std::string filename, bool replace)
     {
@@ -1065,21 +1077,21 @@ public:
     }
 /**
  * @brief Get data.
- * 
- * @param start 
- * @param count 
- * @return ITEM* 
+ *
+ * @param start
+ * @param count
+ * @return ITEM*
  */
     ITEM* getData(uint64_t start, uint64_t count)
     {
         if(count == 0) return NULL;
-        ITEM* result = (ITEM*) malloc(sizeof(ITEM)*count);
+        ITEM* result = reinterpret_cast<ITEM*>(malloc(sizeof(ITEM)*count));
         pFile.oread((char*)result, start * recSize, recSize * count);
         return result;
     }
 /**
  * @brief start of batch.
- * 
+ *
  */
     void startBatch()
     {
@@ -1088,8 +1100,8 @@ public:
 
     /**
      * @brief append item
-     * 
-     * @param record 
+     *
+     * @param record
      */
 
     void append(ITEM record)
@@ -1104,7 +1116,7 @@ public:
     }
 /**
  * @brief flush to file.
- * 
+ *
  */
     void flush()
     {
@@ -1114,9 +1126,9 @@ public:
     }
 /**
  * @brief revert buffer.
- * 
- * @param buf 
- * @param size 
+ *
+ * @param buf
+ * @param size
  */
     static void revert(ITEM* buf, unsigned int size)
     {
@@ -1134,11 +1146,14 @@ public:
 
 /**
  * @brief storage for variable length records.
- * 
- * @tparam ITEM 
+ *
+ * @tparam ITEM
  */
 template<class ITEM> class FileRawVarData
 {
+private:
+    FileRawVarData(const FileRawVarData&);
+    FileRawVarData& operator = (const FileRawVarData&);
 public:
     uint64_t startPos;
     GeoFile pFile;
@@ -1149,22 +1164,22 @@ public:
 public:
 /**
  * @brief Construct a new File Raw Var Data object
- * 
- * @param filename 
- * @param replace 
+ *
+ * @param filename
+ * @param replace
  */
     FileRawVarData(std::string filename, bool replace)
     {
         if(replace) buffer = new char[FILEINDEX_RAWFLUSHSIZE];
         else buffer = NULL;
-        
+
         pFile.open(filename, replace);
         bufferCount = 0;
         itemCount = 0;
         startCount = 0;
         startPos = 0;
     }
-    
+
     virtual ~FileRawVarData()
     {
         if(buffer != NULL) delete[] buffer;
@@ -1172,10 +1187,10 @@ public:
 
 /**
  * @brief Get the Data object
- * 
- * @param start 
- * @param count 
- * @return char* 
+ *
+ * @param start
+ * @param count
+ * @return char*
  */
     char* getData(uint64_t start, uint64_t count)
     {
@@ -1186,7 +1201,7 @@ public:
     }
 /**
  * @brief start batch.
- * 
+ *
  */
     void startBatch()
     {
@@ -1194,8 +1209,8 @@ public:
     }
 /**
  * @brief append item.
- * 
- * @param record 
+ *
+ * @param record
  */
     void append(ITEM& record)
     {
@@ -1217,7 +1232,7 @@ public:
     }
 /**
  * @brief flush file
- * 
+ *
  */
     void flush()
     {

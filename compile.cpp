@@ -196,11 +196,13 @@ uint32_t getUnsignedInteger32(unsigned char* c, bool isBigEndian)
 }
 
 
-struct XmlVisitor
+class XmlVisitor
 {
-    uint64_t relid;
-    uint64_t wayid;
-    uint64_t nodid;
+private:
+
+    uint64_t relid{0};
+    uint64_t wayid{0};
+    uint64_t nodid{0};
 
     bool isRel = false;
     bool isWay = false;
@@ -218,9 +220,15 @@ struct XmlVisitor
     FileIndex<uint64_t, uint64_t> *relationIdIndex;
     FileIndex<uint64_t, uint64_t> *wayIdIndex;
     FileIndex<GeoPointNumberIndex, uint64_t> *nodeIdIndex;
-    BaliseType curBalise;
+    BaliseType curBalise{unknown};
 
-    XmlVisitor(std::string rep)
+    XmlVisitor(const XmlVisitor&);
+    XmlVisitor& operator=(const XmlVisitor&);
+
+
+public:
+
+    explicit XmlVisitor(const std::string& rep)
     {
 
         relationIdIndex = new FileIndex<uint64_t,uint64_t>(rep + "/relationIdIndex", false);
@@ -315,7 +323,6 @@ struct XmlVisitor
             if(b->keyValues["type"] == "node")
             {
                 m.type = point;
-                uint64_t ref = atoll(b->keyValues["ref"].c_str());
                 GeoPointNumberIndex recp;
                 bool res = nodeIdIndex->find(ref, &recp);
                 if(res)
@@ -448,7 +455,7 @@ struct XmlVisitor
         }
     }
 
-    void addShape(std::string filename, std::string tag, std::string value, std::string projection)
+    void addShape(const std::string& filename, const std::string& tag, const std::string& value, const std::string& projection)
     {
     std::string filename_shp = filename+".shp";
     std::string filename_dbf = filename+".dbf";
@@ -467,24 +474,25 @@ struct XmlVisitor
     }
 
 
-    unsigned char header[100], recordheader[8];
-    uint64_t len = fread(header,100,1,shp);
-
 
     dbf_header dbfheader;
     if(dbfheader.read(dbf) != 0) std::cerr << "error while reading dbf file !\n";;
 
 
 
+    unsigned char header[100];
+    uint64_t len = fread(header,100,1,shp);
+
     if(len > 0)
     {
+        unsigned char recordheader[8];
         while(fread(recordheader, 8, 1, shp) > 0)
         {
             uint32_t recordnumber = getUnsignedInteger32(recordheader, true);
             uint32_t recordlength = getUnsignedInteger32(recordheader + 4, true);
             if((recordnumber & 0xFF) == 0) std::cout << "record n° : " <<  recordnumber << "\n";
             unsigned char* recordcontent = (unsigned char*) malloc(recordlength*2);
-            uint64_t len = fread(recordcontent,2, recordlength, shp);
+            len = fread(recordcontent,2, recordlength, shp);
             if(len == 0) std::cerr << "read error !\n";
             uint64_t shapetype = getUnsignedInteger32(recordcontent, false);
 
@@ -631,10 +639,10 @@ int main(int argc, char *argv[])
         exit(1);
     }
     XmlFileParser<ShpVisitor>::parseXmlFile(f,v2);
-    for(shp_file f : v2.shpFiles)
+    for(shp_file g : v2.shpFiles)
     {
-        std::cout << "load shp file : " << rep + "/" + f.name << " with tag : " << f.tag << " value : " << f.value << "\n";
-        v->addShape(rep + "/" + f.name, f.tag, f.value, f.projection);
+        std::cout << "load shp file : " << rep + "/" + g.name << " with tag : " << g.tag << " value : " << g.value << "\n";
+        v->addShape(rep + "/" + g.name, g.tag, g.value, g.projection);
     }
     fclose(f);
     delete v;

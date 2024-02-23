@@ -41,7 +41,7 @@ public:
 
     void append(const char a)
     {
-
+        static_assert(N > 1);
         memmove(c,&c[1],(N-1));
         c[N-1] = a;
 

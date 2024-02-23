@@ -152,13 +152,12 @@ private:
 template<typename MSG> struct Exec
 {
     HttpProtocol p;
-    HttpEncoder encoder;
     std::vector<IndexDesc*>* idxList;
     std::map<std::string, std::string>* symbols;
     std::map<std::string, std::string>* charconvs;
     //std::map<std::string, std::string>* patterns;
     Exec(NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* inqueue,NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* outqueue,
-         std::string file,
+         const std::string& file,
          uint microSleep,std::vector<IndexDesc*>* idxL,
          std::map<std::string, std::string>* symbs,
          std::map<std::string, std::string>* convs,
@@ -256,6 +255,11 @@ int main(int argc, char *argv[])
 
 
     FILE* config = fopen((std::string(argv[1]) + "/config.xml").c_str(),"r");
+    if(!config)
+    {
+        std::cout << std::string(argv[1]) + "/config.xml" << " not found !\n";
+        exit(1);
+    }
     XmlFileParser<ParmsXmlVisitor>::parseXmlFile(config,params);
     fclose(config);
 

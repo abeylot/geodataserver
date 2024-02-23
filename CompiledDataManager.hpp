@@ -90,7 +90,7 @@ struct Line
     bool closed;
     bool mergePoints(GeoPoint* points, uint64_t pointsCount);
     void crop (Rectangle& r);
-    Line(){closed = false;};
+    Line():points(nullptr),pointsCount(0),closed(false){};
     virtual ~Line()
     {
         free(points);
@@ -143,6 +143,9 @@ struct Relation
 
 class CompiledDataManager
 {
+private:
+    CompiledDataManager(const CompiledDataManager&);
+    CompiledDataManager& operator= (CompiledDataManager&);
 public :
     fidx::FileRawData<GeoPoint>*  wayPoints;
     fidx::FileRawData<GeoMember>* relMembers;
@@ -168,9 +171,8 @@ public :
 
     std::string path;
 
-    CompiledDataManager(std::string name,std::vector<IndexDesc*>* conf, std::map<std::string, std::string>* symbs = NULL, std::map<std::string, std::string>* convs = NULL)
+    CompiledDataManager(const std::string& name,std::vector<IndexDesc*>* conf,std::map<std::string, std::string>* symbs = NULL, std::map<std::string, std::string>* convs = NULL):path(name)
     {
-        path=name;
         indexes = conf;
         symbols = symbs;
         charconvs = convs;

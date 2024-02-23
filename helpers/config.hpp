@@ -45,7 +45,7 @@ struct CssClass
         }
         return result;
     }
-    std::string makeClass(std::string clName, double ppm)
+    std::string makeClass(const std::string& clName, double ppm)
     {
         std::string result = "";
         //std::string result = "/*" + tagValue + "*/\n";
@@ -137,13 +137,13 @@ struct ParmsXmlVisitor
     {
     }
 
-    long long getNumParam(std::string key, long long defaultValue)
+    long long getNumParam(const std::string& key, long long defaultValue)
     {
         if(parameters.count(key)) return atoll(parameters[key].c_str());
         else return defaultValue;
     }
 
-    long long getNumParam(std::string key)
+    long long getNumParam(const std::string& key)
     {
         return getNumParam(key, 0);
     }
@@ -154,7 +154,7 @@ struct ParmsXmlVisitor
         else return defaultValue;
     }
 
-    std::string getParam(std::string key)
+    std::string getParam(const std::string& key)
     {
         return getParam(key, "");
     }
@@ -181,7 +181,7 @@ struct XmlVisitor
 //    std::string patternStr="";
 
 
-    XmlVisitor(std::vector<IndexDesc*>& indexList, bool create, std::string rt):root(rt), symbolId(""),symbolStr("")
+    XmlVisitor(std::vector<IndexDesc*>& indexList, bool create,const std::string& rt):root(rt), symbolId(""),symbolStr("")
     {
         idxList = &indexList;
         ccre = create;
