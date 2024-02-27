@@ -17,7 +17,7 @@
 #include "helpers/ExtThread.hpp"
 
 #define MAX_PENDING_REQUESTS 100
-
+using namespace std::literals;
 /**************************************************************************************************************************/
 /**************************************************************************************************************************/
 /**************************************************************************************************************************/
@@ -100,7 +100,7 @@ template<typename MSG> struct Reader
                     }
                 }
             }
-            usleep(10000);
+            std::this_thread::sleep_for(10ms);
         }
         std::cout << "Reader end \n";
         return 0;
@@ -139,7 +139,7 @@ template<typename MSG> struct Writer
                     std::cerr << e.what() << "\n";
                 }
             }
-            usleep(10000);
+            std::this_thread::sleep_for(10ms);
         }
         std::cout << "Writer end\n";
         return 0;
@@ -218,7 +218,7 @@ template<typename MSG> struct Exec
                     std::cerr << e.what() << "\n";
                 }
             }
-            usleep(microSleep);
+            std::this_thread::sleep_for(microSleep * 1000ns);
         }
         std::cout << "Exec end\n";
         return 0;
@@ -318,7 +318,7 @@ int main(int argc, char *argv[])
     std::signal(SIGINT,sig_handler);
     while(!sigstop)
     {
-        usleep(1000);
+       std::this_thread::sleep_for(100ms);
     }
 
     ExtThreads::request_all_to_stop();

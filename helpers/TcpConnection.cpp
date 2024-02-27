@@ -15,7 +15,8 @@
 #include <errno.h>
 #include <unistd.h>
 #include <iostream>
-
+#include <thread>
+using namespace std::literals;
 int64_t TcpConnection::read( char* buffer, uint64_t length )
 {
     int iLen = 0;
@@ -28,7 +29,7 @@ int64_t TcpConnection::read( char* buffer, uint64_t length )
             if(iLen <= 0)
             {
                 errorcount++;
-                usleep(10000);
+                std::this_thread::sleep_for(10ms);
                 std::cout << strerror(errno) << " a read error occured \n";
                 //_IsAlive = false;
                 _LastError = strerror(errno);
@@ -58,7 +59,7 @@ int64_t TcpConnection::write( const char* buff, uint64_t length )
         if(i < 0)
         {
             errorcount++;
-            usleep(10000);
+            std::this_thread::sleep_for(10ms);
             std::cout << strerror(errno) << " a write error occured \n";
             _LastError = strerror(errno);
         }
