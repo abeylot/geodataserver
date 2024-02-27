@@ -21,6 +21,9 @@ public :
     uint64_t* cellsCounter;
     int cellsCount;
     uint64_t itemCount, collisions;
+    private:
+    THashIntegerTable operator =(const THashIntegerTable&);
+    THashIntegerTable(const THashIntegerTable&);
 };
 
 }

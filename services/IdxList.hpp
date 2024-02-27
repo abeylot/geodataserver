@@ -9,6 +9,6 @@ class IdxList : public ServiceInterface
 private:
     HttpEncoder encoder;
 public:
-    Msg* processRequest(Msg* request, CompiledDataManager& mger);
+    Msg* processRequest(Msg* request, CompiledDataManager& mger) override;
 };
 #endif

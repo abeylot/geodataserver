@@ -307,7 +307,7 @@ template<class ITEM, class KEY> class FileIndex
 {
     private:
     bool sorted;
-    KEY last_inserted;
+    KEY last_inserted{};
     std::string filename;
     ITEM* itemBuffer;
     KEY*  keyBuffer;

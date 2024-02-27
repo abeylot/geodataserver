@@ -326,7 +326,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
 }
 
 
-std::string SvgRenderer::renderItems(Rectangle rect, uint32_t sizex, uint32_t sizey, std::string tag)
+std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint32_t sizey, const std::string& tag)
 {
     cssClasses.clear();
     size_x = sizex;
@@ -880,10 +880,10 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 int64_t yyy = myWay.rect.y0/2 + myWay.rect.y1/2;
 
                 lbl.zindex = cl.textZIndex;
-                int32_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-                int32_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-                lbl.pos_x = x;
-                lbl.pos_y = y;
+                int32_t xi = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+                int32_t yi = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+                lbl.pos_x = xi;
+                lbl.pos_y = yi;
                 lbl.style = cl.rank;
                 lbl.text = name;
                 lbl.angle = 0;

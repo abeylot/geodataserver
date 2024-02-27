@@ -10,6 +10,6 @@
 class Svg : public ServiceInterface
 {
 public:
-    Msg* processRequest(Msg* request, CompiledDataManager& mger);
+    Msg* processRequest(Msg* request, CompiledDataManager& mger) override;
 };
 #endif

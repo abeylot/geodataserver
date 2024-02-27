@@ -10,7 +10,7 @@ class StringBuffer
 {
 
 private:
-    char buff_[CONCATENATOR_LENGTH];
+    char buff_[CONCATENATOR_LENGTH]{};
     size_t bytesLeft_;
     std::string* pOut_;
 

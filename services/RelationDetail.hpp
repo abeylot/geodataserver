@@ -13,6 +13,6 @@ private:
     HttpEncoder encoder;
     std::string printRelation(Relation& r);
 public:
-    Msg* processRequest(Msg* request, CompiledDataManager& mger);
+    Msg* processRequest(Msg* request, CompiledDataManager& mger) override;
 };
 #endif

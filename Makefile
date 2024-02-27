@@ -8,7 +8,7 @@ BUILD=build
 
 #cc=$(CC) -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\"
 
-#headers with no matching .cpp
+#headers
 headersCommon=common/constants.hpp \
 common/GeoTypes.hpp \
 helpers/Sequence.hpp \
@@ -16,7 +16,12 @@ helpers/config.hpp \
 helpers/FileIndex.hpp \
 helpers/ExtThread.hpp \
 helpers/NonGrowableQueue.hpp\
-services/ServiceInterface.hpp
+services/ServiceInterface.hpp\
+helpers/Rectangle.hpp \
+helpers/hash.hpp \
+helpers/Sequence.hpp \
+Coordinates.hpp \
+GeoBox.hpp
 
 #objects used by all executables
 objectsCommon = $(BUILD)/GeoBox.o \
@@ -53,7 +58,7 @@ all: $(BUILD) $(BUILD)/renumber $(BUILD)/compile $(BUILD)/index $(BUILD)/geoserv
 $(objectsCommon): $(BUILD)/%.o: %.cpp %.hpp $(headersCommon)
 	$(cc) -c $<  -o $@
 
-$(objectsServer): $(BUILD)/%.o: %.cpp %.hpp $(headersCommon)
+$(objectsServer): $(BUILD)/%.o: %.cpp %.hpp $(headersCommon) messaging/HttpEncoder.hpp messaging/Msg.hpp services/renderers/SvgRenderer.hpp
 	$(cc) -c $<  -o $@
 
 

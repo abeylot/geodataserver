@@ -15,7 +15,7 @@ struct Tags
 {
     char* data;
     uint64_t data_size;
-    std::string operator [](const char* my_tag)
+    std::string operator [](const char* my_tag) const
     {
         if(data == NULL) return "";
         uint64_t used = 0;

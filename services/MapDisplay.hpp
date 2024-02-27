@@ -9,12 +9,12 @@
 class MapDisplay : public ServiceInterface
 {
 private:
-    HttpEncoder encoder;    
-    
+    HttpEncoder encoder;
+
 public:
     MapDisplay();
     ~MapDisplay();
-    Msg* processRequest(Msg* request, CompiledDataManager& mger);
+    Msg* processRequest(Msg* request, CompiledDataManager& mger) override;
 
 };
 

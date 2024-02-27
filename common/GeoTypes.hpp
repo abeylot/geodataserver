@@ -97,7 +97,7 @@ struct __attribute__((packed)) GeoMember
  */
 struct __attribute__((packed)) GeoString
 {
-    char _buffer[256];
+    char _buffer[256]{};
     unsigned char _length;
 
     GeoString & operator=(const std::string &s)

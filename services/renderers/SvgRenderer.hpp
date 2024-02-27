@@ -49,7 +49,7 @@ private:
     uint32_t size_x, size_y;
     uint32_t zmMask;
     hh::THashIntegerTable relationHash, wayHash, nodeHash;
-    short indexId;   
+    short indexId;
     std::map<long ,std::string> resMap;
     std::map<int,std::string>::iterator it;
     std::string tmp = "";
@@ -58,11 +58,11 @@ private:
     std::set<std::string> cssClasses;
     std::string _locale, _defaultColor;
     char _locales[32][2];
-    unsigned char _nb_locales = 0; 
-    
+    unsigned char _nb_locales = 0;
+
 
 public:
-    SvgRenderer(CompiledDataManager* m, std::string locale, std::string defaultColor) : relationHash(10000), wayHash(10000), nodeHash(1000), _locale(locale), _defaultColor(defaultColor)
+    SvgRenderer(CompiledDataManager* m, const std::string& locale, const std::string& defaultColor) : relationHash(10000), wayHash(10000), nodeHash(1000), _locale(locale), _defaultColor(defaultColor)
     {
         mger = m;
         zoom = 0;
@@ -79,14 +79,14 @@ public:
             _nb_locales ++ ;
         }
     }
-    SvgRenderer(CompiledDataManager* m, short z, std::string locale, std::string defaultColor) : relationHash(10000), wayHash(10000), nodeHash(1000), _locale(locale), _defaultColor(defaultColor)
+    SvgRenderer(CompiledDataManager* m, short z, const std::string& locale, const std::string& defaultColor) : relationHash(10000), wayHash(10000), nodeHash(1000), _locale(locale), _defaultColor(defaultColor)
     {
         zoom = 0;
         size_x = 0;
         size_y = 0;
         zmMask = 0;
         indexId = 0;
-        
+
         mger = m;
         zoomLevel = z;
         unsigned int i = 0;
@@ -98,10 +98,10 @@ public:
             i++;
         }
     }
-    
-    std::string renderItems(Rectangle rect, uint32_t sizex, uint32_t sizey, std::string tag);
+
+    std::string renderItems(const Rectangle& rect, uint32_t sizex, uint32_t sizey, const std::string& tag);
     std::string render(label_s& lbl, Way& myWay,     Rectangle rect, uint32_t sizex, uint32_t sizey, CssClass& cl, Shape& s);
-    std::string render(label_s& lbl, Relation& myWay,Rectangle rect, uint32_t sizex, uint32_t sizey, CssClass& cl, Shape& s);
+    std::string render(label_s& lbl, Relation& myRel,Rectangle rect, uint32_t sizex, uint32_t sizey, CssClass& cl, Shape& s);
     std::string render(label_s& lbl, Point& myNode,  Rectangle rect,uint32_t  sizex, uint32_t sizey, CssClass& cl);
     std::string renderShape(Rectangle rect,uint32_t  sizex, uint32_t sizey, CssClass& cl, Shape& s);
     Shape* getShape(CssClass* c, unsigned char layer);

@@ -11,8 +11,8 @@ class NonGrowableQueue
 
     int next_in_key;
     int next_out_key;
-    T items[SIZE];
-    bool itemIsUsed[SIZE];
+    T items[SIZE]{};
+    bool itemIsUsed[SIZE]{};
 
 
     public:

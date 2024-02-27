@@ -98,7 +98,7 @@ public:
      *
      * \param buf char* a buffer to send
      * \param length int data length
-     * \return int	sent length or lesser tha zero if an error occured
+     * \return int  sent length or lesser tha zero if an error occured
      *
      */
     int64_t read (char* buf, uint64_t length);
@@ -107,7 +107,7 @@ public:
      *
      * \param buff char* user provided buffer to store data
      * \param length int maximum length to read
-     * \return int	data length received
+     * \return int  data length received
      *
      */
     int64_t write (const char* buff, uint64_t length);
@@ -150,7 +150,7 @@ private:
     int _TimeOut;
 public:
 
-    TcpClientConnector (std::string host, int port, int timeOut = 1000):_Host(host)
+    TcpClientConnector (const std::string& host, int port, int timeOut = 1000):_Host(host)
     {
         _Port = port;
         //_Host = host;

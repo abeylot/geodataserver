@@ -280,7 +280,7 @@ void HttpEncoder::build200Header(Msg* msg,const std::string& contentType)
 
 
 
-void HttpEncoder::build303Header(Msg* msg, std::string URL)
+void HttpEncoder::build303Header(Msg* msg, const std::string& URL)
 {
     Record* rcd = new Record;
     msg->addRecord(rcd);

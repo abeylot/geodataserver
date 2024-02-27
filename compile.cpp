@@ -90,7 +90,7 @@ struct dbf_header
            if(fread(value, field_descriptors[i].field_length, 1, f) != 1) return -1;
            char value2[1024];
            int index = 0;
-           while (value[index]==' ' && index < 1023) index++;
+           while (index < 1023 && value[index]==' ')  index++;
            int index2 = 1023;
            while((value[index2]==0 || value[index2] == ' ') && index2 > 0) index2--;
            memset (value2,0,1024);

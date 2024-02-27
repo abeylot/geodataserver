@@ -34,6 +34,6 @@ private:
     HttpEncoder encoder;
     std::list<weightedArea> findExpression(std::string expr, CompiledDataManager& mger);
 public:
-    Msg* processRequest(Msg* request, CompiledDataManager& mger);
+    Msg* processRequest(Msg* request, CompiledDataManager& mger) override;
 };
 #endif

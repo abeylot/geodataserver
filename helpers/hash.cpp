@@ -44,12 +44,12 @@ bool THashIntegerTable::addIfUnique(uint64_t key)
 bool THashIntegerTable::removeIfExists(uint64_t key)
 {
     int hash;
-    bool found;
-    unsigned int i,j;
-    found = false;
     hash = hashMe(key) % cellsCount;
     if (cells[hash] != NULL)
     {
+        bool found;
+        found = false;
+        unsigned int i;
         for(i=0; i < cellsCounter[hash]; i++)
         {
             if(cells[hash][i] == key)
@@ -60,7 +60,7 @@ bool THashIntegerTable::removeIfExists(uint64_t key)
         }
         if (found)
         {
-            for(j=i; j < cellsCounter[hash]; j++)
+            for(unsigned int j=i; j < cellsCounter[hash]; j++)
             {
                 cells[hash][j] = cells[hash][j+1];
             }
@@ -84,11 +84,10 @@ bool THashIntegerTable::removeIfExists(uint64_t key)
 bool THashIntegerTable::get(uint64_t key)
 {
     int hash;
-    unsigned int i;
     hash = hashMe(key) % cellsCount;
     if (cells[hash] != NULL)
     {
-        for(i=0; i < cellsCounter[hash]; i++)
+        for(unsigned int i=0; i < cellsCounter[hash]; i++)
         {
             if(cells[hash][i] == key)
             {

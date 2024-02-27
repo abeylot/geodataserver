@@ -19,27 +19,27 @@
 int64_t TcpConnection::read( char* buffer, uint64_t length )
 {
     int iLen = 0;
-    unsigned int errorcount = 0;
     if(_IsAlive)
     {
-		while(iLen <= 0)
-		{
-			iLen = recv( _FileDescr, ( void* ) buffer, length, 0 );
-			if(iLen <= 0)
-			{
-				errorcount++;
-				usleep(10000);
+    unsigned int errorcount = 0;
+        while(iLen <= 0)
+        {
+            iLen = recv( _FileDescr, ( void* ) buffer, length, 0 );
+            if(iLen <= 0)
+            {
+                errorcount++;
+                usleep(10000);
                 std::cout << strerror(errno) << " a read error occured \n";
-				//_IsAlive = false;
-				_LastError = strerror(errno);
-			}
-			if(errorcount > 10)
-			{
-				_IsAlive = false;
-				return -1;
-			}	
-		}
-	}
+                //_IsAlive = false;
+                _LastError = strerror(errno);
+            }
+            if(errorcount > 10)
+            {
+                _IsAlive = false;
+                return -1;
+            }
+        }
+    }
 
     return iLen;
 }
@@ -70,7 +70,7 @@ int64_t TcpConnection::write( const char* buff, uint64_t length )
             break;
         }
     }
-	//std::cout << "wrote : " << iWritten << "\n";
+    //std::cout << "wrote : " << iWritten << "\n";
     return iWritten;
 }
 

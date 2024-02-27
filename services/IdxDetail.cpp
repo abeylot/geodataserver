@@ -6,18 +6,18 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
     std::string resp = "<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>";
     Msg* rep = new Msg;
     encoder.build200Header(rep, "text/html");
-    std::string name  = request->getRecord(2)->getNamedValue("name");
-    std::string start  = request->getRecord(2)->getNamedValue("start");
+    std::string rq_name  = request->getRecord(2)->getNamedValue("name");
+    std::string rq_start  = request->getRecord(2)->getNamedValue("start");
     uint64_t istart = 0;
-    if (start != "") istart = atoll(start.c_str());
+    if (rq_start != "") istart = atoll(rq_start.c_str());
     if(istart >= 1000)
     {
-        resp += "<a href=\"get?name=" +name+ "&start="+std::to_string(istart - 1000)+"\"/> page up </a>\n";
+        resp += "<a href=\"get?name=" +rq_name+ "&start="+std::to_string(istart - 1000)+"\"/> page up </a>\n";
     }
     uint64_t i = istart;
     for(IndexDesc* desc : *(mger.indexes))
     {
-        if(desc->name == name )
+        if(desc->name == rq_name )
         {
             fidx::FileIndex<IndexEntryMasked,GeoBox>* idx = desc->idx;
             fidx::Record<IndexEntryMasked, GeoBox> record;
@@ -51,7 +51,7 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
                     std::string name = p->tags["name"];
                     resp += std::to_string(i) + ":: pos :" + std::to_string(record.key.get_pos())+ "::"+name+":: mask :" + std::to_string(record.key.get_maskLength())+"::"+std::to_string(record.value.zmMask)+":: id :" + std::to_string(record.value.id);
                     resp += "::" + name +"<br/>";
-        
+
                     uint64_t used = 0;
 
                     while( used < p->tags.data_size)
@@ -97,7 +97,7 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
     }
     if(i == istart + 1000)
     {
-        resp += "<a href=\"get?name=" +name+ "&start="+std::to_string(i)+"\"/> page down! </a>\n";
+        resp += "<a href=\"get?name=" +rq_name+ "&start="+std::to_string(i)+"\"/> page down! </a>\n";
     }
     resp += "</body></html>";
     encoder.addContent(rep,resp);

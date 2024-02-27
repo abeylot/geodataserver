@@ -24,7 +24,7 @@ int64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
         {
             if(b[j] == a[i]) countb++;
         }
-        
+
         while(counta > countb)
         {
             for(uint64_t j = 0; j < a.size(); j++)
@@ -51,14 +51,14 @@ int64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
                 }
             }
         }
-        
+
     }
         for(auto i : a) if(i != UNDEFINED_ID) new_a.push_back(i);
         for(auto i : b) if(i != UNDEFINED_ID) new_b.push_back(i);
-        
+
         a = new_a;
         b = new_b;
-        
+
         new_a.clear();
         new_b.clear();
 
@@ -74,7 +74,7 @@ int64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
         {
             if(b[j] == b[i]) countb++;
         }
-        
+
         while(counta > countb)
         {
             for(uint64_t j = 0; j < a.size(); j++)
@@ -101,19 +101,18 @@ int64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
                 }
             }
         }
-        
-        std::vector<uint64_t> new_a, new_b;
+
     }
 
         for(auto i : a) if(i != UNDEFINED_ID) new_a.push_back(i);
         for(auto i : b) if(i != UNDEFINED_ID) new_b.push_back(i);
-        
+
         a = new_a;
         b = new_b;
-        
+
         new_a.clear();
         new_b.clear();
-        
+
         while(a.size())
         {
             for(uint64_t i = 0; i < b.size(); i++)
@@ -128,21 +127,21 @@ int64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
             }
               for(auto i : a) if(i != UNDEFINED_ID) new_a.push_back(i);
             for(auto i : b) if(i != UNDEFINED_ID) new_b.push_back(i);
-        
+
             a = new_a;
             b = new_b;
-        
+
             new_a.clear();
             new_b.clear();
         }
-        
-     
+
+
     return result;
 }
 
 struct textSearchIds
 {
-    std::string sWord;    
+    std::string sWord;
     uint64_t word;
 
     uint64_t node_start_id;
@@ -150,27 +149,23 @@ struct textSearchIds
 
     uint64_t way_start_id;
     uint64_t way_stop_id;
-    
+
     uint64_t relation_start_id;
     uint64_t relation_stop_id;
-    
+
     textSearchIds()
     {
         word = 0;
-        sWord = "";
         node_start_id = UNDEFINED_ID;
         node_stop_id  = UNDEFINED_ID;
 
-        node_start_id = UNDEFINED_ID;
-        node_stop_id  = UNDEFINED_ID;
-    
         way_start_id = UNDEFINED_ID;
         way_stop_id  = UNDEFINED_ID;
-    
+
         relation_start_id = UNDEFINED_ID;
         relation_stop_id  = UNDEFINED_ID;
     }
-    
+
 };
 
 inline bool operator < (textSearchIds const& a, textSearchIds const& b)
@@ -190,7 +185,7 @@ inline bool operator < (textSearchIds const& a, textSearchIds const& b)
 }
 
 
-bool compare_weight (const weightedArea first, const weightedArea second)
+bool compare_weight (const weightedArea& first, const weightedArea& second)
 {
   return ( first.score > second.score );
 }
@@ -198,27 +193,27 @@ bool compare_weight (const weightedArea first, const weightedArea second)
 std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDataManager& mger)
 {
     std::cout << "Search : [" << expr << "]\n";
-    std::stringstream my_stream(expr);
-    
+    std::stringstream my_strm(expr);
+
     std::list<textSearchIds> foundWords;
     std::vector<uint64_t> queryWordsVector;
     std::list<uint64_t> words;
     std::list<uint64_t> wordsToMatch;
-    std::string word;
-    while(std::getline(my_stream,word,' '))
+    std::string wrd;
+    while(std::getline(my_strm,wrd,' '))
     {
-        if(!word.empty())
+        if(!wrd.empty())
         {
-            uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
+            uint64_t k = fidx::makeLexicalKey(wrd.c_str(), wrd.length(), *mger.charconvs);
             words.push_back(k);
             queryWordsVector.push_back(k);
          }
     }
-    
+
     words.sort();
     words.unique();
-    
-    
+
+
     for(auto myword : words)
     {
         IndexRange eN;
@@ -230,10 +225,10 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
         bool foundN = mger.textIndexNodeRange->find(myword, &eN);
         bool foundW = mger.textIndexWayRange->find(myword, &eW);
         bool foundR = mger.textIndexRelationRange->find(myword, &eR);
-        
+
         uint64_t nstart, nstop, wstart, wstop, rstart, rstop;
         nstart = nstop = wstart = wstop = rstart = rstop = UNDEFINED_ID;
-        
+
         if (foundN)
         {
             nstart = eN.first;
@@ -249,9 +244,9 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
             rstart = eR.first;
             rstop  = eR.last;
         }
-        
+
         std::cout << (nstop - nstart) << "," <<  (wstop - wstart) << "," << (rstop -rstart) << "\n";
-        
+
         if((foundN || foundW || foundR) &&
         ((nstop - nstart) + (wstop - wstart) + (rstop -rstart)) < 100000
          )
@@ -264,17 +259,17 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
             ids.way_stop_id   = wstop;
             ids.relation_start_id = rstart;
             ids.relation_stop_id = rstop;
-            
+
             foundWords.push_back(ids);
             wordsToMatch.push_back(myword);
         }
     }
     foundWords.sort();
-    
-    
+
+
     std::list<weightedArea> areas;
     std::list<weightedArea> best_areas;
-    
+
     for(auto searchIds : foundWords)
     {
         areas.clear();
@@ -289,7 +284,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     std::vector<uint64_t> nameWordVector;
                     mger.textIndexNode->get(i, &record);
                     Point* item;
-                    mger.load(item, record.value.id, true);            
+                    mger.load(item, record.value.id, true);
                     area.r.x0 = area.r.x1 = item->x;
                     area.r.y0 = area.r.y1 = item->y;
                     std::string my_string = item->tags["name"];
@@ -305,7 +300,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                             word = word2;
                             found = word.find("&apos;");
                         }
-                        
+
                         uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
                         nameWordVector.push_back(k);
                     }
@@ -319,7 +314,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     }
                     area.found = "Node_"+std::to_string(record.value.id)+":"+my_string;
                     areas.push_back(area);
-                    delete item;            
+                    delete item;
                 }
             }
             if (searchIds.relation_start_id != UNDEFINED_ID)
@@ -332,7 +327,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     std::vector<uint64_t> nameWordVector;
                     mger.textIndexRelation->get(i, &record);
                     Relation* item;
-                    item = mger.loadRelationFast(record.value.id);            
+                    item = mger.loadRelationFast(record.value.id);
                     area.r =  record.value.r;
                     std::string my_string = item->tags["name"];
                     std::replace( my_string.begin(), my_string.end(), '-', ' ');
@@ -362,11 +357,11 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     }
                     area.found = "Relation_"+std::to_string(record.value.id)+":"+my_string;
                     area.relations.push_back(record.value.id);
-                                
+
                     areas.push_back(area);
-                    delete item;            
+                    delete item;
                 }
-            } 
+            }
             if (searchIds.way_start_id != UNDEFINED_ID)
             {
                 for(uint64_t i = searchIds.way_start_id; i <= searchIds.way_stop_id; i++)
@@ -377,7 +372,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     std::vector<uint64_t> nameWordVector;
                     mger.textIndexWay->get(i, &record);
                     Way* item;
-                    mger.load(item, record.value.id, true);            
+                    mger.load(item, record.value.id, true);
                     area.r =  record.value.r;
                     std::string my_string = item->tags["name"];
                     std::replace( my_string.begin(), my_string.end(), '-', ' ');
@@ -405,23 +400,23 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     }
                     area.found = "Way_"+std::to_string(record.value.id)+":"+my_string;
                     areas.push_back(area);
-                    delete item;            
+                    delete item;
                 }
             }
         }
-        if(best_areas.size() == 0)
+        if(best_areas.empty())
         {
             areas.sort(compare_weight);
+            unsigned int i = 0;
             for(auto a : areas)
             {
-                unsigned int i = 0;
                 i++;
                 best_areas.push_back(a);
                 if (i >= 100000)  break;
             }
             break;
         }
-        
+
     }
     return best_areas;
 }
@@ -448,7 +443,7 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
                     a.r.y0 = p->y;
                     a.r.y1 = p->y;
                 }
-            }            
+            }
             for(auto w : item->ways)
             {
                 std::string sNr = w->tags["addr:housenumber"];
@@ -456,7 +451,7 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
                 {
                     a.r = w->rect;
                 }
-            }            
+            }
             for(auto r : item->relations)
             {
                 std::string sNr = r->tags["addr:housenumber"];
@@ -464,7 +459,7 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
                 {
                     a.r = r->rect;
                 }
-            }            
+            }
         }
         else if (street_number && sType == "associatedStreet")
         {
@@ -478,7 +473,7 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
                     a.r.y0 = p->y;
                     a.r.y1 = p->y;
                 }
-            }            
+            }
             for(auto w : item->ways)
             {
                 std::string sNr = w->tags["addr:housenumber"];
@@ -487,7 +482,7 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
                     a.r = w->rect;
 
                 }
-            }            
+            }
             for(auto r : item->relations)
             {
                 std::string sNr = r->tags["addr:housenumber"];
@@ -495,15 +490,15 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
                 {
                     a.r = r->rect;
                 }
-            }            
-        }     
+            }
+        }
         if(item->isClosed)
         {
             // search in relation point to set pin
             for(auto p : item->points)
             {
                 if ((p->tags["place"] != "")
-                    && (p->tags["name"] == item->tags["name"])) 
+                    && (p->tags["name"] == item->tags["name"]))
                     {
                     if(
                       (p->x >= a.r.x0) &&
@@ -511,7 +506,7 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
                       (p->y >= a.r.y0) &&
                       (p->y <= a.r.y1)
                       )
-                    { 
+                    {
                         pin.x = p->x;
                         pin.y = p->y;
                         break;
@@ -529,7 +524,7 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
               (l->points[l->pointsCount/2].y >= a.r.y0) &&
               (l->points[l->pointsCount/2].y <= a.r.y1)
               )
-            { 
+            {
                 pin.x = l->points[l->pointsCount/2].x;
                 pin.y =  l->points[l->pointsCount/2].y;
             }
@@ -556,32 +551,32 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
     std::string name = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("name"));
     std::string mode = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("mode"));
     std::string word;
-    
+
     std::stringstream my_stream(name);
-    
+
     std::list<weightedArea> areas;
     std::list<weightedArea> best_areas;
     std::list<weightedArea> new_areas;
-    
+
     areas.clear();
     best_areas.clear();
     new_areas.clear();
-    
+
     int street_number = 0;
     while(std::getline(my_stream,word,','))
     {
         //trim word:
         size_t left;
         size_t right;
-        
+
         left = 0;
         right = word.size() - 1;
-        
+
         while(left < right && isspace(word.c_str()[left])) ++left;
         while(left <= right && isspace(word.c_str()[right])) --right;
         word = word.substr(left, (right - left + 1));
         std::cout << "search trimmed expr : [" << word << "]\n";
-        
+
         bool is_number = (!word.empty());
         if(!(word[0] >= '0' && word[0] <='9')){
             is_number = false;
@@ -591,7 +586,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
              continue;
         }
 
-        if(best_areas.size() == 0)
+        if(best_areas.empty())
         {
             best_areas = findExpression(word, mger);
         }
@@ -599,7 +594,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
         {
             areas = findExpression(word, mger);
             new_areas.clear();
-            if(areas.size())
+            if(!areas.empty())
             {
                 for(auto a : areas)
                 {
@@ -621,19 +616,19 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
                 best_areas = new_areas;
             }
         }
-              
+
     }
 
-    
+
       weightedArea result;
       best_areas.sort(compare_weight);
-      
-      
-      if(best_areas.size()) result = *(best_areas.begin()); 
+
+
+      if(!best_areas.empty()) result = *(best_areas.begin());
 
 //    for (auto a: best_areas)
 //    {
-        fillPin(mger, result, street_number); 
+        fillPin(mger, result, street_number);
         Rectangle r = result.r;
         int zlevel = 32;
         //best_size *= 1.5;
@@ -647,18 +642,18 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
         //std::cout << zlevel << "\n";
         if(zlevel > 17) zlevel = 17;
         if(zlevel < 0) zlevel = 0;
-    
-        if(mode == "xml")    
+
+        if(mode == "xml")
         {
             std::string resp = "<root>\n";
             int i = 0;
             for(auto a : best_areas)
-            {    
+            {
                 if(i > MAX_RESULTS) break;
                 if(! a.r.isValid()) continue;
-                fillPin(mger, a, street_number); 
+                fillPin(mger, a, street_number);
                 std::string sPin = "";
-                if(a.pin.x) sPin = 
+                if(a.pin.x) sPin =
                     "pin_lon=\""+std::to_string(Coordinates::fromNormalizedLon(a.pin.x))+"\" "
                     "pin_lat=\""+std::to_string(Coordinates::fromNormalizedLat(a.pin.y))+"\" ";
                 resp += "<area "
@@ -683,10 +678,10 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
             {
                 if(i > MAX_RESULTS) break;
                 if(! a.r.isValid()) continue;
-                fillPin(mger, a, street_number); 
+                fillPin(mger, a, street_number);
                 if(i) resp += ", ";
                 std::string sPin = "";
-                if(a.pin.x) sPin = 
+                if(a.pin.x) sPin =
                     ", \"pin_lon\":"+std::to_string(Coordinates::fromNormalizedLon(a.pin.x))+
                     ", \"pin_lat\":"+std::to_string(Coordinates::fromNormalizedLat(a.pin.y));
                  resp+="{"
@@ -706,12 +701,12 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
            encoder.addContent(rep,resp);
            return rep;
        } else {
-       
+
             Msg* rep = new Msg;
             std::string URL;
             if(result.pin.x){
                 URL = "/MapDisplay?pin=true&longitude=" + std::to_string(Coordinates::fromNormalizedLon(result.pin.x)) + "&lattitude=" + std::to_string(Coordinates::fromNormalizedLat(result.pin.y))+"&zoom="+std::to_string(zlevel)+"";
-            } else { 
+            } else {
                 URL = "/MapDisplay?pin=true&longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&zoom="+std::to_string(zlevel)+"";
             }
             encoder.build303Header(rep,URL);
