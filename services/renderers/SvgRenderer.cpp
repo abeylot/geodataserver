@@ -193,7 +193,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                 if( hash->addIfUnique(record.value.id*100 + indexId))
                 {
                     ITEM* item = NULL;
-                    mger->load(item, record.value.id, true);
+                    mger->load(item, record.value.id, false);
                     CssClass* cl = getCssClass(idxDesc, *item, zoom, record.value.zmMask & 0X100000LL);
                     label_s lbl;
                     if(cl)
@@ -253,7 +253,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                     if((record.value.zmMask &  zmMask ) && ((record.value.r * (rect2) ).isValid()))
                     {
                         ITEM* item = NULL;
-                        mger->load(item, record.value.id, true);
+                        mger->load(item, record.value.id, false);
 
                         CssClass* cl = getCssClass(idxDesc, *item, zoom, record.value.zmMask & 0X100000LL);
                         label_s lbl;

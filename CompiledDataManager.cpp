@@ -140,7 +140,7 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
             newWay = loadWay(buffer[i].id, fast);
             if(newWay)
             {
-                r.shape.mergePoints(newWay->points, newWay->pointsCount);
+                if(!fast) r.shape.mergePoints(newWay->points, newWay->pointsCount);
                 r.ways.push_back(newWay);
                 r.rect = r.rect + newWay->rect;
             }
@@ -155,12 +155,12 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
                 {
                     for(Line* l : newRel->shape.lines)
                     {
-                        r.shape.mergePoints(l->points, l->pointsCount);
+                        if(!fast)r.shape.mergePoints(l->points, l->pointsCount);
                     }
                     for(Relation* rel : newRel->relations)
                         for(Line* l : rel->shape.lines)
                         {
-                            r.shape.mergePoints(l->points, l->pointsCount);
+                            if(!fast) r.shape.mergePoints(l->points, l->pointsCount);
                         }
                 }
             }

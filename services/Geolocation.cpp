@@ -594,6 +594,8 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
         {
             areas = findExpression(word, mger);
             new_areas.clear();
+            areas.sort(compare_weight);
+            if(areas.size() > 250) areas.resize(250);
             if(!areas.empty())
             {
                 for(auto a : areas)
@@ -614,6 +616,8 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
                     }
                 }
                 best_areas = new_areas;
+                best_areas.sort(compare_weight);
+                if(best_areas.size() > 250) best_areas.resize(250);
             }
         }
 
@@ -622,6 +626,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 
       weightedArea result;
       best_areas.sort(compare_weight);
+      if(best_areas.size() > 250) best_areas.resize(250);
 
 
       if(!best_areas.empty()) result = *(best_areas.begin());
