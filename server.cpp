@@ -185,7 +185,7 @@ template<typename MSG> struct Exec
                         //printf("%s\n",url.c_str());
                         //time_t ctt = time(0);
                         //std::cout << asctime(localtime(&ctt)) << std::endl;
-                        ServiceInterface* s = ServicesFactory::getService(url, params);
+                        ServiceInterface* s = ServicesFactory::getService(url);
                         if(s)
                         {
                             rep = s->processRequest(m,mger);
@@ -262,6 +262,8 @@ int main(int argc, char *argv[])
     }
     XmlFileParser<ParmsXmlVisitor>::parseXmlFile(config,params);
     fclose(config);
+
+    ServicesFactory::init(params);
 
     std::vector<IndexDesc*> indexes;
     std::map<std::string, std::string> symbols;

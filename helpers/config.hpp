@@ -137,24 +137,26 @@ struct ParmsXmlVisitor
     {
     }
 
-    long long getNumParam(const std::string& key, long long defaultValue)
+    long long getNumParam(const std::string& key, long long defaultValue) const
     {
-        if(parameters.count(key)) return atoll(parameters[key].c_str());
+        auto it = parameters.find(key);
+        if(it != parameters.end()) return atoll(it->second.c_str());
         else return defaultValue;
     }
 
-    long long getNumParam(const std::string& key)
+    long long getNumParam(const std::string& key) const
     {
         return getNumParam(key, 0);
     }
 
-    std::string getParam(std::string key, std::string defaultValue)
+    std::string getParam(std::string key, std::string defaultValue) const
     {
-        if(parameters.count(key)) return parameters[key];
+        auto it = parameters.find(key);
+        if(it != parameters.end()) return it->second;
         else return defaultValue;
     }
 
-    std::string getParam(const std::string& key)
+    std::string getParam(const std::string& key) const
     {
         return getParam(key, "");
     }

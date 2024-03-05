@@ -7,6 +7,24 @@
     <parameter name="locale"        value="fr;en"/>
     <parameter name="DefaultColor"  value="#EEFFEE"/>
 
+    <!-- various debug services -->
+    <parameter name="PingService"           value="disabled"/>
+    <parameter name="RelationListService"   value="disabled"/>
+    <parameter name="IdxListService"        value="disabled"/>
+    <parameter name="IdxDetailService"      value="disabled"/>
+    <parameter name="RelationDetailService" value="disabled"/>
+    <parameter name="WayDetailService"      value="disabled"/>
+    <parameter name="SvgService"            value="disabled"/>
+
+    <!-- map test service -->
+    <parameter name="MapDisplayService"     value="enabled"/>
+
+    <!-- service that serves tiles -->
+    <parameter name="TileService"           value="enabled"/>
+
+    <!-- geolocation service -->
+    <parameter name="GeolocationService"    value="enabled"/>
+
     <shp_file name="water-polygons-split-4326/water_polygons" tag="shape" value="ocean"/>
     <shp_file name="ne_10m_admin_0_boundary_lines_land/ne_10m_admin_0_boundary_lines_land" tag="shape" value="frontier"/>
     <shp_file name="ne_10m_lakes/ne_10m_lakes" tag="shape" value="lake"/>
