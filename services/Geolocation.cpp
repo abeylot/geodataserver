@@ -615,7 +615,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
         for(auto a : best_areas)
         {
             if(i > MAX_RESULTS) break;
-            if(! a.r.isValid() || !a.checkIntersect(mger))) continue;
+            if(! a.r.isValid() || !a.checkIntersect(mger)) continue;
             fillPin(mger, a, street_number);
             std::string sPin = "";
             if(a.pin.x) sPin =
@@ -642,7 +642,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
         for(auto a : best_areas)
         {
             if(i > MAX_RESULTS) break;
-            if(! a.r.isValid() || !a.checkIntersect(mger))) continue;
+            if(! a.r.isValid() || !a.checkIntersect(mger)) continue;
             fillPin(mger, a, street_number);
             if(i) resp += ", ";
             std::string sPin = "";
