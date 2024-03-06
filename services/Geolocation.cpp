@@ -187,7 +187,30 @@ inline bool operator < (textSearchIds const& a, textSearchIds const& b)
 
 bool compare_weight (const weightedArea& first, const weightedArea& second)
 {
-  return ( first.score > second.score );
+  return ( first.score > second.score || ((first.score == second.score )&&(first.r.area() > second.r.area())));
+}
+
+
+template <class ITEM> int64_t calcMatchScore(const ITEM& item, const std::vector<uint64_t>& searched_words, CompiledDataManager& mger)
+{
+    std::vector<uint64_t> nameWordVector;
+    std::string my_string = item->tags["name"];
+    std::replace( my_string.begin(), my_string.end(), '-', ' ');
+    std::stringstream my_stream(my_string);
+    std::string word;
+    while(std::getline(my_stream,word,' '))
+    {
+        size_t found = word.find("&apos;");
+        while(found != std::string::npos)
+        {
+            std::string word2 = word.substr(0,found) + "'" + word.substr(found + 6,word.length());
+            word = word2;
+            found = word.find("&apos;");
+        }
+        uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
+        nameWordVector.push_back(k);
+    }
+    return calcMatchScore(searched_words, nameWordVector);
 }
 
 std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDataManager& mger)
@@ -281,30 +304,19 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     weightedArea area;
                     area.pin.x = area.pin.y = 0;
                     fidx::Record<IndexEntry, uint64_t> record;
-                    std::vector<uint64_t> nameWordVector;
                     mger.textIndexNode->get(i, &record);
                     Point* item;
                     mger.load(item, record.value.id, true);
                     area.r.x0 = area.r.x1 = item->x;
                     area.r.y0 = area.r.y1 = item->y;
-                    std::string my_string = item->tags["name"];
-                    std::replace( my_string.begin(), my_string.end(), '-', ' ');
-                    std::stringstream my_stream(my_string);
-                    std::string word;
-                    while(std::getline(my_stream,word,' '))
-                    {
-                        size_t found = word.find("&apos;");
-                        while(found != std::string::npos)
-                        {
-                            std::string word2 = word.substr(0,found) + "'" + word.substr(found + 6,word.length());
-                            word = word2;
-                            found = word.find("&apos;");
-                        }
 
-                        uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
-                        nameWordVector.push_back(k);
-                    }
-                    if(area.r.isValid()) area.score = calcMatchScore(queryWordsVector, nameWordVector);
+                    // make real area not point.
+                    area.r.x0 -= 1;
+                    area.r.x1 += 1;
+                    area.r.y0 -=1;
+                    area.r.y1 +=1;
+
+                    if(area.r.isValid()) area.score = calcMatchScore(item, queryWordsVector, mger);
                     else area.score = WORST_SCORE;
                     std::string sPlace = item->tags["admin_level"];
                     if(!sPlace.empty())
@@ -312,8 +324,9 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                         int level = 10 - atoi(sPlace.c_str());
                         if(level) area.score *= (1.0 + 0.1 / level);
                     }
-                    area.found = "Node_"+std::to_string(record.value.id)+":"+my_string;
+                    area.found = "Node_"+std::to_string(record.value.id)+":"+item->tags["name"];
                     areas.push_back(area);
+                    area.nodes.push_back(record.value.id);
                     delete item;
                 }
             }
@@ -324,29 +337,11 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     weightedArea area;
                     area.pin.x = area.pin.y = 0;
                     fidx::Record<IndexEntry, uint64_t> record;
-                    std::vector<uint64_t> nameWordVector;
                     mger.textIndexRelation->get(i, &record);
                     Relation* item;
                     item = mger.loadRelationFast(record.value.id);
                     area.r =  record.value.r;
-                    std::string my_string = item->tags["name"];
-                    std::replace( my_string.begin(), my_string.end(), '-', ' ');
-                    std::stringstream my_stream(my_string);
-                    std::string word;
-                    while(std::getline(my_stream,word,' '))
-                    {
-                        size_t found = word.find("&apos;");
-                        while(found != std::string::npos)
-                        {
-                            std::string word2 = word.substr(0,found) + "'" + word.substr(found + 6,word.length());
-                            word = word2;
-                            found = word.find("&apos;");
-                        }
-                        uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
-                        nameWordVector.push_back(k);
-                    }
-
-                    if(area.r.isValid()) area.score = calcMatchScore(queryWordsVector, nameWordVector) + 1;
+                    if(area.r.isValid()) area.score = calcMatchScore(item, queryWordsVector, mger);
                     else area.score = WORST_SCORE;
 
                     std::string sPlace = item->tags["admin_level"];
@@ -355,7 +350,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                         int level = 10 - atoi(sPlace.c_str());
                         if(level) area.score *= (1.0 + 0.1 / level);
                     }
-                    area.found = "Relation_"+std::to_string(record.value.id)+":"+my_string;
+                    area.found = "Relation_"+std::to_string(record.value.id)+":" + item->tags["name"];
                     area.relations.push_back(record.value.id);
 
                     areas.push_back(area);
@@ -369,28 +364,11 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     weightedArea area;
                     area.pin.x = area.pin.y = 0;
                     fidx::Record<IndexEntry, uint64_t> record;
-                    std::vector<uint64_t> nameWordVector;
                     mger.textIndexWay->get(i, &record);
                     Way* item;
                     mger.load(item, record.value.id, true);
                     area.r =  record.value.r;
-                    std::string my_string = item->tags["name"];
-                    std::replace( my_string.begin(), my_string.end(), '-', ' ');
-                    std::stringstream my_stream(my_string);
-                    std::string word;
-                    while(std::getline(my_stream,word,' '))
-                    {
-                        size_t found = word.find("&apos;");
-                        while(found != std::string::npos)
-                        {
-                            std::string word2 = word.substr(0,found) + "'" + word.substr(found + 6,word.length());
-                            word = word2;
-                            found = word.find("&apos;");
-                        }
-                        uint64_t k = fidx::makeLexicalKey(word.c_str(), word.length(), *mger.charconvs);
-                        nameWordVector.push_back(k);
-                    }
-                    if(area.r.isValid()) area.score = calcMatchScore(queryWordsVector, nameWordVector);
+                    if(area.r.isValid()) area.score = calcMatchScore(item, queryWordsVector, mger);
                     else area.score = WORST_SCORE;
                     std::string sPlace = item->tags["admin_level"];
                     if(!sPlace.empty())
@@ -398,8 +376,9 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                         int level = 10 - atoi(sPlace.c_str());
                         if(level) area.score *= (1.0 + 0.1 / level);
                     }
-                    area.found = "Way_"+std::to_string(record.value.id)+":"+my_string;
+                    area.found = "Way_"+std::to_string(record.value.id)+":" + item->tags["name"];
                     areas.push_back(area);
+                    area.ways.push_back(record.value.id);
                     delete item;
                 }
             }
@@ -624,15 +603,78 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
     }
 
 
-      weightedArea result;
-      best_areas.sort(compare_weight);
-      if(best_areas.size() > 250) best_areas.resize(250);
+    best_areas.sort(compare_weight);
+    if(best_areas.size() > 250) best_areas.resize(250);
 
 
-      if(!best_areas.empty()) result = *(best_areas.begin());
 
-//    for (auto a: best_areas)
-//    {
+    if(mode == "xml")
+    {
+        std::string resp = "<root>\n";
+        int i = 0;
+        for(auto a : best_areas)
+        {
+            if(i > MAX_RESULTS) break;
+            if(! a.r.isValid() || !a.checkIntersect(mger))) continue;
+            fillPin(mger, a, street_number);
+            std::string sPin = "";
+            if(a.pin.x) sPin =
+                "pin_lon=\""+std::to_string(Coordinates::fromNormalizedLon(a.pin.x))+"\" "
+                "pin_lat=\""+std::to_string(Coordinates::fromNormalizedLat(a.pin.y))+"\" ";
+            resp += "<area "
+                "lon_min=\""+std::to_string(Coordinates::fromNormalizedLon(a.r.x0))+"\" "
+                "lon_max=\""+std::to_string(Coordinates::fromNormalizedLon(a.r.x1))+"\" "
+                "lat_min=\""+std::to_string(Coordinates::fromNormalizedLat(a.r.y1))+"\" "
+                "lat_max=\""+std::to_string(Coordinates::fromNormalizedLat(a.r.y0))+"\" "
+                + sPin +
+                "found=\""+a.found+"\" "
+                "score=\""+std::to_string(a.score)+"\" />\n";
+            i++;
+        }
+       resp += "</root>\n";
+       Msg* rep = new Msg;
+       encoder.build200Header(rep, "application/xml");
+       encoder.addContent(rep,resp);
+       return rep;
+   } else if (mode =="json"){
+        std::string resp = "[";
+        int i = 0;
+        for(auto a : best_areas)
+        {
+            if(i > MAX_RESULTS) break;
+            if(! a.r.isValid() || !a.checkIntersect(mger))) continue;
+            fillPin(mger, a, street_number);
+            if(i) resp += ", ";
+            std::string sPin = "";
+            if(a.pin.x) sPin =
+                ", \"pin_lon\":"+std::to_string(Coordinates::fromNormalizedLon(a.pin.x))+
+                ", \"pin_lat\":"+std::to_string(Coordinates::fromNormalizedLat(a.pin.y));
+             resp+="{"
+                "\"lon_min\":"+std::to_string((Coordinates::fromNormalizedLon(a.r.x0)))+
+                ", \"lon_max\":"+std::to_string(Coordinates::fromNormalizedLon(a.r.x1))+
+                ", \"lat_min\":"+std::to_string(Coordinates::fromNormalizedLat(a.r.y1))+
+                sPin +
+                ", \"lat_max\":"+std::to_string(Coordinates::fromNormalizedLat(a.r.y0))+
+                ", \"found\":\""+a.found+"\""+
+                ", \"score\":"+std::to_string(a.score);
+            resp+="}\n";
+            i++;
+        }
+       resp += "]\n";
+       Msg* rep = new Msg;
+       encoder.build200Header(rep, "application/json");
+       encoder.addContent(rep,resp);
+       return rep;
+   } else {
+        weightedArea result;
+        for(auto a : best_areas)
+        {
+            if(a.checkIntersect(mger))
+            {
+                result = a;
+                break;
+            }
+        }
         fillPin(mger, result, street_number);
         Rectangle r = result.r;
         int zlevel = 32;
@@ -648,74 +690,66 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
         if(zlevel > 17) zlevel = 17;
         if(zlevel < 0) zlevel = 0;
 
-        if(mode == "xml")
-        {
-            std::string resp = "<root>\n";
-            int i = 0;
-            for(auto a : best_areas)
-            {
-                if(i > MAX_RESULTS) break;
-                if(! a.r.isValid()) continue;
-                fillPin(mger, a, street_number);
-                std::string sPin = "";
-                if(a.pin.x) sPin =
-                    "pin_lon=\""+std::to_string(Coordinates::fromNormalizedLon(a.pin.x))+"\" "
-                    "pin_lat=\""+std::to_string(Coordinates::fromNormalizedLat(a.pin.y))+"\" ";
-                resp += "<area "
-                    "lon_min=\""+std::to_string(Coordinates::fromNormalizedLon(a.r.x0))+"\" "
-                    "lon_max=\""+std::to_string(Coordinates::fromNormalizedLon(a.r.x1))+"\" "
-                    "lat_min=\""+std::to_string(Coordinates::fromNormalizedLat(a.r.y1))+"\" "
-                    "lat_max=\""+std::to_string(Coordinates::fromNormalizedLat(a.r.y0))+"\" "
-                    + sPin +
-                    "found=\""+a.found+"\" "
-                    "score=\""+std::to_string(a.score)+"\" />\n";
-                i++;
-            }
-           resp += "</root>\n";
-           Msg* rep = new Msg;
-           encoder.build200Header(rep, "application/xml");
-           encoder.addContent(rep,resp);
-           return rep;
-       } else if (mode =="json"){
-            std::string resp = "[";
-            int i = 0;
-            for(auto a : best_areas)
-            {
-                if(i > MAX_RESULTS) break;
-                if(! a.r.isValid()) continue;
-                fillPin(mger, a, street_number);
-                if(i) resp += ", ";
-                std::string sPin = "";
-                if(a.pin.x) sPin =
-                    ", \"pin_lon\":"+std::to_string(Coordinates::fromNormalizedLon(a.pin.x))+
-                    ", \"pin_lat\":"+std::to_string(Coordinates::fromNormalizedLat(a.pin.y));
-                 resp+="{"
-                    "\"lon_min\":"+std::to_string((Coordinates::fromNormalizedLon(a.r.x0)))+
-                    ", \"lon_max\":"+std::to_string(Coordinates::fromNormalizedLon(a.r.x1))+
-                    ", \"lat_min\":"+std::to_string(Coordinates::fromNormalizedLat(a.r.y1))+
-                    sPin +
-                    ", \"lat_max\":"+std::to_string(Coordinates::fromNormalizedLat(a.r.y0))+
-                    ", \"found\":\""+a.found+"\""+
-                    ", \"score\":"+std::to_string(a.score);
-                resp+="}\n";
-                i++;
-            }
-           resp += "]\n";
-           Msg* rep = new Msg;
-           encoder.build200Header(rep, "application/json");
-           encoder.addContent(rep,resp);
-           return rep;
-       } else {
-
-            Msg* rep = new Msg;
-            std::string URL;
-            if(result.pin.x){
-                URL = "/MapDisplay?pin=true&longitude=" + std::to_string(Coordinates::fromNormalizedLon(result.pin.x)) + "&lattitude=" + std::to_string(Coordinates::fromNormalizedLat(result.pin.y))+"&zoom="+std::to_string(zlevel)+"";
-            } else {
-                URL = "/MapDisplay?pin=true&longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&zoom="+std::to_string(zlevel)+"";
-            }
-            encoder.build303Header(rep,URL);
-            encoder.addContent(rep,"redirect!!!");
-            return rep;
+        Msg* rep = new Msg;
+        std::string URL;
+        if(result.pin.x){
+            URL = "/MapDisplay?pin=true&longitude=" + std::to_string(Coordinates::fromNormalizedLon(result.pin.x)) + "&lattitude=" + std::to_string(Coordinates::fromNormalizedLat(result.pin.y))+"&zoom="+std::to_string(zlevel)+"";
+        } else {
+            URL = "/MapDisplay?pin=true&longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&zoom="+std::to_string(zlevel)+"";
         }
+        encoder.build303Header(rep,URL);
+        encoder.addContent(rep,"redirect!!!");
+        return rep;
+    }
+}
+bool weightedArea::checkIntersect(CompiledDataManager& mger)
+{
+    for(uint64_t id : relations)
+    {
+        bool result = true;
+        Relation* item = nullptr;
+        mger.load(item, id, false);
+        if(item != nullptr)
+        {
+            result = false;
+            for(auto l : item->shape.lines)
+            {
+                l->crop(r);
+                if(l->pointsCount > 0) result = true;
+            }
+            delete item;
+        }
+        else return false;
+        if (result== false) return false;
+    }
+    for(uint64_t id : ways)
+    {
+        bool result = true;
+        Way* item = nullptr;
+        mger.load(item, id, false);
+        if(item != nullptr){
+            item->crop(r);
+            if(item->pointsCount == 0) result = false;
+            delete item;
+        }
+        else return false;
+        if (result== false) return false;
+    }
+    for(uint64_t id : nodes)
+    {
+        bool result =  true;
+        Point* item = nullptr;
+        mger.load(item,id, false);
+        if(item != nullptr)
+        {
+            if(item->x < r.x0) result = false;
+            if(item->x > r.x1) result = false;
+            if(item->y < r.y0) result = false;
+            if(item->y > r.y1) result = false;
+            delete item;
+        }
+        else return false;
+        if (result== false) return false;
+    }
+    return true;
 }

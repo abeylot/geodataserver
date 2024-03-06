@@ -17,6 +17,10 @@ struct __attribute__((packed)) Rectangle
         if (y1 > b.y1) return false;
             return true;
     }
+    inline uint64_t area() const
+    {
+         return (x1 - x0) * (y1 - y0);
+    }
 };
 Rectangle operator*(Rectangle const& a, double const& b);
 Rectangle operator*(Rectangle const& a, Rectangle const& b);

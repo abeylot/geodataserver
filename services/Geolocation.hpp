@@ -21,9 +21,11 @@ struct weightedArea
     Rectangle r;
     int64_t score;
     std::string found;
+    std::vector<uint64_t> nodes;
+    std::vector<uint64_t> ways;
     std::vector<uint64_t> relations;
     GeoPoint pin;
-    //std::list<uint64_t> words;
+    bool checkIntersect(CompiledDataManager& mger);
 };
 
 
