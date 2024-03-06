@@ -3,6 +3,7 @@
 #include "ServicesFactory.hpp"
 #include "../common/constants.hpp"
 #include <stdlib.h>
+#include <algorithm>
 
 const uint64_t UNDEFINED_ID = 0xFFFFFFFFFFFFFFFF;
 const int64_t  WORST_SCORE  = -999999999;
@@ -53,14 +54,13 @@ int64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
         }
 
     }
-        for(auto i : a) if(i != UNDEFINED_ID) new_a.push_back(i);
-        for(auto i : b) if(i != UNDEFINED_ID) new_b.push_back(i);
 
-        a = new_a;
-        b = new_b;
-
-        new_a.clear();
-        new_b.clear();
+    std::copy_if(a.begin(), a.end(), std::back_inserter(new_a), [](uint64_t i){return i != UNDEFINED_ID;});
+    std::copy_if(b.begin(), b.end(), std::back_inserter(new_b), [](uint64_t i){return i != UNDEFINED_ID;});
+    a = std::move(new_a);
+    b = std::move(new_b);
+    new_a.clear(); //just to be sure
+    new_b.clear();
 
     for(uint64_t i = 0; i < b.size(); i++)
     {
@@ -104,38 +104,32 @@ int64_t calcMatchScore(std::vector<uint64_t> a, std::vector<uint64_t> b)
 
     }
 
-        for(auto i : a) if(i != UNDEFINED_ID) new_a.push_back(i);
-        for(auto i : b) if(i != UNDEFINED_ID) new_b.push_back(i);
+    std::copy_if(a.begin(), a.end(), std::back_inserter(new_a), [](uint64_t i){return i != UNDEFINED_ID;});
+    std::copy_if(b.begin(), b.end(), std::back_inserter(new_b), [](uint64_t i){return i != UNDEFINED_ID;});
+    a = std::move(new_a);
+    b = std::move(new_b);
+    new_a.clear();
+    new_b.clear();
 
-        a = new_a;
-        b = new_b;
-
+    while(a.size())
+    {
+        for(uint64_t i = 0; i < b.size(); i++)
+        {
+            if(a[0] == b[i])
+            {
+                if(i!=0) result += 300;
+                else result += 500;
+                a[0] = b[i] = UNDEFINED_ID;
+                break;
+            }
+        }
+        std::copy_if(a.begin(), a.end(), std::back_inserter(new_a), [](uint64_t i){return i != UNDEFINED_ID;});
+        std::copy_if(b.begin(), b.end(), std::back_inserter(new_b), [](uint64_t i){return i != UNDEFINED_ID;});
+        a = std::move(new_a);
+        b = std::move(new_b);
         new_a.clear();
         new_b.clear();
-
-        while(a.size())
-        {
-            for(uint64_t i = 0; i < b.size(); i++)
-            {
-                if(a[0] == b[i])
-                {
-                    if(i!=0) result += 300;
-                    else result += 500;
-                    a[0] = b[i] = UNDEFINED_ID;
-                    break;
-                }
-            }
-              for(auto i : a) if(i != UNDEFINED_ID) new_a.push_back(i);
-            for(auto i : b) if(i != UNDEFINED_ID) new_b.push_back(i);
-
-            a = new_a;
-            b = new_b;
-
-            new_a.clear();
-            new_b.clear();
-        }
-
-
+    }
     return result;
 }
 

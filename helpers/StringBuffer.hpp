@@ -15,7 +15,7 @@ private:
     std::string* pOut_;
 
 public:
-    StringBuffer(std::string& out)
+    explicit StringBuffer(std::string& out)
     {
         pOut_ = &out;
         bytesLeft_ = CONCATENATOR_LENGTH;
