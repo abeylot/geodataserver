@@ -1,5 +1,4 @@
 #include "StringBuffer.hpp"
-#define CONCATENATOR_LENGTH 0x10000
 
 #include <string.h>
 
@@ -2111,7 +2110,7 @@ StringBuffer& operator<<(StringBuffer& sb, uint32_t l)
         goto c9;
     }
     iRes = 10;
-    
+
 
     // 10 chiffres
     if(l > UINT32_C(3999999999)) {

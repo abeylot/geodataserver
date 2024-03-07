@@ -86,4 +86,4 @@ $(BUILD)/geoserver: server.cpp $(headersCommon) $(objectsCommon) $(objectsServer
 	$(cc) server.cpp $(objectsCommon) $(objectsServer) -o $(BUILD)/geoserver $(libs)
 
 clean:
-		rm -rf build debug
+		rm -rf build
