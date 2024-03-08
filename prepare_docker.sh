@@ -24,15 +24,15 @@ if [ ! -d "cache" ]; then
     rm water-polygons-split-4326.zip
 
     echo "get countries boundaries from  natural earth"
-    wget https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_0_boundary_lines_land.zip
+    wget https://naciscdn.org/naturalearth/10m/cultural/ne_10m_admin_0_boundary_lines_land.zip
     #wget www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_0_boundary_lines_land.zip
     mkdir ne_10m_admin_0_boundary_lines_land
     unzip ne_10m_admin_0_boundary_lines_land.zip -d ne_10m_admin_0_boundary_lines_land
     rm ne_10m_admin_0_boundary_lines_land.zip
 
     echo "get lakes from natural earth"
-    wget https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_lakes.zip
-    #wget www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_lakes.zip
+    wget https:///naturalearth/10m/physical/ne_10m_lakes.zip
+    #wget https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_lakes.zip
     mkdir ne_10m_lakes
     unzip ne_10m_lakes.zip -d ne_10m_lakes
     rm  ne_10m_lakes.zip

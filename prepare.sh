@@ -18,41 +18,39 @@ cp $GEOBIN/../config.xml .
 
 echo "get coastline data, to be able to draw seas."
 wget osmdata.openstreetmap.de/download/water-polygons-split-4326.zip
-if [ $? -ne 0]
+if [ $? -ne 0 ]
   then
   echo " failed to download water polygons"
   exit 1
 fi
 unzip water-polygons-split-4326.zip -d .
-rm water-polygons-split-4326.zip
+#rm water-polygons-split-4326.zip
 
 echo "get countries boundaries from  natural earth"
-wget https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_0_boundary_lines_land.zip
-if [ $? -ne 0]
+wget https://naciscdn.org/naturalearth/10m/cultural/ne_10m_admin_0_boundary_lines_land.zip
+if [ $? -ne 0 ]
   then
   echo " failed to download boundaries from natural earth"
-  exit 1
+else
+  mkdir ne_10m_admin_0_boundary_lines_land
+  unzip ne_10m_admin_0_boundary_lines_land.zip -d ne_10m_admin_0_boundary_lines_land
+  rm ne_10m_admin_0_boundary_lines_land.zip
 fi
-#wget www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_0_boundary_lines_land.zip
-mkdir ne_10m_admin_0_boundary_lines_land
-unzip ne_10m_admin_0_boundary_lines_land.zip -d ne_10m_admin_0_boundary_lines_land
-rm ne_10m_admin_0_boundary_lines_land.zip
-
 echo "get lakes from natural earth"
-wget https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_lakes.zip
-if [ $? -ne 0]
+wget https://naciscdn.org/naturalearth/10m/physical/ne_10m_lakes.zip
+if [ $? -ne 0 ]
   then
   echo " failed to download lakes from natural earth"
-  exit 1
+else
+  mkdir ne_10m_lakes
+  unzip ne_10m_lakes.zip -d ne_10m_lakes
+  rm  ne_10m_lakes.zip
 fi
 #wget www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_lakes.zip
-mkdir ne_10m_lakes
-unzip ne_10m_lakes.zip -d ne_10m_lakes
-rm  ne_10m_lakes.zip
 
 echo "extract data from openstreetmap file"
 wget -O - $OSMFILE | tee osm.bz2 | lbzcat | $GEOBIN/renumber .
-if [ $? -ne 0]
+if [ $? -ne 0 ]
   then
   echo " first data extraction step failed"
   exit 1
@@ -60,7 +58,7 @@ fi
 
 echo "compile data from openstreetmap file and other shp files from natural earth"
 lbzcat osm.bz2 | $GEOBIN/compile .
-if [ $? -ne 0]
+if [ $? -ne 0 ]
   then
   echo " failed to compile data"
   exit 1
@@ -74,7 +72,7 @@ rm relationIdIndex
 
 echo "create indexes"
 $GEOBIN/index .
-if [ $? -ne 0]
+if [ $? -ne 0 ]
   then
   echo " index creation failed"
   exit 1
