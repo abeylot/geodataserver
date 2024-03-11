@@ -31,7 +31,7 @@ if [ ! -d "cache" ]; then
     rm ne_10m_admin_0_boundary_lines_land.zip
 
     echo "get lakes from natural earth"
-    wget https:///naturalearth/10m/physical/ne_10m_lakes.zip
+    wget https://naciscdn.org/naturalearth/10m/physical/ne_10m_lakes.zip
     #wget https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_lakes.zip
     mkdir ne_10m_lakes
     unzip ne_10m_lakes.zip -d ne_10m_lakes
