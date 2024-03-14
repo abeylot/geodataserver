@@ -56,6 +56,11 @@
              <circle cx="2" cy="4" r="4" stroke-width="1" fill="none" stroke="#CECECE" />
     </pattern>
 
+    <pattern id="hashed" width="4" height="8" patternUnits="userSpaceOnUse">
+             <rect x="-1" y="-1" width="5" height="9" fill="#EEEEEE"/>
+             <path stroke-width="1" stroke="#CCCCCC" d="M0 0L4 8"/>
+    </pattern>
+
 
     <filter
        style="color-interpolation-filters:sRGB;"
@@ -648,7 +653,7 @@
     <index type="relation" name="relationHeritageIdx">
         <exclude tagKey="location" tagValue="underground"/>
         <select tagKey="heritage" tagValue="*"/>
-        <restriction zLevels="17,18,19">
+        <restriction zLevels="16,17,18,19">
             <condition tagKey="building" closed="yes">
                 <class value="default" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
             </condition>
@@ -662,7 +667,7 @@
         <exclude tagKey="location" tagValue="underground"/>
         <exclude tagKey="heritage" tagValue="*"/>
         <select tagKey="historic" tagValue="*"/>
-        <restriction zLevels="17,18,19">
+        <restriction zLevels="16,17,18,19">
             <condition tagKey="building" closed="yes">
                 <class value="default" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
             </condition>
@@ -676,7 +681,7 @@
         <exclude tagKey="location" tagValue="underground"/>
         <exclude tagKey="historic" tagValue="*"/>
         <exclude tagKey="heritage" tagValue="*"/>
-        <restriction zLevels="17,18,19">
+        <restriction zLevels="16,17,18,19">
             <condition tagKey="building" closed="yes">
                 <class value="default" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#building"/>
             </condition>
@@ -690,7 +695,7 @@
         <select tagKey="historic" tagValue="*"/>
         <exclude tagKey="location" tagValue="underground"/>
         <exclude tagKey="heritage" tagValue="*"/>
-        <restriction zLevels="17,18,19">
+        <restriction zLevels="16,17,18,19">
             <condition tagKey="building" closed="yes">
                     <class value="default"       textField="addr:housenumber"    textZIndex="0" textStyle="#houseNumber"      zIndex="2901" style="#historicBuilding"/>
             </condition>
@@ -703,7 +708,7 @@
     <index type="way" name="wayHeritageIdx">
         <exclude tagKey="location" tagValue="underground"/>
         <select tagKey="heritage" tagValue="*"/>
-        <restriction zLevels="17,18,19">
+        <restriction zLevels="16,17,18,19">
             <condition tagKey="building" closed="yes">
                     <class value="default"       textField="addr:housenumber"    textZIndex="0" textStyle="#houseNumber"      zIndex="2901" style="#historicBuilding"/>
             </condition>
@@ -716,7 +721,7 @@
     <index type="way" name="wayBuildingIdx">
         <exclude tagKey="historic" tagValue="*"/>
         <exclude tagKey="location" tagValue="underground"/>
-        <restriction zLevels="17,18,19">
+        <restriction zLevels="16,17,18,19">
             <condition tagKey="building" closed="yes">
                     <class value="default"       textField="addr:housenumber"    textZIndex="0" textStyle="#houseNumber"      zIndex="2900" style="#building"/>
             </condition>
