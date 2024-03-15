@@ -175,7 +175,7 @@ Msg* HttpEncoder::encode(std::string* in)
             size_t iSep2 = sBody.find("=");
             if(iSep2 != std::string::npos)
             {
-                sBlock = sBody.substr(0,iSep);
+                sBlock = sBody.substr(iDone,iSep - iDone);
                 rcdBody->addBlock(sBlock);
             }
             iDone = iSep+1;

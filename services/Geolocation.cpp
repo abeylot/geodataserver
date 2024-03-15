@@ -523,6 +523,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
 {
     std::string name = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("name"));
     std::string mode = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("mode"));
+    std::string mag = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("mag"));
     std::string word;
 
     std::stringstream my_stream(name);
@@ -691,6 +692,8 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
         } else {
             URL = "/MapDisplay?pin=true&longitude=" + std::to_string(Coordinates::fromNormalizedLon(r.x0/2 + r.x1/2)) + "&lattitude=" + std::to_string(Coordinates::fromNormalizedLat(r.y0/2 + r.y1/2))+"&zoom="+std::to_string(zlevel)+"";
         }
+        if(mag == "X2") URL += "&mag=X2";
+        else if (mag == "X05") URL += "&mag=X05";
         encoder.build303Header(rep,URL);
         encoder.addContent(rep,"redirect!!!");
         return rep;

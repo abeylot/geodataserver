@@ -14,6 +14,8 @@ Msg* MapDisplay::processRequest(Msg* request, [[maybe_unused]] CompiledDataManag
     std::string longitude = "-1.554136";
     std::string latitude = "47.218637";
     std::string zoom = "12";
+    std::string zofs="0";
+    std::string tsz="256";
 
     std::string resp =
         "<!DOCTYPE html>"
@@ -21,8 +23,8 @@ Msg* MapDisplay::processRequest(Msg* request, [[maybe_unused]] CompiledDataManag
         "<head>"
         "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
         "<title>map test</title>"
-        "<link rel=\"stylesheet\" href=\"http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css\" />"
-        "<script type=\"text/javascript\" src=\"http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js\"></script>"
+        "<link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.css\" />"
+        "<script type=\"text/javascript\" src=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.js\"></script>"
         "<style>"
         "html, body { margin: 1% 0; padding: 0;height: 99%;background-color: #B2B3C8 }"
         "#map {"
@@ -48,12 +50,17 @@ Msg* MapDisplay::processRequest(Msg* request, [[maybe_unused]] CompiledDataManag
         "<label>Locate :"
         "<input name=\"name\" >"
         "</label>"
-        "<button>Send</button>"
-        "<select id=\"mode\" name=\"mode\" selected=\"test\">"
-        "<option value=\"test\">test</option>"
+        "<select id=\"mode\" name=\"mode\">"
+        "<option value=\"test\" selected >test</option>"
         "<option value=\"json\">json</option>"
         "<option value=\"xml\">xml</option>"
         "</select>"
+        "<select id=\"mag\" name=\"mag\">"
+        "<option value=\"X05\" #mag05#>&#x1F50D; X0.5</option>"
+        "<option value=\"X1\" #mag1#>&#x1F50D; X1</option>"
+        "<option value=\"X2\" #mag2#>&#x1F50D; X2</option>"
+        "</select>"
+        "<button><b>Send</b></button>"
         "</form></div>"
 
 
@@ -63,7 +70,7 @@ Msg* MapDisplay::processRequest(Msg* request, [[maybe_unused]] CompiledDataManag
         "var map = L.map('map', {zoomControl: false}).setView([#lat#, #lon#], #zoom#);"
         "L.tileLayer('/{z}/{x}/{y}.svg', {"
         "    attribution: 'Map data: &copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>)',"
-        "    maxZoom: 19"
+        "    maxZoom: 19, tileSize:#tsz#, zoomOffset:#zofs#"
         "}).addTo(map);#pin#"
         "</script>"
         "</body>"
@@ -102,9 +109,35 @@ Msg* MapDisplay::processRequest(Msg* request, [[maybe_unused]] CompiledDataManag
         pin = true;
     }
 
+    if (request->getRecord(2)->getNamedValue("mag") == "X2")
+    {
+        tsz = "512" ;
+        zofs = "-1";
+        resp.replace(resp.find("#mag1#"),6,"");
+        resp.replace(resp.find("#mag05#"),7,"");
+        resp.replace(resp.find("#mag2#"),6,"selected");
+    } else if (request->getRecord(2)->getNamedValue("mag") == "X05")
+    {
+        tsz = "128" ;
+        zofs = "1";
+        resp.replace(resp.find("#mag1#"),6,"");
+        resp.replace(resp.find("#mag05#"),7,"selected");
+        resp.replace(resp.find("#mag2#"),6,"");
+    } else {
+        resp.replace(resp.find("#mag1#"),6,"selected");
+        resp.replace(resp.find("#mag05#"),7,"");
+        resp.replace(resp.find("#mag2#"),6,"");
+    }
+
+
     resp.replace(resp.find("#lon#"),5,longitude);
     resp.replace(resp.find("#lat#"),5,latitude);
     resp.replace(resp.find("#zoom#"),6,zoom);
+    resp.replace(resp.find("#tsz#"),5,tsz);
+    resp.replace(resp.find("#zofs#"),6,zofs);
+
+
+
     if(pin)
     {
         resp.replace(resp.find("#pin#"),5,"var marker = L.marker(["+latitude+","+longitude+"]).addTo(map);");
