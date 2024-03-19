@@ -11,13 +11,17 @@ bool ServicesFactory::_enabledSvgService{false};
 bool ServicesFactory::_enabledMapDisplayService{false};
 bool ServicesFactory::_enabledTileService{false};
 bool ServicesFactory::_enabledGeoLocationService{false};
+bool ServicesFactory::_enabledRasterImageService{false};
 
 int  ServicesFactory::_cacheLevel;
 std::string ServicesFactory::_defaultColor;
 std::string ServicesFactory::_locale;
+std::vector<PngImage> ServicesFactory::_imageList;
 
-void ServicesFactory::init(const ParmsXmlVisitor& params)
+void ServicesFactory::init(const ParmsXmlVisitor& params, const std::vector<PngImage>& imageList )
 {
+    _imageList = imageList;
+
     _locale = params.getParam("locale");
     _cacheLevel = params.getNumParam("CacheLevel", 8);
     _defaultColor = params.getParam("DefaultColor");
@@ -52,6 +56,9 @@ void ServicesFactory::init(const ParmsXmlVisitor& params)
     _enabledGeoLocationService = (params.getParam("GeolocationService") == "enabled");
     if(_enabledGeoLocationService) std::cout << "geolocation service enabled \n";
 
+    _enabledRasterImageService = (params.getParam("RasterImage") == "enabled");
+    if(_enabledGeoLocationService) std::cout << "raster image service enabled \n";
+
 }
 
 
@@ -81,6 +88,23 @@ ServiceInterface* ServicesFactory::getService(std::string service)
         if(pos < service.length()) y =  atoll(c+pos+1);
         //std::cout << x <<":" << y << ";" << z << "\n";
         return new Tile(z, x, y, _cacheLevel, _locale, _defaultColor);
+
+    }
+    else if(_enabledTileService && service.find(".png") != std::string::npos)
+    {
+        unsigned int pos = 0;
+        const char* c = service.c_str();
+        long x=0;
+        long y=0;
+        long z = atoll(c+1);
+        pos=1;
+        while(pos < service.length() && (*(c+pos) != '/')) pos++;
+        if(pos < service.length()) x =  atoll(c+pos+1);
+        pos++;
+        while(pos < service.length() && (*(c+pos) != '/')) pos++;
+        if(pos < service.length()) y =  atoll(c+pos+1);
+        //std::cout << x <<":" << y << ";" << z << "\n";
+        return new RasterImage(z, x, y, _imageList);
 
     }
     else return NULL;

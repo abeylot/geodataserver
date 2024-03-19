@@ -263,8 +263,6 @@ int main(int argc, char *argv[])
     XmlFileParser<ParmsXmlVisitor>::parseXmlFile(config,params);
     fclose(config);
 
-    ServicesFactory::init(params);
-
     std::vector<IndexDesc*> indexes;
     std::map<std::string, std::string> symbols;
     std::map<std::string, std::string> charconvs;
@@ -288,6 +286,7 @@ int main(int argc, char *argv[])
     std::cout << "launching " << params.getNumParam("ExecThreads", 5) << " Exec threads \n";
 
     CompiledDataManager mger(std::string(argv[1]), &indexes, &symbols, &charconvs);
+    ServicesFactory::init(params, v.imageList);
 
 
     for(int i=0; i < params.getNumParam("ExecThreads", 5); i++)

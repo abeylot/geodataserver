@@ -4,6 +4,9 @@
 #include "../GeoBox.hpp"
 #include "Sequence.hpp"
 #include "FileIndex.hpp"
+#include "../common/GeoTypes.hpp"
+#include "../Coordinates.hpp"
+
 
 struct CssClass
 {
@@ -117,6 +120,20 @@ struct IndexDesc
     }
 };
 
+struct PngImage
+{
+    GeoPoint quadrilateral[4];
+    std::string filename;
+    explicit PngImage(const std::string filename, GeoPoint p1, GeoPoint p2, GeoPoint p3, GeoPoint p4):
+    filename(filename)
+    {
+    quadrilateral[0] = p1;
+    quadrilateral[1] = p2;
+    quadrilateral[2] = p3;
+    quadrilateral[3] = p4;
+    }
+};
+
 struct ParmsXmlVisitor
 {
     std::map<std::string, std::string> parameters;
@@ -167,6 +184,7 @@ struct ParmsXmlVisitor
 struct XmlVisitor
 {
     std::vector<IndexDesc*>* idxList;
+    std::vector<PngImage> imageList;
     std::map<std::string, std::string> symbols;
     //std::map<std::string, std::string> patterns;
     std::map<std::string, std::string> shortcuts;
@@ -322,6 +340,23 @@ struct XmlVisitor
                     if(*c) c++;
                 }
             }
+        }
+        if (b->baliseName == "image")
+        {
+            GeoPoint p1,p2,p3,p4;
+
+            p1.x = Coordinates::toNormalizedLon(b->keyValues["x1"]);
+            p2.x = Coordinates::toNormalizedLon(b->keyValues["x2"]);
+            p3.x = Coordinates::toNormalizedLon(b->keyValues["x3"]);
+            p4.x = Coordinates::toNormalizedLon(b->keyValues["x4"]);
+
+
+            p1.y = Coordinates::toNormalizedLat(b->keyValues["y1"]);
+            p2.y = Coordinates::toNormalizedLat(b->keyValues["y2"]);
+            p3.y = Coordinates::toNormalizedLat(b->keyValues["y3"]);
+            p4.y = Coordinates::toNormalizedLat(b->keyValues["y4"]);
+
+            imageList.push_back(PngImage(b->keyValues["ref"], p1, p2, p3, p4));
         }
     }
 

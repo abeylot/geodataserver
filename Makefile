@@ -32,6 +32,7 @@ $(BUILD)/CompiledDataManager.o
 
 #objects used by server.cpp only
 objectsServer = $(BUILD)/services/Ping.o \
+$(BUILD)/services/RasterImage.o \
 $(BUILD)/services/Geolocation.o \
 $(BUILD)/services/RelationList.o \
 $(BUILD)/services/RelationDetail.o \
@@ -51,7 +52,7 @@ $(BUILD)/services/MapDisplay.o \
 $(BUILD)/helpers/StringBuffer.o
 
 #libs=-lpthread  -lz -latomic -lstdc++fs -fsanitize=address -static-libsan
-libs=-lpthread  -lz -latomic -lstdc++fs
+libs=-lpthread  -lz -latomic -lstdc++fs -lpng
 
 all: $(BUILD) $(BUILD)/renumber $(BUILD)/compile $(BUILD)/index $(BUILD)/geoserver
 

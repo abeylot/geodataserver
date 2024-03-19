@@ -13,6 +13,7 @@
 #include "Tile.hpp"
 #include "MapDisplay.hpp"
 #include "Geolocation.hpp"
+#include "RasterImage.hpp"
 class ServicesFactory
 {
 private:
@@ -26,13 +27,15 @@ static bool _enabledSvgService;
 static bool _enabledMapDisplayService;
 static bool _enabledTileService;
 static bool _enabledGeoLocationService;
+static bool _enabledRasterImageService;
 static int _cacheLevel;
 static std::string _defaultColor;
 static std::string _locale;
+static std::vector<PngImage> _imageList;
 
 
 public:
-    static void init(const ParmsXmlVisitor& params);
+    static void init(const ParmsXmlVisitor& params, const std::vector<PngImage>& imageList);
     static ServiceInterface* getService(std::string service);
     static void releaseService(ServiceInterface* service);
 };
