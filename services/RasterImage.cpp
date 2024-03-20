@@ -40,9 +40,6 @@ Msg* RasterImage::processRequest([[maybe_unused]] Msg* request, [[maybe_unused]]
     rect.x1 = Coordinates::toNormalizedLon(std::to_string(lon2));
     rect.y1 = Coordinates::toNormalizedLat(std::to_string(lat2));
 
-    uint32_t szx, szy;
-    szx = szy = 256;
-
 
     Msg* rep = new Msg;
     HttpEncoder encoder;
@@ -50,6 +47,14 @@ Msg* RasterImage::processRequest([[maybe_unused]] Msg* request, [[maybe_unused]]
     std::string res = "";
     // iterate on png images, and build png result
     //
+    png::image< png::rgba_pixel> image(256,256);
+    for(int i = 0; i < 256; i++)
+    {
+        for(int j = 0; j < 256; j++)
+        {
+            image[i][j] = png::rgba_pixel(0,0,0,1);
+        }
+    }
     for(auto img : _imageList)
     {
         Rectangle rect2;
@@ -60,47 +65,34 @@ Msg* RasterImage::processRequest([[maybe_unused]] Msg* request, [[maybe_unused]]
         rect2.addPoint(img.quadrilateral[2].x,img.quadrilateral[2].y);
         rect2.addPoint(img.quadrilateral[3].x,img.quadrilateral[3].y);
 
-        png::image< png::ga_pixel> image(256,256);
-        for(int i = 0; i < 256; i++)
-        {
-            for(int j = 0; j < 256; j++)
-            {
-                image[i][j] = png::ga_pixel(0,1);
-            }
-        }
         if((rect*rect2).isValid())
         {
-          png::image<png::ga_pixel> myImg(6000,6000);
-          myImg.read(mger.path + "/images/" + img.filename);
+          //png::image<png::ga_pixel> myImg(6000,6000);
+          //myImg.read(mger.path + "/images/" + img.filename);
+           png::image<png::rgba_pixel>* myImg = new png::image<png::rgba_pixel>(mger.path + "/images/" + img.filename);
           // std::cout << "rect  " << rect.x0 << ',' << rect.y0 << ',' << rect.x1 << ',' << rect.y1 << ',' << "\n";
            //std::cout << "rect2 " << rect2.x0 << ',' << rect2.y0 << ',' << rect2.x1 << ',' << rect2.y1 << ',' << "\n";
            //for(int i = 0; i < 256; i++) for(int j = 0; j < 256; j++) image[i][j] = png::ga_pixel(i,50);
            for(int i = 0; i < 256; i++){
-                   for(int j = 0; j < 256; j++){
                    long posx = rect.x0*(1.0 - i/256.0) + rect.x1*(i/256.0);
                    if((posx >= rect2.x0) && (posx < rect2.x1))
                    {
+                   uint32_t posxInImg = ((posx - (long)(img.quadrilateral[0].x)) * myImg->get_width()) / ((long)(img.quadrilateral[1].x) -(long)(img.quadrilateral[0].x));
+                   for(int j = 0; j < 256; j++){
                        long posy = rect.y0*(1.0 - j/256.0) + rect.y1*(j/256.0);
                        if((posy >= rect2.y0) && (posy < rect2.y1))
                        {
-                           //image[j][i] = png::ga_pixel(0,50);
-                           uint32_t posxInImg = ((posx - (long)(img.quadrilateral[0].x)) * 6000.0) / ((long)(img.quadrilateral[1].x) -(long)(img.quadrilateral[0].x));
-
-                           uint32_t posyInImg = ((Coordinates::fromNormalizedLat(posy) - Coordinates::fromNormalizedLat(img.quadrilateral[0].y)) * 6000.0) / (Coordinates::fromNormalizedLat(img.quadrilateral[2].y) -Coordinates::fromNormalizedLat(img.quadrilateral[0].y)) + 1;
-                           image[j][i] = myImg[6000 - posyInImg][posxInImg];
+                           uint32_t posyInImg = ((Coordinates::fromNormalizedLat(posy) - Coordinates::fromNormalizedLat(img.quadrilateral[0].y)) * myImg->get_height()) / (Coordinates::fromNormalizedLat(img.quadrilateral[2].y) -Coordinates::fromNormalizedLat(img.quadrilateral[0].y)) + 1;
+                           image[j][i] = (*myImg)[myImg->get_height() - posyInImg][posxInImg];
                        }
-                       //else image[j][i] = png::ga_pixel(255,50);
                    }
-                   //else image[j][i] = png::ga_pixel(255,50);
-
                 }
            }
+           delete myImg;
        }
-
-       std::stringstream sstream;
-       image.write_stream(sstream);
-       encoder.addContent(rep,sstream.str());
     }
-
+    std::stringstream sstream;
+    image.write_stream(sstream);
+    encoder.addContent(rep,sstream.str());
     return rep;
 }
