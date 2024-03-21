@@ -45,6 +45,7 @@ $(BUILD)/services/ServicesFactory.o \
 $(BUILD)/services/Svg.o \
 $(BUILD)/services/Tile.o \
 $(BUILD)/services/renderers/SvgRenderer.o \
+$(BUILD)/services/renderers/PngRenderer.o \
 $(BUILD)/messaging/Msg.o \
 $(BUILD)/helpers/TcpListener.o \
 $(BUILD)/helpers/TcpConnection.o \
@@ -59,7 +60,7 @@ all: $(BUILD) $(BUILD)/renumber $(BUILD)/compile $(BUILD)/index $(BUILD)/geoserv
 $(objectsCommon): $(BUILD)/%.o: %.cpp %.hpp $(headersCommon)
 	$(cc) -c $<  -o $@
 
-$(objectsServer): $(BUILD)/%.o: %.cpp %.hpp $(headersCommon) messaging/HttpEncoder.hpp messaging/Msg.hpp services/renderers/SvgRenderer.hpp
+$(objectsServer): $(BUILD)/%.o: %.cpp %.hpp $(headersCommon) messaging/HttpEncoder.hpp messaging/Msg.hpp services/renderers/SvgRenderer.hpp services/renderers/PngRenderer.hpp
 	$(cc) -c $<  -o $@
 
 
