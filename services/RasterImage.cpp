@@ -3,6 +3,8 @@
 #include <math.h>
 #include <sstream>
 #include <png++/png.hpp>
+#include <filesystem>
+
 
 inline double tilex2long(int x, int z)
 {
@@ -46,6 +48,68 @@ Msg* RasterImage::processRequest([[maybe_unused]] Msg* request, [[maybe_unused]]
     HttpEncoder encoder;
     encoder.build200Header(rep, "image/png");
     PngRenderer r(_imageList, mger.path + "/images/");
-    encoder.addContent(rep,r.render(rect,256,256));
+
+    bool filefound = false;
+    char filename[250];
+    std::string res="";
+    FILE* in;
+    
+    if(_z <= _cachelevel)
+    {
+        snprintf(filename,250,"%s/cache/%ld/%ld/%ld.png",mger.path.c_str(),_z,_x,_y);
+        in = fopen(filename, "r");
+        if(in != NULL)
+        {
+            filefound=true;
+            char buffer[4097];
+            size_t len = 0;
+            while( (len = fread(buffer,1,4096,in)) )
+            {
+                buffer[len] = 0;
+                res.append(buffer, len);
+            }
+        }
+    }
+    if(filefound)
+    {
+    //printf("USING CACHE !\n");
+        fclose(in);
+        encoder.addContent(rep,res);
+    }else{
+        std::string dir1 = mger.path + "/cache/" + std::to_string(_z);
+        std::string dir2 = dir1 + "/" + std::to_string(_x);
+
+        res = r.render(rect,256,256);
+        //std::cout << "cache level " << _cachelevel << "\n";
+        if(_z <= _cachelevel && res.length() > 2048)
+        {
+            std::filesystem::path p1(dir1);
+            std::filesystem::path p2(dir2);
+
+            if(! std::filesystem::exists(p1))
+            {
+                std::filesystem::create_directory(p1);
+            }
+
+            if(! std::filesystem::exists(p2))
+            {
+                std::filesystem::create_directory(p2);
+            }
+            {
+                std::lock_guard<std::mutex> guard(file_mtx);
+                FILE* out = fopen(filename, "w");
+                if(out != NULL)
+                {
+                    fwrite(res.c_str(), res.size(),1,out);
+                    fclose(out);
+                }
+                else
+                {
+                    printf("UNABLE TO CACHE %s !\n", filename);
+                }
+            }
+        }
+    }
+    encoder.addContent(rep,res);
     return rep;
 }

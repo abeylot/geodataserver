@@ -9,10 +9,16 @@ class RasterImage : public ServiceInterface
 private:
     HttpEncoder encoder;
     long _x, _y, _z;
+    unsigned int _cachelevel;
     const std::vector<PngImage>& _imageList;
 public:
     Msg* processRequest(Msg* request, CompiledDataManager& mger) override;
-    explicit RasterImage(long z, long x, long y, const std::vector<PngImage>& imageList):_x(x), _y(y), _z(z),_imageList(imageList)
+    explicit RasterImage(long z, long x, long y, unsigned int cachelevel, const std::vector<PngImage>& imageList):
+    _x(x),
+    _y(y),
+    _z(z),
+    _cachelevel(cachelevel),
+    _imageList(imageList)
     {
     }
 };

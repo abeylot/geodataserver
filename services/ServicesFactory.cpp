@@ -104,7 +104,7 @@ ServiceInterface* ServicesFactory::getService(std::string service)
         while(pos < service.length() && (*(c+pos) != '/')) pos++;
         if(pos < service.length()) y =  atoll(c+pos+1);
         //std::cout << x <<":" << y << ";" << z << "\n";
-        return new RasterImage(z, x, y, _imageList);
+        return new RasterImage(z, x, y, _cacheLevel, _imageList);
 
     }
     else return NULL;
