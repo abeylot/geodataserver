@@ -79,7 +79,7 @@ Msg* MapDisplay::processRequest(Msg* request, [[maybe_unused]] CompiledDataManag
         "var rasterMap = {"
         "\"rasterImages\": raster"
         "};"
-        "L.control.layers(baseMap, rasterMap).addTo(map);"
+        "L.control.layers(baseMap, rasterMap).addTo(map);L.control.scale().addTo(map);"
         "</script>"
         "</body>"
         "</html>";

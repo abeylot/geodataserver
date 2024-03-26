@@ -30,13 +30,13 @@ std::string PngRenderer::render(const Rectangle& rect, uint32_t sizex, uint32_t 
                    long posx = rect.x0*(1.0 - i/((double)sizex)) + rect.x1*(i/(double)sizex);
                    if((posx >= rect2.x0) && (posx < rect2.x1))
                    {
-                   uint32_t posxInImg = ((posx - (long)(img.quadrilateral[0].x)) * myImg->get_width()) / ((long)(img.quadrilateral[1].x) -(long)(img.quadrilateral[0].x));
+                   uint32_t posxInImg = ((posx - (long)(rect2.x0)) * myImg->get_width()) / ((long)(rect2.x1) -(long)(rect2.x0));
                    for(unsigned int j = 0; j < 256; j++){
                        long posy = rect.y0*(1.0 - j/(double)sizey) + rect.y1*(j/(double)sizey);
                        if((posy >= rect2.y0) && (posy < rect2.y1))
                        {
-                           uint32_t posyInImg = ((Coordinates::fromNormalizedLat(posy) - Coordinates::fromNormalizedLat(img.quadrilateral[0].y)) * myImg->get_height()) / (Coordinates::fromNormalizedLat(img.quadrilateral[2].y) -Coordinates::fromNormalizedLat(img.quadrilateral[0].y)) + 1;
-                           image[j][i] = (*myImg)[myImg->get_height() - posyInImg][posxInImg];
+                           uint32_t posyInImg = ((Coordinates::fromNormalizedLat(posy) - Coordinates::fromNormalizedLat(rect2.y0)) * myImg->get_height()) / (Coordinates::fromNormalizedLat(rect2.y1) -Coordinates::fromNormalizedLat(rect2.y0));
+                           image[j][i] = (*myImg)[posyInImg][posxInImg];
                        }
                    }
                 }
