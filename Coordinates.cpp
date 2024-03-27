@@ -43,13 +43,61 @@ uint32_t Coordinates::toNormalizedLon(const std::string& coord)
     return normalized;
 }
 
+
+uint32_t Coordinates::toNormalizedLat(const std::string& coord)
+{
+    size_t pos = coord.find(".");
+    int signe = 1;
+
+    long long signedInt;
+    if(pos == std::string::npos)  signedInt = atoll(coord.substr(0,pos).c_str());
+    else  signedInt = atoll(coord.c_str());
+
+    if (coord.at(0) == '-') signe = -1;
+    uint32_t integerPart = 90 - signedInt;
+
+    std::string sDecimalPart;
+    if(pos == std::string::npos) sDecimalPart = "";
+    else  sDecimalPart = coord.substr(pos+1);
+
+    while(sDecimalPart.size() < 7) sDecimalPart += '0';
+    uint32_t decimalPart = atol(sDecimalPart.c_str());
+    uint32_t intCoord;
+    if(signe == 1)
+        intCoord = (integerPart) * 10000000 - decimalPart;
+    else
+        intCoord = (integerPart)* 10000000 + decimalPart;
+
+    uint32_t normalized = 0;
+    uint32_t toCompare = 1800000000ULL;
+    normalized = 1;
+    for (int i = 0; i < 32; i++ )
+    {
+        normalized <<= 1;
+        if (intCoord > toCompare)
+        {
+            normalized |= 1;
+            intCoord = intCoord - toCompare;
+        }
+        toCompare >>= 1;
+    }
+    return normalized;
+}
+
 double Coordinates::fromNormalizedLon(uint32_t coord)
 {
     float res = ((float) coord * 360.0 /(float) 0b10000000000000000000000000000000) - 180.0;
     return res;
 }
 
-uint32_t Coordinates::toNormalizedLat(const std::string& coord)
+double Coordinates::fromNormalizedLat(uint32_t coord)
+{
+    float res = 90.0 - ((float) coord * 180.0 /(float) 0b10000000000000000000000000000000);
+    return res;
+}
+
+
+/*uint32_t Coordinates::toNormalizedLat(const std::string& coord)
 {
     double angle = atof(coord.c_str());
 
@@ -66,20 +114,6 @@ uint32_t Coordinates::toNormalizedLat(const std::string& coord)
     
     if(signe) normalized = 0b1000000000000000000000000000000  * (1 + dist/(2.5 * M_PI));
     else normalized =       0b1000000000000000000000000000000 * (1 - dist/(2.5 * M_PI));
-    /*
-    uint32_t toCompare = 1800000000ULL;
-    normalized = 1;
-    for (int i = 0; i < 32; i++ )
-    {
-        normalized <<= 1;
-        if (intCoord > toCompare)
-        {
-            normalized |= 1;
-            intCoord = intCoord - toCompare;
-        }
-        toCompare >>= 1;
-    }
-    */
     return normalized;
 }
 
@@ -100,7 +134,7 @@ double Coordinates::fromNormalizedLat(uint32_t coord)
    }
    res = signe * (atan(exp(dist))*2 - M_PI/2.0) * 180.0 / M_PI;
    return res;
-}
+}*/
 
 std::string Coordinates::toHex(const uint32_t number)
 {
