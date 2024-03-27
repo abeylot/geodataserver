@@ -13,35 +13,39 @@ std::string PngRenderer::render(const Rectangle& rect, uint32_t sizex, uint32_t 
             image[i][j] = png::rgba_pixel(0,0,0,1);
         }
     }
+
+
+    double my_lat_min = Coordinates::fromNormalizedLat(rect.y1);
+    double my_lat_max = Coordinates::fromNormalizedLat(rect.y0);
+    double my_lon_min = Coordinates::fromNormalizedLon(rect.x0);
+    double my_lon_max = Coordinates::fromNormalizedLon(rect.x1);
+
     for(auto img : _imageList)
     {
-        Rectangle rect2;
-        rect2.x0 = rect2.x1 = img.quadrilateral[0].x;
-        rect2.y0 = rect2.y1 = img.quadrilateral[0].y;
-
-        rect2.addPoint(img.quadrilateral[1].x,img.quadrilateral[1].y);
-        rect2.addPoint(img.quadrilateral[2].x,img.quadrilateral[2].y);
-        rect2.addPoint(img.quadrilateral[3].x,img.quadrilateral[3].y);
-
-        if((rect*rect2).isValid())
-        {
-           png::image<png::rgba_pixel>* myImg = new png::image<png::rgba_pixel>(_imagePath + img.filename);
-           for(unsigned int i = 0; i < sizex; i++){
-                   long posx = rect.x0*(1.0 - i/((double)sizex)) + rect.x1*(i/(double)sizex);
-                   if((posx >= rect2.x0) && (posx < rect2.x1))
+       if(
+       (my_lat_max >= img.lat_min) and
+       (my_lat_min <= img.lat_max) and
+       (my_lon_max >= img.lon_min) and
+       (my_lon_min <= img.lon_max)
+       )
+       {
+       png::image<png::rgba_pixel>* myImg = new png::image<png::rgba_pixel>(_imagePath + img.filename);
+       for(unsigned int i = 0; i < sizex; i++){
+               double posx = Coordinates::fromNormalizedLon(rect.x0*(1.0 - i/((double)sizex)) + rect.x1*(i/(double)sizex));
+               if((posx >= img.lon_min) && (posx < img.lon_max))
+               {
+               uint32_t posxInImg = ((posx - img.lon_min) * myImg->get_width()) / (img.lon_max - img.lon_min);
+               for(unsigned int j = 0; j < 256; j++){
+                   double posy = Coordinates::fromNormalizedLat(rect.y0*(1.0 - j/(double)sizey) + rect.y1*(j/(double)sizey));
+                   if((posy >= img.lat_min) && (posy < img.lat_max))
                    {
-                   uint32_t posxInImg = ((posx - (long)(rect2.x0)) * myImg->get_width()) / ((long)(rect2.x1) -(long)(rect2.x0));
-                   for(unsigned int j = 0; j < 256; j++){
-                       long posy = rect.y0*(1.0 - j/(double)sizey) + rect.y1*(j/(double)sizey);
-                       if((posy >= rect2.y0) && (posy < rect2.y1))
-                       {
-                           uint32_t posyInImg = ((Coordinates::fromNormalizedLat(posy) - Coordinates::fromNormalizedLat(rect2.y0)) * myImg->get_height()) / (Coordinates::fromNormalizedLat(rect2.y1) -Coordinates::fromNormalizedLat(rect2.y0));
-                           image[j][i] = (*myImg)[posyInImg][posxInImg];
-                       }
+                       uint32_t posyInImg = ((posy - img.lat_max) * myImg->get_height()) / (img.lat_min - img.lat_max);
+                       image[j][i] = (*myImg)[posyInImg][posxInImg];
                    }
-                }
+               }
            }
-           delete myImg;
+       }
+       delete myImg;
        }
     }
     std::stringstream sstream;

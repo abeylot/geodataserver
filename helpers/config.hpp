@@ -6,7 +6,7 @@
 #include "FileIndex.hpp"
 #include "../common/GeoTypes.hpp"
 #include "../Coordinates.hpp"
-
+#include <algorithm>
 
 struct CssClass
 {
@@ -122,15 +122,15 @@ struct IndexDesc
 
 struct PngImage
 {
-    GeoPoint quadrilateral[4];
     std::string filename;
-    explicit PngImage(const std::string filename, GeoPoint p1, GeoPoint p2, GeoPoint p3, GeoPoint p4):
-    filename(filename)
+    double lon_min, lon_max, lat_min, lat_max;
+    explicit PngImage(const std::string filename, double lon_min, double lon_max, double lat_min, double lat_max):
+    filename(filename),
+    lon_min(lon_min),
+    lon_max(lon_max),
+    lat_min(lat_min),
+    lat_max(lat_max)
     {
-    quadrilateral[0] = p1;
-    quadrilateral[1] = p2;
-    quadrilateral[2] = p3;
-    quadrilateral[3] = p4;
     }
 };
 
@@ -343,20 +343,22 @@ struct XmlVisitor
         }
         if (b->baliseName == "image")
         {
-            GeoPoint p1,p2,p3,p4;
-
-            p1.x = Coordinates::toNormalizedLon(b->keyValues["x1"]);
-            p2.x = Coordinates::toNormalizedLon(b->keyValues["x2"]);
-            p3.x = Coordinates::toNormalizedLon(b->keyValues["x3"]);
-            p4.x = Coordinates::toNormalizedLon(b->keyValues["x4"]);
+            double x1 = atof(b->keyValues["x1"].c_str());
+            double x2 = atof(b->keyValues["x2"].c_str());
+            double x3 = atof(b->keyValues["x3"].c_str());
+            double x4 = atof(b->keyValues["x4"].c_str());
 
 
-            p1.y = Coordinates::toNormalizedLat(b->keyValues["y1"]);
-            p2.y = Coordinates::toNormalizedLat(b->keyValues["y2"]);
-            p3.y = Coordinates::toNormalizedLat(b->keyValues["y3"]);
-            p4.y = Coordinates::toNormalizedLat(b->keyValues["y4"]);
+            double y1 = atof(b->keyValues["y1"].c_str());
+            double y2 = atof(b->keyValues["y2"].c_str());
+            double y3 = atof(b->keyValues["y3"].c_str());
+            double y4 = atof(b->keyValues["y4"].c_str());
 
-            imageList.push_back(PngImage(b->keyValues["ref"], p1, p2, p3, p4));
+            imageList.push_back(PngImage(b->keyValues["ref"],
+                std::min(std::min(x1,x2),std::min(x3,x4)),
+                std::max(std::max(x1,x2),std::max(x3,x4)),
+                std::min(std::min(y1,y2),std::min(y3,y4)),
+                std::max(std::max(y1,y2),std::max(y3,y4))));
         }
     }
 
