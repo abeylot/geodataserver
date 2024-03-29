@@ -4,7 +4,7 @@
 #include <set>
 #include <deque>
 #include "../../helpers/hash.hpp"
-
+#include "../../common/Projections.hpp"
 #include "../../CompiledDataManager.hpp"
 
 struct label_s
@@ -40,6 +40,32 @@ struct myShape
     Shape     s;
 };
 
+inline int32_t projectX(const Projection& p, const uint64_t size, const uint32_t left_bound, const uint32_t right_bound, const uint32_t x)
+{
+  double x_  = Coordinates::fromNormalizedLat(x);
+  double x0_ = Coordinates::fromNormalizedLat(left_bound);
+  double x1_ = Coordinates::fromNormalizedLat(right_bound);
+
+  return size*(
+     (p.lon2x(x_) - p.lon2x(x0_))/
+     (p.lon2x(x1_) - p.lon2x(x0_))
+  );
+}
+
+inline int32_t projectY(const Projection& p, const uint64_t size, const uint32_t lower_bound, const uint32_t upper_bound, const uint32_t y)
+{
+  double y_  = Coordinates::fromNormalizedLat(y);
+  double y0_ = Coordinates::fromNormalizedLat(lower_bound);
+  double y1_ = Coordinates::fromNormalizedLat(upper_bound);
+
+  return size*(
+     (p.lat2y(y_) - p.lat2y(y0_))/
+     (p.lat2y(y1_) - p.lat2y(y0_))
+  );
+}
+
+
+
 class SvgRenderer
 {
 private:
@@ -59,6 +85,7 @@ private:
     std::string _locale, _defaultColor;
     char _locales[32][2];
     unsigned char _nb_locales = 0;
+    WebMercatorProj _proj;
 
 
 public:

@@ -10,7 +10,7 @@ uint32_t Coordinates::toNormalizedLon(const std::string& coord)
     long long signedInt;
     if(pos == std::string::npos)  signedInt = atoll(coord.substr(0,pos).c_str());
     else  signedInt = atoll(coord.c_str());
-    
+
     if (coord.at(0) == '-') signe = -1;
     uint32_t integerPart = 180 + signedInt;
 
@@ -84,13 +84,13 @@ uint32_t Coordinates::toNormalizedLat(const std::string& coord)
     return normalized;
 }
 
-double Coordinates::fromNormalizedLon(uint32_t coord)
+double Coordinates::fromNormalizedLon(const uint32_t coord)
 {
     float res = ((float) coord * 360.0 /(float) 0b10000000000000000000000000000000) - 180.0;
     return res;
 }
 
-double Coordinates::fromNormalizedLat(uint32_t coord)
+double Coordinates::fromNormalizedLat(const uint32_t coord)
 {
     float res = 90.0 - ((float) coord * 180.0 /(float) 0b10000000000000000000000000000000);
     return res;
@@ -107,11 +107,11 @@ double Coordinates::fromNormalizedLat(uint32_t coord)
         angleRadians  = -1.0 * angleRadians;
         signe = true;
     }
-    
+
     double dist = log(tan((angleRadians/2.0 + M_PI/4.0)));
-    
+
     uint32_t normalized = 0;
-    
+
     if(signe) normalized = 0b1000000000000000000000000000000  * (1 + dist/(2.5 * M_PI));
     else normalized =       0b1000000000000000000000000000000 * (1 - dist/(2.5 * M_PI));
     return normalized;

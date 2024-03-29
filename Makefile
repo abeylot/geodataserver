@@ -21,6 +21,7 @@ helpers/Rectangle.hpp \
 helpers/hash.hpp \
 helpers/Sequence.hpp \
 Coordinates.hpp \
+common/Projections.hpp \
 GeoBox.hpp
 
 #objects used by all executables
@@ -28,7 +29,8 @@ objectsCommon = $(BUILD)/GeoBox.o \
 $(BUILD)/helpers/hash.o \
 $(BUILD)/Coordinates.o \
 $(BUILD)/helpers/Rectangle.o \
-$(BUILD)/CompiledDataManager.o
+$(BUILD)/CompiledDataManager.o \
+$(BUILD)/common/Projections.o
 
 #objects used by server.cpp only
 objectsServer = $(BUILD)/services/Ping.o \
@@ -70,6 +72,7 @@ $(BUILD):
 	mkdir -p $(BUILD)/services
 	mkdir -p $(BUILD)/services/renderers
 	mkdir -p $(BUILD)/messaging
+	mkdir -p $(BUILD)/common
 
 debug: cc=$(CC) -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\"
 debug: $(BUILD) $(BUILD)/renumber $(BUILD)/compile $(BUILD)/index $(BUILD)/geoserver
