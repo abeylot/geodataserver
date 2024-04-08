@@ -40,6 +40,8 @@ std::string PngRenderer::render(const Rectangle& rect, uint32_t sizex, uint32_t 
                    if((posy >= img.lat_min) && (posy < img.lat_max))
                    {
                        uint32_t posyInImg = ((posy - img.lat_max) * myImg->get_height()) / (img.lat_min - img.lat_max);
+                       if(posyInImg >= myImg->get_width()) posyInImg = myImg->get_width() - 1;
+                       if(posxInImg >= myImg->get_height()) posxInImg = myImg->get_height() - 1;
                        image[j][i] = (*myImg)[posyInImg][posxInImg];
                    }
                }
