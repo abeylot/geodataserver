@@ -56,7 +56,7 @@ void ServicesFactory::init(const ParmsXmlVisitor& params, const std::vector<PngI
     _enabledGeoLocationService = (params.getParam("GeolocationService") == "enabled");
     if(_enabledGeoLocationService) std::cout << "geolocation service enabled \n";
 
-    _enabledRasterImageService = (params.getParam("RasterImage") == "enabled");
+    _enabledRasterImageService = (params.getParam("RasterImageService") == "enabled");
     if(_enabledGeoLocationService) std::cout << "raster image service enabled \n";
 
 }
@@ -90,7 +90,7 @@ ServiceInterface* ServicesFactory::getService(std::string service)
         return new Tile(z, x, y, _cacheLevel, _locale, _defaultColor);
 
     }
-    else if(_enabledTileService && service.find(".png") != std::string::npos)
+    else if(_enabledRasterImageService && service.find(".png") != std::string::npos)
     {
         unsigned int pos = 0;
         const char* c = service.c_str();
