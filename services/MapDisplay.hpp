@@ -10,9 +10,10 @@ class MapDisplay : public ServiceInterface
 {
 private:
     HttpEncoder encoder;
+    bool _enabledRasterImageService;
 
 public:
-    MapDisplay();
+    explicit MapDisplay(bool RasterImageService_enabled);
     ~MapDisplay();
     Msg* processRequest(Msg* request, CompiledDataManager& mger) override;
 

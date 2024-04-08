@@ -26,7 +26,7 @@
     <parameter name="GeolocationService"    value="enabled"/>
 
 
-   <parameter name="RasterImage"           value="enabled"/>
+   <parameter name="RasterImage"           value="disabled"/>
 
 
     <shp_file name="water-polygons-split-4326/water_polygons" tag="shape" value="ocean"/>
@@ -1086,7 +1086,7 @@
        <charconv from="û" to="u"/>
        <charconv from="ç" to="c"/>
    </geoloc>
-   <images>
+   <!--images>
         <image ref="srtm_36_03.png" ncols="6000" nrows="6000" x1="-5" y1="45" x2="0" y2="45" x3="0" y3="50" x4="-5" y4="50">
-   </image>
+   </image-->
 </config>

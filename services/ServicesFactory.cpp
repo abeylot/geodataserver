@@ -72,7 +72,7 @@ ServiceInterface* ServicesFactory::getService(std::string service)
     else if (_enabledRelationDetailService && service == "/relation/get")                return new RelationDetail;
     else if (_enabledWayDetailService && service == "/way/get")                          return new WayDetail;
     else if (_enabledSvgService && service == "/svgMap.svg")                             return new Svg;
-    else if (_enabledMapDisplayService && ((service == "/MapDisplay")||(service =="/"))) return new MapDisplay;
+    else if (_enabledMapDisplayService && ((service == "/MapDisplay")||(service =="/"))) return new MapDisplay(_enabledRasterImageService);
     else if(_enabledTileService && service.find(".svg") != std::string::npos)
     {
         unsigned int pos = 0;

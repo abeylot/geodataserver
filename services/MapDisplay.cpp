@@ -1,6 +1,6 @@
 #include "MapDisplay.hpp"
 
-MapDisplay::MapDisplay()
+MapDisplay::MapDisplay(bool rasterImage_enabled) : _enabledRasterImageService(rasterImage_enabled)
 {
 }
 
@@ -79,11 +79,18 @@ Msg* MapDisplay::processRequest(Msg* request, [[maybe_unused]] CompiledDataManag
         "var rasterMap = {"
         "\"rasterImages\": raster"
         "};"
-        "L.control.layers(baseMap, rasterMap).addTo(map);L.control.scale().addTo(map);"
+        "#raster#"
         "</script>"
         "</body>"
         "</html>";
 
+    if(_enabledRasterImageService)
+    {
+        resp.replace(resp.find("#raster#"),8,"L.control.layers(baseMap, rasterMap).addTo(map);L.control.scale().addTo(map);");
+    } else
+    {
+        resp.replace(resp.find("#raster#"),8,"");
+    }
 
     if (request->getRecord(2)->getNamedValue("lattitude") != "")
     {
