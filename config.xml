@@ -5,7 +5,7 @@
     <parameter name="ExecThreads"   value="5"/>
     <parameter name="CacheLevel"    value="11"/>
     <parameter name="locale"        value="fr;en"/>
-    <parameter name="DefaultColor"  value="#EEEEEE"/>
+    <parameter name="DefaultColor"  value="#EEFFEE"/>
 
     <!-- various debug services -->
     <parameter name="PingService"           value="disabled"/>
@@ -37,8 +37,8 @@
     <!-- patterns -->
 
     <pattern id="mudPattern" width="16" height="8" patternUnits="userSpaceOnUse" >
-             <rect x="0" y="0" width="16" height="8" fill="#DDDDDD" style="opacity:0.2"/>
-             <ellipse cx="8" cy="4" rx="5" ry="1" stroke-width="0" fill="#EEEEEE"  style="opacity:0.4"/>
+             <rect x="0" y="0" width="16" height="8" fill="#AAFFAA" style="opacity:0.2"/>
+             <ellipse cx="8" cy="4" rx="5" ry="1" stroke-width="0" fill="skyblue"  style="opacity:0.4"/>
     </pattern>
 
     <pattern id="reefPattern" width="16" height="16" patternUnits="userSpaceOnUse" >
@@ -49,20 +49,16 @@
     </pattern>
 
     <pattern id="forestPattern" width="16" height="16" patternUnits="userSpaceOnUse" >
-             <rect x="0" y="0" width="16" height="16" fill="#EFEFEF"/>
-             <circle cx="4" cy="7" r="3" stroke-width="0" fill="#DEDEDE" />
-             <circle cx="8" cy="8" r="5" stroke-width="0" fill="#DEDEDE" />
-             <circle cx="12" cy="10" r="4" stroke-width="0" fill="#DEDEDE" />
+             <rect x="0" y="0" width="16" height="16" fill="#99DD99"/>
+             <circle cx="4" cy="7" r="3" stroke-width="0" fill="#95D099" />
+             <circle cx="8" cy="8" r="5" stroke-width="0" fill="#90D090" />
+             <circle cx="12" cy="10" r="4" stroke-width="0" fill="#99D095" />
     </pattern>
 
-    <pattern id="waterPattern" width="4" height="8" patternUnits="userSpaceOnUse">
-             <rect x="0" y="0" width="4" height="8" fill="#BBBBBB"/>
-             <circle cx="2" cy="4" r="4" stroke-width="1" fill="none" stroke="#CECECE" />
-    </pattern>
-
-    <pattern id="hashed" width="4" height="8" patternUnits="userSpaceOnUse">
-             <rect x="-1" y="-1" width="5" height="9" fill="#EEEEEE"/>
-             <path stroke-width="1" stroke="#CCCCCC" d="M0 0L4 8"/>
+    <pattern id="waterPattern" width="6" height="6" patternUnits="userSpaceOnUse" >
+             <rect x="0" y="0" width="6" height="6" fill="skyblue"/>
+             <circle cx="0" cy="0" r="3" stroke-width="1" fill="none" stroke="#99BBFF" />
+             <circle cx="6" cy="0" r="3" stroke-width="1" fill="none" stroke="#99BBFF"/>
     </pattern>
 
 
@@ -101,16 +97,16 @@
 
     <!-- areas -->
     <style id="water"            value="fill:url(#waterPattern); fill-rule:evenodd;"/>
-    <style id="grass"            value="fill:#CDCDCD; fill-rule:evenodd"/>
+    <style id="grass"            value="fill:#AAFFAA; fill-rule:evenodd"/>
     <style id="forest"           value="fill:url(#forestPattern); fill-rule:evenodd"/>
     <style id="ice"              value="fill:lightgrey;; fill-rule:evenodd"/>
-    <style id="concrete"         value="fill:#DDDDDD;; fill-rule:evenodd"/>
+    <style id="concrete"         value="fill:whitesmoke;; fill-rule:evenodd"/>
     <style id="stone"            value="fill:url(#reefPattern); fill-rule:evenodd; opacity:0.4"/>
     <style id="reef"             value="fill:url(#reefPattern); fill-rule:evenodd;opacity:0.4"/>
-    <style id="sand"             value="fill:#DDDDDD; fill-rule:evenodd; opacity:0.4"/>
+    <style id="sand"             value="fill:moccasin; fill-rule:evenodd; opacity:0.4"/>
     <style id="mud"              value="fill:url(#mudPattern); fill-rule:evenodd"/>
-    <style id="building"         value="fill:#EFEFEF;opacity:0.9;stroke:#BBBBBB ;stroke-width:1; fill-rule:evenodd; filter: url(#shadow)"/>
-    <style id="historicBuilding" value="fill:#FAFAFA;opacity:0.7;stroke:#B1B1B1 ;stroke-width:1; fill-rule:evenodd; filter: url(#shadow)"/>
+    <style id="building"         value="fill:linen;opacity:0.9;stroke:BurlyWood ;stroke-width:1; fill-rule:evenodd; filter: url(#shadow)"/>
+    <style id="historicBuilding" value="fill:mistyrose;opacity:0.7;stroke:#B13014 ;stroke-width:1; fill-rule:evenodd; filter: url(#shadow)"/>
     <style id="zone"             value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:5,5; fill-rule:evenodd"/>
     <style id="parking"          value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:1,5; fill-rule:evenodd"/>
     <style id="bridge"           value="fill:#999999;stroke:grey; stroke-width:1; fill-rule:evenodd;opacity:0.7"/>
@@ -120,48 +116,48 @@
     <!-- lines -->
     <style id="frontier"  value="fill:none;stroke:grey; stroke-width:1;"/>
     <style id="sketch"    value="fill:none;stroke:lightgrey; stroke-width:1;opacity:0.7"/>
-    <style id="ferryLine" value="fill:none;stroke:#777777; stroke-width:1;opacity:0.1"/>
-    <style id="waterLine" value="fill:none;stroke:#BBBBBB; stroke-width:1"/>
-    <style id="hedge"      value="fill:none;stroke:#999999; stroke-width:4; stroke-dasharray:0.1,5;stroke-linecap:round;opacity:0.7;"/>
-    <style id="treeLineS"  value="fill:none;stroke:#999999; stroke-width:8; stroke-dasharray:0.1,16;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
-    <style id="treeLineM"  value="fill:none;stroke:#999999; stroke-width:16; stroke-dasharray:0.1,32;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
-    <style id="treeLineL"  value="fill:none;stroke:#999999; stroke-width:32; stroke-dasharray:0.1,64;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
+    <style id="ferryLine" value="fill:none;stroke:blue; stroke-width:1;opacity:0.1"/>
+    <style id="waterLine" value="fill:none;stroke:skyblue; stroke-width:1"/>
+    <style id="hedge"      value="fill:none;stroke:#99DD99; stroke-width:4; stroke-dasharray:0.1,5;stroke-linecap:round;opacity:0.7;"/>
+    <style id="treeLineS"  value="fill:none;stroke:#99DD99; stroke-width:8; stroke-dasharray:0.1,16;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
+    <style id="treeLineM"  value="fill:none;stroke:#99DD99; stroke-width:16; stroke-dasharray:0.1,32;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
+    <style id="treeLineL"  value="fill:none;stroke:#99DD99; stroke-width:32; stroke-dasharray:0.1,64;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
 
-    <style id="road"       value="fill:none; stroke:#AAAAAA;stroke-linecap:round;"/>
-    <style id="path"       value="fill:none; stroke:#AAAAAA;stroke-linecap:butt; stroke-dasharray:5,2; stroke-width:2"/>
-    <style id="stairs"     value="fill:none; stroke:#AAAAAA;stroke-linecap:butt; stroke-dasharray:2,2; stroke-width:2"/>
-    <style id="redRoad"    value="fill:none; stroke:#777777;stroke-linecap:round;stroke-width:2"/>
-    <style id="orangeRoad" value="fill:none; stroke:#AAAAAA;stroke-linecap:round;stroke-width:2"/>
+    <style id="road"       value="fill:none; stroke:#BBBBBB;stroke-linecap:round;"/>
+    <style id="path"       value="fill:none; stroke:#BBBBBB;stroke-linecap:butt; stroke-dasharray:5,2; stroke-width:2"/>
+    <style id="stairs"     value="fill:none; stroke:#BBBBBB;stroke-linecap:butt; stroke-dasharray:2,2; stroke-width:2"/>
+    <style id="redRoad"    value="fill:none; stroke:red;stroke-linecap:round;stroke-width:2"/>
+    <style id="orangeRoad" value="fill:none; stroke:orange;stroke-linecap:round;stroke-width:2"/>
 
-    <style id="coast"      value="fill:none;stroke:#888888 ;stroke-width:1; filter: url(#shadow)"/>
+    <style id="coast"      value="fill:none;stroke:Teal ;stroke-width:1; filter: url(#shadow)"/>
 
 
 
     <!-- text -->
-    <style id="countryName"  value="fill:black;font-family:sans-serif;opacity:0.7;font-size:15px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
-    <style id="stateName"    value="fill:black;font-family:sans-serif;opacity:0.7;font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
-    <style id="provinceName" value="fill:black;font-family:sans-serif;opacity:0.7;font-size:12px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
-    <style id="districtName" value="fill:black;font-family:sans-serif;opacity:0.7;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
-    <style id="countyName"   value="fill:black;font-family:sans-serif;opacity:0.7;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="countryName"  value="fill:red;font-family:sans-serif;opacity:0.7;font-size:15px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="stateName"    value="fill:red;font-family:sans-serif;opacity:0.7;font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="provinceName" value="fill:red;font-family:sans-serif;opacity:0.7;font-size:12px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="districtName" value="fill:red;font-family:sans-serif;opacity:0.7;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="countyName"   value="fill:red;font-family:sans-serif;opacity:0.7;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
 
-    <style id="maroonAreaName"  value="fill:#555555;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
-    <style id="greenAreaName"   value="fill:#444444;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
-    <style id="blueAreaName"    value="fill:#555555;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
-    <style id="greyAreaName"    value="fill:#444444;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="maroonAreaName"  value="fill:maroon;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="greenAreaName"   value="fill:green;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="blueAreaName"    value="fill:blue;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="greyAreaName"    value="fill:grey;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
 
-    <style id="capitalName"     value="fill:#222222;font-family:sans-serif;opacity:0.7; font-size:16px; font-weight:bold;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
-    <style id="subCapitalName"  value="fill:#222222;font-family:sans-serif;opacity:0.7; font-size:15px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="capitalName"     value="fill:maroon;font-family:sans-serif;opacity:0.7; font-size:16px; font-weight:bold;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="subCapitalName"  value="fill:maroon;font-family:sans-serif;opacity:0.7; font-size:15px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
 
-    <style id="cityName"        value="fill:#222222;font-family:sans-serif;opacity:0.7; font-size:14px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
-    <style id="townName"        value="fill:#222222;font-family:sans-serif;opacity:0.7; font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
-    <style id="villageName"     value="fill:#222222;font-family:sans-serif;opacity:0.7; font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="cityName"        value="fill:maroon;font-family:sans-serif;opacity:0.7; font-size:14px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="townName"        value="fill:maroon;font-family:sans-serif;opacity:0.7; font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="villageName"     value="fill:maroon;font-family:sans-serif;opacity:0.7; font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
 
-    <style id="houseNumber"     value="fill:#333333;opacity:0.5;font-family:sans-serif; font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="houseNumber"     value="fill:maroon;opacity:0.5;font-family:sans-serif; font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
     <style id="roadName"        value="fill:black;font-family:sans-serif;opacity:0.5;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
-    <style id="amenityName"     value="fill:#222222;font-family:sans-serif;opacity:0.4;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="amenityName"     value="fill:blue;font-family:sans-serif;opacity:0.4;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
 
-    <style id="riverName"       value="fill:#111111;opacity:0.5;font-family:sans-serif;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
-    <style id="ferryLineName"   value="fill:#111111;;opacity:0.5;font-family:sans-serif;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="riverName"       value="fill:darkblue;opacity:0.5;font-family:sans-serif;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="ferryLineName"   value="fill:darkblue;;opacity:0.5;font-family:sans-serif;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
 
 
     <!-- Symbols -->
@@ -171,30 +167,30 @@
     </symbol>
 
     <symbol id="treeS" width="12" height="12" transform="translate(-6 -6)">
-        <circle  cx="6"  cy="6"  r="4"  style="fill:#999999;opacity:0.7; filter: url(#shadow)" />
+        <circle  cx="6"  cy="6"  r="4"  style="fill:#99DD99;opacity:0.7; filter: url(#shadow)" />
     </symbol>
 
     <symbol id="treeM" width="20" height="20" transform="translate(-10 -10)">
-        <circle  cx="10"  cy="10"  r="8"  style="fill:#999999;opacity:0.7; filter: url(#shadow)" />
+        <circle  cx="10"  cy="10"  r="8"  style="fill:#99DD99;opacity:0.7; filter: url(#shadow)" />
     </symbol>
 
     <symbol id="treeB" width="36" height="36" transform="translate(-18 -18)">
-        <circle  cx="18"  cy="18"  r="16"  style="fill:#999999;opacity:0.7; filter: url(#shadow)" />
+        <circle  cx="18"  cy="18"  r="16"  style="fill:#99DD99;opacity:0.7; filter: url(#shadow)" />
     </symbol>
 
     <symbol id="parking" width="16" height="16" transform="translate(-8 -8)" >
-        <circle  cx="8"  cy="8"  r="8"  style="fill:#000000;opacity:0.2;" />
+        <circle  cx="8"  cy="8"  r="8"  style="fill:#000099;opacity:0.2;" />
         <text x="8" y="8" style="fill:white;opacity:0.9;font-family:sans-serif;font-weight:bold;font-size:13px">P</text>
     </symbol>
 
     <symbol id="hospital" width="24" height="24" transform="translate(-12 -34)" >
         <circle  cx="12"  cy="12"  r="12"  style="fill:#FFFFFF;opacity:0.2;" />
-        <text x="12" y="12" style="fill:#222222;opacity:0.7;font-family:sans-serif;font-weight:bold;font-size:17px">+</text>
+        <text x="12" y="12" style="fill:red;opacity:0.7;font-family:sans-serif;font-weight:bold;font-size:17px">+</text>
     </symbol>
 
     <symbol id="pharmacy" width="24" height="24" transform="translate(-12 -34)" >
         <circle  cx="12"  cy="12"  r="12"  style="fill:#FFFFFF;opacity:0.2;" />
-        <text x="12" y="12" style="fill:#222222;opacity:0.7;font-family:sans-serif;font-weight:bold;font-size:17px">+</text>
+        <text x="12" y="12" style="fill:green;opacity:0.7;font-family:sans-serif;font-weight:bold;font-size:17px">+</text>
     </symbol>
 
     <symbol id="restaurant" width="24" height="24" transform="translate(-12 -24)" >
@@ -213,7 +209,7 @@
     </symbol>
 
     <symbol id="toilets" width="24" height="24" transform="translate(-12 -12)" >
-        <circle  cx="12"  cy="12"  r="14"  style="fill:#555555;opacity:0.6;" />
+        <circle  cx="12"  cy="12"  r="14"  style="fill:blue;opacity:0.6;" />
         <text x="12" y="12" style="fill:white;opacity:0.8;font-family:sans-serif;font-weight:bold;font-size:12px">Wc</text>
     </symbol>
 
@@ -499,7 +495,7 @@
                 <class value="waterway"                  zIndex="101" textZIndex="25" style="#water" />
             </condition>
             <condition tagKey="route" closed="both">
-                <class value="bus"      textWidth="4" textStyle="fill:green;font-family:sans-serif"      zIndex="25000000" style="fill:none; stroke:#888888;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
+                <class value="bus"      textWidth="4" textStyle="fill:green;font-family:sans-serif"      zIndex="25000000" style="fill:none; stroke:green;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
                 <class value="ferry"       textWidth="4" textStyle="#ferryLineName"      zIndex="1000" textZIndex="2000" style="#ferryLine"/>
             </condition>
         </restriction>
@@ -613,7 +609,7 @@
                     <class value="default"                  zIndex="101" style="#water" />
             </condition>
             <condition tagKey="route" closed="both">
-                <class value="bus"       textWidth="4" textZIndex="21" textStyle="fill:maroon;;opacity:0.3;font-family:sans-serif"      zIndex="2500" style="fill:none; stroke:#777777;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
+                <class value="bus"       textWidth="4" textZIndex="21" textStyle="fill:maroon;;opacity:0.3;font-family:sans-serif"      zIndex="2500" style="fill:none; stroke:maroon;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
                 <class value="ferry"       textWidth="4" textZIndex="21" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif"   zIndex="2000" style="#ferryLine"/>
             </condition>
         </restriction>
@@ -962,7 +958,7 @@
         </restriction>
         <restriction zLevels="11,12">
             <condition closed="both" tagKey="highway">
-                <class value="secondary"         zIndex="2030" style="#orangeRoad"  textZIndex="20" textStyle="#roadName" textField="ref"/>
+                <class value="secondary"         zIndex="2030" style="fill:none; stroke:gold;stroke-linecap:round;stroke-width:2"  textZIndex="20" textStyle="#roadName" textField="ref"/>
             </condition>
         </restriction>
     </index>
