@@ -863,7 +863,7 @@ public:
         getAndCacheKey(iMax, &myKey);
         if( myKey == key)
         {
-            getItem(iMin, result);
+            getItem(iMax, result);
             return true;
         }
         if( myKey < key)
