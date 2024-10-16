@@ -55,17 +55,16 @@ int main(int argc, char *argv[])
     fclose(config);
     CompiledDataManager mger(argv[1], &indexes);
 
-    Way* w = NULL;
-    Point* p = NULL;
-    Relation* r = NULL;
+    std::shared_ptr<Way> w = nullptr;
+    std::shared_ptr<Point> p = nullptr;
+    std::shared_ptr<Relation> r = nullptr;
 
     for(uint64_t i=0; i < mger.relationIndex->getSize(); i++)
     {
         r = mger.loadRelation(i);
         if(!r) continue;
 
-        if(r->tags.data == NULL) {
-            delete r;
+        if(r->tags.data == nullptr) {
             if ((i &  0xF) == 0)
                 std::cout << "\rrelation " << i * 100.0 / mger.relationIndex->getSize() << "%  " << std::flush;
             continue;
@@ -76,8 +75,8 @@ int main(int argc, char *argv[])
         while( used < r->tags.data_size)
         {
 
-            char* tag = NULL;
-            char* value = NULL;
+            char* tag = nullptr;
+            char* value = nullptr;
 
             unsigned char tag_size = 0;
             unsigned char value_size = 0;
@@ -162,7 +161,6 @@ int main(int argc, char *argv[])
         }
         if ((i &  0xF) == 0)
             std::cout << "\rrelation " << i * 100.0 / mger.relationIndex->getSize() << "%  " << std::flush;
-        delete r;
     }
 
     for(uint64_t i=0; i < mger.wayIndex->getSize(); i++)
@@ -171,14 +169,14 @@ int main(int argc, char *argv[])
         if(!w) continue;
         bool closed = false;
         if(w->pointsCount > 0)  closed = (w->points[0] == w->points[w->pointsCount -1]);
-        if(w->tags.data == NULL) {delete w; continue;}
+        if(w->tags.data == nullptr) continue;
 
         uint64_t used = 0;
         while( used < w->tags.data_size)
         {
 
-            char* tag = NULL;
-            char* value = NULL;
+            char* tag = nullptr;
+            char* value = nullptr;
 
             unsigned char tag_size = 0;
             unsigned char value_size = 0;
@@ -259,7 +257,6 @@ int main(int argc, char *argv[])
         }
         if ((i &  0xFFF) == 0)
             std::cout << "\rway " << i * 100.0 / mger.wayIndex->getSize() << "%  " << std::flush;
-        delete w;
     }
     for(uint64_t i=0; i < mger.nodeIndex->getSize(); i++)
     {
@@ -268,15 +265,15 @@ int main(int argc, char *argv[])
 
         p = mger.loadPoint(i);
         if(!p) continue;
-        if(p->tags.data == NULL) { delete p; continue; }
+        if(p->tags.data == nullptr) {continue; }
 
         uint64_t used = 0;
 
         while( used < p->tags.data_size)
         {
 
-            char* tag = NULL;
-            char* value = NULL;
+            char* tag = nullptr;
+            char* value = nullptr;
 
             unsigned char tag_size = 0;
             unsigned char value_size = 0;
@@ -349,7 +346,6 @@ int main(int argc, char *argv[])
                 }
             }
         }
-        delete p;
     }
     for( IndexDesc *d : indexes)
     {

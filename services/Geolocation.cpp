@@ -299,8 +299,8 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     area.pin.x = area.pin.y = 0;
                     fidx::Record<IndexEntry, uint64_t> record;
                     mger.textIndexNode->get(i, &record);
-                    Point* item;
-                    mger.load(item, record.value.id, true);
+                    std::shared_ptr<Point> item;
+                    item = mger.load<Point>(record.value.id, true);
                     area.r.x0 = area.r.x1 = item->x;
                     area.r.y0 = area.r.y1 = item->y;
 
@@ -321,7 +321,6 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     area.found = "Node_"+std::to_string(record.value.id)+":"+item->tags["name"];
                     areas.push_back(area);
                     area.nodes.push_back(record.value.id);
-                    delete item;
                 }
             }
             if (searchIds.relation_start_id != UNDEFINED_ID)
@@ -332,7 +331,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     area.pin.x = area.pin.y = 0;
                     fidx::Record<IndexEntry, uint64_t> record;
                     mger.textIndexRelation->get(i, &record);
-                    Relation* item;
+                    std::shared_ptr<Relation> item;
                     item = mger.loadRelationFast(record.value.id);
                     area.r =  record.value.r;
                     if(area.r.isValid()) area.score = calcMatchScore(item, queryWordsVector, mger);
@@ -348,7 +347,6 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     area.relations.push_back(record.value.id);
 
                     areas.push_back(area);
-                    delete item;
                 }
             }
             if (searchIds.way_start_id != UNDEFINED_ID)
@@ -359,8 +357,8 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     area.pin.x = area.pin.y = 0;
                     fidx::Record<IndexEntry, uint64_t> record;
                     mger.textIndexWay->get(i, &record);
-                    Way* item;
-                    mger.load(item, record.value.id, true);
+                    std::shared_ptr<Way> item;
+                    item = mger.load<Way>(record.value.id, true);
                     area.r =  record.value.r;
                     if(area.r.isValid()) area.score = calcMatchScore(item, queryWordsVector, mger);
                     else area.score = WORST_SCORE;
@@ -373,7 +371,6 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     area.found = "Way_"+std::to_string(record.value.id)+":" + item->tags["name"];
                     areas.push_back(area);
                     area.ways.push_back(record.value.id);
-                    delete item;
                 }
             }
         }
@@ -399,8 +396,8 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
 {
     for( auto relid : a.relations)
     {
-        Relation* item;
-        mger.load(item, relid, true);
+        std::shared_ptr<Relation> item;
+        item = mger.load<Relation>(relid, true);
         GeoPoint pin = {0,0};
 
         std::string sType = item->tags["type"];
@@ -519,7 +516,7 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
 }
 
 
-Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
+std::shared_ptr<Msg> Geolocation::processRequest(std::shared_ptr<Msg> request, CompiledDataManager& mger)
 {
     std::string name = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("name"));
     std::string mode = HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("mode"));
@@ -627,7 +624,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
             i++;
         }
        resp += "</root>\n";
-       Msg* rep = new Msg;
+       auto rep = std::make_shared<Msg>();
        encoder.build200Header(rep, "application/xml");
        encoder.addContent(rep,resp);
        return rep;
@@ -656,7 +653,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
             i++;
         }
        resp += "]\n";
-       Msg* rep = new Msg;
+       auto rep = std::make_shared<Msg>();
        encoder.build200Header(rep, "application/json");
        encoder.addContent(rep,resp);
        return rep;
@@ -685,7 +682,7 @@ Msg* Geolocation::processRequest(Msg* request, CompiledDataManager& mger)
         if(zlevel > 17) zlevel = 17;
         if(zlevel < 0) zlevel = 0;
 
-        Msg* rep = new Msg;
+        auto rep = std::make_shared<Msg>();
         std::string URL;
         if(result.pin.x){
             URL = "/MapDisplay?pin=true&longitude=" + std::to_string(Coordinates::fromNormalizedLon(result.pin.x)) + "&lattitude=" + std::to_string(Coordinates::fromNormalizedLat(result.pin.y))+"&zoom="+std::to_string(zlevel)+"";
@@ -704,8 +701,8 @@ bool weightedArea::checkIntersect(CompiledDataManager& mger)
     for(uint64_t id : relations)
     {
         bool result = true;
-        Relation* item = nullptr;
-        mger.load(item, id, false);
+        std::shared_ptr<Relation> item = nullptr;
+        item = mger.load<Relation>(id, false);
         if(item != nullptr)
         {
             result = false;
@@ -714,7 +711,6 @@ bool weightedArea::checkIntersect(CompiledDataManager& mger)
                 l->crop(r);
                 if(l->pointsCount > 0) result = true;
             }
-            delete item;
         }
         else return false;
         if (result== false) return false;
@@ -722,12 +718,11 @@ bool weightedArea::checkIntersect(CompiledDataManager& mger)
     for(uint64_t id : ways)
     {
         bool result = true;
-        Way* item = nullptr;
-        mger.load(item, id, false);
+        std::shared_ptr<Way> item = nullptr;
+        item = mger.load<Way>(id, false);
         if(item != nullptr){
             item->crop(r);
             if(item->pointsCount == 0) result = false;
-            delete item;
         }
         else return false;
         if (result== false) return false;
@@ -735,15 +730,14 @@ bool weightedArea::checkIntersect(CompiledDataManager& mger)
     for(uint64_t id : nodes)
     {
         bool result =  true;
-        Point* item = nullptr;
-        mger.load(item,id, false);
+        std::shared_ptr<Point> item = nullptr;
+        item = mger.load<Point>(id, false);
         if(item != nullptr)
         {
             if(item->x < r.x0) result = false;
             if(item->x > r.x1) result = false;
             if(item->y < r.y0) result = false;
             if(item->y > r.y1) result = false;
-            delete item;
         }
         else return false;
         if (result== false) return false;

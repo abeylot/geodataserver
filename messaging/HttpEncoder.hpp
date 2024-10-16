@@ -4,6 +4,7 @@
 
 #include <string>
 #include "Msg.hpp"
+#include <memory>
 
 #ifndef HTTPENCODER_HPP
 #define HTTPENCODER_HPP
@@ -18,14 +19,14 @@ public:
     HttpEncoder ();
     virtual ~HttpEncoder ();
 
-    Msg* encode(std::string* in);
-    std::string* decode(Msg*) const;
-    std::string getMessageID(Msg* msg) const;
-    static void build200Header(Msg* msg, const std::string& mimType="application/xml");
-    static void build303Header(Msg* msg, const std::string& URL);
-    static void build404Header(Msg* msg);
-    static void build500Header(Msg* msg);
-    static void addContent(Msg* msg,const std::string &content);
+    std::shared_ptr<Msg> encode(std::string* in);
+    std::string* decode(std::shared_ptr<Msg>) const;
+    std::string getMessageID(std::shared_ptr<Msg> msg) const;
+    static void build200Header(std::shared_ptr<Msg> msg, const std::string& mimType="application/xml");
+    static void build303Header(std::shared_ptr<Msg> msg, const std::string& URL);
+    static void build404Header(std::shared_ptr<Msg> msg);
+    static void build500Header(std::shared_ptr<Msg> msg);
+    static void addContent(std::shared_ptr<Msg> msg,const std::string &content);
     static std::string urlDecode(const std::string& in);
 };
 

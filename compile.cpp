@@ -460,13 +460,13 @@ public:
     std::string filename_shp = filename+".shp";
     std::string filename_dbf = filename+".dbf";
     FILE* shp = fopen(filename_shp.c_str(),"r");
-    if(shp == NULL)
+    if(shp == nullptr)
     {
        std::cerr << "shp file missing \n";
        return;
     }
     FILE* dbf = fopen(filename_dbf.c_str(),"r");
-    if(dbf == NULL)
+    if(dbf == nullptr)
     {
        std::cerr << "dbf file missing \n";
        fclose(shp);
@@ -633,7 +633,7 @@ int main(int argc, char *argv[])
     XmlFileParser<XmlVisitor>::parseXmlFile(stdin,*v);
     ShpVisitor v2;
     FILE* f =fopen((rep + "/config.xml").c_str(),"r");
-    if(f == NULL)
+    if(f == nullptr)
     {
         std::cout << "couldn't open "<< rep + "/config.xml" << "\n";
         exit(1);

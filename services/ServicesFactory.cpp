@@ -62,17 +62,17 @@ void ServicesFactory::init(const ParmsXmlVisitor& params, const std::vector<PngI
 }
 
 
-ServiceInterface* ServicesFactory::getService(std::string service)
+std::shared_ptr<ServiceInterface>  ServicesFactory::getService(std::string service)
 {
-    if(_enabledPingService && service == "/ping")                                        return new Ping;
-    else if(_enabledGeoLocationService && service == "/geoloc")                          return new Geolocation;
-    else if (_enabledRelationListService && service == "/relation/list")                 return new RelationList;
-    else if (_enabledIdxListService && service == "/index/list")                         return new IdxList;
-    else if (_enabledIdxDetailService && service == "/index/get")                        return new IdxDetail;
-    else if (_enabledRelationDetailService && service == "/relation/get")                return new RelationDetail;
-    else if (_enabledWayDetailService && service == "/way/get")                          return new WayDetail;
-    else if (_enabledSvgService && service == "/svgMap.svg")                             return new Svg;
-    else if (_enabledMapDisplayService && ((service == "/MapDisplay")||(service =="/"))) return new MapDisplay(_enabledRasterImageService);
+    if(_enabledPingService && service == "/ping")                                        return std::make_shared<Ping>();
+    else if(_enabledGeoLocationService && service == "/geoloc")                          return std::make_shared<Geolocation>();
+    else if (_enabledRelationListService && service == "/relation/list")                 return std::make_shared<RelationList>();
+    else if (_enabledIdxListService && service == "/index/list")                         return std::make_shared<IdxList>();
+    else if (_enabledIdxDetailService && service == "/index/get")                        return std::make_shared<IdxDetail>();
+    else if (_enabledRelationDetailService && service == "/relation/get")                return std::make_shared<RelationDetail>();
+    else if (_enabledWayDetailService && service == "/way/get")                          return std::make_shared<WayDetail>();
+    else if (_enabledSvgService && service == "/svgMap.svg")                             return std::make_shared<Svg>();
+    else if (_enabledMapDisplayService && ((service == "/MapDisplay")||(service =="/"))) return std::make_shared<MapDisplay>(_enabledRasterImageService);
     else if(_enabledTileService && service.find(".svg") != std::string::npos)
     {
         unsigned int pos = 0;
@@ -87,7 +87,7 @@ ServiceInterface* ServicesFactory::getService(std::string service)
         while(pos < service.length() && (*(c+pos) != '/')) pos++;
         if(pos < service.length()) y =  atoll(c+pos+1);
         //std::cout << x <<":" << y << ";" << z << "\n";
-        return new Tile(z, x, y, _cacheLevel, _locale, _defaultColor);
+        return std::make_shared<Tile>(z, x, y, _cacheLevel, _locale, _defaultColor);
 
     }
     else if(_enabledRasterImageService && service.find(".png") != std::string::npos)
@@ -104,14 +104,10 @@ ServiceInterface* ServicesFactory::getService(std::string service)
         while(pos < service.length() && (*(c+pos) != '/')) pos++;
         if(pos < service.length()) y =  atoll(c+pos+1);
         //std::cout << x <<":" << y << ";" << z << "\n";
-        return new RasterImage(z, x, y, _cacheLevel, _imageList);
+        return std::make_shared<RasterImage>(z, x, y, _cacheLevel, _imageList);
 
     }
-    else return NULL;
+    else return nullptr;
 }
 
-void ServicesFactory::releaseService(ServiceInterface* service)
-{
-    if(service != NULL) delete service;
-}
 

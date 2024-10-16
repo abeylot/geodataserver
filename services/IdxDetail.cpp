@@ -1,10 +1,10 @@
 #include "IdxDetail.hpp"
 #include "../common/constants.hpp"
 
-Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
+std::shared_ptr<Msg> IdxDetail::processRequest(std::shared_ptr<Msg> request, CompiledDataManager& mger)
 {
     std::string resp = "<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>";
-    Msg* rep = new Msg;
+    auto rep = std::make_shared<Msg>();
     encoder.build200Header(rep, "text/html");
     std::string rq_name  = request->getRecord(2)->getNamedValue("name");
     std::string rq_start  = request->getRecord(2)->getNamedValue("start");
@@ -28,7 +28,7 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
                 {
                     //GeoIndex p;
                     //mger.relationIndex->get(record.value, &p);
-                    Relation* r = mger.loadRelation(record.value.id);
+                    auto r = mger.loadRelation(record.value.id);
                     resp += "<a href=\"/relation/get?id=";
                     resp += std::to_string(record.value.id);
                     resp +="\"> ";
@@ -40,14 +40,13 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
                     resp += "<a href=\"/relation/get?id=" + std::to_string(r->id) + "\">"+ std::to_string(i) +"</a>:: pos :" + std::to_string(record.key.get_pos())+ ":: mask :" + std::to_string(record.key.get_maskLength())+"::"+std::to_string(record.value.zmMask)+":: id :" + std::to_string(record.value.id);
                     resp += "<br/>";
                     i++;
-                    delete r;
                 }
             }
             else if(desc->type == "node")
             {
                 while (idx->get(i, &record) &&  (i < (istart + 1000)))
                 {
-                    Point* p = mger.loadPoint(record.value.id);
+                    auto p = mger.loadPoint(record.value.id);
                     std::string name = p->tags["name"];
                     resp += std::to_string(i) + ":: pos :" + std::to_string(record.key.get_pos())+ "::"+name+":: mask :" + std::to_string(record.key.get_maskLength())+"::"+std::to_string(record.value.zmMask)+":: id :" + std::to_string(record.value.id);
                     resp += "::" + name +"<br/>";
@@ -57,8 +56,8 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
                     while( used < p->tags.data_size)
                     {
 
-                        char* tag = NULL;
-                        char* value = NULL;
+                        char* tag = nullptr;
+                        char* value = nullptr;
 
                         unsigned char tag_size = 0;
                         unsigned char value_size = 0;
@@ -77,14 +76,13 @@ Msg* IdxDetail::processRequest(Msg* request, CompiledDataManager& mger)
                         resp += "<br/>";
                     }
                     i++;
-                    delete p;
                 }
             }
             else
             {
                 while (idx->get(i, &record) &&  (i < (istart + 1000)))
                 {
-                    Way* r = mger.loadWay(record.value.id);
+                    auto r = mger.loadWay(record.value.id);
                     std::string name = r->tags["name"];
                     resp += "name:" + name ;
                     resp += " <a href=\"/way/get?id=" + std::to_string(r->id) + "\">"+ std::to_string(i) +"</a>:: pos :" + std::to_string(record.key.get_pos())+ ":: mask :" + std::to_string(record.key.get_maskLength())+"::"+std::to_string(record.value.zmMask)+ ":: id :" + std::to_string(record.value.id);

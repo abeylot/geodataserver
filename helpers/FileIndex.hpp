@@ -128,7 +128,7 @@ struct GeoFile
             fh = fopen64 (name.c_str(),"rb");
 
         }
-        if (fh == NULL)
+        if (fh == nullptr)
         {
             throw std::runtime_error("Unable to open file : " + name);
         }
@@ -339,8 +339,8 @@ public:
         itemFile.open(filename, replace);
         keyFile.open(filename + "_key", replace);
 
-        itemBuffer = NULL;
-        keyBuffer  = NULL;
+        itemBuffer = nullptr;
+        keyBuffer  = nullptr;
 
         if (replace)
         {
@@ -361,8 +361,8 @@ public:
      */
     virtual ~FileIndex()
     {
-        if(keyBuffer != NULL) delete[] keyBuffer;
-        if(itemBuffer != NULL) delete[] itemBuffer;
+        if(keyBuffer != nullptr) delete[] keyBuffer;
+        if(itemBuffer != nullptr) delete[] itemBuffer;
     }
 
 /**
@@ -448,11 +448,11 @@ public:
         uint64_t max_bsize = max_mem / ((sizeof(ITEM) + sizeof(KEY))*3);
         if(buffer_size > max_bsize) buffer_size = max_bsize;
 
-        ITEM* item_sort_buffer = NULL;
-        KEY*  key_sort_buffer = NULL;
+        ITEM* item_sort_buffer = nullptr;
+        KEY*  key_sort_buffer = nullptr;
 
         bool resized = false;
-        while(item_sort_buffer == NULL || key_sort_buffer == NULL)
+        while(item_sort_buffer == nullptr || key_sort_buffer == nullptr)
         {
             try
             {
@@ -971,7 +971,7 @@ public:
         std::cout << "file name : " << this->filename << ":" << filename << "\n";
 
         pFile.open(filename, replace);
-        buffer = NULL;
+        buffer = nullptr;
         if (replace)  buffer = new ITEM[FILEINDEX_RAWFLUSHSIZE];
         bufferCount = 0;
         recSize = sizeof(ITEM);
@@ -984,7 +984,7 @@ public:
      */
     virtual ~FileRawIndex()
     {
-        if(buffer != NULL) delete[] buffer;
+        if(buffer != nullptr) delete[] buffer;
     }
 /**
  * @brief append record.
@@ -1061,7 +1061,7 @@ public:
         std::cout << "file name : " <<  filename << "\n";
 
         pFile.open(filename, replace);
-        buffer = NULL;
+        buffer = nullptr;
         if (replace)  buffer = new ITEM[FILEINDEX_RAWFLUSHSIZE];
         bufferCount = 0;
         recSize = sizeof(ITEM);
@@ -1073,7 +1073,7 @@ public:
     }
     virtual ~FileRawData()
     {
-        if(buffer != NULL) delete[] buffer;
+        if(buffer != nullptr) delete[] buffer;
     }
 /**
  * @brief Get data.
@@ -1084,7 +1084,7 @@ public:
  */
     ITEM* getData(uint64_t start, uint64_t count)
     {
-        if(count == 0) return NULL;
+        if(count == 0) return nullptr;
         ITEM* result = reinterpret_cast<ITEM*>(malloc(sizeof(ITEM)*count));
         pFile.oread((char*)result, start * recSize, recSize * count);
         return result;
@@ -1171,7 +1171,7 @@ public:
     FileRawVarData(std::string filename, bool replace)
     {
         if(replace) buffer = new char[FILEINDEX_RAWFLUSHSIZE];
-        else buffer = NULL;
+        else buffer = nullptr;
 
         pFile.open(filename, replace);
         bufferCount = 0;
@@ -1182,7 +1182,7 @@ public:
 
     virtual ~FileRawVarData()
     {
-        if(buffer != NULL) delete[] buffer;
+        if(buffer != nullptr) delete[] buffer;
     }
 
 /**
@@ -1194,7 +1194,7 @@ public:
  */
     char* getData(uint64_t start, uint64_t count)
     {
-        if(count == 0) return NULL;
+        if(count == 0) return nullptr;
         char* result = (char*) malloc(count);
         pFile.oread(result, start,  count);
         return result;

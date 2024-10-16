@@ -8,7 +8,7 @@
 //#include "renderers/ClcArea.hpp"
 
 
-Msg* Svg::processRequest(Msg* request, CompiledDataManager& mger)
+std::shared_ptr<Msg> Svg::processRequest(std::shared_ptr<Msg> request, CompiledDataManager& mger)
 {
     std::string sLon1 = request->getRecord(2)->getNamedValue("longitude1");
     std::string sLat1 = request->getRecord(2)->getNamedValue("lattitude1");
@@ -26,7 +26,7 @@ Msg* Svg::processRequest(Msg* request, CompiledDataManager& mger)
 
     uint32_t meany = (rect.y0 >> 1) + (rect.y1  >> 1);
     double angle = PI * ((meany *1.0) / (1.0 * UINT32_MAX)) - PI/2;
-    double ratio = 	(sin(angle)*(rect.x1 - rect.x0))/(1.0*(rect.y1 - rect.y0));
+    double ratio =  (sin(angle)*(rect.x1 - rect.x0))/(1.0*(rect.y1 - rect.y0));
     if (ratio < 0) ratio *= -1;
 
     uint32_t szx, szy;
@@ -45,7 +45,7 @@ Msg* Svg::processRequest(Msg* request, CompiledDataManager& mger)
 
     //std::string resp = "";
 
-    Msg* rep = new Msg;
+    auto rep = std::make_shared<Msg>();
     HttpEncoder encoder;
     encoder.build200Header(rep, "image/svg+xml");
     SvgRenderer rdr(&mger,std::string(""),"#CCDDCC");

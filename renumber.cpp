@@ -89,10 +89,10 @@ public:
 
             if(tags)
             {
-                GeoPointNumberIndex pt{ nodid++, Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])};
+                GeoPointNumberIndex pt{ nodid++, {Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])}};
                 nodeIdIndex->append(atoll((b->keyValues["id"]).c_str()),pt);
             } else {
-                GeoPointNumberIndex pt{ 0, Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])};
+                GeoPointNumberIndex pt{ 0, {Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])}};
                 nodeIdIndex->append(atoll((b->keyValues["id"]).c_str()),pt);
             }
             tags = 0;

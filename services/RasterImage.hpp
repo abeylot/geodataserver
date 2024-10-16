@@ -12,7 +12,7 @@ private:
     unsigned int _cachelevel;
     const std::vector<PngImage>& _imageList;
 public:
-    Msg* processRequest(Msg* request, CompiledDataManager& mger) override;
+    std::shared_ptr<Msg> processRequest(std::shared_ptr<Msg> request, CompiledDataManager& mger) override;
     explicit RasterImage(long z, long x, long y, unsigned int cachelevel, const std::vector<PngImage>& imageList):
     _x(x),
     _y(y),

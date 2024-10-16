@@ -63,9 +63,9 @@ std::string HttpEncoder::urlDecode(const std::string& in)
     return out;
 }
 
-Msg* HttpEncoder::encode(std::string* in)
+std::shared_ptr<Msg> HttpEncoder::encode(std::string* in)
 {
-    Msg* res = new Msg;
+    auto res = std::make_shared<Msg>();
     if(*in == "") return res;
     //printf("[%s]\n",in->c_str());
     Record *rcd = new Record();
@@ -196,7 +196,7 @@ Msg* HttpEncoder::encode(std::string* in)
 
 }
 
-std::string* HttpEncoder::decode(Msg* outMsg) const
+std::string* HttpEncoder::decode(std::shared_ptr<Msg> outMsg) const
 {
     std::string* res = new std::string();
     if (outMsg->getRecordCount() > 1)
@@ -257,7 +257,7 @@ std::string* HttpEncoder::decode(Msg* outMsg) const
     return res;
 }
 
-std::string HttpEncoder::getMessageID(Msg* msg) const
+std::string HttpEncoder::getMessageID(std::shared_ptr<Msg> msg) const
 {
     std::string s = "";
     if (msg->getRecordCount() != 0)
@@ -269,7 +269,7 @@ std::string HttpEncoder::getMessageID(Msg* msg) const
 }
 
 
-void HttpEncoder::build200Header(Msg* msg,const std::string& contentType)
+void HttpEncoder::build200Header(std::shared_ptr<Msg> msg,const std::string& contentType)
 {
     Record* rcd = new Record;
     msg->addRecord(rcd);
@@ -280,7 +280,7 @@ void HttpEncoder::build200Header(Msg* msg,const std::string& contentType)
 
 
 
-void HttpEncoder::build303Header(Msg* msg, const std::string& URL)
+void HttpEncoder::build303Header(std::shared_ptr<Msg> msg, const std::string& URL)
 {
     Record* rcd = new Record;
     msg->addRecord(rcd);
@@ -290,7 +290,7 @@ void HttpEncoder::build303Header(Msg* msg, const std::string& URL)
 }
 
 
-void HttpEncoder::build404Header(Msg* msg)
+void HttpEncoder::build404Header(std::shared_ptr<Msg> msg)
 {
     Record* rcd = new Record;
     msg->addRecord(rcd);
@@ -298,7 +298,7 @@ void HttpEncoder::build404Header(Msg* msg)
     rcd->addBlock("HTTPStatus=404");
 }
 
-void HttpEncoder::build500Header(Msg* msg)
+void HttpEncoder::build500Header(std::shared_ptr<Msg> msg)
 {
     Record* rcd = new Record;
     msg->addRecord(rcd);
@@ -306,7 +306,7 @@ void HttpEncoder::build500Header(Msg* msg)
     rcd->addBlock("HTTPStatus=500");
 }
 
-void HttpEncoder::addContent(Msg* msg,const std::string &content)
+void HttpEncoder::addContent(std::shared_ptr<Msg> msg,const std::string &content)
 {
     if(msg->getRecordCount() != 1)
     {

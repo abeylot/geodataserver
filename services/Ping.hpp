@@ -9,6 +9,6 @@ class Ping : public ServiceInterface
 private:
     HttpEncoder encoder;
 public:
-    Msg* processRequest(Msg* request, CompiledDataManager& mger) override;
+    std::shared_ptr<Msg> processRequest(std::shared_ptr<Msg> request, CompiledDataManager& mger) override;
 };
 #endif

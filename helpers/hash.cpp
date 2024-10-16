@@ -15,7 +15,7 @@ bool THashIntegerTable::addIfUnique(uint64_t key)
 
     found = false;
     hash = hashMe(key) % cellsCount;
-    if (cells[hash] != NULL)
+    if (cells[hash] != nullptr)
     {
         uint64_t *current, *last;
         current = cells[hash];
@@ -31,7 +31,7 @@ bool THashIntegerTable::addIfUnique(uint64_t key)
     }
     if (!found)
     {
-        if(cells[hash] == NULL) cells[hash] = (uint64_t*) (malloc(sizeof(uint64_t)));
+        if(cells[hash] == nullptr) cells[hash] = (uint64_t*) (malloc(sizeof(uint64_t)));
         else cells[hash] = (uint64_t*) (realloc(cells[hash],sizeof(uint64_t)*(cellsCounter[hash] +1)));
         cellsCounter[hash]++;
         cells[hash][cellsCounter[hash] - 1] = key;
@@ -45,7 +45,7 @@ bool THashIntegerTable::removeIfExists(uint64_t key)
 {
     int hash;
     hash = hashMe(key) % cellsCount;
-    if (cells[hash] != NULL)
+    if (cells[hash] != nullptr)
     {
         bool found;
         found = false;
@@ -71,7 +71,7 @@ bool THashIntegerTable::removeIfExists(uint64_t key)
             else
             {
                 free(cells[hash]);
-                cells[hash] = NULL;
+                cells[hash] = nullptr;
             }
             cellsCounter[hash]--;
             itemCount --;
@@ -85,7 +85,7 @@ bool THashIntegerTable::get(uint64_t key)
 {
     int hash;
     hash = hashMe(key) % cellsCount;
-    if (cells[hash] != NULL)
+    if (cells[hash] != nullptr)
     {
         for(unsigned int i=0; i < cellsCounter[hash]; i++)
         {

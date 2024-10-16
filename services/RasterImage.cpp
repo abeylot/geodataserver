@@ -21,7 +21,7 @@ inline double tiley2lat(int y, int z)
 }
 
 
-Msg* RasterImage::processRequest([[maybe_unused]] Msg* request, [[maybe_unused]] CompiledDataManager& mger)
+std::shared_ptr<Msg> RasterImage::processRequest([[maybe_unused]] std::shared_ptr<Msg> request, [[maybe_unused]] CompiledDataManager& mger)
 {
 
     double lon1, lon2, lat1, lat2;
@@ -44,7 +44,7 @@ Msg* RasterImage::processRequest([[maybe_unused]] Msg* request, [[maybe_unused]]
     rect.y1 = Coordinates::toNormalizedLat(std::to_string(lat2));
 
 
-    Msg* rep = new Msg;
+    auto rep =std::make_shared<Msg>();
     HttpEncoder encoder;
     encoder.build200Header(rep, "image/png");
     PngRenderer r(_imageList, mger.path + "/images/");
@@ -53,12 +53,12 @@ Msg* RasterImage::processRequest([[maybe_unused]] Msg* request, [[maybe_unused]]
     char filename[250];
     std::string res="";
     FILE* in;
-    
+
     if(_z <= _cachelevel)
     {
         snprintf(filename,250,"%s/cache/%ld/%ld/%ld.png",mger.path.c_str(),_z,_x,_y);
         in = fopen(filename, "r");
-        if(in != NULL)
+        if(in != nullptr)
         {
             filefound=true;
             char buffer[4097];
@@ -98,7 +98,7 @@ Msg* RasterImage::processRequest([[maybe_unused]] Msg* request, [[maybe_unused]]
             {
                 std::lock_guard<std::mutex> guard(file_mtx);
                 FILE* out = fopen(filename, "w");
-                if(out != NULL)
+                if(out != nullptr)
                 {
                     fwrite(res.c_str(), res.size(),1,out);
                     fclose(out);

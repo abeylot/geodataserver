@@ -1,19 +1,19 @@
 #include "CompiledDataManager.hpp"
 
 
-Way* CompiledDataManager::loadWay(uint64_t id, bool fast)
+std::shared_ptr<Way> CompiledDataManager::loadWay(uint64_t id, bool fast)
 {
     GeoWayIndex record;
     bool found = wayIndex->get(id,&record);
     if(found)
     {
-        Way* w = new Way();
+        auto w = std::make_shared<Way>();
         w->id = id;
         fillPoints(&(w->points), w->pointsCount,record.pstart,record.psize);
         if(w->pointsCount > 0 && ! fast)
         {
-            GeoPoint *curpoint = NULL;
-            GeoPoint *lastpoint = NULL;
+            GeoPoint *curpoint = nullptr;
+            GeoPoint *lastpoint = nullptr;
             curpoint = w->points;
             w->rect.x0 =w->rect.x1 = curpoint->x;
             w->rect.y0 =w->rect.y1 = curpoint->y;
@@ -33,16 +33,16 @@ Way* CompiledDataManager::loadWay(uint64_t id, bool fast)
         }
         return w;
     }
-    else return NULL;
+    else return nullptr;
 }
 
-Point* CompiledDataManager::loadPoint(uint64_t id)
+std::shared_ptr<Point> CompiledDataManager::loadPoint(uint64_t id)
 {
     GeoPointIndex record;
     bool found = nodeIndex->get(id,&record);
     if(found)
     {
-        Point* p = new Point();
+        auto p = std::make_shared<Point>();
         p->layer = 6;
         p->id = id;
         p->x = record.x;
@@ -54,7 +54,7 @@ Point* CompiledDataManager::loadPoint(uint64_t id)
         }
         return p;
     }
-    else return NULL;
+    else return nullptr;
 
 }
 /*
@@ -63,15 +63,15 @@ Relation* CompiledDataManager::loadRelation(uint64_t id)
     return loadRelation(id, 2);
 }*/
 
-Relation* CompiledDataManager::loadRelation(uint64_t id, short recurs, bool fast)
+std::shared_ptr<Relation> CompiledDataManager::loadRelation(uint64_t id, short recurs, bool fast)
 {
     recurs --;
-    if (recurs < 1) return NULL;
+    if (recurs < 1) return nullptr;
     GeoIndex record;
     bool found = relationIndex->get(id,&record);
     if(found)
     {
-        Relation* r = new Relation();
+        auto r = std::make_shared<Relation>();
         r->id = id;
         r->isPyramidal = false;
         r->rect.x0 = r->rect.x1 = UINT32_C(0xFFFFFFFF);
@@ -89,22 +89,22 @@ Relation* CompiledDataManager::loadRelation(uint64_t id, short recurs, bool fast
         fillLinkedItems(*r,record.mstart,record.msize, recurs, fast);
         return r;
     }
-    else return NULL;
+    else return nullptr;
 }
 
-Relation* CompiledDataManager::loadRelationFast(uint64_t id)
+std::shared_ptr<Relation> CompiledDataManager::loadRelationFast(uint64_t id)
 {
     GeoIndex record;
     bool found = relationIndex->get(id,&record);
     if(found)
     {
-        Relation* r = new Relation();
+        auto r = std::make_shared<Relation>();
         r->rect.x0 = r->rect.x1 = UINT32_C(0xFFFFFFFF);
         r->rect.y0 = r->rect.y1 = UINT32_C(0xFFFFFFFF);
         fillTags(r->tags,record.tstart,record.tsize);
         return r;
     }
-    else return NULL;
+    else return nullptr;
 }
 
 void CompiledDataManager::fillPoints(GeoPoint ** points, uint64_t& pointsCount, uint64_t start, uint64_t size)
@@ -122,9 +122,9 @@ void CompiledDataManager::fillTags(Tags& tags, uint64_t start, uint64_t size)
 void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t size, short recurs, bool fast)
 {
     GeoMember* buffer = relMembers->getData(start,size);
-    Way* newWay = NULL;
-    Point* newPoint;
-    Relation* newRel;
+    std::shared_ptr<Way> newWay = nullptr;
+    std::shared_ptr<Point> newPoint = nullptr;
+    std::shared_ptr<Relation> newRel = nullptr;
     for(uint64_t i = 0; i < size; i++)
     {
         switch(buffer[i].type)
@@ -157,7 +157,7 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
                     {
                         if(!fast)r.shape.mergePoints(l->points, l->pointsCount);
                     }
-                    for(Relation* rel : newRel->relations)
+                    for(auto rel : newRel->relations)
                         for(Line* l : rel->shape.lines)
                         {
                             if(!fast) r.shape.mergePoints(l->points, l->pointsCount);
@@ -458,8 +458,8 @@ void Way::crop(Rectangle& r)
 
 bool Line::mergePoints (GeoPoint* points, uint64_t pointsCount)
 {
-    if(this->points == NULL) return true;
-    if(points == NULL) return true;
+    if(this->points == nullptr) return true;
+    if(points == nullptr) return true;
     if(!this->isClosed())
     {
         if(this->points[0] == points[0])

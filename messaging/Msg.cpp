@@ -40,7 +40,7 @@ void Record::addBlock( const std::string& str)
 const std::string* Record::getBlock(uint64_t i) const
 {
     if (i < Blocks.size()) return &Blocks[i];
-    return NULL;
+    return nullptr;
 }
 
 std::string Record::getNamedValue(const std::string& key) const
@@ -78,7 +78,7 @@ Record*  Record::duplicate() const
 Record* Msg::getRecord(uint64_t i) const
 {
     if (i < Records.size()) return Records[i];
-    return NULL;
+    return nullptr;
 }
 
 uint64_t Msg::getRecordCount() const
@@ -98,9 +98,9 @@ void Msg::addRecord(Record* r)
 
 
 
-Msg*  Msg::duplicate() const
+std::shared_ptr<Msg>  Msg::duplicate() const
 {
-    Msg* res = new Msg;
+    auto res = std::make_shared<Msg>();
     int max_i = getRecordCount();
     for(int i = 0 ; i < max_i; i++)
     {

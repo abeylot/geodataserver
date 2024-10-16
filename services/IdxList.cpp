@@ -1,8 +1,8 @@
 #include "IdxList.hpp"
-Msg* IdxList::processRequest([[maybe_unused]] Msg* request, CompiledDataManager& mger)
+std::shared_ptr<Msg> IdxList::processRequest([[maybe_unused]] std::shared_ptr<Msg> request, CompiledDataManager& mger)
 {
     std::string resp = "<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>";
-    Msg* rep = new Msg;
+    auto rep = std::make_shared<Msg>();
     encoder.build200Header(rep, "text/html");
     for(IndexDesc* desc : *(mger.indexes))
     {

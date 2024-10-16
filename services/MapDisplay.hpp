@@ -15,7 +15,7 @@ private:
 public:
     explicit MapDisplay(bool RasterImageService_enabled);
     ~MapDisplay();
-    Msg* processRequest(Msg* request, CompiledDataManager& mger) override;
+    std::shared_ptr<Msg> processRequest(std::shared_ptr<Msg> request, CompiledDataManager& mger) override;
 
 };
 

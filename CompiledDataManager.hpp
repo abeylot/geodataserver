@@ -10,6 +10,7 @@
 #include "common/GeoTypes.hpp"
 #include "GeoBox.hpp"
 #include "helpers/Rectangle.hpp"
+#include <memory>
 
 struct Tags
 {
@@ -17,14 +18,14 @@ struct Tags
     uint64_t data_size;
     std::string operator [](const char* my_tag) const
     {
-        if(data == NULL) return "";
+        if(data == nullptr) return "";
         uint64_t used = 0;
         uint64_t len = strlen(my_tag);
 
         while( used < data_size)
         {
-            char* tag = NULL;
-            char* value = NULL;
+            char* tag = nullptr;
+            char* value = nullptr;
 
             unsigned char tag_size = 0;
             unsigned char value_size = 0;
@@ -59,7 +60,7 @@ struct Point
     Tags tags;
     virtual ~Point()
     {
-        if(tags.data != NULL) free(tags.data);
+        if(tags.data != nullptr) free(tags.data);
     }
 };
 
@@ -74,7 +75,7 @@ struct Way
     virtual ~Way()
     {
         free(points);
-        if(tags.data != NULL) free(tags.data);
+        if(tags.data != nullptr) free(tags.data);
     }
     void crop (Rectangle& r);
     void fillrec();
@@ -115,29 +116,17 @@ struct Relation
     uint64_t id;
     char layer;
     Rectangle rect;
-    std::vector<Relation*> relations;
-    std::vector<Way*> ways;
+    std::vector<std::shared_ptr<Relation>> relations;
+    std::vector<std::shared_ptr<Way>> ways;
     std::vector<bool> reverseWay;
-    std::vector<Point*> points;
+    std::vector<std::shared_ptr<Point>> points;
     Tags tags;
     bool isPyramidal;
     Shape shape;
     bool isClosed;
     virtual ~Relation()
     {
-        for(Way* w : ways)
-        {
-            delete w;
-        }
-        for (Relation* r : relations)
-        {
-            delete r;
-        }
-        for (Point* p : points)
-        {
-            delete p;
-        }
-        if(tags.data != NULL) free(tags.data);
+        if(tags.data != nullptr) free(tags.data);
     }
 };
 
@@ -171,7 +160,7 @@ public :
 
     std::string path;
 
-    CompiledDataManager(const std::string& name,std::vector<IndexDesc*>* conf,std::map<std::string, std::string>* symbs = NULL, std::map<std::string, std::string>* convs = NULL):path(name)
+    CompiledDataManager(const std::string& name,std::vector<IndexDesc*>* conf,std::map<std::string, std::string>* symbs = nullptr, std::map<std::string, std::string>* convs = nullptr):path(name)
     {
         indexes = conf;
         symbols = symbs;
@@ -213,33 +202,50 @@ public :
         delete textIndexRelationRange;
     }
 
-    Way* loadWay(uint64_t id, bool fast = false);
-    Point* loadPoint(uint64_t id);
+    std::shared_ptr<Way> loadWay(uint64_t id, bool fast = false);
+    std::shared_ptr<Point> loadPoint(uint64_t id);
     //Relation* loadRelation(uint64_t id);
-    Relation* loadRelationFast(uint64_t id);
-    Relation* loadRelation(uint64_t id, short recurs = 2, bool fast = false);
+    std::shared_ptr<Relation> loadRelationFast(uint64_t id);
+    std::shared_ptr<Relation> loadRelation(uint64_t id, short recurs = 2, bool fast = false);
 
-
-    inline void load(Relation*& r, uint64_t id, bool fast)
+    /*
+    inline void load(std::shared_ptr<Relation> r, uint64_t id, bool fast)
     {
         r = loadRelation(id, 3, fast);
     }
 
-    inline void load(Way*& w, uint64_t id, bool fast)
+    inline void load(std::shared_ptr<Way> w, uint64_t id, bool fast)
     {
         w = loadWay(id, fast);
     }
 
-    inline void load(Point*& p, uint64_t id, [[maybe_unused]] bool fast)
+    inline void load(std::shared_ptr<Point> p, uint64_t id, [[maybe_unused]] bool fast)
     {
         p =  loadPoint(id);
     }
-
+*/
     void fillPoints(GeoPoint ** points, uint64_t& pointsCount, uint64_t start, uint64_t size);
 
     void fillTags(Tags& tags, uint64_t start, uint64_t size);
 
     void fillLinkedItems(Relation& r, uint64_t start, uint64_t size, short recurs, bool fast);
+        template<typename ITEM>
+
+    std::shared_ptr<ITEM> load(uint64_t id, [[maybe_unused]] bool fast)
+    {
+        if constexpr(std::is_same<ITEM,Point>())
+        {
+            return loadPoint(id);
+        }
+        if constexpr(std::is_same<ITEM,Way>())
+        {
+            return loadWay(id, fast);
+        }
+        if constexpr(std::is_same<ITEM,Relation>())
+        {
+            return loadRelation(id, 3, fast);
+        }
+    }
 
 };
 #endif

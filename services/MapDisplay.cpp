@@ -8,7 +8,7 @@ MapDisplay::~MapDisplay()
 {
 }
 
-Msg* MapDisplay::processRequest(Msg* request, [[maybe_unused]] CompiledDataManager& mger)
+std::shared_ptr<Msg> MapDisplay::processRequest(std::shared_ptr<Msg> request, [[maybe_unused]] CompiledDataManager& mger)
 {
     bool pin = false;
     std::string longitude = "-1.554136";
@@ -159,7 +159,7 @@ Msg* MapDisplay::processRequest(Msg* request, [[maybe_unused]] CompiledDataManag
     } else {
         resp.replace(resp.find("#pin#"),5,"");
     }
-    Msg* rep = new Msg;
+    auto rep = std::make_shared<Msg>();
     encoder.build200Header(rep, "text/html");
     encoder.addContent(rep,resp);
     return rep;

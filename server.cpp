@@ -63,7 +63,7 @@ private:
 
 template<typename MSG> struct Reader
 {
-    Reader(NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* queue,NonGrowableQueue<TcpConnection*, MAX_PENDING_REQUESTS>* queueS) : queueS(queueS),queue(queue)
+    Reader(NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* queue,NonGrowableQueue<TcpConnection*, MAX_PENDING_REQUESTS>* queueS) : queueS(queueS),queue(queue)
     {
     }
     int operator()()
@@ -84,12 +84,12 @@ template<typename MSG> struct Reader
                         uint32_t len = p.getMessage(m,s);
                         if(len)
                         {
-                            Msg* msg = encoder.encode(&m);
+                            std::shared_ptr<Msg> msg = encoder.encode(&m);
                             msg->setConnection(s);
                             if(!queue->push(msg))
                             {
                                  std::cerr << "too much pending requests, message rejected !\n";
-                                 delete msg;
+                                 //delete msg;
                             }
                         }
                     }
@@ -108,19 +108,19 @@ template<typename MSG> struct Reader
 
 private:
     NonGrowableQueue<TcpConnection*, MAX_PENDING_REQUESTS>* queueS;
-    NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* queue;
+    NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* queue;
 };
 
 template<typename MSG> struct Writer
 {
     HttpProtocol p;
     HttpEncoder encoder;
-    explicit Writer(NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* queue) :  queue(queue)
+    explicit Writer(NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* queue) :  queue(queue)
     {
     }
     int operator()()
     {
-        MSG* m;
+        std::shared_ptr<MSG> m;
         while(!ExtThreads::stop_requested())
         {
             while(queue->pop(m)&&!ExtThreads::stop_requested())
@@ -132,7 +132,7 @@ template<typename MSG> struct Writer
                     //usleep(10000);
                     delete s;
                     delete m->getConnection();
-                    delete m;
+                    //delete m;
                 }
                 catch (const std::exception& e)
                 {
@@ -146,7 +146,7 @@ template<typename MSG> struct Writer
     }
 
 private:
-    NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* queue;
+    NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* queue;
 };
 
 template<typename MSG> struct Exec
@@ -156,7 +156,7 @@ template<typename MSG> struct Exec
     std::map<std::string, std::string>* symbols;
     std::map<std::string, std::string>* charconvs;
     //std::map<std::string, std::string>* patterns;
-    Exec(NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* inqueue,NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* outqueue,
+    Exec(NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* inqueue,NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* outqueue,
          const std::string& file,
          uint microSleep,std::vector<IndexDesc*>* idxL,
          std::map<std::string, std::string>* symbs,
@@ -170,14 +170,14 @@ template<typename MSG> struct Exec
     }
     int operator()()
     {
-        MSG* m;
+        std::shared_ptr<MSG> m;
         while(!ExtThreads::stop_requested())
         {
             while(inqueue->pop(m)&&!ExtThreads::stop_requested())
             {
                 try
                 {
-                    Msg* rep;
+                    std::shared_ptr<Msg> rep;
                     HttpEncoder encoder;
                     if(m->getRecordCount() > 0)
                     {
@@ -185,15 +185,14 @@ template<typename MSG> struct Exec
                         //printf("%s\n",url.c_str());
                         //time_t ctt = time(0);
                         //std::cout << asctime(localtime(&ctt)) << std::endl;
-                        ServiceInterface* s = ServicesFactory::getService(url);
+                        auto s = ServicesFactory::getService(url);
                         if(s)
                         {
                             rep = s->processRequest(m,mger);
-                            ServicesFactory::releaseService(s);
                         }
                         else
                         {
-                            rep = new Msg;
+                            rep = std::make_shared<Msg>();
                             encoder.build404Header(rep);
                             encoder.addContent(rep,"<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>Page "+url+" non trouvée.</body></html>");
                         }
@@ -202,16 +201,14 @@ template<typename MSG> struct Exec
                     }
                     else
                     {
-                        rep = new Msg;
+                        rep = std::make_shared<Msg>();
                         encoder.build500Header(rep);
                     }
                     rep->setConnection(m->getConnection());
                     if(!outqueue->push(rep))
                     {
                          std::cerr << "too much pending responses, response rejected !\n";
-                         delete rep;
                     }
-                    delete m;
                 }
                 catch (const std::exception& e)
                 {
@@ -225,8 +222,8 @@ template<typename MSG> struct Exec
     }
 
 private:
-    NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* inqueue;
-    NonGrowableQueue<MSG*, MAX_PENDING_REQUESTS>* outqueue;
+    NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* inqueue;
+    NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* outqueue;
     std::string file;
     uint microSleep;
     CompiledDataManager& mger;
@@ -275,8 +272,8 @@ int main(int argc, char *argv[])
     fclose(config);
 
 
-    NonGrowableQueue<Msg*, MAX_PENDING_REQUESTS> myInQueue;
-    NonGrowableQueue<Msg*, MAX_PENDING_REQUESTS> myOutQueue;
+    NonGrowableQueue<std::shared_ptr<Msg>, MAX_PENDING_REQUESTS> myInQueue;
+    NonGrowableQueue<std::shared_ptr<Msg>, MAX_PENDING_REQUESTS> myOutQueue;
     NonGrowableQueue<TcpConnection*, MAX_PENDING_REQUESTS> mySessionQueue;
 
     Listener listener(&mySessionQueue);

@@ -22,6 +22,6 @@ public:
         _z = z;
         _cachelevel = cachelevel;
     }
-    Msg* processRequest(Msg* request, CompiledDataManager& mger) override;
+    std::shared_ptr<Msg> processRequest(std::shared_ptr<Msg> request, CompiledDataManager& mger) override;
 };
 #endif

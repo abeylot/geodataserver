@@ -10,6 +10,7 @@
 #include <vector>
 #include <stdio.h>
 #include <inttypes.h>
+#include <memory>
 #include "../helpers/TcpConnection.hpp"
 
 
@@ -59,7 +60,7 @@ public:
 
     Msg()
     {
-        socket = NULL;
+        socket = nullptr;
     }
 
     virtual ~Msg()
@@ -84,7 +85,7 @@ public:
     void addRecord(Record*);
     Record* getRecord(uint64_t i) const;
     uint64_t getRecordCount() const;
-    Msg*  duplicate() const;
+    std::shared_ptr<Msg>  duplicate() const;
 
 };
 

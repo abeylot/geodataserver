@@ -231,7 +231,7 @@ double tiley2lat(int y, int z)
     return 180.0 / M_PI * atan(0.5 * (exp(n) - exp(-n)));
 }
 
-Msg* Tile::processRequest([[maybe_unused]] Msg* request, CompiledDataManager& mger)
+std::shared_ptr<Msg> Tile::processRequest([[maybe_unused]] std::shared_ptr<Msg> request, CompiledDataManager& mger)
 {
     char filename[250];
 
@@ -267,7 +267,7 @@ Msg* Tile::processRequest([[maybe_unused]] Msg* request, CompiledDataManager& mg
 
     //std::string resp = "";
 
-    Msg* rep = new Msg;
+    auto rep = std::make_shared<Msg>();
     HttpEncoder encoder;
     encoder.build200Header(rep, "image/svg+xml");
     std::string res = "";
@@ -326,7 +326,7 @@ Msg* Tile::processRequest([[maybe_unused]] Msg* request, CompiledDataManager& mg
             {
                 std::lock_guard<std::mutex> guard(file_mtx);
                 FILE* out = fopen(filename, "w");
-                if(out != NULL)
+                if(out != nullptr)
                 {
                     def(res, out);
                     fclose(out);

@@ -94,10 +94,10 @@ TcpConnection* TcpListener::waitForClient(void)
     /*
      * Accept connection.
      */
-    if ((iClientSock = accept(_FileDescr, NULL, NULL)) < 0)
+    if ((iClientSock = accept(_FileDescr, nullptr, nullptr)) < 0)
     {
         //printf("accept error %d \n",iClientSock);
-        return NULL;
+        return nullptr;
     }
     //printf("accept success %d \n",iClientSock);
 

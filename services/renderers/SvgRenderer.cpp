@@ -12,19 +12,19 @@
 
 #define LAYER_MULT 100000
 
-Shape* SvgRenderer::getShape(CssClass* c, unsigned char layer)
+Shape& SvgRenderer::getShape(CssClass* c, unsigned char layer)
 {
     auto it = shapes.find(c->rank + layer * LAYER_MULT);
     if(it == shapes.end())
     {
-        shapes[c->rank + layer * LAYER_MULT] = new myShape;
+        shapes[c->rank + layer * LAYER_MULT] = std::make_shared<myShape>();
         shapes[c->rank + layer * LAYER_MULT]->c = c;
         shapes[c->rank + layer * LAYER_MULT]->layer = layer;
-        return &(shapes[c->rank + layer * LAYER_MULT]->s);
+        return (shapes[c->rank + layer * LAYER_MULT]->s);
     }
     else
     {
-        return &(it->second->s);
+        return (it->second->s);
     }
 
 }
@@ -192,8 +192,8 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
             {
                 if( hash->addIfUnique(record.value.id*100 + indexId))
                 {
-                    ITEM* item = NULL;
-                    mger->load(item, record.value.id, false);
+                    std::shared_ptr<ITEM> item = nullptr;
+                    item = mger->load<ITEM>(record.value.id, false);
                     CssClass* cl = getCssClass(idxDesc, *item, zoom, record.value.zmMask & 0X100000LL);
                     label_s lbl;
                     if(cl)
@@ -206,7 +206,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                                         size_x,
                                         size_y,
                                         *cl,
-                                        *getShape(cl, item->layer)
+                                        getShape(cl, item->layer)
                                         );
                             }
                         else
@@ -232,7 +232,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                         if((lbl.text.length() > 0) && (lbl.fontsize > 5))
                             label_vector.push_back(lbl);
                     }
-                    delete item;
+                    //delete item;
                 }
             }
             start++;
@@ -252,8 +252,8 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                 {
                     if((record.value.zmMask &  zmMask ) && ((record.value.r * (rect2) ).isValid()))
                     {
-                        ITEM* item = NULL;
-                        mger->load(item, record.value.id, false);
+                        std::shared_ptr<ITEM> item = nullptr;
+                        item = mger->load<ITEM>(record.value.id, false);
 
                         CssClass* cl = getCssClass(idxDesc, *item, zoom, record.value.zmMask & 0X100000LL);
                         label_s lbl;
@@ -268,7 +268,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                                             size_x,
                                             size_y,
                                             *cl,
-                                            *getShape(cl, item->layer)
+                                            getShape(cl, item->layer)
                                             );
                             }
                             else
@@ -293,7 +293,6 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                             if((lbl.text.length() > 0) && (lbl.fontsize > 5))
                                 label_vector.push_back(lbl);
                         }
-                        delete item;
                     }
                 }
             }
@@ -319,7 +318,6 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
             {
                 resMap[it.second->c->zIndex + it.second->layer * LAYER_MULT] = tmp;
             }
-            delete it.second;
         }
         shapes.clear();
     }
@@ -988,7 +986,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
             label_s lbl2;
             lbl2.text = name;
             if(lbl2.text == "") lbl2.text = "void";
-            for(Way* myWay : myRelation.ways)
+            for(auto myWay : myRelation.ways)
             {
                 myWay->fillrec();
                 if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
@@ -1194,7 +1192,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
 template<class ITEM> CssClass* SvgRenderer::getCssClass(const IndexDesc& idx, ITEM& item,      short zoom, bool closed)
 {
     uint32_t mask = 1LL << zoom;
-    CssClass* myCl = NULL;
+    CssClass* myCl = nullptr;
     for (Condition* cd : idx.conditions)
     {
 

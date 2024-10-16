@@ -29,7 +29,7 @@ std::string PngRenderer::render(const Rectangle& rect, uint32_t sizex, uint32_t 
        (my_lon_min <= img.lon_max)
        )
        {
-       png::image<png::rgba_pixel>* myImg = new png::image<png::rgba_pixel>(_imagePath + img.filename);
+       auto myImg = std::make_unique<png::image<png::rgba_pixel>>(_imagePath + img.filename);
        for(unsigned int i = 0; i < sizex; i++){
                double posx = Coordinates::fromNormalizedLon(rect.x0*(1.0 - i/((double)sizex)) + rect.x1*(i/(double)sizex));
                if((posx >= img.lon_min) && (posx < img.lon_max))
@@ -47,11 +47,11 @@ std::string PngRenderer::render(const Rectangle& rect, uint32_t sizex, uint32_t 
                }
            }
        }
-       delete myImg;
+       //delete myImg;
        }
     }
     std::stringstream sstream;
     image.write_stream(sstream);
-    return std::move(sstream.str());
+    return sstream.str();
 }
 

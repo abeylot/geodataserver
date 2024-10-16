@@ -14,6 +14,7 @@
 #include "MapDisplay.hpp"
 #include "Geolocation.hpp"
 #include "RasterImage.hpp"
+#include <memory>
 class ServicesFactory
 {
 private:
@@ -36,7 +37,7 @@ static std::vector<PngImage> _imageList;
 
 public:
     static void init(const ParmsXmlVisitor& params, const std::vector<PngImage>& imageList);
-    static ServiceInterface* getService(std::string service);
+    static std::shared_ptr<ServiceInterface> getService(std::string service);
     static void releaseService(ServiceInterface* service);
 };
 #endif

@@ -26,44 +26,40 @@ class NonGrowableQueue
 
     bool empty()
     {
-        _token.lock();
+        std::unique_lock lk(_token);
         bool res = !itemIsUsed[next_out_key];
-        _token.unlock();
+        lk.unlock();
         return res;
     }
 
     bool push(T item)
     {
 
-        _token.lock();
+        std::unique_lock lk(_token);
 
         int key = next_in_key;
         if(itemIsUsed[key])
         {
-            _token.unlock();
             return false;
         } else {
             next_in_key = ( next_in_key + 1 ) % SIZE;;
             items[key] = item;
             itemIsUsed[key] = true;
-            _token.unlock();
             return true;
         }
     }
 
     bool pop(T& item)
     {
-        _token.lock();
+        std::unique_lock lk(_token);
         int key = next_out_key;
         if(!itemIsUsed[key])
         {
-            _token.unlock();
             return false;
         } else {
             item = items[key];
             itemIsUsed[key] = false;
             next_out_key = (next_out_key + 1) % SIZE;
-            _token.unlock();
             return true;
         }
     }

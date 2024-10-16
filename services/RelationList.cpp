@@ -3,7 +3,7 @@
 #include "../common/constants.hpp"
 #include <stdlib.h>
 
-Msg* RelationList::processRequest([[maybe_unused]] Msg* request, CompiledDataManager& mger)
+std::shared_ptr<Msg> RelationList::processRequest([[maybe_unused]] std::shared_ptr<Msg> request, CompiledDataManager& mger)
 {
     //GeoBox geoBox;
     // DataManager mger;
@@ -13,7 +13,7 @@ Msg* RelationList::processRequest([[maybe_unused]] Msg* request, CompiledDataMan
     //GeoIndex p;
     for(uint64_t i=0; i < mger.relationIndex->getSize(); i++)
     {
-        Relation* r = mger.loadRelationFast(i);
+        std::shared_ptr<Relation> r = mger.loadRelationFast(i);
         //dump = false;
         /*for(Balise* c : b->childs) {
           if(c->baliseName == BALISENAME_TAGSHORT) {
@@ -46,11 +46,10 @@ Msg* RelationList::processRequest([[maybe_unused]] Msg* request, CompiledDataMan
             resp += "name:" + name + " type:" + type;
             resp += "<br/>";
         }
-        delete r;
         //i++;
     }
     resp += "</body></html>";
-    Msg* rep = new Msg;
+    auto rep = std::make_shared<Msg>();
     encoder.build200Header(rep, "text/html");
     encoder.addContent(rep,resp);
     return rep;
