@@ -245,6 +245,7 @@ public :
         {
             return loadRelation(id, 3, fast);
         }
+        return nullptr;
     }
 
 };
