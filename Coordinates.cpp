@@ -86,13 +86,13 @@ uint32_t Coordinates::toNormalizedLat(const std::string& coord)
 
 double Coordinates::fromNormalizedLon(const uint32_t coord)
 {
-    float res = ((float) coord * 360.0 /(float) 0b10000000000000000000000000000000) - 180.0;
+    double res = ((double) coord * 360.0 /(double) 0b10000000000000000000000000000000) - 180.0;
     return res;
 }
 
 double Coordinates::fromNormalizedLat(const uint32_t coord)
 {
-    float res = 90.0 - ((float) coord * 180.0 /(float) 0b10000000000000000000000000000000);
+    double res = 90.0 - ((double) coord * 180.0 /(double) 0b10000000000000000000000000000000);
     return res;
 }
 
