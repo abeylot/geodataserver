@@ -25,6 +25,10 @@
     <!-- geolocation service -->
     <parameter name="GeolocationService"    value="enabled"/>
 
+
+   <parameter name="RasterImage"           value="disabled"/>
+
+
     <shp_file name="water-polygons-split-4326/water_polygons" tag="shape" value="ocean"/>
     <shp_file name="ne_10m_admin_0_boundary_lines_land/ne_10m_admin_0_boundary_lines_land" tag="shape" value="frontier"/>
     <shp_file name="ne_10m_lakes/ne_10m_lakes" tag="shape" value="lake"/>
@@ -118,10 +122,10 @@
     <style id="sketch"    value="fill:none;stroke:lightgrey; stroke-width:1;opacity:0.7"/>
     <style id="ferryLine" value="fill:none;stroke:#777777; stroke-width:1;opacity:0.1"/>
     <style id="waterLine" value="fill:none;stroke:#BBBBBB; stroke-width:1"/>
-    <style id="hedge"      value="fill:none;stroke:#999999; stroke-width:4; stroke-dasharray:0.1,5;stroke-linecap:round;opacity:0.7;"/>
-    <style id="treeLineS"  value="fill:none;stroke:#999999; stroke-width:8; stroke-dasharray:0.1,16;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
-    <style id="treeLineM"  value="fill:none;stroke:#999999; stroke-width:16; stroke-dasharray:0.1,32;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
-    <style id="treeLineL"  value="fill:none;stroke:#999999; stroke-width:32; stroke-dasharray:0.1,64;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
+    <style id="hedge"      value="fill:none;stroke:url(#forestPattern); stroke-width:4;stroke-linecap:round;opacity:0.7;"/>
+    <style id="treeLineS"  value="fill:none;stroke:url(#forestPattern); stroke-width:8;stroke-linecap:round;opacity:0.7;"/>
+    <style id="treeLineM"  value="fill:none;stroke:url(#forestPattern); stroke-width:16;stroke-linecap:round;opacity:0.7;"/>
+    <style id="treeLineL"  value="fill:none;stroke:url(#forestPattern); stroke-width:32;stroke-linecap:round;opacity:0.7;"/>
 
     <style id="road"       value="fill:none; stroke:#AAAAAA;stroke-linecap:round;"/>
     <style id="path"       value="fill:none; stroke:#AAAAAA;stroke-linecap:butt; stroke-dasharray:5,2; stroke-width:2"/>

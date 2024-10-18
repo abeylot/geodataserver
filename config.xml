@@ -118,10 +118,10 @@
     <style id="sketch"    value="fill:none;stroke:lightgrey; stroke-width:1;opacity:0.7"/>
     <style id="ferryLine" value="fill:none;stroke:blue; stroke-width:1;opacity:0.1"/>
     <style id="waterLine" value="fill:none;stroke:skyblue; stroke-width:1"/>
-    <style id="hedge"      value="fill:none;stroke:#99DD99; stroke-width:4; stroke-dasharray:0.1,5;stroke-linecap:round;opacity:0.7;"/>
-    <style id="treeLineS"  value="fill:none;stroke:#99DD99; stroke-width:8; stroke-dasharray:0.1,16;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
-    <style id="treeLineM"  value="fill:none;stroke:#99DD99; stroke-width:16; stroke-dasharray:0.1,32;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
-    <style id="treeLineL"  value="fill:none;stroke:#99DD99; stroke-width:32; stroke-dasharray:0.1,64;stroke-linecap:round;opacity:0.7; filter: url(#shadow)"/>
+    <style id="hedge"      value="fill:none;stroke:url(#forestPattern); stroke-width:4;stroke-linecap:round;opacity:0.7;"/>
+    <style id="treeLineS"  value="fill:none;stroke:url(#forestPattern); stroke-width:8;stroke-linecap:round;opacity:0.7;"/>
+    <style id="treeLineM"  value="fill:none;stroke:url(#forestPattern); stroke-width:16;stroke-linecap:round;opacity:0.7;"/>
+    <style id="treeLineL"  value="fill:none;stroke:url(#forestPattern); stroke-width:32;stroke-linecap:round;opacity:0.7;"/>
 
     <style id="road"       value="fill:none; stroke:#BBBBBB;stroke-linecap:round;"/>
     <style id="path"       value="fill:none; stroke:#BBBBBB;stroke-linecap:butt; stroke-dasharray:5,2; stroke-width:2"/>
@@ -615,7 +615,7 @@
         </restriction>
         <restriction zLevels="17">
             <condition tagKey="natural" closed="both">
-                <class value="tree_row"                  zIndex="50001" style="#treeLineS"/>
+                <class value="tree_row"                  zIndex="60001" style="#treeLineS"/>
             </condition>
         </restriction>
         <restriction zLevels="18">

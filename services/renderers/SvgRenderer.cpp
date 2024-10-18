@@ -955,7 +955,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
     StringBuffer result(resultString);
     std::string textField = "name";
     if(!(cl.textField == "")) textField = cl.textField;
-    bool draw = ((myRelation.rect)*rect).isValid();
+    bool draw = ((myRelation.rect)*(rect*1.25)).isValid();
     bool keep = false;
 
     if(cl.style != "")
