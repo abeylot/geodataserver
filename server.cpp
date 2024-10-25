@@ -182,19 +182,46 @@ template<typename MSG> struct Exec
                     if(m->getRecordCount() > 0)
                     {
                         std::string url = m->getRecord(0)->getNamedValue("URL");
-                        //printf("%s\n",url.c_str());
-                        //time_t ctt = time(0);
-                        //std::cout << asctime(localtime(&ctt)) << std::endl;
+                        std::string etag = m->getRecord(0)->getNamedValue("If-None-Match");
                         auto s = ServicesFactory::getService(url);
                         if(s)
                         {
                             rep = s->processRequest(m,mger);
+                            auto new_rep = std::make_shared<Msg>();
+                            Record* rcd = new Record;
+                            Record* rcd2 = new Record;
+                            rcd2->addBlock("");
+                            new_rep->addRecord(rcd);
+                            new_rep->addRecord(rcd2);
+                            bool replace = false;;
+                            if(!etag.empty())
+                            {
+                                std::string etag2=rep->getRecord(0)->getNamedValue("HTTPEtag");
+                                if(etag == etag2)
+                                {
+                                    for(auto block : rep->getRecord(0)->getBlocks())
+                                    {
+                                        if(block.find("HTTPStatus=200") == 0 )
+                                        {
+                                            block = "HTTPStatus=304";
+                                            replace = true;
+                                        }
+                                        rcd->addBlock(block);
+                                    }
+                                    if(replace)
+                                    {
+                                        std::string ctLength = std::string("content-length: ") + std::to_string(rep->getRecord(1)->getBlock(0)->size());
+                                        new_rep->getRecord(0)->addBlock(ctLength);
+                                        rep = new_rep;
+                                    }
+                                }
+                            }
                         }
                         else
                         {
                             rep = std::make_shared<Msg>();
                             encoder.build404Header(rep);
-                            encoder.addContent(rep,"<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>Page "+url+" non trouvée.</body></html>");
+                            encoder.addContent(rep,"<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>Page "+url+" NOT FOUND </body></html>");
                         }
                         //ctt = time(0);
                         //std::cout << asctime(localtime(&ctt)) << std::endl;

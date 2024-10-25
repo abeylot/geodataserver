@@ -295,6 +295,16 @@ std::shared_ptr<Msg> Tile::processRequest([[maybe_unused]] std::shared_ptr<Msg> 
     {
     //printf("USING CACHE !\n");
         fclose(in);
+        std::string sEtag = "HTTPEtag=\"";
+        uint64_t key = 0;
+        char* key_c = (char*) &key;
+        for(unsigned int i = 0; i < res.size(); i++)
+        {
+            key_c[i%8] = key_c[i%8] ^ res[i];
+        }
+        sEtag += std::to_string(key);
+        sEtag += "\"";
+        rep->getRecord(0)->addBlock(sEtag);
         encoder.addContent(rep,res);
     }else{
         std::string dir1 = mger.path + "/cache/" + std::to_string(_z);
@@ -307,9 +317,19 @@ std::shared_ptr<Msg> Tile::processRequest([[maybe_unused]] std::shared_ptr<Msg> 
         rep->getRecord(0)->addBlock("HTTPEncoding=gzip");
         std::string smallRes;
         def(res, smallRes);
+        std::string sEtag = "HTTPEtag=\"";
+        uint64_t key = 0;
+        char* key_c = (char*) &key;
+        for(unsigned int i = 0; i < smallRes.size(); i++)
+        {
+            key_c[i%8] = key_c[i%8] ^ smallRes[i];
+        }
+        sEtag += std::to_string(key);
+        sEtag += "\"";
+        rep->getRecord(0)->addBlock(sEtag);
         encoder.addContent(rep,smallRes);
         //std::cout << "cache level " << _cachelevel << "\n";
-    if(_z <= _cachelevel && res.length() > 2048)
+        if(_z <= _cachelevel && res.length() > 2048)
         {
             std::filesystem::path p1(dir1);
             std::filesystem::path p2(dir2);

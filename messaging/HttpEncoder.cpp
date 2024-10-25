@@ -244,6 +244,12 @@ std::string* HttpEncoder::decode(std::shared_ptr<Msg> outMsg) const
             *res += std::string("Location: ")+ sLocation + "\r\n";
         }
 
+        std::string sEtag = outMsg->getRecord(0)->getNamedValue("HTTPEtag");
+        if(sEtag.length() != 0)
+        {
+            *res += std::string("ETag: ")+ sEtag + "\r\n";
+        }
+
         const std::string* sData = outMsg->getRecord(1)->getBlock(0);
 
 
@@ -296,6 +302,14 @@ void HttpEncoder::build404Header(std::shared_ptr<Msg> msg)
     msg->addRecord(rcd);
     rcd->addBlock("HTTPVersion=HTTP/1.0");
     rcd->addBlock("HTTPStatus=404");
+}
+
+void HttpEncoder::build304Header(std::shared_ptr<Msg> msg)
+{
+    Record* rcd = new Record;
+    msg->addRecord(rcd);
+    rcd->addBlock("HTTPVersion=HTTP/1.0");
+    rcd->addBlock("HTTPStatus=304");
 }
 
 void HttpEncoder::build500Header(std::shared_ptr<Msg> msg)

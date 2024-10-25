@@ -25,6 +25,7 @@ public:
     static void build200Header(std::shared_ptr<Msg> msg, const std::string& mimType="application/xml");
     static void build303Header(std::shared_ptr<Msg> msg, const std::string& URL);
     static void build404Header(std::shared_ptr<Msg> msg);
+    static void build304Header(std::shared_ptr<Msg> msg);
     static void build500Header(std::shared_ptr<Msg> msg);
     static void addContent(std::shared_ptr<Msg> msg,const std::string &content);
     static std::string urlDecode(const std::string& in);
