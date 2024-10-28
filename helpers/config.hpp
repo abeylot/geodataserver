@@ -7,6 +7,7 @@
 #include "../common/GeoTypes.hpp"
 #include "../Coordinates.hpp"
 #include <algorithm>
+#include <memory>
 
 struct CssClass
 {
