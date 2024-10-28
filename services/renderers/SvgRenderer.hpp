@@ -74,7 +74,6 @@ private:
     short zoom;
     uint32_t size_x, size_y;
     uint32_t zmMask;
-    hh::THashIntegerTable relationHash, wayHash, nodeHash;
     short indexId;
     std::map<long ,std::string> resMap;
     std::map<int,std::string>::iterator it;
@@ -89,7 +88,7 @@ private:
 
 
 public:
-    SvgRenderer(CompiledDataManager* m, const std::string& locale, const std::string& defaultColor) : relationHash(10000), wayHash(10000), nodeHash(1000), _locale(locale), _defaultColor(defaultColor)
+    SvgRenderer(CompiledDataManager* m, const std::string& locale, const std::string& defaultColor) :  _locale(locale), _defaultColor(defaultColor)
     {
         mger = m;
         zoom = 0;
@@ -106,7 +105,7 @@ public:
             _nb_locales ++ ;
         }
     }
-    SvgRenderer(CompiledDataManager* m, short z, const std::string& locale, const std::string& defaultColor) : relationHash(10000), wayHash(10000), nodeHash(1000), _locale(locale), _defaultColor(defaultColor)
+    SvgRenderer(CompiledDataManager* m, short z, const std::string& locale, const std::string& defaultColor) : _locale(locale), _defaultColor(defaultColor)
     {
         zoom = 0;
         size_x = 0;

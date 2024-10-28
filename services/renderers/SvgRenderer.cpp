@@ -142,7 +142,10 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
 {
     GeoBoxSet gSet;
     Shape myShape;
-    hh::THashIntegerTable* hash;
+    hh::THashIntegerTable hash(10000);
+
+    std::map <uint64_t, std::pair<CssClass*, std::shared_ptr<ITEM>>> itemsToDraw;
+
     Rectangle rect2;
 
     static_assert(std::is_same<ITEM,Relation>() ||
@@ -151,19 +154,16 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
 
     if constexpr(std::is_same<ITEM,Relation>())
     {
-         hash = &relationHash;
          gSet = makeGeoBoxSet(rect*1.25);
          rect2 = rect*1.25;
     }
     if constexpr(std::is_same<ITEM,Way>())
     {
-         hash = &wayHash;
          gSet = makeGeoBoxSet(rect*1.25);
          rect2 = rect*1.25;
     }
     if constexpr(std::is_same<ITEM,Point>())
     {
-         hash = &nodeHash;
          gSet = makeGeoBoxSet(rect*2);
          rect2 = rect*2;
     }
@@ -190,7 +190,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
         {
             if((record.value.zmMask &  zmMask )&&((record.value.r * (rect2)).isValid()))
             {
-                if( hash->addIfUnique(record.value.id*100 + indexId))
+                if( hash.addIfUnique(record.value.id))
                 {
                     std::shared_ptr<ITEM> item = nullptr;
                     item = mger->load<ITEM>(record.value.id, false);
@@ -201,38 +201,9 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                         if constexpr(! std::is_same<ITEM, Point>())
                         {
                             item->rect = record.value.r;
-                            tmp = render(lbl, *item,
-                                        rect,
-                                        size_x,
-                                        size_y,
-                                        *cl,
-                                        getShape(cl, item->layer)
-                                        );
-                            }
-                        else
-                        {
-                            tmp = render(lbl, *item,
-                                        rect,
-                                        size_x,
-                                        size_y,
-                                        *cl
-
-                                        );
                         }
-
-                        auto it = resMap.find(cl->zIndex + item->layer * LAYER_MULT);
-                        if(it != resMap.end())
-                        {
-                            it->second += tmp;
-                        }
-                        else
-                        {
-                            resMap[cl->zIndex + item->layer * LAYER_MULT] = tmp;
-                        }
-                        if((lbl.text.length() > 0) && (lbl.fontsize > 5))
-                            label_vector.push_back(lbl);
+                        itemsToDraw[record.value.id] = std::make_pair(cl, item);
                     }
-                    //delete item;
                 }
             }
             start++;
@@ -248,7 +219,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
             if(idxDesc.idx->findLastLesser(maxGeoBox2, start))
             while(idxDesc.idx->get(start++, &record) && (record.key <= maxGeoBox2))
             {
-                if( hash->addIfUnique(record.value.id*100 +indexId))
+                if( hash.addIfUnique(record.value.id))
                 {
                     if((record.value.zmMask &  zmMask ) && ((record.value.r * (rect2) ).isValid()))
                     {
@@ -256,47 +227,55 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                         item = mger->load<ITEM>(record.value.id, false);
 
                         CssClass* cl = getCssClass(idxDesc, *item, zoom, record.value.zmMask & 0X100000LL);
-                        label_s lbl;
 
                         if(cl)
                         {
                             if constexpr(! std::is_same<ITEM, Point>())
                             {
                                 item->rect = record.value.r;
-                                tmp = render(lbl, *item,
-                                            rect,
-                                            size_x,
-                                            size_y,
-                                            *cl,
-                                            getShape(cl, item->layer)
-                                            );
                             }
-                            else
-                            {
-                                tmp = render(lbl, *item,
-                                            rect,
-                                            size_x,
-                                            size_y,
-                                            *cl
-                                            );
-                            }
-
-                            auto it = resMap.find(cl->zIndex + item->layer * LAYER_MULT);
-                            if(it != resMap.end())
-                            {
-                                it->second += tmp;
-                            }
-                            else
-                            {
-                                resMap[cl->zIndex + item->layer * LAYER_MULT] = tmp;
-                            }
-                            if((lbl.text.length() > 0) && (lbl.fontsize > 5))
-                                label_vector.push_back(lbl);
+                            itemsToDraw[record.value.id] = std::make_pair(cl, item);
                         }
                     }
                 }
             }
         }
+    }
+    for (auto[key, value] : itemsToDraw)
+    {
+        label_s lbl;
+        CssClass* cl = value.first;
+        std::shared_ptr<ITEM> item = value.second;
+        if constexpr(! std::is_same<ITEM, Point>())
+        {
+            tmp = render(lbl, *item,
+                         rect,
+                         size_x,
+                         size_y,
+                         *cl,
+                         getShape(cl, item->layer)
+                         );
+        }
+        else
+        {
+            tmp = render(lbl, *item,
+                         rect,
+                         size_x,
+                         size_y,
+                         *cl
+                         );
+        }
+        auto it = resMap.find(value.first->zIndex + value.second->layer * LAYER_MULT);
+        if(it != resMap.end())
+        {
+            it->second += tmp;
+        }
+        else
+        {
+            resMap[value.first->zIndex + value.second->layer * LAYER_MULT] = tmp;
+        }
+           if((lbl.text.length() > 0) && (lbl.fontsize > 5))
+               label_vector.push_back(lbl);
     }
     if constexpr(! std::is_same<ITEM, Point>())
     {
