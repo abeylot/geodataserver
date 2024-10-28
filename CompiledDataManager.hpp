@@ -153,14 +153,14 @@ public :
     fidx::FileIndex<IndexRange,uint64_t> *textIndexWayRange;
     fidx::FileIndex<IndexRange,uint64_t> *textIndexRelationRange;
 
-    std::vector<IndexDesc*>* indexes;
+    std::vector<std::shared_ptr<IndexDesc>>* indexes;
     std::map<std::string, std::string>* symbols;
     std::map<std::string, std::string>* charconvs;
     //std::map<std::string, std::string>* patterns;
 
     std::string path;
 
-    CompiledDataManager(const std::string& name,std::vector<IndexDesc*>* conf,std::map<std::string, std::string>* symbs = nullptr, std::map<std::string, std::string>* convs = nullptr):path(name)
+    CompiledDataManager(const std::string& name,std::vector<std::shared_ptr<IndexDesc>>* conf,std::map<std::string, std::string>* symbs = nullptr, std::map<std::string, std::string>* convs = nullptr):path(name)
     {
         indexes = conf;
         symbols = symbs;

@@ -75,11 +75,11 @@ int main(int argc, char *argv[])
                 {
                     if(d->type == "relation")
                     {
-                        for (Condition* cd : d->conditions)
+                        for (auto cd : d->conditions)
                         {
                             if (c->keyValues["k"] == cd->tagKey)
                             {
-                                for(CssClass* cl : cd->classes)
+                                for(auto cl : cd->classes)
                                 {
                                     //bool kept =false;
                                     if (cl->tagValue == c->keyValues["v"])
@@ -123,14 +123,14 @@ int main(int argc, char *argv[])
                 {
                     if(d->type == "way")
                     {
-                        for (Condition* cd : d->conditions)
+                        for (auto cd : d->conditions)
                         {
                             if ((c->keyValues["k"] == cd->tagKey)
                                     &&((closed && cd->closed)||((!closed) && !(cd->closed)))
                                )
                             {
                                 //bool kept =false;
-                                for(CssClass* cl : cd->classes)
+                                for(auto  cl : cd->classes)
                                 {
                                     if (cl->tagValue ==c->keyValues["v"])
                                     {

@@ -12,7 +12,7 @@
 
 #define LAYER_MULT 100000
 
-Shape& SvgRenderer::getShape(CssClass* c, unsigned char layer)
+Shape& SvgRenderer::getShape(std::shared_ptr<CssClass> c, unsigned char layer)
 {
     auto it = shapes.find(c->rank + layer * LAYER_MULT);
     if(it == shapes.end())
@@ -144,7 +144,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
     Shape myShape;
     hh::THashIntegerTable hash(10000);
 
-    std::map <uint64_t, std::pair<CssClass*, std::shared_ptr<ITEM>>> itemsToDraw;
+    std::map <uint64_t, std::pair<std::shared_ptr<CssClass>, std::shared_ptr<ITEM>>> itemsToDraw;
 
     Rectangle rect2;
 
@@ -194,7 +194,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                 {
                     std::shared_ptr<ITEM> item = nullptr;
                     item = mger->load<ITEM>(record.value.id, false);
-                    CssClass* cl = getCssClass(idxDesc, *item, zoom, record.value.zmMask & 0X100000LL);
+                    std::shared_ptr<CssClass> cl = getCssClass(idxDesc, *item, zoom, record.value.zmMask & 0X100000LL);
                     label_s lbl;
                     if(cl)
                     {
@@ -226,7 +226,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                         std::shared_ptr<ITEM> item = nullptr;
                         item = mger->load<ITEM>(record.value.id, false);
 
-                        CssClass* cl = getCssClass(idxDesc, *item, zoom, record.value.zmMask & 0X100000LL);
+                        std::shared_ptr<CssClass> cl = getCssClass(idxDesc, *item, zoom, record.value.zmMask & 0X100000LL);
 
                         if(cl)
                         {
@@ -244,7 +244,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
     for (auto[key, value] : itemsToDraw)
     {
         label_s lbl;
-        CssClass* cl = value.first;
+        std::shared_ptr<CssClass> cl = value.first;
         std::shared_ptr<ITEM> item = value.second;
         if constexpr(! std::is_same<ITEM, Point>())
         {
@@ -341,7 +341,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
     result << "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 " << sizex << " " << sizey << "\">\n";
 
     indexId = 0;
-    for (IndexDesc* idxDesc : *(mger->indexes))
+    for (auto idxDesc : *(mger->indexes))
     {
         indexId++;
         if(!(idxDesc->mask & zmMask)) continue;
@@ -513,11 +513,11 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
     for( auto pattern : *(mger->symbols))
     {
         bool found = false;
-        for (IndexDesc* idxDesc : *(mger->indexes))
+        for (auto idxDesc : *(mger->indexes))
         {
-            for (Condition* cd : idxDesc->conditions)
+            for (auto cd : idxDesc->conditions)
             {
-                for(CssClass* cl : cd->classes)
+                for(auto cl : cd->classes)
                 {
                     if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
                     {
@@ -541,11 +541,11 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
     result << "<style>\ntext,tspan{dominant-baseline:central;text-anchor:middle;} path{fill:none;}";
 
 
-    for (IndexDesc* idxDesc : *(mger->indexes))
+    for (auto idxDesc : *(mger->indexes))
     {
-        for (Condition* cd : idxDesc->conditions)
+        for (auto cd : idxDesc->conditions)
         {
-            for(CssClass* cl : cd->classes)
+            for(auto cl : cd->classes)
             {
                 if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
                 {
@@ -556,11 +556,11 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
     }
     result << "</style>\n";
 
-    for (IndexDesc* idxDesc : *(mger->indexes))
+    for (auto idxDesc : *(mger->indexes))
     {
-        for (Condition* cd : idxDesc->conditions)
+        for (auto cd : idxDesc->conditions)
         {
-            for(CssClass* cl : cd->classes)
+            for(auto cl : cd->classes)
             {
                 if( cssClasses.find("sym#"+cl->symbol) != cssClasses.end())
                 {
@@ -1168,11 +1168,11 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
 
 
 
-template<class ITEM> CssClass* SvgRenderer::getCssClass(const IndexDesc& idx, ITEM& item,      short zoom, bool closed)
+template<class ITEM> std::shared_ptr<CssClass> SvgRenderer::getCssClass(const IndexDesc& idx, ITEM& item,      short zoom, bool closed)
 {
     uint32_t mask = 1LL << zoom;
-    CssClass* myCl = nullptr;
-    for (Condition* cd : idx.conditions)
+    std::shared_ptr<CssClass> myCl = nullptr;
+    for (auto cd : idx.conditions)
     {
 
         bool cond = false;
@@ -1191,7 +1191,7 @@ template<class ITEM> CssClass* SvgRenderer::getCssClass(const IndexDesc& idx, IT
 
         if (cond)
         {
-            for(CssClass* cl : cd->classes)
+            for(auto cl : cd->classes)
             {
                 if(cl->mask & mask)
                     if (cl->tagValue=="default")
@@ -1199,7 +1199,7 @@ template<class ITEM> CssClass* SvgRenderer::getCssClass(const IndexDesc& idx, IT
                         myCl = cl;
                     }
             }
-            for(CssClass* cl : cd->classes)
+            for(auto cl : cd->classes)
             {
                 if(cl->mask & mask)
                     if (cl->tagValue == item.tags[cd->tagKey.c_str()])

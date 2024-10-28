@@ -4,7 +4,7 @@ std::shared_ptr<Msg> IdxList::processRequest([[maybe_unused]] std::shared_ptr<Ms
     std::string resp = "<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>";
     auto rep = std::make_shared<Msg>();
     encoder.build200Header(rep, "text/html");
-    for(IndexDesc* desc : *(mger.indexes))
+    for(auto desc : *(mger.indexes))
     {
         resp += "<a href=\"/index/get?name=";
         resp +=desc->name;

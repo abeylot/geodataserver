@@ -152,13 +152,13 @@ private:
 template<typename MSG> struct Exec
 {
     HttpProtocol p;
-    std::vector<IndexDesc*>* idxList;
+    std::vector<std::shared_ptr<IndexDesc>>* idxList;
     std::map<std::string, std::string>* symbols;
     std::map<std::string, std::string>* charconvs;
     //std::map<std::string, std::string>* patterns;
     Exec(NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* inqueue,NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* outqueue,
          const std::string& file,
-         uint microSleep,std::vector<IndexDesc*>* idxL,
+         uint microSleep,std::vector<std::shared_ptr<IndexDesc>>* idxL,
          std::map<std::string, std::string>* symbs,
          std::map<std::string, std::string>* convs,
          CompiledDataManager& mger ) : inqueue(inqueue), outqueue(outqueue), file(file), microSleep(microSleep), mger(mger)
@@ -287,7 +287,7 @@ int main(int argc, char *argv[])
     XmlFileParser<ParmsXmlVisitor>::parseXmlFile(config,params);
     fclose(config);
 
-    std::vector<IndexDesc*> indexes;
+    std::vector<std::shared_ptr<IndexDesc>> indexes;
     std::map<std::string, std::string> symbols;
     std::map<std::string, std::string> charconvs;
 
@@ -348,6 +348,6 @@ int main(int argc, char *argv[])
 
     ExtThreads::request_all_to_stop();
     ExtThreads::request_all_to_join();
-    for(auto i : indexes) delete i;
+    //for(auto i : indexes) delete i;
 
 }

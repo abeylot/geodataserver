@@ -66,13 +66,13 @@ struct CssClass
 struct Condition
 {
     std::string tagKey;
-    std::vector<CssClass*> classes;
+    std::vector<std::shared_ptr<CssClass>> classes;
     bool closed;
     bool opened;
-    ~Condition()
-    {
-        for(auto c : classes) delete c;
-    }
+    //~Condition()
+    //{
+    //    for(auto c : classes) delete c;
+    //}
 };
 
 struct Selector
@@ -106,16 +106,16 @@ struct IndexDesc
 {
     std::string type;
     std::string name;
-    std::vector<Condition*> conditions;
-    std::vector<Selector*> selectors;
-    std::vector<Selector*> excludeSelectors;
+    std::vector<std::shared_ptr<Condition>> conditions;
+    std::vector<std::shared_ptr<Selector>> selectors;
+    std::vector<std::shared_ptr<Selector>> excludeSelectors;
     fidx::FileIndex<IndexEntryMasked,GeoBox>* idx;
     uint32_t mask;
     ~IndexDesc()
     {
-        for(auto a : conditions) delete a;
-        for(auto b : selectors) delete b;
-        for(auto c: excludeSelectors) delete c;
+        //for(auto a : conditions) delete a;
+        //for(auto b : selectors) delete b;
+        //for(auto c: excludeSelectors) delete c;
         delete idx;
     }
 };
@@ -183,7 +183,7 @@ struct ParmsXmlVisitor
 
 struct XmlVisitor
 {
-    std::vector<IndexDesc*>* idxList;
+    std::vector<std::shared_ptr<IndexDesc>>* idxList;
     std::vector<PngImage> imageList;
     std::map<std::string, std::string> symbols;
     //std::map<std::string, std::string> patterns;
@@ -201,7 +201,7 @@ struct XmlVisitor
 //    std::string patternStr="";
 
 
-    XmlVisitor(std::vector<IndexDesc*>& indexList, bool create,const std::string& rt):root(rt), symbolId(""),symbolStr("")
+    XmlVisitor(std::vector<std::shared_ptr<IndexDesc>>& indexList, bool create,const std::string& rt):root(rt), symbolId(""),symbolStr("")
     {
         idxList = &indexList;
         ccre = create;
@@ -252,7 +252,7 @@ struct XmlVisitor
         }
         if (b->baliseName == "index")
         {
-            IndexDesc* idx = new IndexDesc;
+            auto idx = std::make_shared<IndexDesc>();
             idxList->push_back(idx);
             //idx->tagKey = b->keyValues["tagKey"];
             idx->type = b->keyValues["type"];
@@ -265,7 +265,7 @@ struct XmlVisitor
         }
         if (b->baliseName == "condition")
         {
-            Condition* cdt = new Condition;
+            auto cdt = std::make_shared<Condition>();
             //IndexDesc* desc =
             (*idxList)[idxList->size() - 1]->conditions.push_back(cdt);
             cdt->tagKey = b->keyValues["tagKey"];
@@ -276,7 +276,7 @@ struct XmlVisitor
         }
         if (b->baliseName == "exclude")
         {
-            Selector* sel = new Selector;
+            auto sel = std::make_shared<Selector>();
             (*idxList)[idxList->size() - 1]->excludeSelectors.push_back(sel);
             sel->tagKey = b->keyValues["tagKey"];
             sel->tagValue = b->keyValues["tagValue"];
@@ -284,7 +284,7 @@ struct XmlVisitor
         }
         if (b->baliseName == "select")
         {
-            Selector* sel = new Selector;
+            auto sel = std::make_shared<Selector>();
             (*idxList)[idxList->size() - 1]->selectors.push_back(sel);
             sel->tagKey = b->keyValues["tagKey"];
             sel->tagValue = b->keyValues["tagValue"];
@@ -292,7 +292,7 @@ struct XmlVisitor
         }
         if (b->baliseName == "class")
         {
-            CssClass* cdt = new CssClass;
+            auto cdt = std::make_shared<CssClass>();
             //IndexDesc* desc =
             (*idxList)[idxList->size() - 1]->conditions[(*idxList)[idxList->size() - 1]->conditions.size() - 1]->classes.push_back(cdt);
             cdt->tagValue = b->keyValues["value"];

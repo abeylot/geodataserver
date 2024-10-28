@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     }
 
 
-    std::vector<IndexDesc*> indexes;
+    std::vector<std::shared_ptr<IndexDesc>> indexes;
 
     XmlVisitor v(indexes, true, argv[1]);
 
@@ -111,17 +111,17 @@ int main(int argc, char *argv[])
                 }
             }
 
-            for( IndexDesc *d : indexes)
+            for( auto d : indexes)
             {
                 bool kept =false;
                 uint32_t zmMask = 0;
                 if(d->type == "relation")
                 {
-                    for (Condition* cd : d->conditions)
+                    for (auto cd : d->conditions)
                     {
                         if ((tag_size == cd->tagKey.length()) && (strncmp(tag, cd->tagKey.c_str(), tag_size) == 0))
                         {
-                            for(CssClass* cl : cd->classes)
+                            for(auto cl : cd->classes)
                             {
                                 if (
                                    ((value_size == cl->tagValue.length()) && (strncmp(value, cl->tagValue.c_str(), value_size) == 0))
@@ -132,11 +132,11 @@ int main(int argc, char *argv[])
                                     {
                                         kept = true;
                                         if(d->selectors.size() > 0) kept = false;
-                                        for(Selector* sel : d->selectors)
+                                        for(auto sel : d->selectors)
                                         {
                                             kept = kept || (((sel->tagValue == "*")&&(r->tags[sel->tagKey.c_str()] !=""))||( r->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
-                                        for(Selector* sel : d->excludeSelectors)
+                                        for(auto sel : d->excludeSelectors)
                                         {
                                             kept = kept && !(((sel->tagValue == "*")&&(r->tags[sel->tagKey.c_str()] !=""))||( r->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
@@ -208,17 +208,17 @@ int main(int argc, char *argv[])
                 }
             }
 
-            for( IndexDesc *d : indexes)
+            for( auto d : indexes)
             {
                 bool kept =false;
                 uint32_t zmMask = 0;
                 if(d->type == "way")
                 {
-                    for (Condition* cd : d->conditions)
+                    for (auto cd : d->conditions)
                     {
                         if ((tag_size == cd->tagKey.length()) && (strncmp(tag, cd->tagKey.c_str(), tag_size) == 0))
                         {
-                            for(CssClass* cl : cd->classes)
+                            for(auto cl : cd->classes)
                             {
                                 if (
                                    ((value_size == cl->tagValue.length()) && (strncmp(value, cl->tagValue.c_str(), value_size) == 0))
@@ -228,11 +228,11 @@ int main(int argc, char *argv[])
                                     {
                                         kept = true;
                                         if(d->selectors.size() > 0) kept = false;
-                                        for(Selector* sel : d->selectors)
+                                        for(auto sel : d->selectors)
                                         {
                                             kept = kept || (((sel->tagValue == "*")&&(w->tags[sel->tagKey.c_str()] !=""))||( w->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
-                                        for(Selector* sel : d->excludeSelectors)
+                                        for(auto sel : d->excludeSelectors)
                                         {
                                             kept = kept && !(((sel->tagValue == "*")&&(w->tags[sel->tagKey.c_str()] !=""))||( w->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
@@ -306,17 +306,17 @@ int main(int argc, char *argv[])
                 }
             }
 
-            for( IndexDesc *d : indexes)
+            for( auto d : indexes)
             {
                 bool kept =false;
                 uint32_t zmMask = 0;
                 if(d->type == "node")
                 {
-                    for (Condition* cd : d->conditions)
+                    for (auto cd : d->conditions)
                     {
                         if ((tag_size == cd->tagKey.length()) && (strncmp(tag, cd->tagKey.c_str(), tag_size) == 0))
                         {
-                            for(CssClass* cl : cd->classes)
+                            for(auto cl : cd->classes)
                             {
                                 if (
                                    ((value_size == cl->tagValue.length()) && (strncmp(value, cl->tagValue.c_str(), value_size) == 0))
@@ -324,11 +324,11 @@ int main(int argc, char *argv[])
                                 {
                                         kept = true;
                                         if(d->selectors.size() > 0) kept = false;
-                                        for(Selector* sel : d->selectors)
+                                        for(auto sel : d->selectors)
                                         {
                                             kept = kept || (((sel->tagValue == "*")&&(p->tags[sel->tagKey.c_str()] !=""))||( p->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
-                                        for(Selector* sel : d->excludeSelectors)
+                                        for(auto sel : d->excludeSelectors)
                                         {
                                             kept = kept && !(((sel->tagValue == "*")&&(p->tags[sel->tagKey.c_str()] !=""))||( p->tags[sel->tagKey.c_str()] == sel->tagValue ));
                                         }
@@ -347,7 +347,7 @@ int main(int argc, char *argv[])
             }
         }
     }
-    for( IndexDesc *d : indexes)
+    for( auto d : indexes)
     {
         d->idx->flush();
         d->idx->sort();
@@ -412,6 +412,6 @@ int main(int argc, char *argv[])
         last_key = rec.key;
     }
     textIndexRelationRange.flush();
-    for (auto i : indexes) delete i;
+    //for (auto i : indexes) delete i;
     return 0;
 }

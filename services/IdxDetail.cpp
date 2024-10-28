@@ -15,7 +15,7 @@ std::shared_ptr<Msg> IdxDetail::processRequest(std::shared_ptr<Msg> request, Com
         resp += "<a href=\"get?name=" +rq_name+ "&start="+std::to_string(istart - 1000)+"\"/> page up </a>\n";
     }
     uint64_t i = istart;
-    for(IndexDesc* desc : *(mger.indexes))
+    for(auto desc : *(mger.indexes))
     {
         if(desc->name == rq_name )
         {
