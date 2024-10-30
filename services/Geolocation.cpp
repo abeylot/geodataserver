@@ -484,9 +484,9 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
                 }
             }
         }
-        else if (item->shape.lines.size() == 1)
+        else if (item->shape.openedLines.size() == 1)
         {
-            Line* l =  item->shape.lines[0];
+            Line* l =  item->shape.openedLines[0];
              // set pin to middle of shape points
             if(
               (l->points[l->pointsCount/2].x >= a.r.x0) &&
@@ -706,7 +706,12 @@ bool weightedArea::checkIntersect(CompiledDataManager& mger)
         if(item != nullptr)
         {
             result = false;
-            for(auto l : item->shape.lines)
+            for(auto l : item->shape.openedLines)
+            {
+                l->crop(r);
+                if(l->pointsCount > 0) result = true;
+            }
+            for(auto l : item->shape.closedLines)
             {
                 l->crop(r);
                 if(l->pointsCount > 0) result = true;

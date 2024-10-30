@@ -3,7 +3,7 @@
 GIT_VERSION = "$(shell git describe --tags)"
 
 CC= g++
-cc=$(CC)  -O2 -g -Wall -Wextra -pedantic-errors -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\"
+cc=$(CC)  -O2 -g -ffast-math -Wall -Wextra -pedantic-errors -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\"
 BUILD=build
 
 #cc=$(CC) -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\"

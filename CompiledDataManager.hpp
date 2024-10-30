@@ -100,11 +100,16 @@ struct Line
 
 struct Shape
 {
-    std::vector<Line*> lines;
-    void mergePoints(GeoPoint* points, uint64_t pointsCount);
+    std::vector<Line*> openedLines;
+    std::vector<Line*> closedLines;
+    void mergePoints(GeoPoint* points, uint64_t pointsCount, bool closed);
     virtual ~Shape()
     {
-        for(Line* l : lines)
+        for(Line* l : openedLines)
+        {
+            delete l;
+        }
+        for(Line* l : closedLines)
         {
             delete l;
         }

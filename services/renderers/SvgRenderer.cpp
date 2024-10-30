@@ -167,6 +167,9 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
          gSet = makeGeoBoxSet(rect*2);
          rect2 = rect*2;
     }
+
+    std::set<uint64_t> done_geoboxes;
+
     for(short i = 0; i < gSet.count; i++)
     {
         GeoBox g;
@@ -216,6 +219,11 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
             maxGeoBox2.set_maskLength(mask);
             uint64_t myMask = UINT64_C(0xFFFFFFFFFFFFFFFF) << mask;
             maxGeoBox2.set_pos(maxGeoBox2.get_pos() & myMask);
+            if(std::find(done_geoboxes.begin(), done_geoboxes.end(), maxGeoBox2.get_hash()) != done_geoboxes.end())
+            {
+                continue; // dont do twice the same job
+            }
+            done_geoboxes.insert(maxGeoBox2.get_hash());
             if(idxDesc.idx->findLastLesser(maxGeoBox2, start))
             while(idxDesc.idx->get(start++, &record) && (record.key <= maxGeoBox2))
             {
@@ -612,9 +620,9 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
     if(width && ((width*ppm) <  0.25)) return "";
 
 
-    if(s.lines.size() == 0) return "";
+    if (s.openedLines.empty() && s.closedLines.empty() ) return "";
     result << "<path  d=\"";
-    for(Line* l : s.lines)
+    for(Line* l : s.openedLines)
     {
         bool first = true;
         double x=0;
@@ -626,8 +634,34 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
             int64_t yy = l->points[i].y;
             oldx = x;
             oldy = y;
-            //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-            //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+            x = projectX(_proj, szx, rect.x0, rect.x1, xx);
+            y = projectY(_proj, szy, rect.y0, rect.y1, yy);
+            {
+                if(first)
+                {
+                    result << "M" << (int32_t)(x) << " " << (int32_t)(y);
+                    first = false;
+                }
+                else
+                {
+                    if((trunc(x) != trunc(oldx)) || (trunc(y) != trunc(oldy))|| i == (l->pointsCount - 1))
+                        result << "L" << (int32_t)(x) << " " << (int32_t)(y) ;
+                }
+            }
+        }
+    }
+    for(Line* l : s.closedLines)
+    {
+        bool first = true;
+        double x=0;
+        double y=0;
+        x=0; y=0;
+        for(unsigned int i = 0 ; i < l->pointsCount; i++)
+        {
+            int64_t xx = l->points[i].x;
+            int64_t yy = l->points[i].y;
+            oldx = x;
+            oldy = y;
             x = projectX(_proj, szx, rect.x0, rect.x1, xx);
             y = projectY(_proj, szy, rect.y0, rect.y1, yy);
             {
@@ -815,7 +849,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     if(draw)
     {
         myWay.crop(r1);
-        if(myWay.pointsCount > 1) s.mergePoints(myWay.points, myWay.pointsCount);
+        if(myWay.pointsCount > 1) s.mergePoints(myWay.points, myWay.pointsCount, myWay.points[0] == myWay.points[myWay.pointsCount - 1]);
     }
     lbl.fontsize = 12;
     std::size_t found = cl.textStyle.find("font-size:");
@@ -979,7 +1013,43 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
             if(draw)
             {
                 result << "<path  d=\"";
-                for(Line* l: myRelation.shape.lines)
+                for(Line* l: myRelation.shape.openedLines)
+                {
+                    Rectangle r1 = rect*1.25;
+                    //l->crop(r1);
+                    //s.mergePoints(l->points, l->pointsCount);
+                    l->crop(r1);
+                    if(l->pointsCount < 2) continue;
+                    bool first = true;
+                    int x=0;
+                    int y=0;
+                    for(unsigned int i = 0 ; i < l->pointsCount; i++)
+                    {
+                        keep = true;
+                        int64_t xx = l->points[i].x;
+                        int64_t yy = l->points[i].y;
+                        int oldx = x;
+                        int oldy = y;
+                        //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+                        //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+                        x = projectX(_proj, szx, rect.x0, rect.x1, xx);
+                        y = projectY(_proj, szy, rect.y0, rect.y1, yy);
+
+                        if((x != oldx) || (y != oldy) || i == (l->pointsCount - 1))
+                        {
+                            if(first)
+                            {
+                                result << "M" << (int32_t)(x) << " " << (int32_t)(y);
+                                first = false;
+                            }
+                            else
+                            {
+                                result << "L" << (int32_t)(x) << " " << (int32_t)(y);
+                            }
+                        }
+                    }
+                }
+                for(Line* l: myRelation.shape.closedLines)
                 {
                     Rectangle r1 = rect*1.25;
                     //l->crop(r1);

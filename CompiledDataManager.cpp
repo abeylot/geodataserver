@@ -140,7 +140,7 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
             newWay = loadWay(buffer[i].id, fast);
             if(newWay)
             {
-                if(!fast) r.shape.mergePoints(newWay->points, newWay->pointsCount);
+                if(!fast) r.shape.mergePoints(newWay->points, newWay->pointsCount, newWay->points[0] == newWay->points[newWay->pointsCount - 1] );
                 r.ways.push_back(newWay);
                 r.rect = r.rect + newWay->rect;
             }
@@ -153,15 +153,25 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
                 r.rect = r.rect + newRel->rect;
                 if(r.isPyramidal)
                 {
-                    for(Line* l : newRel->shape.lines)
+                    for(Line* l : newRel->shape.closedLines)
                     {
-                        if(!fast)r.shape.mergePoints(l->points, l->pointsCount);
+                        if(!fast)r.shape.mergePoints(l->points, l->pointsCount, true);
+                    }
+                    for(Line* l : newRel->shape.openedLines)
+                    {
+                        if(!fast)r.shape.mergePoints(l->points, l->pointsCount, false);
                     }
                     for(auto rel : newRel->relations)
-                        for(Line* l : rel->shape.lines)
+                    {
+                        for(Line* l : rel->shape.closedLines)
                         {
-                            if(!fast) r.shape.mergePoints(l->points, l->pointsCount);
+                            if(!fast) r.shape.mergePoints(l->points, l->pointsCount, true);
                         }
+                        for(Line* l : rel->shape.openedLines)
+                        {
+                            if(!fast) r.shape.mergePoints(l->points, l->pointsCount, false);
+                        }
+                    }
                 }
             }
             break;
@@ -181,24 +191,15 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
                 r.shape.lines.erase(r.shape.lines.begin() + i);
             }
         }*/
-        for (auto it = r.shape.lines.begin(); it != r.shape.lines.end(); )
+        for (auto it = r.shape.openedLines.begin(); it != r.shape.openedLines.end(); )
         {
-            if (!(*it)->isClosed())
-            {
                 delete (*it);
-                it = r.shape.lines.erase(it);
-            }
-            else
-            {
-                ++it;
-            }
+                it = r.shape.openedLines.erase(it);
         }
     }
 
-    for(Line* l : r.shape.lines)
-    {
-        r.isClosed = r.isClosed && l->isClosed();
-    }
+    r.isClosed = r.shape.openedLines.empty();
+
     free(buffer);
 }
 
@@ -460,8 +461,8 @@ bool Line::mergePoints (GeoPoint* points, uint64_t pointsCount)
 {
     if(this->points == nullptr) return true;
     if(points == nullptr) return true;
-    if(!this->isClosed())
-    {
+//    if(!this->isClosed())
+//    {
         if(this->points[0] == points[0])
         {
             this->points = static_cast<GeoPoint*> (realloc(this->points,(pointsCount + this->pointsCount)*sizeof(GeoPoint)));
@@ -493,20 +494,20 @@ bool Line::mergePoints (GeoPoint* points, uint64_t pointsCount)
             this->pointsCount += pointsCount - 1 ;
             return true;
         }
-    }
+//    }
     return false;
 }
 
 
-void Shape::mergePoints(GeoPoint* points, uint64_t pointsCount)
+void Shape::mergePoints(GeoPoint* points, uint64_t pointsCount, bool closed)
 {
     bool merged = false;
     unsigned int i = 0;
-    if(!(points[0] == points[pointsCount - 1]))
+    if(!closed)
     {
-        for(i = 0; i < lines.size(); i++)
+        for(i = 0; i < openedLines.size(); i++)
         {
-            Line* l = lines[i];
+            Line* l = openedLines[i];
             if(l->mergePoints(points, pointsCount))
             {
                 merged = true;
@@ -521,16 +522,22 @@ void Shape::mergePoints(GeoPoint* points, uint64_t pointsCount)
         Line* l = new Line();
         l->points = newPoints;
         l->pointsCount = pointsCount;
-        lines.push_back(l);
+        if(closed) closedLines.push_back(l);
+        else openedLines.push_back(l);
+    }
+    else if(openedLines[i]->points[0] == openedLines[i]->points[openedLines[i]->pointsCount - 1])
+    {
+        closedLines.push_back(openedLines[i]);
+        openedLines.erase(openedLines.begin() + i);
     }
     else
     {
         merged = false;
         unsigned int j;
-        for(j = i+1; j < lines.size(); j++)
+        for(j = i+1; j < openedLines.size(); j++)
         {
-            Line* l = lines[j];
-            if(l->mergePoints(lines[i]->points, lines[i]->pointsCount))
+            Line* l = openedLines[j];
+            if(l->mergePoints(openedLines[i]->points, openedLines[i]->pointsCount))
             {
                 merged = true;
                 break;
@@ -538,8 +545,13 @@ void Shape::mergePoints(GeoPoint* points, uint64_t pointsCount)
         }
         if(merged)
         {
-            delete lines[i];
-            lines.erase(lines.begin() + i);
+            if(openedLines[j]->points[0] == openedLines[j]->points[openedLines[j]->pointsCount - 1])
+            {
+                closedLines.push_back(openedLines[j]);
+                openedLines.erase(openedLines.begin() + j);
+            }
+            delete openedLines[i];
+            openedLines.erase(openedLines.begin() + i);
         }
     }
 }
