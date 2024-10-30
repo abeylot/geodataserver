@@ -20,9 +20,9 @@ std::shared_ptr<Way> CompiledDataManager::loadWay(uint64_t id, bool fast)
             for(lastpoint = curpoint + w->pointsCount ; curpoint  < lastpoint; curpoint++)
             {
                 if(curpoint->x < w->rect.x0) w->rect.x0 = curpoint->x;
-                if(curpoint->x > w->rect.x1) w->rect.x1 = curpoint->x;
+                else if(curpoint->x > w->rect.x1) w->rect.x1 = curpoint->x;
                 if(curpoint->y < w->rect.y0) w->rect.y0 = curpoint->y;
-                if(curpoint->y > w->rect.y1) w->rect.y1 = curpoint->y;
+                else if(curpoint->y > w->rect.y1) w->rect.y1 = curpoint->y;
             }
         }
         fillTags(w->tags,record.tstart,record.tsize);
