@@ -221,6 +221,7 @@ private:
     FileIndex<uint64_t, uint64_t> *wayIdIndex;
     FileIndex<GeoPointNumberIndex, uint64_t> *nodeIdIndex;
     BaliseType curBalise{unknown};
+    std::unordered_map<uint64_t, uint64_t> local_cache;
 
     XmlVisitor(const XmlVisitor&);
     XmlVisitor& operator=(const XmlVisitor&);
@@ -242,7 +243,6 @@ public:
         wayPoints  = new FileRawData<GeoPoint>(rep + "/wayPoints", true);
         relMembers = new FileRawData<GeoMember>(rep + "/relMembers", true);
         baliseTags = new FileRawVarData<GeoString>(rep + "/baliseTags", true);
-
     }
 
     ~XmlVisitor()
@@ -298,7 +298,7 @@ public:
         {
             uint64_t ref = atoll(b->keyValues["ref"].c_str());
             GeoPointNumberIndex recp;
-            bool res = nodeIdIndex->find(ref, &recp);
+            bool res = nodeIdIndex->find(ref, &recp, local_cache);
             if (res)
             {
                 /*GeoPoint p;
@@ -309,6 +309,7 @@ public:
         }
         else if (b->baliseName == BALISENAME_WAY)
         {
+            local_cache.clear();
             curBalise = BaliseType::way;
             wayPoints->startBatch();
             baliseTags->startBatch();

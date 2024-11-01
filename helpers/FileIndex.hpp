@@ -703,27 +703,6 @@ public:
 
         }
         sortedSize++;
-        //bool cont = true;
-        /*while((plusGrandsCount > 1 )&& cont)
-        {
-            get(end - (plusGrandsCount - 1), &tmp);
-            if (tmp.key == pivot.key)
-            {
-                plusGrandsCount --;
-                sortedSize ++;
-            }
-            else cont = false;
-        }
-        while((plusPetitsCount > 1 )&& cont)
-        {
-            get(begin + plusPetitsCount - 1, &tmp);
-            if (tmp.key == pivot.key)
-            {
-                plusPetitsCount --;
-                sortedSize ++;
-            }
-            else cont = false;
-        }*/
         std::cerr << "*** *** *** *** sorted " << sortedSize << " out of " << fileSize << "\n";
         if(plusGrandsCount > 1) sort(end - (plusGrandsCount - 1), end, key_sort_buffer, item_sort_buffer, buffer_size);
         else if(!plusGrandsCount) sortedSize++;
@@ -739,25 +718,6 @@ public:
  * @return true
  * @return false
  */
-    /*bool  getAndCache_deprecated(uint64_t pos, Record<ITEM,KEY>* result)
-    {
-        std::lock_guard<std::mutex> guard(cache_mutex);
-        auto it = cache.find(pos);
-        if(it == cache.end())
-        {
-            if(get(pos, result))
-            {
-                cache[pos] = *result;
-                return true;
-            }
-            else return false;
-        }
-        else
-        {
-            *result = it->second;
-            return true;
-        }
-    }*/
 
     bool  getAndCacheKey(uint64_t pos, KEY* result)
     {
@@ -835,6 +795,77 @@ public:
         return fileSize;
     }
 
+/**
+ * @brief search key in index.
+ *
+ * @param key
+ * @param result
+ * @return true
+ * @return false
+ */
+    bool find(KEY key, ITEM* result, std::unordered_map<uint64_t, KEY>& local_cache)
+    {
+        uint64_t iMin = 0;
+        uint64_t iMax = getSize() - 1;
+        short level = 0;
+        KEY myKey;
+
+        getAndCacheKey(iMin, &myKey);
+        if( myKey == key)
+        {
+            getItem(iMin, result);
+            return true;
+        }
+        if( myKey > key)
+        {
+            return false;
+        }
+        getAndCacheKey(iMax, &myKey);
+        if( myKey == key)
+        {
+            getItem(iMax, result);
+            return true;
+        }
+        if( myKey < key)
+        {
+            return false;
+        }
+
+
+        while((iMax - iMin) > 1)
+        {
+            level++;
+            uint64_t iPivot = (iMin + iMax) >> 1;
+            if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&myKey);
+            else
+            {
+                auto it = local_cache.find(iPivot);
+                if(it == local_cache.end())
+                {
+                    getKey(iPivot, &myKey);
+                    local_cache[iPivot] = myKey;
+                } else {
+                    myKey = it->second;
+                }
+            }
+            if(myKey > key)
+            {
+                iMax = iPivot;
+            }
+            else if(myKey == key)
+            {
+                getItem(iPivot, result);
+                return true;
+            }
+            else
+            {
+                iMin = iPivot;
+            }
+        }
+        return false;
+    };
+ 
+ 
 /**
  * @brief search key in index.
  *
@@ -940,7 +971,110 @@ public:
         return true;
     };
 
+
+// -- vectorized search
+#define IDX_NOT_FOUND 0xFFFFFFFFFFFFFFFFULL
+
+void findKeysIterate(const std::vector<KEY>& sortedKeys, std::vector<uint64_t>& results,uint64_t kd, uint64_t kf, uint64_t iMin, uint64_t iMax, uint64_t level)
+{
+    level++;
+    if (iMax < iMin+2)
+    {
+        for(uint64_t ind = kd; ind <= kf; ind++)
+        {
+            results[ind] = IDX_NOT_FOUND;
+        }
+        return;
+    }
+    
+    uint64_t iPivot = ( iMax + iMin ) / 2ULL;
+    KEY key;
+    if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&key);
+    else getKey(iPivot, &key);
+    if(key == sortedKeys[kd])
+    {
+        while(sortedKeys[kd] == key)
+        {
+            results[kd] = iPivot;
+            kd++;
+        } 
+        if(kd <= kf) findKeysIterate(sortedKeys, results, kd, kf, iMin, iMax, level);
+    }
+    else if(key == sortedKeys[kf])
+    {
+        while(sortedKeys[kf] == key)
+        {
+            results[kf] = iPivot;
+            kf--;
+        } 
+        if(kd <= kf) findKeysIterate(sortedKeys, results, kd, kf - 1, iMin, iMax, level);
+    }
+    else if(key < sortedKeys[kd])
+    {
+        findKeysIterate(sortedKeys, results, kd, kf - 1, iPivot, iMax, level);
+    }
+    else if(key > sortedKeys[kf])
+    {
+        findKeysIterate(sortedKeys, results, kd, kf - 1, iMin, iPivot, level);
+    }
+    else
+    {
+        uint64_t kp =kd;
+        while(key > sortedKeys[kp]) kp++;
+        uint64_t k0 = kp;
+        uint64_t k1 = kp+1;
+        while(key == sortedKeys[k1])
+        {
+            results[k1] = iPivot;
+            k1++;
+        }
+        if(k0 >= kd) findKeysIterate(sortedKeys, results, kd, k0, iMin, iPivot, level);
+        if(k1 <= kf) findKeysIterate(sortedKeys, results, k1, kf, iPivot, iMax, level);       
+    }    
+}
+
+std::vector<uint64_t> findKeys(const std::vector<KEY>& keys)
+{
+    std::vector<KEY> sortedKeys = keys;
+    sortedKeys.sort();
+    uint64_t iMin = 0;
+    uint64_t iMax = getSize() - 1;
+    short level = 0;
+    KEY myKey;
+    getAndCacheKey(iMin, &myKey);
+    uint64_t kd = 0;
+    uint64_t kf = keys.size -1;
+    std::vector<uint64_t> results;
+    for(size_t i = 0; i < sortedKeys.size();i++)
+    {
+        results.push_back(IDX_NOT_FOUND);
+    }
+    while(sortedKeys[kd] > myKey)
+    {
+        if(kd == sortedKeys.size() -1) return results;
+        kd++;
+    } 
+    while(sortedKeys[kd] == myKey)
+    {
+        results[kd] = iMin;
+        if(kd == sortedKeys.size() -1) return results;
+        kd++;
+    }
+     
+    getAndCacheKey(iMax, &myKey);
+
+    while(sortedKeys[kf] < myKey) kf--; 
+    while(sortedKeys[kf] == myKey)
+    {
+        results[kf] = iMax;
+        if(kf == 0) return results;
+        kf--;
+    } 
+    if(kd <= kf) findKeysIterate(sortedKeys, results, kd, kf, iMin, iMax, level);           
+}
+// --
 };
+
 
 /**
  * @brief index without key (key is record number).
