@@ -7,6 +7,8 @@
 #include "Coordinates.hpp"
 #include <math.h>
 
+// this program isn't multithreaded
+#define DISCARD_MUTEX
 
 using namespace fidx;
 using namespace std;
@@ -221,7 +223,9 @@ private:
     FileIndex<uint64_t, uint64_t> *wayIdIndex;
     FileIndex<GeoPointNumberIndex, uint64_t> *nodeIdIndex;
     BaliseType curBalise{unknown};
-    std::unordered_map<uint64_t, uint64_t> local_cache;
+    //std::unordered_map<uint64_t, uint64_t> local_cache;
+    std::vector<uint64_t> way_points_rank;
+    std::vector<uint64_t> way_points_ids;
 
     XmlVisitor(const XmlVisitor&);
     XmlVisitor& operator=(const XmlVisitor&);
@@ -297,19 +301,18 @@ public:
         else if (b->baliseName == BALISENAME_ND)
         {
             uint64_t ref = atoll(b->keyValues["ref"].c_str());
-            GeoPointNumberIndex recp;
+            way_points_ids.push_back(ref);
+            /*GeoPointNumberIndex recp;
             bool res = nodeIdIndex->find(ref, &recp, local_cache);
             if (res)
             {
-                /*GeoPoint p;
-                p.x = recp.value.p.x;
-                p.y = recp.value.p.y;*/
                 wayPoints->append(recp.p);
-            }
+            }*/
         }
         else if (b->baliseName == BALISENAME_WAY)
         {
-            local_cache.clear();
+            way_points_ids.clear();
+            way_points_rank.clear();
             curBalise = BaliseType::way;
             wayPoints->startBatch();
             baliseTags->startBatch();
@@ -406,6 +409,22 @@ public:
         }
         else if (b->baliseName == BALISENAME_WAY)
         {
+            way_points_rank = nodeIdIndex->findKeys(way_points_ids);
+            for(auto i : way_points_rank)
+            {
+                if(i != IDX_NOT_FOUND)
+                {
+                    GeoPointNumberIndex recp;
+                    nodeIdIndex->getItem(i, &recp);
+                    wayPoints->append(recp.p);
+                }
+            }
+            /*GeoPointNumberIndex recp;
+            bool res = nodeIdIndex->find(ref, &recp, local_cache);
+            if (res)
+            {
+                wayPoints->append(recp.p);
+            }*/
             isWay = false;
             GeoWayIndex wayRecord;
             wayRecord.pstart = wayPoints->startCount;

@@ -719,9 +719,11 @@ public:
  * @return false
  */
 
-    bool  getAndCacheKey(uint64_t pos, KEY* result)
+    bool  getAndCacheKey(const uint64_t pos, KEY* result)
     {
+#ifndef DISCARD_MUTEX
         std::lock_guard<std::mutex> guard(cache_mutex);
+#endif
         auto it = cacheKey.find(pos);
         if(it == cacheKey.end())
         {
@@ -759,7 +761,7 @@ public:
         return true;
     }
 
-    inline bool  getKey(uint64_t pos, KEY* result )
+    inline bool  getKey(const uint64_t pos, KEY* result )
     {
         if( pos >= getSize())
         {
@@ -975,14 +977,16 @@ public:
 // -- vectorized search
 #define IDX_NOT_FOUND 0xFFFFFFFFFFFFFFFFULL
 
-void findKeysIterate(const std::vector<KEY>& sortedKeys, std::vector<uint64_t>& results,uint64_t kd, uint64_t kf, uint64_t iMin, uint64_t iMax, uint64_t level)
+void findKeysIterate(const std::vector<std::pair<KEY, uint64_t*>>& sortedKeys, uint64_t kd, uint64_t kf, uint64_t iMin, uint64_t iMax, uint64_t level)
 {
+    //assert(kd < sortedKeys.size());
+    //assert(kf < sortedKeys.size());
     level++;
     if (iMax < iMin+2)
     {
         for(uint64_t ind = kd; ind <= kf; ind++)
         {
-            results[ind] = IDX_NOT_FOUND;
+            *(sortedKeys[ind].second) = IDX_NOT_FOUND;
         }
         return;
     }
@@ -991,86 +995,111 @@ void findKeysIterate(const std::vector<KEY>& sortedKeys, std::vector<uint64_t>& 
     KEY key;
     if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&key);
     else getKey(iPivot, &key);
-    if(key == sortedKeys[kd])
+    if(key == sortedKeys[kd].first)
     {
-        while(sortedKeys[kd] == key)
+        while(sortedKeys[kd].first == key)
         {
-            results[kd] = iPivot;
+            *(sortedKeys[kd].second) = iPivot;
+            if(kd >= sortedKeys.size() -1) return;
             kd++;
         } 
-        if(kd <= kf) findKeysIterate(sortedKeys, results, kd, kf, iMin, iMax, level);
+        if(kd <= kf) findKeysIterate(sortedKeys, kd, kf, iMin, iMax, level);
     }
-    else if(key == sortedKeys[kf])
+    else if(key == sortedKeys[kf].first)
     {
-        while(sortedKeys[kf] == key)
+        while(sortedKeys[kf].first == key)
         {
-            results[kf] = iPivot;
+            *(sortedKeys[kf].second) = iPivot;
+            if(kf == 0) return;
             kf--;
         } 
-        if(kd <= kf) findKeysIterate(sortedKeys, results, kd, kf - 1, iMin, iMax, level);
+        if(kd <= kf) findKeysIterate(sortedKeys, kd, kf, iMin, iMax, level);
     }
-    else if(key < sortedKeys[kd])
+    else if(key < sortedKeys[kd].first)
     {
-        findKeysIterate(sortedKeys, results, kd, kf - 1, iPivot, iMax, level);
+        findKeysIterate(sortedKeys, kd, kf, iPivot, iMax, level);
     }
-    else if(key > sortedKeys[kf])
+    else if(key > sortedKeys[kf].first)
     {
-        findKeysIterate(sortedKeys, results, kd, kf - 1, iMin, iPivot, level);
+        findKeysIterate(sortedKeys, kd, kf, iMin, iPivot, level);
     }
     else
     {
-        uint64_t kp =kd;
-        while(key > sortedKeys[kp]) kp++;
-        uint64_t k0 = kp;
-        uint64_t k1 = kp+1;
-        while(key == sortedKeys[k1])
+        /*
+        uint64_t kp = kd;
+        while(key > sortedKeys[kp].first) kp++;
+        uint64_t k0 = kp - 1;
+        uint64_t k1 = kp;
+        */
+        uint64_t k0 = kd;
+        uint64_t k1 = kf;
+        while(k1 > k0+1)
         {
-            results[k1] = iPivot;
+            uint64_t k2 = (k0+k1) / 2;
+            if(key <= sortedKeys[k2].first) k1 = k2;
+            else k0 = k2;
+        }
+        
+        while(key == sortedKeys[k1].first)
+        {
+            *(sortedKeys[k1].second) = iPivot;
             k1++;
         }
-        if(k0 >= kd) findKeysIterate(sortedKeys, results, kd, k0, iMin, iPivot, level);
-        if(k1 <= kf) findKeysIterate(sortedKeys, results, k1, kf, iPivot, iMax, level);       
+        if(k0 >= kd) findKeysIterate(sortedKeys, kd, k0, iMin, iPivot, level);
+        if(k1 <= kf) findKeysIterate(sortedKeys, k1, kf, iPivot, iMax, level);       
     }    
 }
 
 std::vector<uint64_t> findKeys(const std::vector<KEY>& keys)
 {
-    std::vector<KEY> sortedKeys = keys;
-    sortedKeys.sort();
+    std::vector<std::pair<KEY,uint64_t*>> sortedKeys(keys.size());
+    std::vector<uint64_t> results(keys.size());
+    for(unsigned int i = 0; i < keys.size();i++)
+    {
+        sortedKeys[i] = {keys[i],&(results[i])};
+    }
+    // sort keys 
+    std::sort(sortedKeys.begin(), sortedKeys.end(), [](const std::pair<KEY, uint64_t*> &a, const std::pair<KEY, uint64_t*>  &b)
+    { 
+        return a.first < b.first; 
+    });
+//    std::sort(sortedKeys.begin(), sortedKeys.end(),);
     uint64_t iMin = 0;
     uint64_t iMax = getSize() - 1;
     short level = 0;
     KEY myKey;
     getAndCacheKey(iMin, &myKey);
     uint64_t kd = 0;
-    uint64_t kf = keys.size -1;
-    std::vector<uint64_t> results;
-    for(size_t i = 0; i < sortedKeys.size();i++)
-    {
-        results.push_back(IDX_NOT_FOUND);
-    }
-    while(sortedKeys[kd] > myKey)
+    uint64_t kf = keys.size() -1;
+    
+    while(sortedKeys[kd].first < myKey)
     {
         if(kd == sortedKeys.size() -1) return results;
         kd++;
     } 
-    while(sortedKeys[kd] == myKey)
+    while(sortedKeys[kd].first == myKey)
     {
-        results[kd] = iMin;
+        *(sortedKeys[kd].second) = iMin;
         if(kd == sortedKeys.size() -1) return results;
         kd++;
     }
      
     getAndCacheKey(iMax, &myKey);
 
-    while(sortedKeys[kf] < myKey) kf--; 
-    while(sortedKeys[kf] == myKey)
+    while(sortedKeys[kf].first > myKey)
     {
-        results[kf] = iMax;
         if(kf == 0) return results;
         kf--;
     } 
-    if(kd <= kf) findKeysIterate(sortedKeys, results, kd, kf, iMin, iMax, level);           
+    while(sortedKeys[kf].first == myKey)
+    {
+        std::cout << iMax << "--\n";
+        *(sortedKeys[kf].second) = iMax;
+        if(kf == 0) return results;
+        kf--;
+    } 
+    if(kd <= kf) findKeysIterate(sortedKeys, kd, kf, iMin, iMax, level);
+    return results;           
 }
 // --
 };
