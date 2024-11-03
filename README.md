@@ -13,5 +13,6 @@ see [here](/docs/index.md).
 ## dependencies
 1. ~~boost-threads~~
 2. libzlib
+3. libpng++
 ##
 ![sample](/docs/sample2.jpg)
