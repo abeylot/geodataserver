@@ -143,6 +143,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
     GeoBoxSet gSet;
     Shape myShape;
     hh::THashIntegerTable hash(10000);
+    std::unordered_map<uint64_t, GeoBox> local_cache;
 
     std::map <uint64_t, std::pair<std::shared_ptr<CssClass>, std::shared_ptr<ITEM>>> itemsToDraw;
 
@@ -188,7 +189,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
 
         fidx::Record<IndexEntryMasked, GeoBox> record;
         uint64_t start;
-        if(idxDesc.idx->findLastLesser(g, start))
+        if(idxDesc.idx->findLastLesser(g, start, local_cache))
         while(idxDesc.idx->get(start, &record) && (record.key <= maxGeoBox))
         {
             if((record.value.zmMask &  zmMask )&&((record.value.r * (rect2)).isValid()))
@@ -224,7 +225,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                 continue; // dont do twice the same job
             }
             done_geoboxes.insert(maxGeoBox2.get_hash());
-            if(idxDesc.idx->findLastLesser(maxGeoBox2, start))
+            if(idxDesc.idx->findLastLesser(maxGeoBox2, start, local_cache))
             while(idxDesc.idx->get(start++, &record) && (record.key <= maxGeoBox2))
             {
                 if( hash.addIfUnique(record.value.id))

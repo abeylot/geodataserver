@@ -86,7 +86,6 @@ private:
     unsigned char _nb_locales = 0;
     WebMercatorProj _proj;
 
-
 public:
     SvgRenderer(CompiledDataManager* m, const std::string& locale, const std::string& defaultColor) :  _locale(locale), _defaultColor(defaultColor)
     {

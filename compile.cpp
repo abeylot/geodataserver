@@ -221,7 +221,8 @@ private:
 
     FileIndex<uint64_t, uint64_t> *relationIdIndex;
     FileIndex<uint64_t, uint64_t> *wayIdIndex;
-    FileIndex<GeoPointNumberIndex, uint64_t> *nodeIdIndex;
+    FileIndex<GeoPoint, uint64_t> *nodeIdIndex;
+    KeyIndex<uint64_t> *nodeRefIndex;
     BaliseType curBalise{unknown};
     //std::unordered_map<uint64_t, uint64_t> local_cache;
     std::vector<uint64_t> way_points_rank;
@@ -238,7 +239,8 @@ public:
 
         relationIdIndex = new FileIndex<uint64_t,uint64_t>(rep + "/relationIdIndex", false);
         wayIdIndex      = new FileIndex<uint64_t,uint64_t>(rep + "/wayIdIndex",      false);
-        nodeIdIndex     = new FileIndex<GeoPointNumberIndex,uint64_t>(rep + "/nodeIdIndex",     false);
+        nodeIdIndex     = new FileIndex<GeoPoint,uint64_t>(rep + "/nodeIdIndex",     false);
+        nodeRefIndex    = new KeyIndex<uint64_t>(rep + "/nodeRefIndex",     false);
 
         relationIndex   = new FileRawIndex<GeoIndex>(rep + "/relationIndex",  true);
         wayIndex        = new FileRawIndex<GeoWayIndex>(rep + "/wayIndex",       true);
@@ -267,6 +269,7 @@ public:
         delete relationIdIndex;
         delete wayIdIndex;
         delete nodeIdIndex;
+        delete nodeRefIndex;
 
         delete wayPoints;
         delete relMembers;
@@ -327,11 +330,11 @@ public:
             if(b->keyValues["type"] == "node")
             {
                 m.type = point;
-                GeoPointNumberIndex recp;
-                bool res = nodeIdIndex->find(ref, &recp);
+                uint64_t recp;
+                bool res = nodeRefIndex->find(ref, &recp);
                 if(res)
                 {
-                    m.id = recp.number;
+                    m.id = recp;
                 }
                 else
                 {
@@ -414,9 +417,9 @@ public:
             {
                 if(i != IDX_NOT_FOUND)
                 {
-                    GeoPointNumberIndex recp;
+                    GeoPoint recp;
                     nodeIdIndex->getItem(i, &recp);
-                    wayPoints->append(recp.p);
+                    wayPoints->append(recp);
                 }
             }
             /*GeoPointNumberIndex recp;
