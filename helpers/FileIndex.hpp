@@ -881,7 +881,7 @@ public:
         uint64_t iMin = 0;
         uint64_t iMax = getSize() - 1;
         short level = 0;
-        KEY myKey;
+        KEY myKey = key;
 
         getAndCacheKey(iMin, &myKey);
         if( myKey == key)
@@ -1040,7 +1040,7 @@ void findKeysIterate(const std::vector<std::pair<KEY, uint64_t*>>& sortedKeys, u
     }
 
     uint64_t iPivot = ( iMax + iMin ) / 2ULL;
-    KEY key;
+    KEY key = sortedKeys[0].first;
     if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&key);
     else getKey(iPivot, &key);
     if(key == sortedKeys[kd].first)
