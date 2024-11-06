@@ -636,7 +636,7 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
             oldx = x;
             oldy = y;
             x = projectX(_proj, szx, rect.x0, rect.x1, xx);
-            y = projectY(_proj, szy, rect.y0, rect.y1, yy);
+            y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
             {
                 if(first)
                 {
@@ -664,7 +664,7 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
             oldx = x;
             oldy = y;
             x = projectX(_proj, szx, rect.x0, rect.x1, xx);
-            y = projectY(_proj, szy, rect.y0, rect.y1, yy);
+            y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
             {
                 if(first)
                 {
@@ -763,7 +763,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
         x = projectX(_proj, szx, rect.x0, rect.x1, xx);
-        y = projectY(_proj, szy, rect.y0, rect.y1, yy);
+        y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
         {
             if(first)
             {
@@ -791,7 +791,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
         x = projectX(_proj, szx, rect.x0, rect.x1, xx);
-        y = projectY(_proj, szy, rect.y0, rect.y1, yy);
+        y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
 
         {
             if(!first)
@@ -829,7 +829,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
         x = projectX(_proj, szx, rect.x0, rect.x1, xx);
-        y = projectY(_proj, szy, rect.y0, rect.y1, yy);
+        y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
         {
             if(!first)
             {
@@ -904,7 +904,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 //int32_t xi = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
                 //int32_t yi = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
                  int32_t xi = projectX(_proj, szx, rect.x0, rect.x1, xxx);
-                 int32_t yi = projectY(_proj, szy, rect.y0, rect.y1, yyy);
+                 int32_t yi = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
 
                 lbl.pos_x = xi;
                 lbl.pos_y = yi;
@@ -923,7 +923,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         //x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         //y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
           x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
-          y = projectY(_proj, szy, rect.y0, rect.y1, yyy);
+          y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
 
         result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t) x  << "\"  y=\"" << (int32_t) y << "\" />";
         cssClasses.insert("sym#"+cl.symbol);
@@ -1034,7 +1034,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                         //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
                         //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
                         x = projectX(_proj, szx, rect.x0, rect.x1, xx);
-                        y = projectY(_proj, szy, rect.y0, rect.y1, yy);
+                        y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
 
                         if((x != oldx) || (y != oldy) || i == (l->pointsCount - 1))
                         {
@@ -1070,7 +1070,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                         //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
                         //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
                         x = projectX(_proj, szx, rect.x0, rect.x1, xx);
-                        y = projectY(_proj, szy, rect.y0, rect.y1, yy);
+                        y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
 
                         if((x != oldx) || (y != oldy) || i == (l->pointsCount - 1))
                         {
@@ -1117,7 +1117,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                         //int32_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
                         //int32_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
                         int32_t x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
-                        int32_t y = projectY(_proj, szy, rect.y0, rect.y1, yyy);
+                        int32_t y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
 
                         lbl.pos_x = x;
                         lbl.pos_y = y;
@@ -1137,7 +1137,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
         int64_t xxx = (myRelation.rect.x0 + myRelation.rect.x1) / 2;
         int64_t yyy = (myRelation.rect.y0 + myRelation.rect.y1) /2;
         int32_t x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
-        int32_t y = projectY(_proj, szy, rect.y0, rect.y1, yyy);
+        int32_t y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
         //int64_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         //int64_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
         result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\" />";
@@ -1214,7 +1214,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
             //x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
             //y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
             x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
-            y = projectY(_proj, szy, rect.y0, rect.y1, yyy);
+            y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
             lbl.pos_x = x;
             lbl.pos_y = y;
             lbl.style = cl.rank;
@@ -1228,7 +1228,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         //x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         //y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
         x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
-        y = projectY(_proj, szy, rect.y0, rect.y1, yyy);
+        y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
         result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\" />";
         cssClasses.insert("sym#"+cl.symbol);
     }
