@@ -1,3 +1,4 @@
+#define DISCARD_MUTEX // affects fileindex.hpp to avoid an useless mutex in monothreaded case
 #include <map>
 #include <vector>
 #include "helpers/Sequence.hpp"
@@ -8,7 +9,6 @@
 #include <math.h>
 
 // this program isn't multithreaded
-#define DISCARD_MUTEX
 
 using namespace fidx;
 using namespace std;
