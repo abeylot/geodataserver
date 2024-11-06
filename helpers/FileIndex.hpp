@@ -30,9 +30,9 @@ struct GeoFile
         name = fname;
         if(create)
         {
-            fh = open64(name.c_str(),O_CREAT|O_TRUNC|O_RDWR, S_IWUSR | S_IREAD);
+            fh = open64(name.c_str(),O_CREAT|O_TRUNC|O_RDWR| O_NOATIME, S_IWUSR | S_IREAD );
         } else {
-            fh = open64(name.c_str(),O_RDONLY);
+            fh = open64(name.c_str(),O_RDONLY | O_NOATIME);
             if(!fh)
             {
                 std::cout << name << " not found !"<< "\n";
