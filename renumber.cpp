@@ -24,7 +24,8 @@ public:
 
     FileIndex<uint64_t, uint64_t> *relationIdIndex;
     FileIndex<uint64_t, uint64_t> *wayIdIndex;
-    FileIndex<GeoPointNumberIndex, uint64_t> *nodeIdIndex;
+    FileIndex<GeoPoint, uint64_t> *nodeIdIndex;
+    KeyIndex<uint64_t> *nodeRefIndex;
 
     explicit XmlVisitor(const std::string& rep)
     {
@@ -34,7 +35,8 @@ public:
         tags = 0;
         relationIdIndex = new FileIndex<uint64_t,uint64_t>((rep + "/relationIdIndex") .c_str(), true);
         wayIdIndex      = new FileIndex<uint64_t,uint64_t>((rep +"/wayIdIndex").c_str(), true);
-        nodeIdIndex     = new FileIndex<GeoPointNumberIndex, uint64_t>((rep + "/nodeIdIndex").c_str(), true);
+        nodeIdIndex     = new FileIndex<GeoPoint, uint64_t>((rep + "/nodeIdIndex").c_str(), true);
+        nodeRefIndex    = new KeyIndex<uint64_t>((rep + "/nodeRefIndex").c_str(), true);
     }
 
     ~XmlVisitor()
@@ -44,7 +46,8 @@ public:
         nodeIdIndex->flush();
         if(!relationIdIndex->isSorted()) relationIdIndex->sort();
         if(!wayIdIndex->isSorted()) wayIdIndex->sort();
-        if(!wayIdIndex->isSorted()) nodeIdIndex->sort();
+        if(!nodeIdIndex->isSorted()) nodeIdIndex->sort();
+        if(!nodeRefIndex->isSorted()) nodeRefIndex->sort();
         delete relationIdIndex;
         delete wayIdIndex;
         delete nodeIdIndex;
@@ -86,14 +89,15 @@ public:
 
         else if (b->baliseName == BALISENAME_NODE)
         {
-
+            GeoPoint pt{ Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])};
+            uint64_t ref = atoll((b->keyValues["id"]).c_str());
             if(tags)
             {
-                GeoPointNumberIndex pt{ nodid++, {Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])}};
-                nodeIdIndex->append(atoll((b->keyValues["id"]).c_str()),pt);
+                nodid++;
+                nodeIdIndex->append(ref,pt);
+                nodeRefIndex->append(ref);
             } else {
-                GeoPointNumberIndex pt{ 0, {Coordinates::toNormalizedLon(b->keyValues["lon"]), Coordinates::toNormalizedLat(b->keyValues["lat"])}};
-                nodeIdIndex->append(atoll((b->keyValues["id"]).c_str()),pt);
+                nodeIdIndex->append(ref,pt);
             }
             tags = 0;
         }

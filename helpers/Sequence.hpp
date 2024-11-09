@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <iostream>
 #include <sstream>
+#include <unistd.h>
+#include <assert.h>
 
 #define  COMMENT_BEGIN   "<!--",4
 #define  MANIFEST_BEGIN  "<?",2
@@ -27,13 +29,13 @@ template<short N> class Sequence
 public:
     unsigned char c[N];
 
-    bool check(const std::string& s)
+    bool check(const std::string& s) const
     {
         if (s.length() > N) return false;
         else return  (memcmp(s.c_str(),c,s.length()) == 0);
     }
 
-    bool check(const char* s, const unsigned char l)
+    bool check(const char* s, const unsigned char l) const
     {
         if (l > N) return false;
         else return  (memcmp(s,c,l) == 0);
@@ -42,7 +44,14 @@ public:
     void append(const char a)
     {
         static_assert(N > 2);
-        if constexpr (N > 2)
+        if constexpr (N == 4)
+        {
+            uint32_t* val = ((uint32_t*) c);
+            *val = (*val >> 8) + (a << 24);
+            //std::cout << c[0] << c[1] << c[2] << c[3] << "\n";
+            //usleep(1000);
+        }
+        else if constexpr (N > 2)
         {
             memmove(c,&c[1],(N-1));
             c[N-1] = a;
@@ -88,6 +97,7 @@ struct ParseContext
         unsigned int attrNameLen = 0;
         unsigned int attrValueLen = 0;
         unsigned int baliseNameLen = 0;
+        unsigned int stringNodeLen = 0;
         SeqBalise* curBalise;
         std::string stringNode = "";
         short skip = 0;
@@ -102,13 +112,17 @@ public:
         ParseContext p;
         unsigned char buffer[BUFFLEN];
         FILE* fIn  = file;
-        short initSeq=0;
         uint64_t done = 0;
         uint64_t len = 0;
         Sequence<4> seq;
         //char cData;
         std::vector<SeqBalise*> tagStack;
         unsigned char* c;
+        len = fread(buffer,1,3,fIn);
+        assert(len ==  3);
+        seq.append(buffer[0]);
+        seq.append(buffer[1]);
+        seq.append(buffer[2]);
         len = fread(buffer,1,BUFFLEN,fIn);
         while(len)
         {
@@ -121,7 +135,7 @@ public:
                 }
 
                 seq.append(*c);
-                if(initSeq < 3) initSeq++;
+                if(p.skip) p.skip--;
                 else selectXmlFile(seq, visitor, &tagStack, p);
             }
             len = fread(buffer,1,BUFFLEN,fIn);
@@ -139,13 +153,13 @@ public:
     {
         ParseContext p;
         unsigned char buffer[BUFFLEN];
-        short initSeq=0;
         uint64_t done = 0;
         uint64_t len = 0;
         Sequence<4> seq;
         std::vector<SeqBalise*> tagStack;
         unsigned char* c;
         //len = fread(buffer,1,BUFFLEN,fIn);
+        my_stream.read((char*)(seq.c),3);
         my_stream.read((char*)buffer,BUFFLEN);
         len = my_stream.gcount();
         while(len)
@@ -159,7 +173,7 @@ public:
                 }
 
                 seq.append(*c);
-                if(initSeq < 3) initSeq++;
+                if(p.skip) p.skip--;
                 else selectXmlFile(seq, visitor, &tagStack, p);
             }
             my_stream.read((char*)buffer,BUFFLEN);
@@ -180,15 +194,8 @@ public:
 
 
 private:
-    static void selectXmlFile(Sequence<4> sq, VISITOR& visitor, std::vector<SeqBalise*>* tagStack, ParseContext& p)
+    static void selectXmlFile(const Sequence<4>& sq, VISITOR& visitor, std::vector<SeqBalise*>* tagStack, ParseContext& p)
     {
-
-        if(p.skip)
-        {
-            p.skip--;
-            return;
-        }
-
         switch(p.state)
         {
         case STATE_UNKNOWN:
@@ -208,15 +215,11 @@ private:
                 p.state = STATE_TAGEND;
                 p.curBalise = tagStack->back();
                 tagStack->pop_back();
-                if(p.stringNode.size())
+                if(p.stringNodeLen)
                 {
                     visitor.stringNode(*tagStack, p.stringNode);
                     p.stringNode = "";
-                }
-                if(p.stringNode.size())
-                {
-                    visitor.stringNode(*tagStack, p.stringNode);
-                    p.stringNode = "";
+                    p.stringNodeLen = 0;
                 }
                 visitor.endTag(*tagStack, p.curBalise);
                 delete(p.curBalise);
@@ -228,16 +231,18 @@ private:
                 p.curBalise = new SeqBalise;
                 p.baliseNameLen = 0;
                 //stringName="";
-                if(p.stringNode.size())
+                if(p.stringNodeLen)
                 {
                     visitor.stringNode(*tagStack, p.stringNode);
                     p.stringNode = "";
+                    p.stringNodeLen = 0;
                 }
             }
             else
             {
                  p.stringNode += sq.c[0];
-                 //std::cout << " -----[" << stringNode << "]\n";
+                 p.stringNodeLen++;
+                 //std::cout << " -----[" << p.stringNode << "]\n";
             }
             break;
 

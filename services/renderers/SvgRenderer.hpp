@@ -52,16 +52,29 @@ inline int32_t projectX(const Projection& p, const uint64_t size, const uint32_t
   );
 }
 
-inline int32_t projectY(const Projection& p, const uint64_t size, const uint32_t lower_bound, const uint32_t upper_bound, const uint32_t y)
+inline int32_t projectY(const Projection& p, const uint64_t size, const uint32_t lower_bound, const uint32_t upper_bound, const uint32_t yt, std::unordered_map<uint32_t, int32_t>& yProjectionCache )
 {
-  double y_  = Coordinates::fromNormalizedLat(y);
-  double y0_ = Coordinates::fromNormalizedLat(lower_bound);
-  double y1_ = Coordinates::fromNormalizedLat(upper_bound);
+    uint32_t y = yt | 0b111111;
+    int32_t result;
+    auto it = yProjectionCache.find(y);
+    if(it == yProjectionCache.end())
+    {
+        double y_  = Coordinates::fromNormalizedLat(y);
+        double y0_ = Coordinates::fromNormalizedLat(lower_bound);
+        double y1_ = Coordinates::fromNormalizedLat(upper_bound);
 
-  return size*(
-     (p.lat2y(y_) - p.lat2y(y0_))/
-     (p.lat2y(y1_) - p.lat2y(y0_))
-  );
+        result =  size*(
+           (p.lat2y(y_) - p.lat2y(y0_))/
+           (p.lat2y(y1_) - p.lat2y(y0_))
+        );
+
+        yProjectionCache[y] = result;
+    }
+    else
+    {
+        result = it->second;
+    }
+    return result;
 }
 
 
@@ -69,6 +82,7 @@ inline int32_t projectY(const Projection& p, const uint64_t size, const uint32_t
 class SvgRenderer
 {
 private:
+    std::unordered_map<uint32_t, int32_t> yProjectionCache;
     CompiledDataManager* mger;
     short zoomLevel;
     short zoom;
@@ -85,7 +99,6 @@ private:
     char _locales[32][2];
     unsigned char _nb_locales = 0;
     WebMercatorProj _proj;
-
 
 public:
     SvgRenderer(CompiledDataManager* m, const std::string& locale, const std::string& defaultColor) :  _locale(locale), _defaultColor(defaultColor)

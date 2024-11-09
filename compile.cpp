@@ -1,3 +1,4 @@
+#define DISCARD_MUTEX // affects fileindex.hpp to avoid an useless mutex in monothreaded case
 #include <map>
 #include <vector>
 #include "helpers/Sequence.hpp"
@@ -7,6 +8,7 @@
 #include "Coordinates.hpp"
 #include <math.h>
 
+// this program isn't multithreaded
 
 using namespace fidx;
 using namespace std;
@@ -219,8 +221,12 @@ private:
 
     FileIndex<uint64_t, uint64_t> *relationIdIndex;
     FileIndex<uint64_t, uint64_t> *wayIdIndex;
-    FileIndex<GeoPointNumberIndex, uint64_t> *nodeIdIndex;
+    FileIndex<GeoPoint, uint64_t> *nodeIdIndex;
+    KeyIndex<uint64_t> *nodeRefIndex;
     BaliseType curBalise{unknown};
+    //std::unordered_map<uint64_t, uint64_t> local_cache;
+    std::vector<uint64_t> way_points_rank;
+    std::vector<uint64_t> way_points_ids;
 
     XmlVisitor(const XmlVisitor&);
     XmlVisitor& operator=(const XmlVisitor&);
@@ -233,7 +239,8 @@ public:
 
         relationIdIndex = new FileIndex<uint64_t,uint64_t>(rep + "/relationIdIndex", false);
         wayIdIndex      = new FileIndex<uint64_t,uint64_t>(rep + "/wayIdIndex",      false);
-        nodeIdIndex     = new FileIndex<GeoPointNumberIndex,uint64_t>(rep + "/nodeIdIndex",     false);
+        nodeIdIndex     = new FileIndex<GeoPoint,uint64_t>(rep + "/nodeIdIndex",     false);
+        nodeRefIndex    = new KeyIndex<uint64_t>(rep + "/nodeRefIndex",     false);
 
         relationIndex   = new FileRawIndex<GeoIndex>(rep + "/relationIndex",  true);
         wayIndex        = new FileRawIndex<GeoWayIndex>(rep + "/wayIndex",       true);
@@ -242,7 +249,6 @@ public:
         wayPoints  = new FileRawData<GeoPoint>(rep + "/wayPoints", true);
         relMembers = new FileRawData<GeoMember>(rep + "/relMembers", true);
         baliseTags = new FileRawVarData<GeoString>(rep + "/baliseTags", true);
-
     }
 
     ~XmlVisitor()
@@ -263,6 +269,7 @@ public:
         delete relationIdIndex;
         delete wayIdIndex;
         delete nodeIdIndex;
+        delete nodeRefIndex;
 
         delete wayPoints;
         delete relMembers;
@@ -297,18 +304,18 @@ public:
         else if (b->baliseName == BALISENAME_ND)
         {
             uint64_t ref = atoll(b->keyValues["ref"].c_str());
-            GeoPointNumberIndex recp;
-            bool res = nodeIdIndex->find(ref, &recp);
+            way_points_ids.push_back(ref);
+            /*GeoPointNumberIndex recp;
+            bool res = nodeIdIndex->find(ref, &recp, local_cache);
             if (res)
             {
-                /*GeoPoint p;
-                p.x = recp.value.p.x;
-                p.y = recp.value.p.y;*/
                 wayPoints->append(recp.p);
-            }
+            }*/
         }
         else if (b->baliseName == BALISENAME_WAY)
         {
+            way_points_ids.clear();
+            way_points_rank.clear();
             curBalise = BaliseType::way;
             wayPoints->startBatch();
             baliseTags->startBatch();
@@ -323,11 +330,11 @@ public:
             if(b->keyValues["type"] == "node")
             {
                 m.type = point;
-                GeoPointNumberIndex recp;
-                bool res = nodeIdIndex->find(ref, &recp);
+                uint64_t recp;
+                bool res = nodeRefIndex->find(ref, &recp);
                 if(res)
                 {
-                    m.id = recp.number;
+                    m.id = recp;
                 }
                 else
                 {
@@ -405,6 +412,22 @@ public:
         }
         else if (b->baliseName == BALISENAME_WAY)
         {
+            way_points_rank = nodeIdIndex->findKeys(way_points_ids);
+            for(auto i : way_points_rank)
+            {
+                if(i != IDX_NOT_FOUND)
+                {
+                    GeoPoint recp;
+                    nodeIdIndex->getItem(i, &recp);
+                    wayPoints->append(recp);
+                }
+            }
+            /*GeoPointNumberIndex recp;
+            bool res = nodeIdIndex->find(ref, &recp, local_cache);
+            if (res)
+            {
+                wayPoints->append(recp.p);
+            }*/
             isWay = false;
             GeoWayIndex wayRecord;
             wayRecord.pstart = wayPoints->startCount;

@@ -30,9 +30,9 @@ struct GeoFile
         name = fname;
         if(create)
         {
-            fh = open64(name.c_str(),O_CREAT|O_TRUNC|O_RDWR, S_IWUSR | S_IREAD);
+            fh = open64(name.c_str(),O_CREAT|O_TRUNC|O_RDWR| O_NOATIME, S_IWUSR | S_IREAD );
         } else {
-            fh = open64(name.c_str(),O_RDONLY);
+            fh = open64(name.c_str(),O_RDONLY | O_NOATIME);
             if(!fh)
             {
                 std::cout << name << " not found !"<< "\n";
@@ -703,27 +703,6 @@ public:
 
         }
         sortedSize++;
-        //bool cont = true;
-        /*while((plusGrandsCount > 1 )&& cont)
-        {
-            get(end - (plusGrandsCount - 1), &tmp);
-            if (tmp.key == pivot.key)
-            {
-                plusGrandsCount --;
-                sortedSize ++;
-            }
-            else cont = false;
-        }
-        while((plusPetitsCount > 1 )&& cont)
-        {
-            get(begin + plusPetitsCount - 1, &tmp);
-            if (tmp.key == pivot.key)
-            {
-                plusPetitsCount --;
-                sortedSize ++;
-            }
-            else cont = false;
-        }*/
         std::cerr << "*** *** *** *** sorted " << sortedSize << " out of " << fileSize << "\n";
         if(plusGrandsCount > 1) sort(end - (plusGrandsCount - 1), end, key_sort_buffer, item_sort_buffer, buffer_size);
         else if(!plusGrandsCount) sortedSize++;
@@ -739,29 +718,12 @@ public:
  * @return true
  * @return false
  */
-    /*bool  getAndCache_deprecated(uint64_t pos, Record<ITEM,KEY>* result)
-    {
-        std::lock_guard<std::mutex> guard(cache_mutex);
-        auto it = cache.find(pos);
-        if(it == cache.end())
-        {
-            if(get(pos, result))
-            {
-                cache[pos] = *result;
-                return true;
-            }
-            else return false;
-        }
-        else
-        {
-            *result = it->second;
-            return true;
-        }
-    }*/
 
-    bool  getAndCacheKey(uint64_t pos, KEY* result)
+    bool  getAndCacheKey(const uint64_t pos, KEY* result)
     {
+#ifndef DISCARD_MUTEX
         std::lock_guard<std::mutex> guard(cache_mutex);
+#endif
         auto it = cacheKey.find(pos);
         if(it == cacheKey.end())
         {
@@ -799,7 +761,7 @@ public:
         return true;
     }
 
-    inline bool  getKey(uint64_t pos, KEY* result )
+    inline bool  getKey(const uint64_t pos, KEY* result )
     {
         if( pos >= getSize())
         {
@@ -843,12 +805,83 @@ public:
  * @return true
  * @return false
  */
-    bool find(KEY key, ITEM* result)
+    bool find(KEY key, ITEM* result, std::unordered_map<uint64_t, KEY>& local_cache)
     {
         uint64_t iMin = 0;
         uint64_t iMax = getSize() - 1;
         short level = 0;
         KEY myKey;
+
+        getAndCacheKey(iMin, &myKey);
+        if( myKey == key)
+        {
+            getItem(iMin, result);
+            return true;
+        }
+        if( myKey > key)
+        {
+            return false;
+        }
+        getAndCacheKey(iMax, &myKey);
+        if( myKey == key)
+        {
+            getItem(iMax, result);
+            return true;
+        }
+        if( myKey < key)
+        {
+            return false;
+        }
+
+
+        while((iMax - iMin) > 1)
+        {
+            level++;
+            uint64_t iPivot = (iMin + iMax) >> 1;
+            if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&myKey);
+            else
+            {
+                auto it = local_cache.find(iPivot);
+                if(it == local_cache.end())
+                {
+                    getKey(iPivot, &myKey);
+                    local_cache[iPivot] = myKey;
+                } else {
+                    myKey = it->second;
+                }
+            }
+            if(myKey > key)
+            {
+                iMax = iPivot;
+            }
+            else if(myKey == key)
+            {
+                getItem(iPivot, result);
+                return true;
+            }
+            else
+            {
+                iMin = iPivot;
+            }
+        }
+        return false;
+    };
+
+
+/**
+ * @brief search key in index.
+ *
+ * @param key
+ * @param result
+ * @return true
+ * @return false
+ */
+    bool find(KEY key, ITEM* result)
+    {
+        uint64_t iMin = 0;
+        uint64_t iMax = getSize() - 1;
+        short level = 0;
+        KEY myKey = key;
 
         getAndCacheKey(iMin, &myKey);
         if( myKey == key)
@@ -940,7 +973,185 @@ public:
         return true;
     };
 
+
+    bool findLastLesser(KEY key, uint64_t& iMin, std::unordered_map<uint64_t, KEY>& local_cache)
+    {
+        Record<ITEM,KEY> result;
+        iMin = 0;
+        uint64_t iMax = getSize() - 1;
+        short level = 0;
+        getAndCacheKey(iMin, &(result.key));
+        if( result.key == key)
+        {
+            return true;
+        }
+        if( result.key > key)
+        {
+            iMin = 0;
+            return true;
+        }
+
+        getAndCacheKey(iMax, &(result.key));
+        if( result.key < key)
+        {
+            iMin = iMax;
+            return true;
+        }
+
+        while((iMax - iMin) > 1)
+        {
+            level++;
+            uint64_t iPivot = (iMin + (iMax -iMin)/2);
+            if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&(result.key));
+
+            else
+            {
+                auto it = local_cache.find(iPivot);
+                if(it == local_cache.end())
+                {
+                    getKey(iPivot, &(result.key));
+                    local_cache[iPivot] = result.key;
+                } else {
+                   result.key = it->second;
+                }
+            }
+            if(result.key >= key) iMax = iPivot;
+            else iMin = iPivot;
+        }
+        return true;
+    };
+
+
+// -- vectorized search
+#define IDX_NOT_FOUND 0xFFFFFFFFFFFFFFFFULL
+
+void findKeysIterate(const std::vector<std::pair<KEY, uint64_t*>>& sortedKeys, uint64_t kd, uint64_t kf, uint64_t iMin, uint64_t iMax, uint64_t level)
+{
+    //assert(kd < sortedKeys.size());
+    //assert(kf < sortedKeys.size());
+    level++;
+    if (iMax < iMin+2)
+    {
+        for(uint64_t ind = kd; ind <= kf; ind++)
+        {
+            *(sortedKeys[ind].second) = IDX_NOT_FOUND;
+        }
+        return;
+    }
+
+    uint64_t iPivot = ( iMax + iMin ) / 2ULL;
+    KEY key = sortedKeys[0].first;
+    if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&key);
+    else getKey(iPivot, &key);
+    if(key == sortedKeys[kd].first)
+    {
+        while(sortedKeys[kd].first == key)
+        {
+            *(sortedKeys[kd].second) = iPivot;
+            if(kd >= sortedKeys.size() -1) return;
+            kd++;
+        }
+        if(kd <= kf) findKeysIterate(sortedKeys, kd, kf, iMin, iMax, level);
+    }
+    else if(key == sortedKeys[kf].first)
+    {
+        while(sortedKeys[kf].first == key)
+        {
+            *(sortedKeys[kf].second) = iPivot;
+            if(kf == 0) return;
+            kf--;
+        }
+        if(kd <= kf) findKeysIterate(sortedKeys, kd, kf, iMin, iMax, level);
+    }
+    else if(key < sortedKeys[kd].first)
+    {
+        findKeysIterate(sortedKeys, kd, kf, iPivot, iMax, level);
+    }
+    else if(key > sortedKeys[kf].first)
+    {
+        findKeysIterate(sortedKeys, kd, kf, iMin, iPivot, level);
+    }
+    else
+    {
+        /*
+        uint64_t kp = kd;
+        while(key > sortedKeys[kp].first) kp++;
+        uint64_t k0 = kp - 1;
+        uint64_t k1 = kp;
+        */
+        uint64_t k0 = kd;
+        uint64_t k1 = kf;
+        while(k1 > k0+1)
+        {
+            uint64_t k2 = (k0+k1) / 2;
+            if(key <= sortedKeys[k2].first) k1 = k2;
+            else k0 = k2;
+        }
+
+        while(key == sortedKeys[k1].first)
+        {
+            *(sortedKeys[k1].second) = iPivot;
+            k1++;
+        }
+        if(k0 >= kd) findKeysIterate(sortedKeys, kd, k0, iMin, iPivot, level);
+        if(k1 <= kf) findKeysIterate(sortedKeys, k1, kf, iPivot, iMax, level);
+    }
+}
+
+std::vector<uint64_t> findKeys(const std::vector<KEY>& keys)
+{
+    std::vector<std::pair<KEY,uint64_t*>> sortedKeys(keys.size());
+    std::vector<uint64_t> results(keys.size());
+    for(unsigned int i = 0; i < keys.size();i++)
+    {
+        sortedKeys[i] = {keys[i],&(results[i])};
+    }
+    // sort keys
+    std::sort(sortedKeys.begin(), sortedKeys.end(), [](const std::pair<KEY, uint64_t*> &a, const std::pair<KEY, uint64_t*>  &b)
+    {
+        return a.first < b.first;
+    });
+//    std::sort(sortedKeys.begin(), sortedKeys.end(),);
+    uint64_t iMin = 0;
+    uint64_t iMax = getSize() - 1;
+    short level = 0;
+    KEY myKey;
+    getAndCacheKey(iMin, &myKey);
+    uint64_t kd = 0;
+    uint64_t kf = keys.size() -1;
+
+    while(sortedKeys[kd].first < myKey)
+    {
+        if(kd == sortedKeys.size() -1) return results;
+        kd++;
+    }
+    while(sortedKeys[kd].first == myKey)
+    {
+        *(sortedKeys[kd].second) = iMin;
+        if(kd == sortedKeys.size() -1) return results;
+        kd++;
+    }
+
+    getAndCacheKey(iMax, &myKey);
+
+    while(sortedKeys[kf].first > myKey)
+    {
+        if(kf == 0) return results;
+        kf--;
+    }
+    while(sortedKeys[kf].first == myKey)
+    {
+        std::cout << iMax << "--\n";
+        *(sortedKeys[kf].second) = iMax;
+        if(kf == 0) return results;
+        kf--;
+    }
+    if(kd <= kf) findKeysIterate(sortedKeys, kd, kf, iMin, iMax, level);
+    return results;
+}
+// --
 };
+
 
 /**
  * @brief index without key (key is record number).
@@ -1243,7 +1454,473 @@ public:
 
 };
 
+/***********************************************************************/
+template<class KEY> class KeyIndex
+{
+    private:
+    bool sorted;
+    KEY last_inserted{};
+    std::string filename;
+    KEY*  keyBuffer;
+    unsigned long bufferCount;
+    uint64_t keySize;
+    uint64_t sortedSize;
+    std::unordered_map<uint64_t, KEY> cacheKey;
+    std::mutex cache_mutex;
+    KeyIndex(const KeyIndex&);
+    KeyIndex& operator = (const KeyIndex&);
+public:
+    uint64_t fileSize;
+    GeoFile keyFile;
 
+    bool isSorted(){return sorted;}
+
+    /**
+     * @brief Construct a new File Index object.
+     *
+     * @param filename_  name of the fiile.
+     * @param replace    true if file shall be created.
+     */
+    KeyIndex(const std::string& filename_, bool replace) : filename(filename_)
+    {
+
+        keyFile.open(filename + "_key", replace);
+
+        keyBuffer  = nullptr;
+
+        if (replace)
+        {
+            keyBuffer  = new KEY[FILEINDEX_RAWFLUSHSIZE];
+        }
+        bufferCount = 0;
+        keySize  = sizeof(KEY);
+        fileSize = keyFile.length()/keySize;
+        sortedSize = 0;
+        sorted = true;
+    }
+
+    /**
+     * @brief Destroy the File Index object
+     *
+     */
+    virtual ~KeyIndex()
+    {
+        if(keyBuffer != nullptr) delete[] keyBuffer;
+    }
+
+/**
+ * @brief append item to index.
+ *
+ * @param key
+ */
+    void append(const KEY& key)
+    {
+        keyBuffer[bufferCount] = key;
+        bufferCount ++;
+
+        if (bufferCount == FILEINDEX_RAWFLUSHSIZE)
+        {
+            flush();
+        }
+        if((fileSize) && (key < last_inserted)) sorted = false;
+        last_inserted = key;
+    }
+
+
+/**
+ * @brief flush index file to disk.
+ *
+ */
+    void flush()
+    {
+        keyFile.append((char*)&keyBuffer[0], keySize * bufferCount);
+        bufferCount = 0;
+        fileSize = keyFile.length()/keySize;
+    }
+/**
+ * @brief swap items in index
+ *
+ * @param item1
+ * @param item2
+ */
+    void swap(uint64_t n1, uint64_t n2)
+    {
+        KEY   key1, key2;
+
+        keyFile.oread((char*)&key1, n1 * keySize, keySize);
+        keyFile.oread((char*)&key2, n2 * keySize, keySize);
+        keyFile.owrite((char*)&key2, n1 * keySize, keySize);
+        keyFile.owrite((char*)&key1, n2 * keySize, keySize);
+
+    }
+
+    /**
+     * @brief sort index
+     *
+     */
+
+    void sort()
+    {
+        struct sysinfo info;
+        int res = sysinfo(&info);
+        uint64_t max_mem = 500000000ULL; // 500 mbytes
+        if(res == 0)
+        {
+            max_mem = (((unsigned long) info.freeram) * (( unsigned long) info.mem_unit)) / 2;
+        }
+
+        std::cerr << "ram :" << (((unsigned long) info.freeram) * (( unsigned long) info.mem_unit)) / (1048 * 1048) << "mb, sorting  " << fileSize << " elements \n";
+        if(!fileSize) return;
+        sortedSize = 0;
+
+        uint64_t buffer_size = (fileSize + 3) / 3;
+
+        uint64_t max_bsize = max_mem / (sizeof(KEY)*3);
+        if(buffer_size > max_bsize) buffer_size = max_bsize;
+
+        KEY*  key_sort_buffer = nullptr;
+
+        bool resized = false;
+        while(key_sort_buffer == nullptr)
+        {
+            try
+            {
+              key_sort_buffer  = new KEY[buffer_size*3];
+            } catch(std::bad_alloc& ba)
+            {
+                std::cout << "buffer_size : " << buffer_size << "too big\n";
+                buffer_size /= 2;
+                resized = true;
+            }
+            if(resized == true)
+            {
+                delete[] key_sort_buffer;
+                buffer_size /= 2;
+                key_sort_buffer  = new KEY[buffer_size*3];
+            }
+        }
+        sort(0,fileSize-1, key_sort_buffer, buffer_size);
+        sorted = true;
+        delete[] key_sort_buffer;
+    }
+
+
+    void swapKey(KEY* a, KEY* b)
+    {
+        KEY c;
+        memcpy(&c, a, keySize);
+        memcpy(a, b, keySize);
+        memcpy(b, &c, keySize);
+    }
+
+    void memsort(int64_t begin, int64_t end, KEY* key_sort_buffer)
+    {
+        //std::cout << "memsort " << begin <<" "<< end <<"\n";
+        if((end - begin) < 1) return;
+        if((end - begin) == 1)
+        {
+            if ( key_sort_buffer[end] < key_sort_buffer[begin] )
+            {
+                swapKey(key_sort_buffer + end, key_sort_buffer + begin);
+            }
+            return;
+        }
+        else
+        {
+            int64_t lessers = 0;
+            int64_t biggers = 0;
+            int64_t total = end - begin;
+            int64_t ipivot = begin;
+            while(total > (biggers + lessers))
+            {
+                while((total > (biggers + lessers))
+                && (begin + 1 + lessers <= end)
+                && (key_sort_buffer[begin + 1 + lessers] < key_sort_buffer[begin])) lessers++;
+                while((total > (biggers + lessers))
+                && (end - biggers >= begin + 1)
+                && (key_sort_buffer[end - biggers ] > key_sort_buffer[begin])) biggers++;
+                if(total > (biggers + lessers + 1))
+                {
+                    swapKey(key_sort_buffer + (begin+1+lessers), key_sort_buffer + (end - biggers));
+
+                    biggers++;
+                    lessers++;
+                } else if (total == (biggers + lessers + 1)) {
+                    if(key_sort_buffer[begin + 1 + lessers] < key_sort_buffer[begin]) lessers++;
+                    else biggers++;
+                }
+            }
+            ipivot = begin + lessers;
+            swapKey(key_sort_buffer + ipivot, key_sort_buffer + begin);
+
+            if((ipivot + 1)< end) memsort(ipivot + 1, end, key_sort_buffer);
+            if(ipivot > (begin + 1)) memsort(begin, ipivot - 1,  key_sort_buffer);
+        }
+    }
+
+
+    /**
+     * @brief sort index part.
+     *
+     * @param begin
+     * @param end
+     * @param sort_buffer
+     * @param buffer_size
+     */
+
+    void sort(uint64_t begin, uint64_t end, KEY* key_sort_buffer, uint64_t buffer_size)
+    {
+        std::cerr << "sort " << begin <<" "<< end <<"\n";
+        uint64_t count = (end - begin) + 1;
+        if((end - begin + 1) < (3ULL*buffer_size))
+        {
+            std::cout << "enough memory, performing qsort \n";
+            std::cout << "read data \n";
+            keyFile.oread((char*)key_sort_buffer, begin * keySize, keySize * count);
+            std::cout << "sort data \n";
+
+            //std::qsort(&sort_buffer[0], count, recSize,fileIndexComp<ITEM,KEY>);
+            memsort(0, count - 1, key_sort_buffer);
+
+            std::cout << "write data \n";
+            keyFile.owrite((char*)key_sort_buffer, begin * keySize, keySize * count );
+            sortedSize += count;
+            std::cerr << "*** *** *** *** sorted " << sortedSize << " out of " << fileSize << "\n";
+            return;
+        }
+        if((end - begin) > 2)
+        {
+            uint64_t i = (end + begin) / 2;
+            swap(i,end);
+        }
+
+        KEY* key_plusPetits = key_sort_buffer;
+        KEY* key_plusGrands = key_sort_buffer + buffer_size;
+        KEY* key_autres = key_sort_buffer + 2ULL*buffer_size;
+
+        KEY curKey;
+
+
+        //Record<ITEM,KEY> tmp;
+        getKey(end, &curKey);
+        uint64_t autresCount = end - begin;
+        uint64_t plusGrandsCount = 0;
+        uint64_t plusPetitsCount = 0;
+        while(autresCount > 0)
+        {
+            uint64_t plusPetitsBufferCount=0;
+            uint64_t plusGrandsBufferCount=0;
+            uint64_t autresBufferCount=0;
+            uint64_t toRead = buffer_size;
+            //std::cout << "reading " << toRead << "items from file \n";
+            if(toRead > autresCount) toRead = autresCount;
+
+            keyFile.oread((char*)key_autres, (end - (toRead  + plusGrandsCount)) * keySize, keySize * toRead );
+
+            autresBufferCount = toRead;
+            plusPetitsBufferCount = 0;
+            plusGrandsBufferCount = 0;
+            autresCount -= toRead;
+            //std::cout << "dividing items \n";
+            while(autresBufferCount > 0)
+            {
+                autresBufferCount --;
+                if(key_autres[autresBufferCount] >  curKey)
+                {
+                    key_plusGrands[plusGrandsBufferCount] = key_autres[autresBufferCount];
+                    plusGrandsBufferCount++;
+                }
+                else if(key_autres[autresBufferCount] <  curKey)
+                {
+                    key_plusPetits[plusPetitsBufferCount] = key_autres[autresBufferCount];
+                    plusPetitsBufferCount++;
+                }
+                else
+                {
+                    if(plusGrandsBufferCount> plusPetitsBufferCount)
+                    {
+                        key_plusPetits[plusPetitsBufferCount] = key_autres[autresBufferCount];
+                        plusPetitsBufferCount++;
+                    }
+                    else
+                    {
+                        key_plusGrands[plusGrandsBufferCount] = key_autres[autresBufferCount];
+                        plusGrandsBufferCount ++;
+                    }
+                }
+            }
+            //std::cout << "divided items \n";
+
+            if(plusGrandsBufferCount)
+            {
+                //std::cout << plusGrandsBufferCount << " items where bigger writing them to file\n";
+                keyFile.owrite((char*)key_plusGrands, (end - (plusGrandsCount + plusGrandsBufferCount - 1)) * keySize, keySize * plusGrandsBufferCount);
+            }
+            plusGrandsCount += plusGrandsBufferCount;
+            //std::cout << plusPetitsBufferCount << " items where smaller writing them to file\n";
+            if(autresCount  < plusPetitsBufferCount)
+            {
+                std::cout << " cache " << autresCount << " items \n";
+
+                keyFile.oread((char*)key_autres, (begin + plusPetitsCount) * keySize, keySize * autresCount);
+
+                if(plusPetitsBufferCount)
+                {
+                    //std:: cout << "write smallers \n";
+                    keyFile.owrite((char*)key_plusPetits, (begin + plusPetitsCount) * keySize, keySize * plusPetitsBufferCount);
+                    plusPetitsCount += plusPetitsBufferCount;
+                }
+                if(autresCount)
+                {
+                    //std:: cout << "write cached \n";
+                    keyFile.owrite((char*)key_autres, (begin+plusPetitsCount) * keySize, keySize * autresCount);
+                }
+
+            }
+            else
+            {
+                if(plusPetitsBufferCount)
+                {
+
+                    //std::cout << " cache " << plusPetitsCount << " items \n";
+                    keyFile.oread((char*)key_autres, (begin + plusPetitsCount) * keySize, keySize * plusPetitsBufferCount);
+                    //std:: cout << "write smallers \n";
+                    keyFile.owrite((char*)key_plusPetits, (begin + plusPetitsCount) * keySize, keySize * plusPetitsBufferCount);
+
+                    plusPetitsCount += plusPetitsBufferCount;
+                    //std:: cout << "write cached \n";
+                    keyFile.owrite((char*)key_autres, (end - (plusGrandsCount + plusPetitsBufferCount)) * keySize, keySize * plusPetitsBufferCount);
+                }
+            }
+            //std:: cout << "write pivot at the right place \n";
+            keyFile.owrite((char*)&(curKey), (end  - (plusGrandsCount)) * keySize, keySize);
+
+        }
+        sortedSize++;
+        std::cerr << "*** *** *** *** sorted " << sortedSize << " out of " << fileSize << "\n";
+        if(plusGrandsCount > 1) sort(end - (plusGrandsCount - 1), end, key_sort_buffer, buffer_size);
+        else if(!plusGrandsCount) sortedSize++;
+        if(plusPetitsCount > 1) sort(begin, begin + plusPetitsCount - 1, key_sort_buffer, buffer_size);
+        else if(!plusPetitsCount) sortedSize++;
+    }
+
+/**
+ * @brief Get And Cache object
+ *
+ * @param pos
+ * @param result
+ * @return true
+ * @return false
+ */
+
+    bool  getAndCacheKey(const uint64_t pos, KEY* result)
+    {
+#ifndef DISCARD_MUTEX
+        std::lock_guard<std::mutex> guard(cache_mutex);
+#endif
+        auto it = cacheKey.find(pos);
+        if(it == cacheKey.end())
+        {
+            if(getKey(pos, result))
+            {
+                cacheKey[pos] = *result;
+                return true;
+            }
+            else return false;
+        }
+        else
+        {
+            *result = it->second;
+            return true;
+        }
+    }
+
+
+    inline bool  getKey(const uint64_t pos, KEY* result )
+    {
+        if( pos >= getSize())
+        {
+            //std::cerr << "key not found ! " << (int) pos << (int) getSize() << "/n";
+            return false;
+        }
+        keyFile.oread((char*)result, pos*keySize, keySize);
+        return true;
+    }
+
+
+
+/**
+ * @brief get index size.
+ *
+ * @return uint64_t
+ */
+    uint64_t getSize()
+    {
+        return fileSize;
+    }
+
+/**
+ * @brief search key in index.
+ *
+ * @param key
+ * @param result
+ * @return true
+ * @return false
+ */
+    bool find(KEY key, uint64_t* pos)
+    {
+        uint64_t iMin = 0;
+        uint64_t iMax = getSize() - 1;
+        short level = 0;
+        KEY myKey;
+
+        getAndCacheKey(iMin, &myKey);
+        if( myKey == key)
+        {
+            *pos = iMin;
+            return true;
+        }
+        if( myKey > key)
+        {
+            return false;
+        }
+        getAndCacheKey(iMax, &myKey);
+        if( myKey == key)
+        {
+            *pos = iMax;
+            return true;
+        }
+        if( myKey < key)
+        {
+            return false;
+        }
+
+
+        while((iMax - iMin) > 1)
+        {
+            level++;
+            uint64_t iPivot = (iMin + iMax) >> 1;
+            if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&myKey);
+            else getKey(iPivot, &myKey);
+            if(myKey > key)
+            {
+                iMax = iPivot;
+            }
+            else if(myKey == key)
+            {
+                *pos = iPivot;
+                return true;
+            }
+            else
+            {
+                iMin = iPivot;
+            }
+        }
+        return false;
+    }
+};
+
+/***********************************************************************/
 
 }
 #endif

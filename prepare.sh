@@ -67,8 +67,12 @@ rm osm.bz2
 
 echo "remove indexes that are no longer useful"
 rm nodeIdIndex
+rm nodeIdIndex_key
+rm nodeRefIndex_key
 rm wayIdIndex
+rm wayIdIndex_key
 rm relationIdIndex
+rm relationIdIndex_key
 
 echo "create indexes"
 $GEOBIN/index .

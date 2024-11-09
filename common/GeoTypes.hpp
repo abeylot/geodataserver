@@ -123,13 +123,5 @@ struct __attribute__((packed)) GeoString
     }
 };
 
-/**
- * @brief struct to store geopoint data with it's id
- *
- */
-struct __attribute__((packed)) GeoPointNumberIndex
-{
-    uint64_t number;
-    GeoPoint p;
-};
+
 #endif
