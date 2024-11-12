@@ -25,7 +25,7 @@ std::shared_ptr<Msg> Svg::processRequest(std::shared_ptr<Msg> request, CompiledD
     rect.y1 = atoll(sLat2.c_str());
 
     uint32_t meany = (rect.y0 >> 1) + (rect.y1  >> 1);
-    double angle = PI * ((meany *1.0) / (1.0 * UINT32_MAX)) - PI/2;
+    double angle = M_PI * ((meany *1.0) / (1.0 * UINT32_MAX)) - M_PI/2;
     double ratio =  (sin(angle)*(rect.x1 - rect.x0))/(1.0*(rect.y1 - rect.y0));
     if (ratio < 0) ratio *= -1;
 

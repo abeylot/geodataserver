@@ -14,13 +14,14 @@
 
 Shape& SvgRenderer::getShape(std::shared_ptr<CssClass> c, unsigned char layer)
 {
-    auto it = shapes.find(c->rank + layer * LAYER_MULT);
+    uint64_t id = (c->rank << 8) + layer;
+    auto it = shapes.find(id);
     if(it == shapes.end())
     {
-        shapes[c->rank + layer * LAYER_MULT] = std::make_shared<myShape>();
-        shapes[c->rank + layer * LAYER_MULT]->c = c;
-        shapes[c->rank + layer * LAYER_MULT]->layer = layer;
-        return (shapes[c->rank + layer * LAYER_MULT]->s);
+        shapes[id] = std::make_shared<myShape>();
+        shapes[id]->c = c;
+        shapes[id]->layer = layer;
+        return (shapes[id]->s);
     }
     else
     {
@@ -35,8 +36,8 @@ bool compare(const label_s& l2, const label_s& l1)
     if(l2.zindex > l1.zindex) return true;
     if(l1.style > l2.style) return true;
     if(l2.style > l1.style) return false;
-    if (l1.text.length() > l2.text.length()) return true;
-    if (l1.text.length() < l2.text.length()) return false;
+    if (l1.text.length() < l2.text.length()) return true;
+    if (l1.text.length() > l2.text.length()) return false;
     if (l1.text > l2.text) return true;
     if (l1.text < l2.text) return false;
     if (l1.pos_x > l2.pos_x) return true;
@@ -143,7 +144,6 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
     GeoBoxSet gSet;
     Shape myShape;
     hh::THashIntegerTable hash(10000);
-    std::unordered_map<uint64_t, GeoBox> local_cache;
 
     std::map <uint64_t, std::pair<std::shared_ptr<CssClass>, std::shared_ptr<ITEM>>> itemsToDraw;
 
@@ -170,9 +170,10 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
     }
 
     std::set<uint64_t> done_geoboxes;
-
+    //bool get_range(KEY key_min, KEY key_max, std::vector<KEY>& keys, std::vector<ITEM>& items)
     for(short i = 0; i < gSet.count; i++)
     {
+        std::vector<IndexEntryMasked> indexEntry;
         GeoBox g;
         g = gSet.boxes[i];
         short  mask = g.get_maskLength();
@@ -187,30 +188,31 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
             maxGeoBox.set_pos(0xFFFFFFFFFFFFFFFF);
         }
 
-        fidx::Record<IndexEntryMasked, GeoBox> record;
-        uint64_t start;
-        if(idxDesc.idx->findLastLesser(g, start, local_cache))
-        while(idxDesc.idx->get(start, &record) && (record.key <= maxGeoBox))
+        //fidx::Record<IndexEntryMasked, GeoBox> record;
+        //uint64_t start;
+        //if(idxDesc.idx->findLastLesser(g, start))
+        if(idxDesc.idx->get_range(g, maxGeoBox, indexEntry))
+        for(size_t i = 0; i < indexEntry.size(); i++)
         {
-            if((record.value.zmMask &  zmMask )&&((record.value.r * (rect2)).isValid()))
+            if((indexEntry[i].zmMask &  zmMask )&&((indexEntry[i].r * (rect2)).isValid()))
             {
-                if( hash.addIfUnique(record.value.id))
+                if( hash.addIfUnique(indexEntry[i].id))
                 {
                     std::shared_ptr<ITEM> item = nullptr;
-                    item = mger->load<ITEM>(record.value.id, false);
-                    std::shared_ptr<CssClass> cl = getCssClass(idxDesc, *item, zoom, record.value.zmMask & 0X100000LL);
+                    item = mger->load<ITEM>(indexEntry[i].id, true);
+                    std::shared_ptr<CssClass> cl = getCssClass(idxDesc, *item, zoom, indexEntry[i].zmMask & 0X100000LL);
                     label_s lbl;
                     if(cl)
                     {
                         if constexpr(! std::is_same<ITEM, Point>())
                         {
-                            item->rect = record.value.r;
+                            item->rect = indexEntry[i].r;
                         }
-                        itemsToDraw[record.value.id] = std::make_pair(cl, item);
+                        itemsToDraw[indexEntry[i].id] = std::make_pair(cl, item);
                     }
                 }
             }
-            start++;
+            //start++;
         }
         mask = g.get_maskLength();
         short max = 64;
@@ -225,25 +227,25 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                 continue; // dont do twice the same job
             }
             done_geoboxes.insert(maxGeoBox2.get_hash());
-            if(idxDesc.idx->findLastLesser(maxGeoBox2, start, local_cache))
-            while(idxDesc.idx->get(start++, &record) && (record.key <= maxGeoBox2))
+    //        if(idxDesc.idx->findLastLesser(maxGeoBox2, start))
+            if(idxDesc.idx->get_range(maxGeoBox2, maxGeoBox2, indexEntry))
+            for(size_t i = 0; i < indexEntry.size(); i++)
             {
-                if( hash.addIfUnique(record.value.id))
+                if((indexEntry[i].zmMask &  zmMask )&&((indexEntry[i].r * (rect2)).isValid()))
                 {
-                    if((record.value.zmMask &  zmMask ) && ((record.value.r * (rect2) ).isValid()))
+                    if( hash.addIfUnique(indexEntry[i].id))
                     {
                         std::shared_ptr<ITEM> item = nullptr;
-                        item = mger->load<ITEM>(record.value.id, false);
-
-                        std::shared_ptr<CssClass> cl = getCssClass(idxDesc, *item, zoom, record.value.zmMask & 0X100000LL);
-
+                        item = mger->load<ITEM>(indexEntry[i].id, true);
+                        std::shared_ptr<CssClass> cl = getCssClass(idxDesc, *item, zoom, indexEntry[i].zmMask & 0X100000LL);
+                        label_s lbl;
                         if(cl)
                         {
                             if constexpr(! std::is_same<ITEM, Point>())
                             {
-                                item->rect = record.value.r;
+                                item->rect = indexEntry[i].r;
                             }
-                            itemsToDraw[record.value.id] = std::make_pair(cl, item);
+                            itemsToDraw[indexEntry[i].id] = std::make_pair(cl, item);
                         }
                     }
                 }

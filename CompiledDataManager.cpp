@@ -140,7 +140,7 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
             newWay = loadWay(buffer[i].id, fast);
             if(newWay)
             {
-                if(!fast) r.shape.mergePoints(newWay->points, newWay->pointsCount, newWay->points[0] == newWay->points[newWay->pointsCount - 1] );
+                r.shape.mergePoints(newWay->points, newWay->pointsCount, newWay->points[0] == newWay->points[newWay->pointsCount - 1] );
                 r.ways.push_back(newWay);
                 r.rect = r.rect + newWay->rect;
             }
@@ -231,7 +231,7 @@ void do_crop(GeoPoint*& points, uint64_t &pointsCount, Rectangle& r)
     for(i = 1; i < pointsCount; i++)
     {
         bool isinsidenew = (points[i].x >= r.x0);
-        if((!isinside && isinsidenew) || (isinside && !isinsidenew))
+        if(isinside ^ isinsidenew)
         {
             double ratio = ((double)(points[i].x) - (double)(r.x0)) / ((double)(points[i].x) - (double)(points[i-1].x));
             uint32_t new_x = r.x0;;

@@ -23,8 +23,6 @@
 #define  EQUALSSPACE     "= \"",3
 #define  MANIFEST_END    "?>",2
 
-#define IGNORE_STRINGNODES
-
 
 template<short N> class Sequence
 {
