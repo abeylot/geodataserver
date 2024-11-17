@@ -1,4 +1,8 @@
 #define DISCARD_MUTEX // affects fileindex.hpp to avoid an useless mutex in monothreaded case
+#define FILEINDEX_CACHELEVEL 25 // can increase a little because there is only one fileindex searched in this executable
+
+#define IGNORE_STRINGNODES
+
 #include <map>
 #include <vector>
 #include "helpers/Sequence.hpp"
@@ -393,19 +397,24 @@ public:
         else if (b->baliseName == BALISENAME_NODE)
         {
             isNod = false;
-            GeoPointIndex nodeRecord;
-            nodeRecord.x = Coordinates::toNormalizedLon(b->keyValues["lon"]);
-            nodeRecord.y = Coordinates::toNormalizedLat(b->keyValues["lat"]);
-            nodeRecord.tstart = baliseTags->startCount;
+            size_t tsize = 0;
 
             if((baliseTags->itemCount  - baliseTags->startCount) > 0xFFFF){
                 std::cerr << "too much tags for node \n";
-                nodeRecord.tsize = 0xFFFF;
+                tsize = 0xFFFF;
             } else {
-                nodeRecord.tsize = baliseTags->itemCount  - baliseTags->startCount;
+                tsize = baliseTags->itemCount  - baliseTags->startCount;
             }
 
-            if(nodeRecord.tsize) nodeIndex->append(nodeRecord);
+            if(tsize)
+            {
+                GeoPointIndex nodeRecord;
+                nodeRecord.tsize = tsize;
+                nodeRecord.x = Coordinates::toNormalizedLon(b->keyValues["lon"]);
+                nodeRecord.y = Coordinates::toNormalizedLat(b->keyValues["lat"]);
+                nodeRecord.tstart = baliseTags->startCount;
+                nodeIndex->append(nodeRecord);
+            }
         }
         else if (b->baliseName == BALISENAME_ND)
         {

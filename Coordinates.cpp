@@ -8,7 +8,7 @@ uint32_t Coordinates::toNormalizedLon(const std::string& coord)
     int signe = 1;
 
     long long signedInt;
-    if(pos == std::string::npos)  signedInt = atoll(coord.substr(0,pos).c_str());
+    if(pos != std::string::npos)  signedInt = atoll(coord.substr(0,pos).c_str());
     else  signedInt = atoll(coord.c_str());
 
     if (coord.at(0) == '-') signe = -1;
@@ -50,7 +50,7 @@ uint32_t Coordinates::toNormalizedLat(const std::string& coord)
     int signe = 1;
 
     long long signedInt;
-    if(pos == std::string::npos)  signedInt = atoll(coord.substr(0,pos).c_str());
+    if(pos != std::string::npos)  signedInt = atoll(coord.substr(0,pos).c_str());
     else  signedInt = atoll(coord.c_str());
 
     if (coord.at(0) == '-') signe = -1;

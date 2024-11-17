@@ -99,7 +99,9 @@ struct ParseContext
         unsigned int baliseNameLen = 0;
         unsigned int stringNodeLen = 0;
         SeqBalise* curBalise;
+#ifndef IGNORE_STRINGNODES
         std::string stringNode = "";
+#endif
         short skip = 0;
 };
 
@@ -215,12 +217,14 @@ private:
                 p.state = STATE_TAGEND;
                 p.curBalise = tagStack->back();
                 tagStack->pop_back();
+#ifndef IGNORE_STRINGNODES
                 if(p.stringNodeLen)
                 {
                     visitor.stringNode(*tagStack, p.stringNode);
                     p.stringNode = "";
                     p.stringNodeLen = 0;
                 }
+#endif
                 visitor.endTag(*tagStack, p.curBalise);
                 delete(p.curBalise);
                 p.skip = 1;
@@ -231,19 +235,23 @@ private:
                 p.curBalise = new SeqBalise;
                 p.baliseNameLen = 0;
                 //stringName="";
+#ifndef IGNORE_STRINGNODES
                 if(p.stringNodeLen)
                 {
                     visitor.stringNode(*tagStack, p.stringNode);
                     p.stringNode = "";
                     p.stringNodeLen = 0;
                 }
+#endif
             }
-            else
+ #ifndef IGNORE_STRINGNODES
+           else
             {
                  p.stringNode += sq.c[0];
                  p.stringNodeLen++;
                  //std::cout << " -----[" << p.stringNode << "]\n";
             }
+#endif
             break;
 
         case STATE_COMMENT:

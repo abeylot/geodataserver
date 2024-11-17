@@ -2,7 +2,9 @@
 #ifndef FILEINDEX_HPP
 #define FILEINDEX_HPP
 #define FILEINDEX_RAWFLUSHSIZE   1000ULL
+#ifndef FILEINDEX_CACHELEVEL
 #define FILEINDEX_CACHELEVEL 24
+#endif
 #include <string>
 #include <unordered_map>
 #include <algorithm>
@@ -20,6 +22,7 @@
 #include <thread>
 #include <mutex>
 #include <sys/sysinfo.h>
+#include <memory>
 
 struct GeoFile
 {
@@ -213,8 +216,6 @@ struct GeoFile
 namespace fidx
 {
 
-
-
    inline uint64_t makeLexicalKey(const char* value_, size_t value_size_, const std::map<std::string, std::string>&substitutions)
    {
         char value[128];
@@ -240,21 +241,6 @@ namespace fidx
             for(size_t k = 0; k < out.length();k++)    value[value_size++] = tolower(out[k]);
         }
         uint64_t key = 0;
-        /*if(value_size > 0) { key += tolower(value[0]);}
-        key <<= 3;
-        if(value_size > 1) { key += tolower(value[1]);}
-        key <<= 3;
-        if(value_size > 2) { key += tolower(value[2]);}
-        key <<= 3;
-        if(value_size > 3) { key += tolower(value[3]);}
-        key <<= 3;
-        if(value_size > 4) { key += tolower(value[4]);}
-        key <<= 3;
-        if(value_size > 5) { key += tolower(value[5]);}
-        key <<= 3;
-        if(value_size > 6) { key += tolower(value[6]);}
-        key <<= 3;
-        if(value_size > 7) { key += tolower(value[7]);}*/
         char* key_c = (char*) &key;
         for(unsigned int i = 0; i < value_size; i++)
         {
@@ -262,6 +248,18 @@ namespace fidx
         }
         return key;
    }
+
+    template<class KEY>
+    struct key_file_cache{
+        int64_t offset;
+        KEY k[2048];
+    };
+
+    template<class ITEM>
+    struct item_file_cache{
+        int64_t offset;
+        ITEM k[2048];
+    };
 
 
  /**
@@ -315,8 +313,10 @@ template<class ITEM, class KEY> class FileIndex
     uint64_t itemSize;
     uint64_t keySize;
     uint64_t sortedSize;
+    uint64_t cacheSize;
     //std::unordered_map<uint64_t, Record<ITEM, KEY>> cache;
-    std::unordered_map<uint64_t, KEY> cacheKey;
+    KEY* cacheKey;
+    uint64_t* cacheKeyB;
     std::mutex cache_mutex;
     FileIndex(const FileIndex&);
     FileIndex& operator = (const FileIndex&);
@@ -352,7 +352,17 @@ public:
         keySize  = sizeof(KEY);
         fileSize = itemFile.length()/itemSize;
         sortedSize = 0;
+        cacheSize = 10;
         sorted = true;
+        if(!replace)
+        {
+            cacheSize = ((uint64_t)1 << FILEINDEX_CACHELEVEL) + 1 ;
+            if(cacheSize > (fileSize / 2048)) cacheSize = fileSize / 2048;
+            if(cacheSize < 4) cacheSize = 4;
+        }
+        cacheKey = new KEY[cacheSize];
+        cacheKeyB = new uint64_t[cacheSize/64 + 1];
+        memset(cacheKeyB , 0 ,8*(cacheSize/64) + 8);
     }
 
     /**
@@ -363,6 +373,8 @@ public:
     {
         if(keyBuffer != nullptr) delete[] keyBuffer;
         if(itemBuffer != nullptr) delete[] itemBuffer;
+        delete[] cacheKey;
+        delete[] cacheKeyB;
     }
 
 /**
@@ -719,24 +731,24 @@ public:
  * @return false
  */
 
-    bool  getAndCacheKey(const uint64_t pos, KEY* result)
+    bool  getAndCacheKey(const uint64_t cPos, const uint64_t pos, KEY* result)
     {
 #ifndef DISCARD_MUTEX
         std::lock_guard<std::mutex> guard(cache_mutex);
 #endif
-        auto it = cacheKey.find(pos);
-        if(it == cacheKey.end())
+        if (!(cacheKeyB[cPos/64] &  (1ULL <<  (cPos % 64))))
         {
             if(getKey(pos, result))
             {
-                cacheKey[pos] = *result;
+                cacheKey[cPos] = *result;
+                cacheKeyB[cPos/64] |=  1ULL <<  (cPos % 64);
                 return true;
             }
             else return false;
         }
         else
         {
-            *result = it->second;
+            *result = cacheKey[cPos];
             return true;
         }
     }
@@ -769,6 +781,28 @@ public:
             return false;
         }
         keyFile.oread((char*)result, pos*keySize, keySize);
+        return true;
+    }
+
+    inline bool  getKeys(const uint64_t pos_min, const uint64_t pos_max, KEY* result )
+    {
+        if( pos_max >= getSize())
+        {
+            //std::cerr << "key not found ! " << (int) pos << (int) getSize() << "/n";
+            return false;
+        }
+        keyFile.oread((char*)result, pos_min*keySize, keySize*(1 + pos_max - pos_min));
+        return true;
+    }
+
+    inline bool  getItems(const uint64_t pos_min, const uint64_t pos_max, ITEM* result )
+    {
+        if( pos_max >= getSize())
+        {
+            //std::cerr << "key not found ! " << (int) pos << (int) getSize() << "/n";
+            return false;
+        }
+        itemFile.oread((char*)result, pos_min*itemSize, itemSize*(1 + pos_max - pos_min));
         return true;
     }
 
@@ -805,14 +839,18 @@ public:
  * @return true
  * @return false
  */
-    bool find(KEY key, ITEM* result, std::unordered_map<uint64_t, KEY>& local_cache)
+    bool find(KEY key, ITEM* result)
     {
+        std::shared_ptr<key_file_cache<KEY>> cache;
+        if(!getSize()) return false;
         uint64_t iMin = 0;
+        uint64_t iCMin = 0;
         uint64_t iMax = getSize() - 1;
+        uint64_t iCMax = cacheSize - 1;
         short level = 0;
         KEY myKey;
 
-        getAndCacheKey(iMin, &myKey);
+        getAndCacheKey(iCMin, iMin, &myKey);
         if( myKey == key)
         {
             getItem(iMin, result);
@@ -822,7 +860,7 @@ public:
         {
             return false;
         }
-        getAndCacheKey(iMax, &myKey);
+        getAndCacheKey(iCMax, iMax, &myKey);
         if( myKey == key)
         {
             getItem(iMax, result);
@@ -833,26 +871,33 @@ public:
             return false;
         }
 
-
         while((iMax - iMin) > 1)
         {
+            if(!cache && ((iMax - iMin) < 2048))
+            {
+                cache = std::make_shared<key_file_cache<KEY>>();
+                cache->offset = iMin;
+                getKeys(iMin,iMax, cache->k);
+            }
             level++;
             uint64_t iPivot = (iMin + iMax) >> 1;
-            if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&myKey);
+            uint64_t iCPivot = (iCMin + iCMax) /2;
+            if(cache)
+            {
+                myKey = cache->k[iPivot - cache->offset];
+            }
+            else if((iCMax - iCMin) > 1)
+            {
+                getAndCacheKey(iCPivot, iPivot,&myKey);
+            }
             else
             {
-                auto it = local_cache.find(iPivot);
-                if(it == local_cache.end())
-                {
-                    getKey(iPivot, &myKey);
-                    local_cache[iPivot] = myKey;
-                } else {
-                    myKey = it->second;
-                }
+                getKey(iPivot, &myKey);
             }
             if(myKey > key)
             {
                 iMax = iPivot;
+                iCMax = iCPivot;
             }
             else if(myKey == key)
             {
@@ -861,6 +906,7 @@ public:
             }
             else
             {
+                iCMin = iCPivot;
                 iMin = iPivot;
             }
         }
@@ -868,65 +914,6 @@ public:
     };
 
 
-/**
- * @brief search key in index.
- *
- * @param key
- * @param result
- * @return true
- * @return false
- */
-    bool find(KEY key, ITEM* result)
-    {
-        uint64_t iMin = 0;
-        uint64_t iMax = getSize() - 1;
-        short level = 0;
-        KEY myKey = key;
-
-        getAndCacheKey(iMin, &myKey);
-        if( myKey == key)
-        {
-            getItem(iMin, result);
-            return true;
-        }
-        if( myKey > key)
-        {
-            return false;
-        }
-        getAndCacheKey(iMax, &myKey);
-        if( myKey == key)
-        {
-            getItem(iMax, result);
-            return true;
-        }
-        if( myKey < key)
-        {
-            return false;
-        }
-
-
-        while((iMax - iMin) > 1)
-        {
-            level++;
-            uint64_t iPivot = (iMin + iMax) >> 1;
-            if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&myKey);
-            else getKey(iPivot, &myKey);
-            if(myKey > key)
-            {
-                iMax = iPivot;
-            }
-            else if(myKey == key)
-            {
-                getItem(iPivot, result);
-                return true;
-            }
-            else
-            {
-                iMin = iPivot;
-            }
-        }
-        return false;
-    };
 
     /**
      * @brief find last index id lesser than key.
@@ -939,11 +926,15 @@ public:
 
     bool findLastLesser(KEY key, uint64_t& iMin)
     {
+        std::shared_ptr<key_file_cache<KEY>> cache;
+        if(!getSize()) return false;
         Record<ITEM,KEY> result;
+        uint64_t iCMin = 0;
+        uint64_t iCMax = cacheSize - 1;
         iMin = 0;
         uint64_t iMax = getSize() - 1;
         short level = 0;
-        getAndCacheKey(iMin, &(result.key));
+        getAndCacheKey(iCMin, iMin, &(result.key));
         if( result.key == key)
         {
             return true;
@@ -954,7 +945,7 @@ public:
             return true;
         }
 
-        getAndCacheKey(iMax, &(result.key));
+        getAndCacheKey(iCMax, iMax, &(result.key));
         if( result.key < key)
         {
             iMin = iMax;
@@ -963,73 +954,87 @@ public:
 
         while((iMax - iMin) > 1)
         {
+            if(!cache &&((iMax - iMin) < 2048))
+            {
+                cache = std::make_shared<key_file_cache<KEY>>();
+                cache->offset = iMin;
+                getKeys(iMin,iMax, cache->k);
+            }
             level++;
-            uint64_t iPivot = (iMin + (iMax -iMin)/2);
-            if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&(result.key));
+            uint64_t iCPivot = (iCMin + iCMax)/2;
+            uint64_t iPivot = (iMin +iMax)/2;
+            if(cache) result.key = cache->k[iPivot - cache->offset];
+            else if((iCMax - iCMin) > 1) getAndCacheKey(iCPivot, iPivot,&(result.key));
             else getKey(iPivot, &(result.key));
-            if(result.key >= key) iMax = iPivot;
-            else iMin = iPivot;
-        }
-        return true;
-    };
-
-
-    bool findLastLesser(KEY key, uint64_t& iMin, std::unordered_map<uint64_t, KEY>& local_cache)
-    {
-        Record<ITEM,KEY> result;
-        iMin = 0;
-        uint64_t iMax = getSize() - 1;
-        short level = 0;
-        getAndCacheKey(iMin, &(result.key));
-        if( result.key == key)
-        {
-            return true;
-        }
-        if( result.key > key)
-        {
-            iMin = 0;
-            return true;
-        }
-
-        getAndCacheKey(iMax, &(result.key));
-        if( result.key < key)
-        {
-            iMin = iMax;
-            return true;
-        }
-
-        while((iMax - iMin) > 1)
-        {
-            level++;
-            uint64_t iPivot = (iMin + (iMax -iMin)/2);
-            if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&(result.key));
-
+            if(result.key >= key)
+            {
+                iMax = iPivot;
+                iCMax = iCPivot;
+            }
             else
             {
-                auto it = local_cache.find(iPivot);
-                if(it == local_cache.end())
-                {
-                    getKey(iPivot, &(result.key));
-                    local_cache[iPivot] = result.key;
-                } else {
-                   result.key = it->second;
-                }
+                iMin = iPivot;
+                iCMin = iCPivot;
             }
-            if(result.key >= key) iMax = iPivot;
-            else iMin = iPivot;
         }
         return true;
     };
 
+// -- get range
+
+bool get_range(KEY key_min, KEY key_max/*, std::vector<KEY>& keys*/, std::vector<ITEM>& items)
+{
+    //keys.clear();
+    items.clear();
+    uint64_t iMin;
+    if(!findLastLesser(key_min, iMin)) return false;
+    uint64_t iMax = iMin;
+    uint64_t iMaxMax = getSize() - 1;
+    uint64_t iMinRead = iMax;
+    uint64_t iMaxRead = iMax + 99;
+    KEY keysTab[100];
+    for(;;)
+    {
+        if (iMaxRead > iMaxMax) iMaxRead = iMaxMax;
+        bool rres = getKeys(iMax, iMax + 99, keysTab);
+        if(!rres) break;// shouldn't happen
+        uint64_t cur = 0;
+        for(iMax = iMinRead; iMax <= iMaxRead; iMax++)
+        {
+            if(keysTab[cur] <= key_max)
+            {
+                //keys.push_back(keysTab[cur]);
+                cur++;
+            } else {
+                break;
+            }
+        }
+        if(cur != 100) break;
+        iMinRead += 100;
+        iMaxRead += 100;
+    }
+    ITEM* itemsTab = new ITEM[1+iMax -iMin];
+    bool iRes = getItems(iMin, iMax,itemsTab);
+    if (!iRes)
+    {
+        delete[] itemsTab;
+        return false;
+    }
+    else for(uint64_t i = iMin; i <= iMax; i++) items.push_back(itemsTab[i -iMin]);
+    delete[] itemsTab;
+    return true;
+}
 
 // -- vectorized search
 #define IDX_NOT_FOUND 0xFFFFFFFFFFFFFFFFULL
 
-void findKeysIterate(const std::vector<std::pair<KEY, uint64_t*>>& sortedKeys, uint64_t kd, uint64_t kf, uint64_t iMin, uint64_t iMax, uint64_t level)
+
+void findKeysIterate(const std::vector<std::pair<KEY, uint64_t*>>& sortedKeys, uint64_t kd, uint64_t kf, uint64_t iMin, uint64_t iMax, uint64_t iCMin, uint64_t iCMax,std::shared_ptr<key_file_cache<KEY>> cache)
 {
     //assert(kd < sortedKeys.size());
     //assert(kf < sortedKeys.size());
-    level++;
+    if(!getSize()) return;
+
     if (iMax < iMin+2)
     {
         for(uint64_t ind = kd; ind <= kf; ind++)
@@ -1038,47 +1043,63 @@ void findKeysIterate(const std::vector<std::pair<KEY, uint64_t*>>& sortedKeys, u
         }
         return;
     }
-
     uint64_t iPivot = ( iMax + iMin ) / 2ULL;
+    uint64_t iCPivot = ( iCMax  + iCMin ) / 2;
     KEY key = sortedKeys[0].first;
-    if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&key);
-    else getKey(iPivot, &key);
+    if(!cache && (iMax -iMin) < 2048)
+    {
+        cache = std::make_shared<key_file_cache<KEY>>();
+        cache->offset = iMin;
+        getKeys(iMin,iMax, cache->k);
+    }
+    if(cache)
+    {
+        key = cache->k[iPivot - cache->offset];
+    }
+    else if((iCMax -iCMin) > 1)
+    {
+        getAndCacheKey(iCPivot, iPivot, &key);
+    }
+    else
+    {
+        getKey(iPivot, &key);
+    }
     if(key == sortedKeys[kd].first)
     {
         while(sortedKeys[kd].first == key)
         {
             *(sortedKeys[kd].second) = iPivot;
-            if(kd >= sortedKeys.size() -1) return;
+            if(kd >= sortedKeys.size() -1)
+            {
+                return;
+            }
             kd++;
         }
-        if(kd <= kf) findKeysIterate(sortedKeys, kd, kf, iMin, iMax, level);
+        if(kd <= kf) findKeysIterate(sortedKeys, kd, kf, iMin, iMax, iCMin, iCMax, cache);
     }
     else if(key == sortedKeys[kf].first)
     {
         while(sortedKeys[kf].first == key)
         {
             *(sortedKeys[kf].second) = iPivot;
-            if(kf == 0) return;
+            if(kf == 0)
+            {
+                return;
+            }
             kf--;
         }
-        if(kd <= kf) findKeysIterate(sortedKeys, kd, kf, iMin, iMax, level);
+        if(kd <= kf) findKeysIterate(sortedKeys, kd, kf, iMin, iMax, iCMin, iCMax, cache);
     }
     else if(key < sortedKeys[kd].first)
     {
-        findKeysIterate(sortedKeys, kd, kf, iPivot, iMax, level);
+        findKeysIterate(sortedKeys, kd, kf, iPivot, iMax, iCPivot, iCMax, cache);
     }
     else if(key > sortedKeys[kf].first)
     {
-        findKeysIterate(sortedKeys, kd, kf, iMin, iPivot, level);
+        findKeysIterate(sortedKeys, kd, kf, iMin, iPivot, iCMin, iCPivot, cache);
     }
     else
     {
-        /*
-        uint64_t kp = kd;
-        while(key > sortedKeys[kp].first) kp++;
-        uint64_t k0 = kp - 1;
-        uint64_t k1 = kp;
-        */
         uint64_t k0 = kd;
         uint64_t k1 = kf;
         while(k1 > k0+1)
@@ -1093,13 +1114,15 @@ void findKeysIterate(const std::vector<std::pair<KEY, uint64_t*>>& sortedKeys, u
             *(sortedKeys[k1].second) = iPivot;
             k1++;
         }
-        if(k0 >= kd) findKeysIterate(sortedKeys, kd, k0, iMin, iPivot, level);
-        if(k1 <= kf) findKeysIterate(sortedKeys, k1, kf, iPivot, iMax, level);
+        if(k0 >= kd) findKeysIterate(sortedKeys, kd, k0, iMin, iPivot, iCMin, iCPivot, cache);
+        if(k1 <= kf) findKeysIterate(sortedKeys, k1, kf, iPivot, iMax, iCPivot, iCMax, cache);
     }
 }
 
 std::vector<uint64_t> findKeys(const std::vector<KEY>& keys)
 {
+    uint64_t iCMin = 0;
+    uint64_t iCMax = cacheSize - 1;
     std::vector<std::pair<KEY,uint64_t*>> sortedKeys(keys.size());
     std::vector<uint64_t> results(keys.size());
     for(unsigned int i = 0; i < keys.size();i++)
@@ -1114,9 +1137,8 @@ std::vector<uint64_t> findKeys(const std::vector<KEY>& keys)
 //    std::sort(sortedKeys.begin(), sortedKeys.end(),);
     uint64_t iMin = 0;
     uint64_t iMax = getSize() - 1;
-    short level = 0;
     KEY myKey;
-    getAndCacheKey(iMin, &myKey);
+    getAndCacheKey(iCMin, iMin, &myKey);
     uint64_t kd = 0;
     uint64_t kf = keys.size() -1;
 
@@ -1132,7 +1154,7 @@ std::vector<uint64_t> findKeys(const std::vector<KEY>& keys)
         kd++;
     }
 
-    getAndCacheKey(iMax, &myKey);
+    getAndCacheKey(iCMax, iMax, &myKey);
 
     while(sortedKeys[kf].first > myKey)
     {
@@ -1146,11 +1168,11 @@ std::vector<uint64_t> findKeys(const std::vector<KEY>& keys)
         if(kf == 0) return results;
         kf--;
     }
-    if(kd <= kf) findKeysIterate(sortedKeys, kd, kf, iMin, iMax, level);
+    if(kd <= kf) findKeysIterate(sortedKeys, kd, kf, iMin, iMax, iCMin, iCMax, nullptr);
     return results;
 }
-// --
-};
+}
+;
 
 
 /**
@@ -1465,7 +1487,9 @@ template<class KEY> class KeyIndex
     unsigned long bufferCount;
     uint64_t keySize;
     uint64_t sortedSize;
-    std::unordered_map<uint64_t, KEY> cacheKey;
+    uint64_t cacheSize;
+    KEY* cacheKey;
+    uint64_t* cacheKeyB;
     std::mutex cache_mutex;
     KeyIndex(const KeyIndex&);
     KeyIndex& operator = (const KeyIndex&);
@@ -1497,6 +1521,16 @@ public:
         fileSize = keyFile.length()/keySize;
         sortedSize = 0;
         sorted = true;
+        cacheSize = 10;
+        if(!replace)
+        {
+            cacheSize = ((uint64_t)1 << FILEINDEX_CACHELEVEL) + 1 ;
+            if(cacheSize > fileSize) cacheSize = fileSize;
+            std::cout << cacheSize << ",,,,,\n";
+        }
+        cacheKey = new KEY[cacheSize];
+        cacheKeyB = new uint64_t[cacheSize/64 + 1];
+        memset(cacheKeyB , 0 ,8*(cacheSize/64) + 8);
     }
 
     /**
@@ -1506,6 +1540,8 @@ public:
     virtual ~KeyIndex()
     {
         if(keyBuffer != nullptr) delete[] keyBuffer;
+        delete[] cacheKey;
+        delete[] cacheKeyB;
     }
 
 /**
@@ -1813,24 +1849,24 @@ public:
  * @return false
  */
 
-    bool  getAndCacheKey(const uint64_t pos, KEY* result)
+    bool  getAndCacheKey(const uint64_t cPos, const uint64_t pos, KEY* result)
     {
 #ifndef DISCARD_MUTEX
         std::lock_guard<std::mutex> guard(cache_mutex);
 #endif
-        auto it = cacheKey.find(pos);
-        if(it == cacheKey.end())
+        if (!(cacheKeyB[cPos/64] &  (1ULL <<  (cPos % 64))))
         {
             if(getKey(pos, result))
             {
-                cacheKey[pos] = *result;
+                cacheKey[cPos] = *result;
+                cacheKeyB[cPos/64] |=  1ULL <<  (cPos % 64);
                 return true;
             }
             else return false;
         }
         else
         {
-            *result = it->second;
+            *result = cacheKey[cPos];
             return true;
         }
     }
@@ -1846,6 +1882,19 @@ public:
         keyFile.oread((char*)result, pos*keySize, keySize);
         return true;
     }
+
+
+    inline bool  getKeys(const uint64_t pos_min, const uint64_t pos_max, KEY* result )
+    {
+        if( pos_max >= getSize())
+        {
+            //std::cerr << "key not found ! " << (int) pos << (int) getSize() << "/n";
+            return false;
+        }
+        keyFile.oread((char*)result, pos_min*keySize, keySize*(1 + pos_max - pos_min));
+        return true;
+    }
+
 
 
 
@@ -1869,12 +1918,16 @@ public:
  */
     bool find(KEY key, uint64_t* pos)
     {
+        if(!getSize()) return false;
+        std::shared_ptr<key_file_cache<KEY>> cache;
         uint64_t iMin = 0;
+        uint64_t iCMin = 0;
         uint64_t iMax = getSize() - 1;
+        uint64_t iCMax = cacheSize - 1;
         short level = 0;
         KEY myKey;
 
-        getAndCacheKey(iMin, &myKey);
+        getAndCacheKey(iCMin, iMin, &myKey);
         if( myKey == key)
         {
             *pos = iMin;
@@ -1884,7 +1937,7 @@ public:
         {
             return false;
         }
-        getAndCacheKey(iMax, &myKey);
+        getAndCacheKey(iCMax, iMax, &myKey);
         if( myKey == key)
         {
             *pos = iMax;
@@ -1898,13 +1951,21 @@ public:
 
         while((iMax - iMin) > 1)
         {
-            level++;
+            if(!cache && ((iMax - iMin) < 2048))
+            {
+                cache = std::make_shared<key_file_cache<KEY>>();
+                cache->offset = iMin;
+                getKeys(iMin,iMax, cache->k);
+            }             level++;
             uint64_t iPivot = (iMin + iMax) >> 1;
-            if(level < FILEINDEX_CACHELEVEL) getAndCacheKey(iPivot,&myKey);
+            uint64_t iCPivot = (iCMin + iCMax) >> 1;
+            if(cache) myKey = cache->k[iPivot - cache->offset];
+            else if((iCMax - iCMin) > 1) getAndCacheKey(iCPivot, iPivot,&myKey);
             else getKey(iPivot, &myKey);
             if(myKey > key)
             {
                 iMax = iPivot;
+                iCMax = iCPivot;
             }
             else if(myKey == key)
             {
@@ -1914,6 +1975,7 @@ public:
             else
             {
                 iMin = iPivot;
+                iCMin = iCPivot;
             }
         }
         return false;

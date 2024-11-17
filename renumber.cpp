@@ -1,3 +1,4 @@
+#define IGNORE_STRINGNODES
 #include "helpers/Sequence.hpp"
 #include "common/GeoTypes.hpp"
 #include "Coordinates.hpp"
