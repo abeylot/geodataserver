@@ -679,6 +679,11 @@
                 <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
             </condition>
         </restriction>
+        <restriction zLevels="14,15,16,17,18,19">
+            <condition tagKey="man_made" closed="yes">
+                <class value="bridge"  textZIndex="0" textStyle="#greyAreaName"     zIndex="1001" style="#bridge"/>
+            </condition>
+        </restriction>
     </index>
 
     <index type="relation" name="relationLBuildingIdx">
@@ -691,6 +696,11 @@
             </condition>
             <condition tagKey="type"    closed="yes">
                 <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#building"/>
+            </condition>
+        </restriction>
+        <restriction zLevels="14,15,16,17,18,19">
+            <condition tagKey="man_made" closed="yes">
+                <class value="bridge"  textZIndex="0" textStyle="#greyAreaName"     zIndex="1001" style="#bridge"/>
             </condition>
         </restriction>
     </index>
