@@ -448,7 +448,7 @@ public:
         uint64_t max_mem = 500000000ULL; // 500 mbytes
         if(res == 0)
         {
-            max_mem = (((unsigned long) info.freeram) * (( unsigned long) info.mem_unit)) / 2;
+            max_mem = (((unsigned long) info.totalram) * (( unsigned long) info.mem_unit)) / 2;
         }
 
         std::cerr << "ram :" << (((unsigned long) info.freeram) * (( unsigned long) info.mem_unit)) / (1048 * 1048) << "mb, sorting  " << fileSize << " elements \n";
