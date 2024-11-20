@@ -214,6 +214,8 @@ private:
     bool isWay = false;
     bool isNod = false;
 
+    uint64_t nodes_found = 0;
+
     FileRawData<GeoPoint>*  wayPoints;
     FileRawData<GeoMember>* relMembers;
     FileRawVarData<GeoString>*  baliseTags;
@@ -282,7 +284,11 @@ public:
 
     void log(uint64_t done)
     {
-        std::cerr << " done " << (done >> UINT64_C(20)) << "Mio.\t relations " << relationIndex->itemCount << "\tways " << wayIndex->itemCount << "\tnodes " << nodeIndex->itemCount<< "\n" << std::flush;
+        std::cerr << " done " << (done >> UINT64_C(20)) ;
+        std::cerr << "Mio.\t relations " << (int)(100 * relationIndex->itemCount / relationIdIndex->getSize());
+        std::cerr  << "%\tways " << (int)(100 * wayIndex->itemCount / wayIdIndex->getSize());
+        std::cerr  << "%\tnodes " << (int)(100 * nodes_found / nodeIdIndex->getSize());
+        std::cerr <<  "%\n" << std::flush;
     }
 
     void stringNode([[maybe_unused]] const std::vector<SeqBalise*>& tagStack, [[maybe_unused]] std::string& s)
@@ -304,6 +310,7 @@ public:
             curBalise = BaliseType::point;
             baliseTags->startBatch();
             isNod = true;
+            nodes_found ++;
         }
         else if (b->baliseName == BALISENAME_ND)
         {
