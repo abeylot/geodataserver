@@ -693,8 +693,8 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     Rectangle r1 = rect*1.25;
     lbl.id = myWay.id + UINT64_C(0xA000000000000000);
     lbl.fontsize = 12;
-    std::string_view name = "";
-    std::string_view inherited_name = "";
+    std::string name = "";
+    std::string inherited_name = "";
     if(!lbl.text.empty())
     {
         inherited_name = lbl.text;//when called by relation render
@@ -735,18 +735,18 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     if(cl.textField != "") textField = cl.textField;
     if(textField != "name" && name.empty())
     {
-        name = myWay.tags[textField];
+        name = std::string(myWay.tags[textField]);
     }
     if((name == "") || (textField == "name") )
     {
         for ( unsigned int i = 0 ; i < _nb_locales; i++)
         {
             std::string tmp = std::string("name:") + std::string(_locales[i],2);
-            name = myWay.tags[tmp];
+            name = std::string(myWay.tags[tmp]);
             if (name != "") break;
 
         }
-        if(name == "") name = myWay.tags["name"];
+        if(name == "") name = std::string(myWay.tags["name"]);
     }
     if(inherited_name != "") {
         if(inherited_name == "void") name ="";
@@ -979,23 +979,23 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 
         if(cl.opened)
         {
-            std::string_view name = "";
+            std::string name = "";
             if(cl.textStyle != "")
             {
                 if(textField != "name")
                 {
-                    name = myRelation.tags[textField];
+                    name = std::string(myRelation.tags[textField]);
                 }
                 if(name == "" || textField == "name")
                 {
                     for ( unsigned int i = 0 ; i < _nb_locales; i++)
                     {
                         std::string tmp = std::string("name:") + std::string(_locales[i],2);
-                        name = myRelation.tags[tmp];
+                        name = std::string(myRelation.tags[tmp]);
                         if (name != "") break;
 
                     }
-                    if(name == "") name = myRelation.tags["name"];
+                    if(name == "") name = std::string(myRelation.tags["name"]);
                 }
             }
 
@@ -1096,18 +1096,18 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                 std::string name = "";
                 if(textField != "name")
                 {
-                    name = myRelation.tags[textField];
+                    name = std::string(myRelation.tags[textField]);
                 }
                 if(name == "" || textField == "name")
                 {
                     for ( unsigned int i = 0 ; i < _nb_locales; i++)
                     {
                         std::string tmp = std::string("name:") + std::string(_locales[i],2);
-                        name = myRelation.tags[tmp];
+                        name = std::string(myRelation.tags[tmp]);
                         if (name != "") break;
 
                     }
-                    if(name == "") name = myRelation.tags["name"];
+                    if(name == "") name = std::string(myRelation.tags["name"]);
                 }
                 if(name != "")
                 {
@@ -1172,22 +1172,22 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
     {
         std::string fieldName = "name";
         if (cl.textField != "") fieldName = cl.textField;
-        name = myNode.tags[fieldName];
+        name = std::string(myNode.tags[fieldName]);
 
         if(fieldName != "name")
         {
-            name = myNode.tags[fieldName];
+            name = std::string(myNode.tags[fieldName]);
         }
         if((name == "") || (fieldName == "name") )
         {
             for ( unsigned int i = 0 ; i < _nb_locales; i++)
             {
                 std::string tmp = std::string("name:") + std::string(_locales[i],2);
-                name = myNode.tags[tmp];
+                name = std::string(myNode.tags[tmp]);
                 if (name != "") break;
 
             }
-            if(name == "") name = myNode.tags["name"];
+            if(name == "") name = std::string(myNode.tags["name"]);
         }
 
         lbl.text = name;
