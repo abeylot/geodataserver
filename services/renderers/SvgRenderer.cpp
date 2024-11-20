@@ -693,8 +693,8 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     Rectangle r1 = rect*1.25;
     lbl.id = myWay.id + UINT64_C(0xA000000000000000);
     lbl.fontsize = 12;
-    std::string name = "";
-    std::string inherited_name = "";
+    std::string_view name = "";
+    std::string_view inherited_name = "";
     if(!lbl.text.empty())
     {
         inherited_name = lbl.text;//when called by relation render
@@ -979,7 +979,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 
         if(cl.opened)
         {
-            std::string name = "";
+            std::string_view name = "";
             if(cl.textStyle != "")
             {
                 if(textField != "name")

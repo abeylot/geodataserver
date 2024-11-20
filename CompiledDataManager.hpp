@@ -16,7 +16,7 @@ struct Tags
 {
     char* data;
     uint64_t data_size;
-    std::string operator [](const char* my_tag) const
+    std::string_view operator [](const char* my_tag) const
     {
         if(data == nullptr) return "";
         uint64_t used = 0;
@@ -42,7 +42,7 @@ struct Tags
             {
               if(strncmp(my_tag, tag, tag_size) == 0)
               {
-                  return std::string(value, value_size);
+                  return std::string_view(value, value_size);
               }
             }
         }
@@ -50,6 +50,15 @@ struct Tags
     }
 };
 
+inline int atoiSW(std::string_view s)
+{
+    int result = 0;
+    for(char c : s)
+    {
+        result = result * 10 + (c - '0');
+    }
+    return result;
+}
 
 struct Point
 {

@@ -29,7 +29,7 @@ std::shared_ptr<Way> CompiledDataManager::loadWay(uint64_t id, bool fast)
         w->layer=6;
         if(w->tags["layer"] != "")
         {
-            w->layer += atoi( w->tags["layer"].c_str());
+            w->layer += atoiSW( w->tags["layer"]);
         }
         return w;
     }
@@ -50,7 +50,7 @@ std::shared_ptr<Point> CompiledDataManager::loadPoint(uint64_t id)
         fillTags(p->tags,record.tstart,record.tsize);
         if(p->tags["layer"] != "")
         {
-            p->layer += atoi( p->tags["layer"].c_str());
+            p->layer += atoiSW( p->tags["layer"]);
         }
         return p;
     }
@@ -80,7 +80,7 @@ std::shared_ptr<Relation> CompiledDataManager::loadRelation(uint64_t id, short r
         r->layer = 6;
         if(r->tags["layer"] != "")
         {
-            r->layer += atoi( r->tags["layer"].c_str());
+            r->layer += atoiSW( r->tags["layer"]);
         }
         if(r->tags["type"] == "land_area")
         {

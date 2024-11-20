@@ -188,7 +188,7 @@ bool compare_weight (const weightedArea& first, const weightedArea& second)
 template <class ITEM> int64_t calcMatchScore(const ITEM& item, const std::vector<uint64_t>& searched_words, CompiledDataManager& mger)
 {
     std::vector<uint64_t> nameWordVector;
-    std::string my_string = item->tags["name"];
+    std::string my_string = std::string(item->tags["name"]);
     std::replace( my_string.begin(), my_string.end(), '-', ' ');
     std::stringstream my_stream(my_string);
     std::string word;
@@ -312,13 +312,13 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 
                     if(area.r.isValid()) area.score = calcMatchScore(item, queryWordsVector, mger);
                     else area.score = WORST_SCORE;
-                    std::string sPlace = item->tags["admin_level"];
+                    std::string_view sPlace = item->tags["admin_level"];
                     if(!sPlace.empty())
                     {
-                        int level = 10 - atoi(sPlace.c_str());
+                        int level = 10 - atoiSW(sPlace);
                         if(level) area.score *= (1.0 + 0.1 / level);
                     }
-                    area.found = "Node_"+std::to_string(indexEntry[i].id)+":"+item->tags["name"];
+                    area.found = "Node_"+std::to_string(indexEntry[i].id)+":"+ std::string(item->tags["name"]);
                     areas.push_back(area);
                     area.nodes.push_back(indexEntry[i].id);
                 }
@@ -338,13 +338,13 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     if(area.r.isValid()) area.score = calcMatchScore(item, queryWordsVector, mger);
                     else area.score = WORST_SCORE;
 
-                    std::string sPlace = item->tags["admin_level"];
+                    std::string_view sPlace = item->tags["admin_level"];
                     if(!sPlace.empty())
                     {
-                        int level = 10 - atoi(sPlace.c_str());
+                        int level = 10 - atoiSW(sPlace);
                         if(level) area.score *= (1.0 + 0.1 / level);
                     }
-                    area.found = "Relation_"+std::to_string(indexEntry[i].id)+":" + item->tags["name"];
+                    area.found = "Relation_"+std::to_string(indexEntry[i].id)+":" + std::string(item->tags["name"]);
                     area.relations.push_back(indexEntry[i].id);
 
                     areas.push_back(area);
@@ -364,13 +364,13 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     area.r =  indexEntry[i].r;
                     if(area.r.isValid()) area.score = calcMatchScore(item, queryWordsVector, mger);
                     else area.score = WORST_SCORE;
-                    std::string sPlace = item->tags["admin_level"];
+                    std::string_view sPlace = item->tags["admin_level"];
                     if(!sPlace.empty())
                     {
-                        int level = 10 - atoi(sPlace.c_str());
+                        int level = 10 - atoiSW(sPlace);
                         if(level) area.score *= (1.0 + 0.1 / level);
                     }
-                    area.found = "Way_"+std::to_string(indexEntry[i].id)+":" + item->tags["name"];
+                    area.found = "Way_"+std::to_string(indexEntry[i].id)+":" + std::string(item->tags["name"]);
                     areas.push_back(area);
                     area.ways.push_back(indexEntry[i].id);
                 }
@@ -403,13 +403,13 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
         item = mger.load<Relation>(relid, true);
         GeoPoint pin = {0,0};
 
-        std::string sType = item->tags["type"];
+        std::string_view sType = item->tags["type"];
         if(street_number && sType == "street")
         {
             for(auto p : item->points)
             {
-                std::string sNr = p->tags["addr:housenumber"];
-                if(atoi(sNr.c_str()) == street_number)
+                std::string_view sNr = p->tags["addr:housenumber"];
+                if(atoiSW(sNr) == street_number)
                 {
                     a.r.x0 = p->x;
                     a.r.x1 = p->x;
@@ -419,16 +419,16 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
             }
             for(auto w : item->ways)
             {
-                std::string sNr = w->tags["addr:housenumber"];
-                if(atoi(sNr.c_str()) == street_number)
+                std::string_view sNr = w->tags["addr:housenumber"];
+                if(atoiSW(sNr) == street_number)
                 {
                     a.r = w->rect;
                 }
             }
             for(auto r : item->relations)
             {
-                std::string sNr = r->tags["addr:housenumber"];
-                if(atoi(sNr.c_str()) == street_number)
+                std::string_view sNr = r->tags["addr:housenumber"];
+                if(atoiSW(sNr) == street_number)
                 {
                     a.r = r->rect;
                 }
@@ -438,8 +438,8 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
         {
             for(auto p : item->points)
             {
-                std::string sNr = p->tags["addr:housenumber"];
-                if(atoi(sNr.c_str()) == street_number)
+                std::string_view sNr = p->tags["addr:housenumber"];
+                if(atoiSW(sNr) == street_number)
                 {
                     a.r.x0 = p->x;
                     a.r.x1 = p->x;
@@ -449,8 +449,8 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
             }
             for(auto w : item->ways)
             {
-                std::string sNr = w->tags["addr:housenumber"];
-                if(atoi(sNr.c_str()) == street_number)
+                std::string_view sNr = w->tags["addr:housenumber"];
+                if(atoiSW(sNr) == street_number)
                 {
                     a.r = w->rect;
 
@@ -458,8 +458,8 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
             }
             for(auto r : item->relations)
             {
-                std::string sNr = r->tags["addr:housenumber"];
-                if(atoi(sNr.c_str()) == street_number)
+                std::string_view sNr = r->tags["addr:housenumber"];
+                if(atoiSW(sNr) == street_number)
                 {
                     a.r = r->rect;
                 }
