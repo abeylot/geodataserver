@@ -16,11 +16,11 @@ struct Tags
 {
     char* data;
     uint64_t data_size;
-    std::string_view operator [](const char* my_tag) const
+    std::string_view operator [](std::string_view my_tag) const
     {
         if(data == nullptr) return "";
         uint64_t used = 0;
-        uint64_t len = strlen(my_tag);
+        uint64_t len = my_tag.size();
 
         while( used < data_size)
         {
@@ -40,7 +40,7 @@ struct Tags
             used += value_size;
             if(tag_size == len)
             {
-              if(strncmp(my_tag, tag, tag_size) == 0)
+              if(strncmp(my_tag.data(), tag, tag_size) == 0)
               {
                   return std::string_view(value, value_size);
               }
