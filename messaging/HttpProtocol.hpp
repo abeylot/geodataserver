@@ -1,7 +1,7 @@
 #ifndef HTTPPROTOCOL_HPP
 #define HTTPPROTOCOL_HPP
 
-
+#include <memory>
 #include "../helpers/TcpConnection.hpp"
 
 /**
@@ -15,8 +15,8 @@ private:
 public:
     HttpProtocol ();
     virtual ~HttpProtocol ();
-    virtual int64_t putMessage(std::string& msg, TcpConnection* s);
-    virtual int64_t getMessage (std::string& msg, TcpConnection* s);
+    virtual int64_t putMessage(std::string& msg, std::shared_ptr<TcpConnection> s);
+    virtual int64_t getMessage (std::string& msg, std::shared_ptr<TcpConnection> s);
 
 };
 #endif // HTTPPROTOCOL_HPP

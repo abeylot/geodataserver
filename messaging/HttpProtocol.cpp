@@ -12,12 +12,12 @@ HttpProtocol::~HttpProtocol()
 {
 }
 
-int64_t HttpProtocol::putMessage(std::string& message, TcpConnection* s)
+int64_t HttpProtocol::putMessage(std::string& message, std::shared_ptr<TcpConnection> s)
 {
     return s->write(message.c_str(), message.length());
 }
 
-int64_t HttpProtocol::getMessage(std::string& message,TcpConnection* s)
+int64_t HttpProtocol::getMessage(std::string& message,std::shared_ptr<TcpConnection> s)
 {
     uint64_t rcv = 0;
 
