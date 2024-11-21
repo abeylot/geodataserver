@@ -147,10 +147,10 @@ template<typename MSG> struct Exec
     //std::map<std::string, std::string>* patterns;
     Exec(NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* inqueue,NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* outqueue,
          const std::string& file,
-         uint microSleep,std::vector<std::shared_ptr<IndexDesc>>* idxL,
+         std::vector<std::shared_ptr<IndexDesc>>* idxL,
          std::map<std::string, std::string>* symbs,
          std::map<std::string, std::string>* convs,
-         CompiledDataManager& mger ) : inqueue(inqueue), outqueue(outqueue), file(file), microSleep(microSleep), mger(mger)
+         CompiledDataManager& mger ) : inqueue(inqueue), outqueue(outqueue), file(file), mger(mger)
     {
         idxList = idxL;
         symbols = symbs;
@@ -240,7 +240,6 @@ private:
     NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* inqueue;
     NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* outqueue;
     std::string file;
-    uint microSleep;
     CompiledDataManager& mger;
 };
 
@@ -292,7 +291,6 @@ int main(int argc, char *argv[])
     NonGrowableQueue<std::shared_ptr<TcpConnection>, MAX_PENDING_REQUESTS> mySessionQueue;
 
     Listener listener(&mySessionQueue);
-    uint microSleep = 30000;
     Reader<Msg> reader1(&myInQueue, &mySessionQueue);
     Reader<Msg> reader2(&myInQueue, &mySessionQueue);
     std::cout << "launching " << params.getNumParam("ExecThreads", 5) << " Exec threads \n";
@@ -306,11 +304,9 @@ int main(int argc, char *argv[])
         Exec<Msg> exec(&myInQueue,
                        &myOutQueue,
                        std::string(argv[1]),
-                       microSleep,
                        &(indexes),
                        &(symbols),
                        &(charconvs), mger);
-        microSleep *= 2;
         ExtThreads::launch_thread(exec);
     }
     std::cout << "launching " << params.getNumParam("WriterThreads", 10) << " Writer threads \n";
