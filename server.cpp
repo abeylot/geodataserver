@@ -31,7 +31,7 @@ void sig_handler([[maybe_unused]]int sig)
 
 struct Listener
 {
-  explicit  Listener(NonGrowableQueue<TcpConnection*, MAX_PENDING_REQUESTS>* queue) : queue(queue)
+  explicit  Listener(NonGrowableQueue<std::shared_ptr<TcpConnection>, MAX_PENDING_REQUESTS>* queue) : queue(queue)
     {
     }
 
@@ -42,13 +42,12 @@ struct Listener
         listener.init(params.getNumParam("ServerPort", 8081),100);
         while(!ExtThreads::stop_requested())
         {
-            TcpConnection *cnx = listener.waitForClient();
+            auto cnx = listener.waitForClient();
             if(cnx)
             {
                 if(!queue->push(cnx))
                 {
                     std::cerr << "too much pending requests, client rejected !\n";
-                    delete cnx;
                 }
             }
         }
@@ -56,14 +55,14 @@ struct Listener
         return 0;
     }
 private:
-    NonGrowableQueue<TcpConnection*, MAX_PENDING_REQUESTS>* queue;
+    NonGrowableQueue<std::shared_ptr<TcpConnection>, MAX_PENDING_REQUESTS>* queue;
     TcpListener listener;
 };
 
 
 template<typename MSG> struct Reader
 {
-    Reader(NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* queue,NonGrowableQueue<TcpConnection*, MAX_PENDING_REQUESTS>* queueS) : queueS(queueS),queue(queue)
+    Reader(NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* queue,NonGrowableQueue<std::shared_ptr<TcpConnection>, MAX_PENDING_REQUESTS>* queueS) : queueS(queueS),queue(queue)
     {
     }
     int operator()()
@@ -71,43 +70,38 @@ template<typename MSG> struct Reader
         HttpEncoder encoder;
         while(!ExtThreads::stop_requested())
         {
-            while(!queueS->empty())
+            std::shared_ptr<TcpConnection> s = nullptr;
+            bool res = queueS->pop_timed(s);
+            if(res)
             {
-                TcpConnection* s;
-                bool res = queueS->pop(s);
-                if(res)
+                try
                 {
-                    try
+                    HttpProtocol p;
+                    std::string m;
+                    uint32_t len = p.getMessage(m,s);
+                    if(len)
                     {
-                        HttpProtocol p;
-                        std::string m;
-                        uint32_t len = p.getMessage(m,s);
-                        if(len)
+                        std::shared_ptr<Msg> msg = encoder.encode(&m);
+                        msg->setConnection(s);
+                        if(!queue->push(msg))
                         {
-                            std::shared_ptr<Msg> msg = encoder.encode(&m);
-                            msg->setConnection(s);
-                            if(!queue->push(msg))
-                            {
-                                 std::cerr << "too much pending requests, message rejected !\n";
-                                 //delete msg;
-                            }
+                             std::cerr << "too much pending requests, message rejected !\n";
+                             //delete msg;
                         }
                     }
-                    catch (const std::exception& e)
-                    {
-                        std::cerr << e.what() << "\n";
-                        delete s;
-                    }
+                }
+                catch (const std::exception& e)
+                {
+                    std::cerr << e.what() << "\n";
                 }
             }
-            std::this_thread::sleep_for(10ms);
         }
         std::cout << "Reader end \n";
         return 0;
     }
 
 private:
-    NonGrowableQueue<TcpConnection*, MAX_PENDING_REQUESTS>* queueS;
+    NonGrowableQueue<std::shared_ptr<TcpConnection>, MAX_PENDING_REQUESTS>* queueS;
     NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* queue;
 };
 
@@ -123,23 +117,18 @@ template<typename MSG> struct Writer
         std::shared_ptr<MSG> m;
         while(!ExtThreads::stop_requested())
         {
-            while(queue->pop(m)&&!ExtThreads::stop_requested())
+            if(queue->pop_timed(m)) try
             {
-                try
-                {
-                    std::string* s = encoder.decode(m);
-                    p.putMessage(*s,m->getConnection());
-                    //usleep(10000);
-                    delete s;
-                    delete m->getConnection();
-                    //delete m;
-                }
-                catch (const std::exception& e)
-                {
-                    std::cerr << e.what() << "\n";
-                }
+                std::string* s = encoder.decode(m);
+                p.putMessage(*s,m->getConnection());
+                //usleep(10000);
+                delete s;
+                //delete m;
             }
-            std::this_thread::sleep_for(10ms);
+            catch (const std::exception& e)
+            {
+                std::cerr << e.what() << "\n";
+            }
         }
         std::cout << "Writer end\n";
         return 0;
@@ -158,10 +147,10 @@ template<typename MSG> struct Exec
     //std::map<std::string, std::string>* patterns;
     Exec(NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* inqueue,NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* outqueue,
          const std::string& file,
-         uint microSleep,std::vector<std::shared_ptr<IndexDesc>>* idxL,
+         std::vector<std::shared_ptr<IndexDesc>>* idxL,
          std::map<std::string, std::string>* symbs,
          std::map<std::string, std::string>* convs,
-         CompiledDataManager& mger ) : inqueue(inqueue), outqueue(outqueue), file(file), microSleep(microSleep), mger(mger)
+         CompiledDataManager& mger ) : inqueue(inqueue), outqueue(outqueue), file(file), mger(mger)
     {
         idxList = idxL;
         symbols = symbs;
@@ -173,7 +162,7 @@ template<typename MSG> struct Exec
         std::shared_ptr<MSG> m;
         while(!ExtThreads::stop_requested())
         {
-            while(inqueue->pop(m)&&!ExtThreads::stop_requested())
+            if(inqueue->pop_timed(m))
             {
                 try
                 {
@@ -242,7 +231,6 @@ template<typename MSG> struct Exec
                     std::cerr << e.what() << "\n";
                 }
             }
-            std::this_thread::sleep_for(microSleep * 1000ns);
         }
         std::cout << "Exec end\n";
         return 0;
@@ -252,7 +240,6 @@ private:
     NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* inqueue;
     NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* outqueue;
     std::string file;
-    uint microSleep;
     CompiledDataManager& mger;
 };
 
@@ -301,10 +288,9 @@ int main(int argc, char *argv[])
 
     NonGrowableQueue<std::shared_ptr<Msg>, MAX_PENDING_REQUESTS> myInQueue;
     NonGrowableQueue<std::shared_ptr<Msg>, MAX_PENDING_REQUESTS> myOutQueue;
-    NonGrowableQueue<TcpConnection*, MAX_PENDING_REQUESTS> mySessionQueue;
+    NonGrowableQueue<std::shared_ptr<TcpConnection>, MAX_PENDING_REQUESTS> mySessionQueue;
 
     Listener listener(&mySessionQueue);
-    uint microSleep = 30000;
     Reader<Msg> reader1(&myInQueue, &mySessionQueue);
     Reader<Msg> reader2(&myInQueue, &mySessionQueue);
     std::cout << "launching " << params.getNumParam("ExecThreads", 5) << " Exec threads \n";
@@ -318,11 +304,9 @@ int main(int argc, char *argv[])
         Exec<Msg> exec(&myInQueue,
                        &myOutQueue,
                        std::string(argv[1]),
-                       microSleep,
                        &(indexes),
                        &(symbols),
                        &(charconvs), mger);
-        microSleep *= 2;
         ExtThreads::launch_thread(exec);
     }
     std::cout << "launching " << params.getNumParam("WriterThreads", 10) << " Writer threads \n";

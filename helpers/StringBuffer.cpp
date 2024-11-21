@@ -3631,6 +3631,11 @@ StringBuffer& operator<<(StringBuffer& sb, const char* s)
     return sb.concat(s, strlen(s));
 }
 
+StringBuffer& operator<<(StringBuffer& sb, std::string_view s)
+{
+    return sb.concat(s.data(), s.size());
+}
+
 StringBuffer& operator<<(StringBuffer& sb, std::string s)
 {
     return sb.concat(s);

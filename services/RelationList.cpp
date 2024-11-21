@@ -41,9 +41,9 @@ std::shared_ptr<Msg> RelationList::processRequest([[maybe_unused]] std::shared_p
                   resp += c->keyValues["k"] +"="+ c->keyValues["v"]; resp +=" ";
               }
             }*/
-            std::string name = r->tags["name"];
-            std::string type = r->tags["type"];
-            resp += "name:" + name + " type:" + type;
+            std::string_view name = r->tags["name"];
+            std::string_view type = r->tags["type"];
+            resp += "name:" + std::string(name) + " type:" + std::string(type);
             resp += "<br/>";
         }
         //i++;

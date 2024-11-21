@@ -87,7 +87,7 @@ int TcpListener::init(int portNumber, int timeOut)
     return 0;
 }
 
-TcpConnection* TcpListener::waitForClient(void)
+std::shared_ptr<TcpConnection> TcpListener::waitForClient(void)
 {
     int iClientSock;
 
@@ -101,7 +101,7 @@ TcpConnection* TcpListener::waitForClient(void)
     }
     //printf("accept success %d \n",iClientSock);
 
-    TcpConnection* cnx =  new TcpConnection(iClientSock);
+    auto cnx =  std::make_shared<TcpConnection>(iClientSock);
     cnx->setTimeoutValue(_TimeOut);
     return cnx;
 }

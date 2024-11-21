@@ -188,7 +188,7 @@ bool compare_weight (const weightedArea& first, const weightedArea& second)
 template <class ITEM> int64_t calcMatchScore(const ITEM& item, const std::vector<uint64_t>& searched_words, CompiledDataManager& mger)
 {
     std::vector<uint64_t> nameWordVector;
-    std::string my_string = item->tags["name"];
+    std::string my_string = std::string(item->tags["name"]);
     std::replace( my_string.begin(), my_string.end(), '-', ' ');
     std::stringstream my_stream(my_string);
     std::string word;
@@ -293,14 +293,14 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
         {
             if (searchIds.node_start_id != UNDEFINED_ID)
             {
-                for(uint64_t i = searchIds.node_start_id; i <= searchIds.node_stop_id; i++)
+                IndexEntry* indexEntry = new IndexEntry[1 + searchIds.node_stop_id - searchIds.node_start_id];
+                if( mger.textIndexNode->getItems(searchIds.node_start_id, searchIds.node_stop_id, indexEntry))
+                for(uint64_t i = 0; i <= searchIds.node_stop_id - searchIds.node_start_id; i++)
                 {
                     weightedArea area;
                     area.pin.x = area.pin.y = 0;
-                    fidx::Record<IndexEntry, uint64_t> record;
-                    mger.textIndexNode->get(i, &record);
                     std::shared_ptr<Point> item;
-                    item = mger.load<Point>(record.value.id, true);
+                    item = mger.load<Point>(indexEntry[i].id, true);
                     area.r.x0 = area.r.x1 = item->x;
                     area.r.y0 = area.r.y1 = item->y;
 
@@ -312,66 +312,69 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
 
                     if(area.r.isValid()) area.score = calcMatchScore(item, queryWordsVector, mger);
                     else area.score = WORST_SCORE;
-                    std::string sPlace = item->tags["admin_level"];
+                    std::string_view sPlace = item->tags["admin_level"];
                     if(!sPlace.empty())
                     {
-                        int level = 10 - atoi(sPlace.c_str());
+                        int level = 10 - atoiSW(sPlace);
                         if(level) area.score *= (1.0 + 0.1 / level);
                     }
-                    area.found = "Node_"+std::to_string(record.value.id)+":"+item->tags["name"];
+                    area.found = "Node_"+std::to_string(indexEntry[i].id)+":"+ std::string(item->tags["name"]);
                     areas.push_back(area);
-                    area.nodes.push_back(record.value.id);
+                    area.nodes.push_back(indexEntry[i].id);
                 }
+                delete[] indexEntry;
             }
             if (searchIds.relation_start_id != UNDEFINED_ID)
             {
-                for(uint64_t i = searchIds.relation_start_id; i <= searchIds.relation_stop_id; i++)
+                IndexEntry* indexEntry = new IndexEntry[1 + searchIds.relation_stop_id - searchIds.relation_start_id];
+                if( mger.textIndexRelation->getItems(searchIds.relation_start_id, searchIds.relation_stop_id, indexEntry))
+                for(uint64_t i = 0; i <= searchIds.relation_stop_id - searchIds.relation_start_id; i++)
                 {
                     weightedArea area;
                     area.pin.x = area.pin.y = 0;
-                    fidx::Record<IndexEntry, uint64_t> record;
-                    mger.textIndexRelation->get(i, &record);
                     std::shared_ptr<Relation> item;
-                    item = mger.loadRelationFast(record.value.id);
-                    area.r =  record.value.r;
+                    item = mger.loadRelationFast(indexEntry[i].id);
+                    area.r =  indexEntry[i].r;
                     if(area.r.isValid()) area.score = calcMatchScore(item, queryWordsVector, mger);
                     else area.score = WORST_SCORE;
 
-                    std::string sPlace = item->tags["admin_level"];
+                    std::string_view sPlace = item->tags["admin_level"];
                     if(!sPlace.empty())
                     {
-                        int level = 10 - atoi(sPlace.c_str());
+                        int level = 10 - atoiSW(sPlace);
                         if(level) area.score *= (1.0 + 0.1 / level);
                     }
-                    area.found = "Relation_"+std::to_string(record.value.id)+":" + item->tags["name"];
-                    area.relations.push_back(record.value.id);
+                    area.found = "Relation_"+std::to_string(indexEntry[i].id)+":" + std::string(item->tags["name"]);
+                    area.relations.push_back(indexEntry[i].id);
 
                     areas.push_back(area);
                 }
+                delete[] indexEntry;
             }
             if (searchIds.way_start_id != UNDEFINED_ID)
             {
-                for(uint64_t i = searchIds.way_start_id; i <= searchIds.way_stop_id; i++)
+                IndexEntry* indexEntry = new IndexEntry[1 + searchIds.way_stop_id - searchIds.way_start_id];
+                if( mger.textIndexWay->getItems(searchIds.way_start_id, searchIds.way_stop_id, indexEntry))
+                for(uint64_t i = 0; i <= searchIds.way_stop_id - searchIds.way_start_id; i++)
                 {
                     weightedArea area;
                     area.pin.x = area.pin.y = 0;
-                    fidx::Record<IndexEntry, uint64_t> record;
-                    mger.textIndexWay->get(i, &record);
                     std::shared_ptr<Way> item;
-                    item = mger.load<Way>(record.value.id, true);
-                    area.r =  record.value.r;
+                    item = mger.load<Way>(indexEntry[i].id, true);
+                    area.r =  indexEntry[i].r;
                     if(area.r.isValid()) area.score = calcMatchScore(item, queryWordsVector, mger);
                     else area.score = WORST_SCORE;
-                    std::string sPlace = item->tags["admin_level"];
+                    std::string_view sPlace = item->tags["admin_level"];
                     if(!sPlace.empty())
                     {
-                        int level = 10 - atoi(sPlace.c_str());
+                        int level = 10 - atoiSW(sPlace);
                         if(level) area.score *= (1.0 + 0.1 / level);
                     }
-                    area.found = "Way_"+std::to_string(record.value.id)+":" + item->tags["name"];
+                    area.found = "Way_"+std::to_string(indexEntry[i].id)+":" + std::string(item->tags["name"]);
                     areas.push_back(area);
-                    area.ways.push_back(record.value.id);
+                    area.ways.push_back(indexEntry[i].id);
                 }
+                delete[] indexEntry;
             }
         }
         if(best_areas.empty())
@@ -400,13 +403,13 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
         item = mger.load<Relation>(relid, true);
         GeoPoint pin = {0,0};
 
-        std::string sType = item->tags["type"];
+        std::string_view sType = item->tags["type"];
         if(street_number && sType == "street")
         {
             for(auto p : item->points)
             {
-                std::string sNr = p->tags["addr:housenumber"];
-                if(atoi(sNr.c_str()) == street_number)
+                std::string_view sNr = p->tags["addr:housenumber"];
+                if(atoiSW(sNr) == street_number)
                 {
                     a.r.x0 = p->x;
                     a.r.x1 = p->x;
@@ -416,16 +419,16 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
             }
             for(auto w : item->ways)
             {
-                std::string sNr = w->tags["addr:housenumber"];
-                if(atoi(sNr.c_str()) == street_number)
+                std::string_view sNr = w->tags["addr:housenumber"];
+                if(atoiSW(sNr) == street_number)
                 {
                     a.r = w->rect;
                 }
             }
             for(auto r : item->relations)
             {
-                std::string sNr = r->tags["addr:housenumber"];
-                if(atoi(sNr.c_str()) == street_number)
+                std::string_view sNr = r->tags["addr:housenumber"];
+                if(atoiSW(sNr) == street_number)
                 {
                     a.r = r->rect;
                 }
@@ -435,8 +438,8 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
         {
             for(auto p : item->points)
             {
-                std::string sNr = p->tags["addr:housenumber"];
-                if(atoi(sNr.c_str()) == street_number)
+                std::string_view sNr = p->tags["addr:housenumber"];
+                if(atoiSW(sNr) == street_number)
                 {
                     a.r.x0 = p->x;
                     a.r.x1 = p->x;
@@ -446,8 +449,8 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
             }
             for(auto w : item->ways)
             {
-                std::string sNr = w->tags["addr:housenumber"];
-                if(atoi(sNr.c_str()) == street_number)
+                std::string_view sNr = w->tags["addr:housenumber"];
+                if(atoiSW(sNr) == street_number)
                 {
                     a.r = w->rect;
 
@@ -455,8 +458,8 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
             }
             for(auto r : item->relations)
             {
-                std::string sNr = r->tags["addr:housenumber"];
-                if(atoi(sNr.c_str()) == street_number)
+                std::string_view sNr = r->tags["addr:housenumber"];
+                if(atoiSW(sNr) == street_number)
                 {
                     a.r = r->rect;
                 }

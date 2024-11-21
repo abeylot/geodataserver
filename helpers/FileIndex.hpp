@@ -448,7 +448,7 @@ public:
         uint64_t max_mem = 500000000ULL; // 500 mbytes
         if(res == 0)
         {
-            max_mem = (((unsigned long) info.freeram) * (( unsigned long) info.mem_unit)) / 2;
+            max_mem = (((unsigned long) info.totalram) * (( unsigned long) info.mem_unit)) / 2;
         }
 
         std::cerr << "ram :" << (((unsigned long) info.freeram) * (( unsigned long) info.mem_unit)) / (1048 * 1048) << "mb, sorting  " << fileSize << " elements \n";
@@ -982,7 +982,7 @@ public:
 
 // -- get range
 
-bool get_range(KEY key_min, KEY key_max/*, std::vector<KEY>& keys*/, std::vector<ITEM>& items)
+bool get_range(KEY key_min, KEY key_max, std::vector<ITEM>& items, bool include_lower_bound = true, bool include_upper_bound = true)
 {
     //keys.clear();
     items.clear();
@@ -1001,7 +1001,9 @@ bool get_range(KEY key_min, KEY key_max/*, std::vector<KEY>& keys*/, std::vector
         uint64_t cur = 0;
         for(iMax = iMinRead; iMax <= iMaxRead; iMax++)
         {
-            if(keysTab[cur] <= key_max)
+            if(keysTab[cur] < key_min) iMin++;
+            else if(!include_lower_bound && (keysTab[cur] == key_min)) iMin++;
+            if((keysTab[cur] < key_max) || (include_upper_bound && keysTab[cur] == key_max))
             {
                 //keys.push_back(keysTab[cur]);
                 cur++;

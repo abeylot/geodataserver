@@ -42,4 +42,5 @@ StringBuffer& operator<<(StringBuffer& sb, uint8_t l);
 StringBuffer& operator<<(StringBuffer& sb, int8_t l);
 StringBuffer& operator<<(StringBuffer& sb, const char* s);
 StringBuffer& operator<<(StringBuffer& sb, std::string s);
+StringBuffer& operator<<(StringBuffer& sb, std::string_view s);
 #endif

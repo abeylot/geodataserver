@@ -11,6 +11,7 @@
 
 
 #include <string>
+#include <memory>
 #include "TcpConnection.hpp"
 
 #ifndef TcpListener_hpp
@@ -47,7 +48,7 @@ public:
      * \return IConnection* a new connection
      *
      */
-    TcpConnection* waitForClient( void );
+    std::shared_ptr<TcpConnection> waitForClient( void );
 
     /** \brief
      *

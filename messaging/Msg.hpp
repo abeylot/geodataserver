@@ -54,7 +54,7 @@ class Msg
 {
 private:
     std::vector<Record*> Records;
-    TcpConnection* socket;
+    std::shared_ptr <TcpConnection> socket;
 
 public:
 
@@ -72,12 +72,12 @@ public:
         Records.clear();
     }
 
-    void setConnection(TcpConnection* s)
+    void setConnection(std::shared_ptr<TcpConnection> s)
     {
         socket = s;
     }
 
-    TcpConnection* getConnection() const
+    std::shared_ptr<TcpConnection> getConnection() const
     {
         return socket;
     }

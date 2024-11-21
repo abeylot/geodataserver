@@ -34,9 +34,9 @@ std::shared_ptr<Msg> IdxDetail::processRequest(std::shared_ptr<Msg> request, Com
                     resp +="\"> ";
                     resp += std::to_string(i);
                     resp +="</a>";
-                    std::string name = r->tags["name"];
-                    std::string type = r->tags["type"];
-                    resp += "name:" + name + " type:" + type;
+                    std::string_view name = r->tags["name"];
+                    std::string_view type = r->tags["type"];
+                    resp += "name:" + std::string(name) + " type:" + std::string(type);
                     resp += "<a href=\"/relation/get?id=" + std::to_string(r->id) + "\">"+ std::to_string(i) +"</a>:: pos :" + std::to_string(record.key.get_pos())+ ":: mask :" + std::to_string(record.key.get_maskLength())+"::"+std::to_string(record.value.zmMask)+":: id :" + std::to_string(record.value.id);
                     resp += "<br/>";
                     i++;
@@ -47,9 +47,9 @@ std::shared_ptr<Msg> IdxDetail::processRequest(std::shared_ptr<Msg> request, Com
                 while (idx->get(i, &record) &&  (i < (istart + 1000)))
                 {
                     auto p = mger.loadPoint(record.value.id);
-                    std::string name = p->tags["name"];
-                    resp += std::to_string(i) + ":: pos :" + std::to_string(record.key.get_pos())+ "::"+name+":: mask :" + std::to_string(record.key.get_maskLength())+"::"+std::to_string(record.value.zmMask)+":: id :" + std::to_string(record.value.id);
-                    resp += "::" + name +"<br/>";
+                    std::string_view name = p->tags["name"];
+                    resp += std::to_string(i) + ":: pos :" + std::to_string(record.key.get_pos())+ "::"+std::string(name)+":: mask :" + std::to_string(record.key.get_maskLength())+"::"+std::to_string(record.value.zmMask)+":: id :" + std::to_string(record.value.id);
+                    resp += "::" + std::string(name) +"<br/>";
 
                     uint64_t used = 0;
 
@@ -83,8 +83,8 @@ std::shared_ptr<Msg> IdxDetail::processRequest(std::shared_ptr<Msg> request, Com
                 while (idx->get(i, &record) &&  (i < (istart + 1000)))
                 {
                     auto r = mger.loadWay(record.value.id);
-                    std::string name = r->tags["name"];
-                    resp += "name:" + name ;
+                    std::string_view name = r->tags["name"];
+                    resp += "name:" + std::string(name) ;
                     resp += " <a href=\"/way/get?id=" + std::to_string(r->id) + "\">"+ std::to_string(i) +"</a>:: pos :" + std::to_string(record.key.get_pos())+ ":: mask :" + std::to_string(record.key.get_maskLength())+"::"+std::to_string(record.value.zmMask)+ ":: id :" + std::to_string(record.value.id);
                     resp +="<br/>";
                     i++;

@@ -124,8 +124,8 @@
     <style id="treeLineL"  value="fill:none;stroke:url(#forestPattern); stroke-width:32;stroke-linecap:round;opacity:0.7;"/>
 
     <style id="road"       value="fill:none; stroke:#BBBBBB;stroke-linecap:round;"/>
-    <style id="path"       value="fill:none; stroke:#BBBBBB;stroke-linecap:butt; stroke-dasharray:5,2; stroke-width:2"/>
-    <style id="stairs"     value="fill:none; stroke:#BBBBBB;stroke-linecap:butt; stroke-dasharray:2,2; stroke-width:2"/>
+    <style id="path"       value="fill:none; stroke:#DDDDBB;stroke-linecap:round"/>
+    <style id="stairs"     value="fill:none; stroke:#BBBBBB;stroke-linecap:butt; stroke-dasharray:2,2"/>
     <style id="redRoad"    value="fill:none; stroke:red;stroke-linecap:round;stroke-width:2"/>
     <style id="orangeRoad" value="fill:none; stroke:orange;stroke-linecap:round;stroke-width:2"/>
 
@@ -661,6 +661,11 @@
                 <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
             </condition>
         </restriction>
+        <restriction zLevels="14,15,16,17,18,19">
+            <condition tagKey="man_made" closed="yes">
+                <class value="bridge"  textZIndex="0" textStyle="#greyAreaName"     zIndex="1001" style="#bridge"/>
+            </condition>
+        </restriction>
     </index>
 
     <index type="relation" name="relationHistoricIdx">
@@ -673,6 +678,11 @@
             </condition>
             <condition tagKey="type"    closed="yes">
                 <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2901" style="#historicBuilding"/>
+            </condition>
+        </restriction>
+        <restriction zLevels="14,15,16,17,18,19">
+            <condition tagKey="man_made" closed="yes">
+                <class value="bridge"  textZIndex="0" textStyle="#greyAreaName"     zIndex="1001" style="#bridge"/>
             </condition>
         </restriction>
     </index>
@@ -689,6 +699,11 @@
                 <class value="building" textField="addr:housenumber"  textZIndex="0" textStyle="#houseNumber" zIndex="2900" style="#building"/>
             </condition>
         </restriction>
+        <restriction zLevels="14,15,16,17,18,19">
+            <condition tagKey="man_made" closed="yes">
+                <class value="bridge"  textZIndex="0" textStyle="#greyAreaName"     zIndex="1001" style="#bridge"/>
+            </condition>
+        </restriction>
     </index>
 
     <index type="way" name="wayHistoricIdx">
@@ -703,6 +718,11 @@
                 <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2901" style="#historicBuilding"/>
             </condition>
         </restriction>
+        <restriction zLevels="14,15,16,17,18,19">
+            <condition tagKey="man_made" closed="yes">
+                <class value="bridge"  textZIndex="0" textStyle="#greyAreaName"     zIndex="1001" style="#bridge"/>
+            </condition>
+        </restriction>
     </index>
 
     <index type="way" name="wayHeritageIdx">
@@ -714,6 +734,11 @@
             </condition>
             <condition tagKey="type" closed="yes">
                 <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2901" style="#historicBuilding"/>
+            </condition>
+        </restriction>
+        <restriction zLevels="14,15,16,17,18,19">
+            <condition tagKey="man_made" closed="yes">
+                <class value="bridge"  textZIndex="0" textStyle="#greyAreaName"     zIndex="1001" style="#bridge"/>
             </condition>
         </restriction>
     </index>
@@ -800,12 +825,12 @@
         <restriction zLevels="16,17,18,19">
             <condition closed="both" tagKey="highway">
                 <class value="stop"            zIndex="2000" style="#road" width="16"  textZIndex="20" textStyle="#roadName"/>
-                <class value="steps"           zIndex="2001" style="#stairs" width="5" textZIndex="21" textStyle="#roadName"/>
-                <class value="footway"         zIndex="2001" style="#path" width="5"   textZIndex="22" textStyle="#roadName"/>
-                <class value="path"            zIndex="2002" style="#path" width="5"   textZIndex="23" textStyle="#roadName"/>
-                <class value="pedestrian"      zIndex="2003" style="#path" width="5"   textZIndex="24" textStyle="#roadName"/>
+                <class value="steps"           zIndex="2001" style="#stairs" width="8" textZIndex="21" textStyle="#roadName"/>
+                <class value="footway"         zIndex="2001" style="#path" width="8"   textZIndex="22" textStyle="#roadName"/>
+                <class value="path"            zIndex="2002" style="#path" width="8"   textZIndex="23" textStyle="#roadName"/>
+                <class value="pedestrian"      zIndex="2003" style="#path" width="8"   textZIndex="24" textStyle="#roadName"/>
                 <class value="unclassified"    zIndex="2004" style="#road" width="10" textZIndex="25" textStyle="#roadName"/>
-                <class value="cycleway"        zIndex="2005" style="#road" width="5"  textZIndex="26" textStyle="#roadName"/>
+                <class value="cycleway"        zIndex="2005" style="#road" width="8"  textZIndex="26" textStyle="#roadName"/>
                 <class value="residential"     zIndex="2006" style="#road" width="10" textZIndex="27" textStyle="#roadName"/>
                 <class value="service"         zIndex="2007" style="#road" width="10" textZIndex="28" textStyle="#roadName"/>
                 <class value="track"           zIndex="2008" style="#road" width="10" textZIndex="29" textStyle="#roadName"/>
@@ -857,10 +882,10 @@
         <restriction zLevels="16,17,18,19">
             <condition closed="both" tagKey="highway">
                 <class value="stop"            zIndex="2000" style="#road" width="16"  textZIndex="20" textStyle="#roadName"/>
-                <class value="steps"           zIndex="2001" style="#stairs" width="5" textZIndex="21" textStyle="#roadName"/>
-                <class value="footway"         zIndex="2001" style="#path" width="5"   textZIndex="22" textStyle="#roadName"/>
-                <class value="path"            zIndex="2002" style="#path" width="5"   textZIndex="23" textStyle="#roadName"/>
-                <class value="pedestrian"      zIndex="2003" style="#path" width="5"   textZIndex="24" textStyle="#roadName"/>
+                <class value="steps"           zIndex="2001" style="#stairs" width="8" textZIndex="21" textStyle="#roadName"/>
+                <class value="footway"         zIndex="2001" style="#path" width="8"   textZIndex="22" textStyle="#roadName"/>
+                <class value="path"            zIndex="2002" style="#path" width="8"   textZIndex="23" textStyle="#roadName"/>
+                <class value="pedestrian"      zIndex="2003" style="#path" width="8"   textZIndex="24" textStyle="#roadName"/>
                 <class value="unclassified"    zIndex="2004" style="#road" symbol="oneway" width="10" textZIndex="25" textStyle="#roadName"/>
                 <class value="cycleway"        zIndex="2005" style="#road" symbol="oneway" width="5"  textZIndex="26" textStyle="#roadName"/>
                 <class value="residential"     zIndex="2006" style="#road" symbol="oneway" width="10" textZIndex="27" textStyle="#roadName"/>
