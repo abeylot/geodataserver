@@ -36,13 +36,13 @@ bool compare(const label_s& l2, const label_s& l1)
     if(l2.zindex > l1.zindex) return true;
     if(l1.style > l2.style) return true;
     if(l2.style > l1.style) return false;
-    if (l1.text.length() < l2.text.length()) return true;
-    if (l1.text.length() > l2.text.length()) return false;
-    if (l1.text > l2.text) return true;
-    if (l1.text < l2.text) return false;
+    //if (l1.text.length() < l2.text.length()) return true;
+    //if (l1.text.length() > l2.text.length()) return false;
     if (l1.pos_x > l2.pos_x) return true;
     if (l1.pos_x < l2.pos_x) return false;
     if (l1.pos_y > l2.pos_y) return true;
+    if (l1.text > l2.text) return true;
+    if (l1.text < l2.text) return false;
     return false;
 }
 
@@ -373,81 +373,36 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
     {
         bool to_show = true;
 
-        double xc,xd,yc,yd;
+        //double xc,xd,yc,yd;
         int ilines;
         int ilt = cutString(t->text, ilines);
-        double lt = t->fontsize*0.5*ilt;
-        double ht = t->fontsize*0.5*ilines;
+        double lt = t->fontsize*0.8*ilt;
+        double ht = t->fontsize*1.0*ilines;
 
-        xc = t->pos_x + lt*(cos(t->angle)) - ht*(sin(t->angle));;
+        /*xc = t->pos_x + lt*(cos(t->angle)) - ht*(sin(t->angle));;
         yc = t->pos_y + lt*(sin(t->angle)) + ht*(cos(t->angle));;
         xd = t->pos_x - lt*(cos(t->angle)) + ht*(sin(t->angle));;
-        yd = t->pos_y - lt*(sin(t->angle)) - ht*(cos(t->angle));;
+        yd = t->pos_y - lt*(sin(t->angle)) - ht*(cos(t->angle));;*/
 
         for(auto v = label_vector.begin(); v!=t; ++v)
         {
+            if (v->to_show == false) continue;
             int ilv = cutString(v->text, ilines);
 
-            int dx = v->pos_x - t->pos_x;
-            int dy = v->pos_y - t->pos_y;
-            if(dx < 0) dx = -dx;
-            if(dy < 0) dy = -dy;
-            if((t->text == v->text)&&((dx*dx +dy*dy)< 16000))
-            {
-                to_show = false;
-                break;
-            }
 
-            if(((uint64_t)(dy) < (t->fontsize + v->fontsize))
-              &&((uint64_t)(dx << 1) < (t->fontsize*0.75*ilt + v->fontsize*0.75*ilv)))
-            {
-                to_show = false;
-                break;
-            }
-
-            double xa,ya,xb,yb;
+            //double xa,ya,xb,yb;
 
 
-            double lv = v->fontsize*0.5*ilv;
-            double hv = v->fontsize*0.5*ilines;
+            double lv = v->fontsize*0.8*ilv;
+            double hv = v->fontsize*1.0*ilines;
 
-            xa = v->pos_x + lv*(cos(v->angle)) - hv*(sin(v->angle));
+            /*xa = v->pos_x + lv*(cos(v->angle)) - hv*(sin(v->angle));
             ya = v->pos_y + lv*(sin(v->angle)) + hv*(cos(v->angle));
             xb = v->pos_x - lv*(cos(v->angle)) + hv*(sin(v->angle));
-            yb = v->pos_y - lv*(sin(v->angle)) - hv*(cos(v->angle));
+            yb = v->pos_y - lv*(sin(v->angle)) - hv*(cos(v->angle));*/
 
 
-            double xab = xb - xa;
-            double yab = yb - ya;
-
-            double xac = xc - xa;
-            double yac = yc -ya;
-
-            double xad = xd - xa;
-            double yad = yd -ya;
-
-            double pvectabac = (xab * yac) - (yab * xac);
-            double pvectabad = (xab * yad) - (yab * xad);
-
-            bool diffsidecd = (pvectabac*pvectabad < 0);
-
-            double xcd = xd - xc;
-            double ycd = yd - yc;
-
-            double xca = -xac;
-            double yca = -yac;
-
-            double xcb = xb -xc;
-            double ycb = yb - yc;
-
-            double pvectcdca = (xcd*yca) - (ycd*xca);
-            double pvectcdcb = (xcd*ycb) - (ycd*xcb);
-
-            bool diffsideab = (pvectcdca * pvectcdcb) < 0;
-
-
-
-            if(diffsideab && diffsidecd)
+            if((lt*lt + ht*ht + lv*lv + hv*hv) > 4*(((double)(t->pos_x) - (double)(v->pos_x))*((double)(t->pos_x) - (double)(v->pos_x)) + ((double)(t->pos_y) - (double)(v->pos_y))*((double)(t->pos_y) - (double)(v->pos_y))))
             {
                     to_show = false;
                     break;
@@ -456,7 +411,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
 
         }
 
-        double lbl_max_x = xd;
+        /*double lbl_max_x = xd;
         if (xc > xd) lbl_max_x = xc;
 
         double lbl_min_x = xd;
@@ -467,16 +422,21 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
 
         double lbl_min_y = yd;
         if (yc < yd) lbl_min_y = yc;
-
-        bool in_map_square = (
+*/
+        /*bool in_map_square = (
                              ( lbl_max_x >= 0 )
                              &&(lbl_min_x <= size_x)
                              &&(lbl_max_y >= 0)
                              &&(lbl_min_y <= size_y)
                              );
 
-
-        if(to_show && in_map_square ) to_print.push_back(*t);
+*/
+        if(to_show /*&& in_map_square*/ )
+        {
+            to_print.push_back(*t);
+            t->to_show = true;
+        }
+        else t->to_show = false;
     }
 
     for(auto v=to_print.begin(); v!=to_print.end(); ++v)
