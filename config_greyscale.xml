@@ -64,6 +64,11 @@
              <rect x="-1" y="-1" width="5" height="9" fill="#EEEEEE"/>
              <path stroke-width="1" stroke="#CCCCCC" d="M0 0L4 8"/>
     </pattern>
+    <pattern id="hashed2" width="4" height="8" patternUnits="userSpaceOnUse">
+             <rect x="-1" y="-1" width="5" height="9" fill="#EEEEEE"/>
+             <path stroke-width="1" stroke="#CCCCCC" d="M0 0L4 8"/>
+             <path stroke-width="1" stroke="#CCCCCC" d="M4 0L0 8"/>
+    </pattern>
 
 
     <filter
@@ -109,8 +114,8 @@
     <style id="reef"             value="fill:url(#reefPattern); fill-rule:evenodd;opacity:0.4"/>
     <style id="sand"             value="fill:#DDDDDD; fill-rule:evenodd; opacity:0.4"/>
     <style id="mud"              value="fill:url(#mudPattern); fill-rule:evenodd"/>
-    <style id="building"         value="fill:#EFEFEF;opacity:0.9;stroke:#BBBBBB ;stroke-width:1; fill-rule:evenodd; filter: url(#shadow)"/>
-    <style id="historicBuilding" value="fill:#FAFAFA;opacity:0.7;stroke:#B1B1B1 ;stroke-width:1; fill-rule:evenodd; filter: url(#shadow)"/>
+    <style id="building"         value="fill:url(#hashed);stroke:#BBBBBB ;stroke-width:1; fill-rule:evenodd; filter: url(#shadow)"/>
+    <style id="historicBuilding" value="fill:url(#hashed2);stroke:#B1B1B1 ;stroke-width:1; fill-rule:evenodd; filter: url(#shadow)"/>
     <style id="zone"             value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:5,5; fill-rule:evenodd"/>
     <style id="parking"          value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:1,5; fill-rule:evenodd"/>
     <style id="bridge"           value="fill:#999999;stroke:grey; stroke-width:1; fill-rule:evenodd;opacity:0.7"/>
@@ -128,7 +133,7 @@
     <style id="treeLineL"  value="fill:none;stroke:url(#forestPattern); stroke-width:32;stroke-linecap:round;opacity:0.7;"/>
 
     <style id="road"       value="fill:none; stroke:#AAAAAA;stroke-linecap:round;"/>
-    <style id="path"       value="fill:none; stroke:#AAAAAA;stroke-linecap:butt; stroke-dasharray:5,2; stroke-width:2"/>
+    <style id="path"       value="fill:none; stroke:#BBBBBB;stroke-linecap:round"/>
     <style id="stairs"     value="fill:none; stroke:#AAAAAA;stroke-linecap:butt; stroke-dasharray:2,2; stroke-width:2"/>
     <style id="redRoad"    value="fill:none; stroke:#777777;stroke-linecap:round;stroke-width:2"/>
     <style id="orangeRoad" value="fill:none; stroke:#AAAAAA;stroke-linecap:round;stroke-width:2"/>
@@ -138,30 +143,30 @@
 
 
     <!-- text -->
-    <style id="countryName"  value="fill:black;font-family:sans-serif;opacity:0.7;font-size:15px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
-    <style id="stateName"    value="fill:black;font-family:sans-serif;opacity:0.7;font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
-    <style id="provinceName" value="fill:black;font-family:sans-serif;opacity:0.7;font-size:12px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
-    <style id="districtName" value="fill:black;font-family:sans-serif;opacity:0.7;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
-    <style id="countyName"   value="fill:black;font-family:sans-serif;opacity:0.7;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="countryName"  value="fill:black;font-family:monospace;opacity:0.7;font-size:15px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="stateName"    value="fill:black;font-family:monospace;opacity:0.7;font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="provinceName" value="fill:black;font-family:monospace;opacity:0.7;font-size:12px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="districtName" value="fill:black;font-family:monospace;opacity:0.7;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="countyName"   value="fill:black;font-family:monospace;opacity:0.7;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
 
-    <style id="maroonAreaName"  value="fill:#555555;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
-    <style id="greenAreaName"   value="fill:#444444;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
-    <style id="blueAreaName"    value="fill:#555555;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
-    <style id="greyAreaName"    value="fill:#444444;opacity:0.5;font-family:sans-serif;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="maroonAreaName"  value="fill:#555555;opacity:0.5;font-family:monospace;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="greenAreaName"   value="fill:#444444;opacity:0.5;font-family:monospace;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="blueAreaName"    value="fill:#555555;opacity:0.5;font-family:monospace;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="greyAreaName"    value="fill:#444444;opacity:0.5;font-family:monospace;opacity:0.5;font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
 
-    <style id="capitalName"     value="fill:#222222;font-family:sans-serif;opacity:0.7; font-size:16px; font-weight:bold;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
-    <style id="subCapitalName"  value="fill:#222222;font-family:sans-serif;opacity:0.7; font-size:15px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="capitalName"     value="fill:#222222;font-family:monospace;opacity:0.7; font-size:16px; font-weight:bold;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="subCapitalName"  value="fill:#222222;font-family:monospace;opacity:0.7; font-size:15px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
 
-    <style id="cityName"        value="fill:#222222;font-family:sans-serif;opacity:0.7; font-size:14px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
-    <style id="townName"        value="fill:#222222;font-family:sans-serif;opacity:0.7; font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
-    <style id="villageName"     value="fill:#222222;font-family:sans-serif;opacity:0.7; font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="cityName"        value="fill:#222222;font-family:monospace;opacity:0.7; font-size:14px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="townName"        value="fill:#222222;font-family:monospace;opacity:0.7; font-size:13px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
+    <style id="villageName"     value="fill:#222222;font-family:monospace;opacity:0.7; font-size:11px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.8"/>
 
-    <style id="houseNumber"     value="fill:#333333;opacity:0.5;font-family:sans-serif; font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
-    <style id="roadName"        value="fill:black;font-family:sans-serif;opacity:0.5;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
-    <style id="amenityName"     value="fill:#222222;font-family:sans-serif;opacity:0.4;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="houseNumber"     value="fill:#333333;opacity:0.5;font-family:monospace; font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="roadName"        value="fill:black;font-family:monospace;opacity:0.5;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="amenityName"     value="fill:#222222;font-family:monospace;opacity:0.4;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
 
-    <style id="riverName"       value="fill:#111111;opacity:0.5;font-family:sans-serif;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
-    <style id="ferryLineName"   value="fill:#111111;;opacity:0.5;font-family:sans-serif;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="riverName"       value="fill:#111111;opacity:0.5;font-family:monospace;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
+    <style id="ferryLineName"   value="fill:#111111;;opacity:0.5;font-family:monospace;font-size:10px;paint-order:stroke;stroke-width:4;stroke:white;stroke-opacity:0.7"/>
 
 
     <!-- Symbols -->
@@ -184,17 +189,17 @@
 
     <symbol id="parking" width="16" height="16" transform="translate(-8 -8)" >
         <circle  cx="8"  cy="8"  r="8"  style="fill:#000000;opacity:0.2;" />
-        <text x="8" y="8" style="fill:white;opacity:0.9;font-family:sans-serif;font-weight:bold;font-size:13px">P</text>
+        <text x="8" y="8" style="fill:white;opacity:0.9;font-family:monospace;font-weight:bold;font-size:13px">P</text>
     </symbol>
 
     <symbol id="hospital" width="24" height="24" transform="translate(-12 -34)" >
         <circle  cx="12"  cy="12"  r="12"  style="fill:#FFFFFF;opacity:0.2;" />
-        <text x="12" y="12" style="fill:#222222;opacity:0.7;font-family:sans-serif;font-weight:bold;font-size:17px">+</text>
+        <text x="12" y="12" style="fill:#222222;opacity:0.7;font-family:monospace;font-weight:bold;font-size:17px">+</text>
     </symbol>
 
     <symbol id="pharmacy" width="24" height="24" transform="translate(-12 -34)" >
         <circle  cx="12"  cy="12"  r="12"  style="fill:#FFFFFF;opacity:0.2;" />
-        <text x="12" y="12" style="fill:#222222;opacity:0.7;font-family:sans-serif;font-weight:bold;font-size:17px">+</text>
+        <text x="12" y="12" style="fill:#222222;opacity:0.7;font-family:monospace;font-weight:bold;font-size:17px">+</text>
     </symbol>
 
     <symbol id="restaurant" width="24" height="24" transform="translate(-12 -24)" >
@@ -214,7 +219,7 @@
 
     <symbol id="toilets" width="24" height="24" transform="translate(-12 -12)" >
         <circle  cx="12"  cy="12"  r="14"  style="fill:#555555;opacity:0.6;" />
-        <text x="12" y="12" style="fill:white;opacity:0.8;font-family:sans-serif;font-weight:bold;font-size:12px">Wc</text>
+        <text x="12" y="12" style="fill:white;opacity:0.8;font-family:monospace;font-weight:bold;font-size:12px">Wc</text>
     </symbol>
 
     <symbol id="oneway" width="10" height="10" transform="translate(-5 -5)" >
@@ -499,7 +504,7 @@
                 <class value="waterway"                  zIndex="101" textZIndex="25" style="#water" />
             </condition>
             <condition tagKey="route" closed="both">
-                <class value="bus"      textWidth="4" textStyle="fill:green;font-family:sans-serif"      zIndex="25000000" style="fill:none; stroke:#888888;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
+                <class value="bus"      textWidth="4" textStyle="fill:grey;font-family:monospace"      zIndex="25000000" style="fill:none; stroke:#888888;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
                 <class value="ferry"       textWidth="4" textStyle="#ferryLineName"      zIndex="1000" textZIndex="2000" style="#ferryLine"/>
             </condition>
         </restriction>
@@ -613,8 +618,8 @@
                     <class value="default"                  zIndex="101" style="#water" />
             </condition>
             <condition tagKey="route" closed="both">
-                <class value="bus"       textWidth="4" textZIndex="21" textStyle="fill:maroon;;opacity:0.3;font-family:sans-serif"      zIndex="2500" style="fill:none; stroke:#777777;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
-                <class value="ferry"       textWidth="4" textZIndex="21" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif"   zIndex="2000" style="#ferryLine"/>
+                <class value="bus"       textWidth="4" textZIndex="21" textStyle="fill:grey;opacity:0.3;font-family:monospace"      zIndex="2500" style="fill:none; stroke:#777777;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
+                <class value="ferry"       textWidth="4" textZIndex="21" textStyle="fill:grey;opacity:0.3;font-family:monospace"   zIndex="2000" style="#ferryLine"/>
             </condition>
         </restriction>
         <restriction zLevels="17">
@@ -717,6 +722,11 @@
                 <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2901" style="#historicBuilding"/>
             </condition>
         </restriction>
+        <restriction zLevels="14,15,16,17,18,19">
+            <condition tagKey="man_made" closed="yes">
+                <class value="bridge"  textZIndex="0" textStyle="#greyAreaName"     zIndex="1001" style="#bridge"/>
+            </condition>
+        </restriction>
     </index>
 
     <index type="way" name="wayHeritageIdx">
@@ -728,6 +738,11 @@
             </condition>
             <condition tagKey="type" closed="yes">
                 <class value="building"     textField="addr:housenumber"      textZIndex="0" textStyle="#houseNumber"     zIndex="2901" style="#historicBuilding"/>
+            </condition>
+        </restriction>
+        <restriction zLevels="14,15,16,17,18,19">
+            <condition tagKey="man_made" closed="yes">
+                <class value="bridge"  textZIndex="0" textStyle="#greyAreaName"     zIndex="1001" style="#bridge"/>
             </condition>
         </restriction>
     </index>
@@ -763,17 +778,17 @@
         <exclude tagKey="layer" tagValue="-8"/>
         <restriction zLevels="13,14">
             <condition tagKey="railway" closed="both">
-                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:3,1;opacity:0.4" textwidth="11"/>
+                <class value="default"      textZIndex="20" textStyle="fill:gey;opacity:0.3;font-family:monospace;" textWidth="6"      zIndex="2100" style="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:3,1;opacity:0.4" textwidth="11"/>
             </condition>
         </restriction>
         <restriction zLevels="15,16">
             <condition tagKey="railway" closed="both">
-                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none;stroke:grey; stroke-width:2; stroke-dasharray:3,1;opacity:0.4" textwidth="11"/>
+                <class value="default"      textZIndex="20" textStyle="fill:grey;opacity:0.3;font-family:monospace;" textWidth="6"      zIndex="2100" style="fill:none;stroke:grey; stroke-width:2; stroke-dasharray:3,1;opacity:0.4" textwidth="11"/>
             </condition>
         </restriction>
         <restriction zLevels="17,18,19">
             <condition tagKey="railway" closed="both">
-                <class value="default"      textZIndex="20" textStyle="fill:darkblue;opacity:0.3;font-family:sans-serif;" textWidth="6"      zIndex="2100" style="fill:none;stroke:grey; stroke-width:3; stroke-dasharray:3,1;opacity:0.4" textwidth="11"/>
+                <class value="default"      textZIndex="20" textStyle="fill:grey;opacity:0.3;font-family:monospace;" textWidth="6"      zIndex="2100" style="fill:none;stroke:grey; stroke-width:3; stroke-dasharray:3,1;opacity:0.4" textwidth="11"/>
             </condition>
         </restriction>
     </index>
@@ -814,12 +829,12 @@
         <restriction zLevels="16,17,18,19">
             <condition closed="both" tagKey="highway">
                 <class value="stop"            zIndex="2000" style="#road" width="16"  textZIndex="20" textStyle="#roadName"/>
-                <class value="steps"           zIndex="2001" style="#stairs" width="5" textZIndex="21" textStyle="#roadName"/>
-                <class value="footway"         zIndex="2001" style="#path" width="5"   textZIndex="22" textStyle="#roadName"/>
-                <class value="path"            zIndex="2002" style="#path" width="5"   textZIndex="23" textStyle="#roadName"/>
-                <class value="pedestrian"      zIndex="2003" style="#path" width="5"   textZIndex="24" textStyle="#roadName"/>
+                <class value="steps"           zIndex="2001" style="#stairs" width="8" textZIndex="21" textStyle="#roadName"/>
+                <class value="footway"         zIndex="2001" style="#path" width="8"   textZIndex="22" textStyle="#roadName"/>
+                <class value="path"            zIndex="2002" style="#path" width="8"   textZIndex="23" textStyle="#roadName"/>
+                <class value="pedestrian"      zIndex="2003" style="#path" width="8"   textZIndex="24" textStyle="#roadName"/>
                 <class value="unclassified"    zIndex="2004" style="#road" width="10" textZIndex="25" textStyle="#roadName"/>
-                <class value="cycleway"        zIndex="2005" style="#road" width="5"  textZIndex="26" textStyle="#roadName"/>
+                <class value="cycleway"        zIndex="2005" style="#road" width="8"  textZIndex="26" textStyle="#roadName"/>
                 <class value="residential"     zIndex="2006" style="#road" width="10" textZIndex="27" textStyle="#roadName"/>
                 <class value="service"         zIndex="2007" style="#road" width="10" textZIndex="28" textStyle="#roadName"/>
                 <class value="track"           zIndex="2008" style="#road" width="10" textZIndex="29" textStyle="#roadName"/>
@@ -871,10 +886,10 @@
         <restriction zLevels="16,17,18,19">
             <condition closed="both" tagKey="highway">
                 <class value="stop"            zIndex="2000" style="#road" width="16"  textZIndex="20" textStyle="#roadName"/>
-                <class value="steps"           zIndex="2001" style="#stairs" width="5" textZIndex="21" textStyle="#roadName"/>
-                <class value="footway"         zIndex="2001" style="#path" width="5"   textZIndex="22" textStyle="#roadName"/>
-                <class value="path"            zIndex="2002" style="#path" width="5"   textZIndex="23" textStyle="#roadName"/>
-                <class value="pedestrian"      zIndex="2003" style="#path" width="5"   textZIndex="24" textStyle="#roadName"/>
+                <class value="steps"           zIndex="2001" style="#stairs" width="8" textZIndex="21" textStyle="#roadName"/>
+                <class value="footway"         zIndex="2001" style="#path" width="8"   textZIndex="22" textStyle="#roadName"/>
+                <class value="path"            zIndex="2002" style="#path" width="8"   textZIndex="23" textStyle="#roadName"/>
+                <class value="pedestrian"      zIndex="2003" style="#path" width="8"   textZIndex="24" textStyle="#roadName"/>
                 <class value="unclassified"    zIndex="2004" style="#road" symbol="oneway" width="10" textZIndex="25" textStyle="#roadName"/>
                 <class value="cycleway"        zIndex="2005" style="#road" symbol="oneway" width="5"  textZIndex="26" textStyle="#roadName"/>
                 <class value="residential"     zIndex="2006" style="#road" symbol="oneway" width="10" textZIndex="27" textStyle="#roadName"/>
