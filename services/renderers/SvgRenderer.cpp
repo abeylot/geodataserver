@@ -30,19 +30,25 @@ Shape& SvgRenderer::getShape(std::shared_ptr<CssClass> c, unsigned char layer)
 
 }
 
-bool compare(const label_s& l2, const label_s& l1)
+bool compare(const std::shared_ptr<label_s>& l2, const std::shared_ptr<label_s>& l1)
 {
-    if(l1.zindex > l2.zindex) return false;
-    if(l2.zindex > l1.zindex) return true;
-    if(l1.style > l2.style) return true;
-    if(l2.style > l1.style) return false;
+    if(l1->zindex > l2->zindex) return false;
+    if(l2->zindex > l1->zindex) return true;
+    
+    if(l1->style > l2->style) return true;
+    if(l2->style > l1->style) return false;
+    
     //if (l1.text.length() < l2.text.length()) return true;
     //if (l1.text.length() > l2.text.length()) return false;
-    if (l1.pos_x > l2.pos_x) return true;
-    if (l1.pos_x < l2.pos_x) return false;
-    if (l1.pos_y > l2.pos_y) return true;
-    if (l1.text > l2.text) return true;
-    if (l1.text < l2.text) return false;
+    
+    if (l1->pos_x > l2->pos_x) return true;
+    if (l1->pos_x < l2->pos_x) return false;
+    
+    if (l1->pos_y > l2->pos_y) return true;
+    if (l1->pos_y < l2->pos_y) return false;
+
+    if (l1->text > l2->text) return true;
+    if (l1->text < l2->text) return false;
     return false;
 }
 
@@ -238,7 +244,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                         std::shared_ptr<ITEM> item = nullptr;
                         item = mger->load<ITEM>(indexEntry[i].id, true);
                         std::shared_ptr<CssClass> cl = getCssClass(idxDesc, *item, zoom, indexEntry[i].zmMask & 0X100000LL);
-                        label_s lbl;
+                        //std::shared_ptr<label_s> lbl;
                         if(cl)
                         {
                             if constexpr(! std::is_same<ITEM, Point>())
@@ -254,12 +260,12 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
     }
     for (auto[key, value] : itemsToDraw)
     {
-        label_s lbl;
+        std::shared_ptr<label_s> lbl = std::make_shared<label_s>();
         std::shared_ptr<CssClass> cl = value.first;
         std::shared_ptr<ITEM> item = value.second;
         if constexpr(! std::is_same<ITEM, Point>())
         {
-            tmp = render(lbl, *item,
+            tmp = render(*lbl, *item,
                          rect,
                          size_x,
                          size_y,
@@ -269,7 +275,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
         }
         else
         {
-            tmp = render(lbl, *item,
+            tmp = render(*lbl, *item,
                          rect,
                          size_x,
                          size_y,
@@ -285,7 +291,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
         {
             resMap[value.first->zIndex + value.second->layer * LAYER_MULT] = tmp;
         }
-           if((lbl.text.length() > 0) && (lbl.fontsize > 5))
+           if((lbl->text.length() > 0) && (lbl->fontsize > 5))
                label_vector.push_back(lbl);
     }
     if constexpr(! std::is_same<ITEM, Point>())
@@ -366,7 +372,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
 
     std::sort(label_vector.begin(), label_vector.end(),compare);
 
-    std::vector<label_s> to_print;
+    std::vector<std::shared_ptr<label_s>> to_print;
 
 
     for(auto t=label_vector.begin(); t!=label_vector.end(); ++t)
@@ -375,9 +381,9 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
 
         //double xc,xd,yc,yd;
         int ilines;
-        int ilt = cutString(t->text, ilines);
-        double lt = t->fontsize*0.8*ilt;
-        double ht = t->fontsize*1.0*ilines;
+        int ilt = cutString((*t)->text, ilines);
+        double lt = (*t)->fontsize*0.8*ilt;
+        double ht = (*t)->fontsize*1.0*ilines;
 
         /*xc = t->pos_x + lt*(cos(t->angle)) - ht*(sin(t->angle));;
         yc = t->pos_y + lt*(sin(t->angle)) + ht*(cos(t->angle));;
@@ -386,15 +392,15 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
 
         for(auto v = label_vector.begin(); v!=t; ++v)
         {
-            if (v->to_show == false) continue;
-            int ilv = cutString(v->text, ilines);
+            //if ((*v)->to_show == false) continue;
+            int ilv = cutString((*v)->text, ilines);
 
 
             //double xa,ya,xb,yb;
 
 
-            double lv = v->fontsize*0.8*ilv;
-            double hv = v->fontsize*1.0*ilines;
+            double lv = (*v)->fontsize*0.8*ilv;
+            double hv = (*v)->fontsize*1.0*ilines;
 
             /*xa = v->pos_x + lv*(cos(v->angle)) - hv*(sin(v->angle));
             ya = v->pos_y + lv*(sin(v->angle)) + hv*(cos(v->angle));
@@ -402,7 +408,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
             yb = v->pos_y - lv*(sin(v->angle)) - hv*(cos(v->angle));*/
 
 
-            if((lt*lt + ht*ht + lv*lv + hv*hv) > 4*(((double)(t->pos_x) - (double)(v->pos_x))*((double)(t->pos_x) - (double)(v->pos_x)) + ((double)(t->pos_y) - (double)(v->pos_y))*((double)(t->pos_y) - (double)(v->pos_y))))
+            if((lt*lt + ht*ht + lv*lv + hv*hv) > 4*(((double)((*t)->pos_x) - (double)((*v)->pos_x))*((double)((*t)->pos_x) - (double)((*v)->pos_x)) + ((double)((*t)->pos_y) - (double)((*v)->pos_y))*((double)((*t)->pos_y) - (double)((*v)->pos_y))))
             {
                     to_show = false;
                     break;
@@ -434,46 +440,46 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
         if(to_show /*&& in_map_square*/ )
         {
             to_print.push_back(*t);
-            t->to_show = true;
+            (*t)->to_show = true;
         }
-        else t->to_show = false;
+        else (*t)->to_show = false;
     }
 
     for(auto v=to_print.begin(); v!=to_print.end(); ++v)
     {
         {
 
-               if(v->angle ==0)
+               if((*v)->angle ==0)
                {
                    texts << "<text  class=\"c"
-                      << v->style
+                      << (*v)->style
                       << "\" style=\"font-size:"
-                      << v->fontsize
-                      << "px\" x=\"" << v->pos_x
-                      << "\" y=\"" << v->pos_y
+                      << (*v)->fontsize
+                      << "px\" x=\"" << (*v)->pos_x
+                      << "\" y=\"" << (*v)->pos_y
                       << "\">"
-                      << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
+                      << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
                       << "</text>\n";
                }
                else
                {
                    texts << "<text  class=\"c"
-                      << v->style
+                      << (*v)->style
                       << "\" style=\"font-size:"
-                      << v->fontsize
-                      << "px\" x=\"" << v->pos_x
-                      << "\" y=\"" << v->pos_y
+                      << (*v)->fontsize
+                      << "px\" x=\"" << (*v)->pos_x
+                      << "\" y=\"" << (*v)->pos_y
                       << "\" transform=\"rotate("
-                      << (int32_t)(v->angle*180/M_PI)
+                      << (int32_t)((*v)->angle*180/M_PI)
                       << ","
-                      << v->pos_x
+                      << (*v)->pos_x
                       << ","
-                      << v->pos_y
+                      << (*v)->pos_y
                       << ")\">"
-                      << cutString(v->text, v->pos_x, v->pos_y, v->fontsize)
+                      << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
                       << "</text>\n";
                }
-               cssClasses.insert("c"+std::to_string(v->style));
+               cssClasses.insert("c"+std::to_string((*v)->style));
 
         }
     }
@@ -959,16 +965,16 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                 }
             }
 
-            label_s lbl2;
-            lbl2.text = name;
-            if(lbl2.text == "") lbl2.text = "void";
+            std::shared_ptr<label_s> lbl2 = std::make_shared<label_s>();
+            lbl2->text = name;
+            if(lbl2->text == "") lbl2->text = "void";
             for(auto myWay : myRelation.ways)
             {
                 myWay->fillrec();
                 if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
                 keep = true;
-                result << render(lbl2,*myWay, rect, szx, szy, cl, s);
-                label_vector.push_back(lbl2);
+                result << render(*lbl2,*myWay, rect, szx, szy, cl, s);
+                if(lbl2->text != "void" && lbl2->text != "") label_vector.push_back(lbl2);
             }
         }
         else

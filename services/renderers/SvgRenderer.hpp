@@ -3,6 +3,7 @@
 #include <string>
 #include <set>
 #include <deque>
+#include <memory>
 #include "../../helpers/hash.hpp"
 #include "../../common/Projections.hpp"
 #include "../../CompiledDataManager.hpp"
@@ -94,7 +95,7 @@ private:
     std::map<long ,std::string> resMap;
     std::map<int,std::string>::iterator it;
     std::string tmp = "";
-    std::vector<label_s> label_vector;
+    std::vector<std::shared_ptr<label_s>> label_vector;
     std::map<uint64_t, std::shared_ptr<myShape>> shapes;
     std::set<std::string> cssClasses;
     std::string _locale, _defaultColor;
