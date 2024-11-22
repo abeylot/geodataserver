@@ -30,11 +30,11 @@ int64_t TcpConnection::read( char* buffer, uint64_t length )
             {
                 errorcount++;
                 std::this_thread::sleep_for(100ms);
-                std::cout << strerror(errno) << " a read error occured \n";
+                std::cout << strerror(errno) << " a read error occured" << errorcount << " \n";
                 //_IsAlive = false;
                 _LastError = strerror(errno);
             }
-            if(errorcount > 10)
+            if(errorcount > 20)
             {
                 _IsAlive = false;
                 return -1;
@@ -64,7 +64,7 @@ int64_t TcpConnection::write( const char* buff, uint64_t length )
             _LastError = strerror(errno);
         }
 
-        if( errorcount > 10 )
+        if( errorcount > 20 )
         {
             _IsAlive = false;
             iWritten = -1;
