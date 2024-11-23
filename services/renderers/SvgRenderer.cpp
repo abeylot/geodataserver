@@ -769,8 +769,8 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 if(curLength > halfLength)
                 {
                     ratio = (halfLength - oldLength)/(curLength - oldLength);
-                    lbl.pos_x = x * ratio + oldx * (1 - ratio);
-                    lbl.pos_y = y * ratio + oldy * (1 - ratio);
+                    lbl.pos_x = std::trunc(x * ratio + oldx * (1 - ratio));
+                    lbl.pos_y = std::trunc(y * ratio + oldy * (1 - ratio));
                     double dfx = x - oldx;
                     double dfy = y - oldy;
                     if(dfx == 0) lbl.angle = M_PI / 2;
@@ -874,8 +874,8 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                  int32_t xi = projectX(_proj, szx, rect.x0, rect.x1, xxx);
                  int32_t yi = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
 
-                lbl.pos_x = xi;
-                lbl.pos_y = yi;
+                lbl.pos_x = std::trunc(xi);
+                lbl.pos_y = std::trunc(yi);
                 lbl.style = cl.rank;
                 lbl.text = name;
                 lbl.angle = 0;
@@ -1087,8 +1087,8 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                         int32_t x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
                         int32_t y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
 
-                        lbl.pos_x = x;
-                        lbl.pos_y = y;
+                        lbl.pos_x = std::trunc(x);
+                        lbl.pos_y = std::trunc(y);
                         lbl.zindex = cl.textZIndex;
                         lbl.style = cl.rank;
                         lbl.text = name;
@@ -1183,8 +1183,8 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
             //y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
             x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
             y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
-            lbl.pos_x = x;
-            lbl.pos_y = y;
+            lbl.pos_x = std::trunc(x);
+            lbl.pos_y = std::trunc(y);
             lbl.style = cl.rank;
             lbl.angle = 0;
         }

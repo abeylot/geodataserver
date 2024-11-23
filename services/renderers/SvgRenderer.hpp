@@ -43,7 +43,7 @@ struct myShape
     Shape     s;
 };
 
-inline int32_t projectX(const Projection& p, const uint64_t size, const uint32_t left_bound, const uint32_t right_bound, const uint32_t x)
+inline double projectX(const Projection& p, const uint64_t size, const uint32_t left_bound, const uint32_t right_bound, const uint32_t x)
 {
   double x_  = Coordinates::fromNormalizedLat(x);
   double x0_ = Coordinates::fromNormalizedLat(left_bound);
@@ -55,7 +55,7 @@ inline int32_t projectX(const Projection& p, const uint64_t size, const uint32_t
   );
 }
 
-inline int32_t projectY(const Projection& p, const uint64_t size, const uint32_t lower_bound, const uint32_t upper_bound, const uint32_t yt, std::unordered_map<uint32_t, int32_t>& yProjectionCache )
+inline double projectY(const Projection& p, const uint64_t size, const uint32_t lower_bound, const uint32_t upper_bound, const uint32_t yt, std::unordered_map<uint32_t, int32_t>& yProjectionCache )
 {
     uint32_t y = yt | 0b111111;
     int32_t result;
