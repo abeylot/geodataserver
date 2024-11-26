@@ -20,7 +20,7 @@ class NonGrowableQueue
 
     public:
 
-    NonGrowableQueue():next_in_key(0),next_out_key(0),_used_size()
+    NonGrowableQueue():next_in_key(0),next_out_key(0),_used_size(0)
     {
         for(int i = 0; i < SIZE; i++) itemIsUsed[i] = false;
     }
