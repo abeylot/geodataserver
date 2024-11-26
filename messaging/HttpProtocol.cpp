@@ -47,7 +47,7 @@ int64_t HttpProtocol::getMessage(std::string& message,std::shared_ptr<TcpConnect
                 {
                     iContentLength = atoi(message.c_str() + ictLength + 16);
                     if(iContentLength > MAX_CONTENT_LENGTH) return 0;
-                }
+                } else return rcv;
             }
             if (iFound != std::string::npos)
             {
