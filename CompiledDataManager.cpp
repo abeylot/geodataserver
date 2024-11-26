@@ -5,7 +5,7 @@ std::shared_ptr<Way> CompiledDataManager::loadWay(uint64_t id, bool fast)
 {
     GeoWayIndex record;
     bool found = wayIndex->get(id,&record);
-    if(found)
+    if(found && record.psize != 0)
     {
         auto w = std::make_shared<Way>();
         w->id = id;
