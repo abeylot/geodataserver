@@ -99,7 +99,7 @@ std::shared_ptr<TcpConnection> TcpListener::waitForClient(void)
         //printf("accept error %d \n",iClientSock);
         return nullptr;
     }
-    //printf("accept success %d \n",iClientSock);
+    printf("[%d]<--- accept \n",iClientSock);
 
     auto cnx =  std::make_shared<TcpConnection>(iClientSock);
     cnx->setTimeoutValue(_TimeOut);

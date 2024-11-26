@@ -34,16 +34,16 @@ bool compare(const std::shared_ptr<label_s>& l2, const std::shared_ptr<label_s>&
 {
     if(l1->zindex > l2->zindex) return false;
     if(l2->zindex > l1->zindex) return true;
-    
+
     if(l1->style > l2->style) return true;
     if(l2->style > l1->style) return false;
-    
+
     //if (l1.text.length() < l2.text.length()) return true;
     //if (l1.text.length() > l2.text.length()) return false;
-    
+
     if (l1->pos_x > l2->pos_x) return true;
     if (l1->pos_x < l2->pos_x) return false;
-    
+
     if (l1->pos_y > l2->pos_y) return true;
     if (l1->pos_y < l2->pos_y) return false;
 
@@ -355,7 +355,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
     StringBuffer texts(textsString);
 
     result << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?> <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
-    result << "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 " << sizex << " " << sizey << "\">\n";
+    result << "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\""<<size_x<<"\" height=\""<<size_y<<"\" viewBox=\"0 0 " << sizex << " " << sizey << "\">\n";
 
     indexId = 0;
     for (auto idxDesc : *(mger->indexes))

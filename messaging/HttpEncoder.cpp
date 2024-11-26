@@ -4,7 +4,7 @@
  */
 
 #include <sstream>
-
+#include <iostream>
 #include "HttpEncoder.hpp"
 
 
@@ -93,6 +93,7 @@ std::shared_ptr<Msg> HttpEncoder::encode(std::string* in)
     if(iEndLine == std::string::npos)  iEndLine = sHead.size();
     size_t iDone = 0;
     std::string sLine = sHead.substr(iDone,iEndLine - iDone);
+    std::cout << "<--- " << sLine << "\n";
     iDone = iEndLine;
     size_t pSep = sLine.find("?");
     size_t iSep = sLine.find(" ");
@@ -220,6 +221,7 @@ std::string* HttpEncoder::decode(std::shared_ptr<Msg> outMsg) const
         {
             *res += sStatus + "\r\n";
         }
+        std::cout << "---> " << *res;
         std::string sSession = outMsg->getRecord(0)->getNamedValue("HTTPSession");
         if(sSession.length() != 0)
         {
@@ -279,7 +281,7 @@ void HttpEncoder::build200Header(std::shared_ptr<Msg> msg,const std::string& con
 {
     Record* rcd = new Record;
     msg->addRecord(rcd);
-    rcd->addBlock("HTTPVersion=HTTP/1.0");
+    rcd->addBlock("HTTPVersion=HTTP/1.1");
     rcd->addBlock("HTTPStatus=200");
     rcd->addBlock("HTTPContentType="+contentType);
 }
@@ -290,7 +292,7 @@ void HttpEncoder::build303Header(std::shared_ptr<Msg> msg, const std::string& UR
 {
     Record* rcd = new Record;
     msg->addRecord(rcd);
-    rcd->addBlock("HTTPVersion=HTTP/1.0");
+    rcd->addBlock("HTTPVersion=HTTP/1.1");
     rcd->addBlock("HTTPStatus=303");
     rcd->addBlock("HTTPLocation="+URL);
 }
@@ -300,7 +302,7 @@ void HttpEncoder::build404Header(std::shared_ptr<Msg> msg)
 {
     Record* rcd = new Record;
     msg->addRecord(rcd);
-    rcd->addBlock("HTTPVersion=HTTP/1.0");
+    rcd->addBlock("HTTPVersion=HTTP/1.1");
     rcd->addBlock("HTTPStatus=404");
 }
 
@@ -308,7 +310,7 @@ void HttpEncoder::build304Header(std::shared_ptr<Msg> msg)
 {
     Record* rcd = new Record;
     msg->addRecord(rcd);
-    rcd->addBlock("HTTPVersion=HTTP/1.0");
+    rcd->addBlock("HTTPVersion=HTTP/1.1");
     rcd->addBlock("HTTPStatus=304");
 }
 
@@ -316,7 +318,7 @@ void HttpEncoder::build500Header(std::shared_ptr<Msg> msg)
 {
     Record* rcd = new Record;
     msg->addRecord(rcd);
-    rcd->addBlock("HTTPVersion=HTTP/1.0");
+    rcd->addBlock("HTTPVersion=HTTP/1.1");
     rcd->addBlock("HTTPStatus=500");
 }
 

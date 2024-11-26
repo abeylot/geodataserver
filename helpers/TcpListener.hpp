@@ -40,7 +40,7 @@ public:
     TcpListener()
     {
         _FileDescr = 0;
-        _TimeOut = 10000;
+        _TimeOut = 30000;
     }
 
     /** \brief wait for client connection on tcpsocket

@@ -78,9 +78,10 @@ template<typename MSG> struct Reader
                 {
                     HttpProtocol p;
                     std::string m;
-                    uint32_t len = p.getMessage(m,s);
-                    if(len)
+                    int64_t len = p.getMessage(m,s);
+                    if(len > 0)
                     {
+                        std::cout << "[" << s->getFileDescr() << "]";
                         std::shared_ptr<Msg> msg = encoder.encode(&m);
                         msg->setConnection(s);
                         if(!queue->push(msg))
@@ -109,7 +110,7 @@ template<typename MSG> struct Writer
 {
     HttpProtocol p;
     HttpEncoder encoder;
-    explicit Writer(NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* queue) :  queue(queue)
+    explicit Writer(NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* queue, NonGrowableQueue<std::shared_ptr<TcpConnection>, MAX_PENDING_REQUESTS>* queue_s) :  queue(queue), queue_s(queue_s)
     {
     }
     int operator()()
@@ -119,11 +120,15 @@ template<typename MSG> struct Writer
         {
             if(queue->pop_timed(m)) try
             {
+                std::cout <<"[" << m->getConnection()->getFileDescr() << "]";
                 std::string* s = encoder.decode(m);
                 p.putMessage(*s,m->getConnection());
                 //usleep(10000);
                 delete s;
                 //delete m;
+                // see if connection still used
+                if(m->getConnection()->isAlive())
+                    queue_s->push(m->getConnection());
             }
             catch (const std::exception& e)
             {
@@ -136,6 +141,7 @@ template<typename MSG> struct Writer
 
 private:
     NonGrowableQueue<std::shared_ptr<MSG>, MAX_PENDING_REQUESTS>* queue;
+    NonGrowableQueue<std::shared_ptr<TcpConnection>, MAX_PENDING_REQUESTS>* queue_s;
 };
 
 template<typename MSG> struct Exec
@@ -212,13 +218,12 @@ template<typename MSG> struct Exec
                             encoder.build404Header(rep);
                             encoder.addContent(rep,"<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>Page "+url+" NOT FOUND </body></html>");
                         }
-                        //ctt = time(0);
-                        //std::cout << asctime(localtime(&ctt)) << std::endl;
                     }
                     else
                     {
                         rep = std::make_shared<Msg>();
                         encoder.build500Header(rep);
+                        encoder.addContent(rep,"<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>Page SERVER ERROR </body></html>");
                     }
                     rep->setConnection(m->getConnection());
                     if(!outqueue->push(rep))
@@ -312,7 +317,7 @@ int main(int argc, char *argv[])
     std::cout << "launching " << params.getNumParam("WriterThreads", 10) << " Writer threads \n";
     for(int i=0; i < params.getNumParam("WriterThreads", 10); i++)
     {
-        Writer<Msg> writer(&myOutQueue);
+        Writer<Msg> writer(&myOutQueue, &mySessionQueue);
         ExtThreads::launch_thread(writer);
     }
     ExtThreads::launch_thread(reader1);

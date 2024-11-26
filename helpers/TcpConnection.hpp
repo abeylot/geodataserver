@@ -42,6 +42,8 @@ public:
         abort ();
     }
 
+    int getFileDescr(){return _FileDescr;}
+
     /** \brief client side TcpConnection creation
      *
      * \param host
