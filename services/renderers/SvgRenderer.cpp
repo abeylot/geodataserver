@@ -470,7 +470,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
                       << "px\" x=\"" << (*v)->pos_x
                       << "\" y=\"" << (*v)->pos_y
                       << "\" transform=\"rotate("
-                      << (int32_t)((*v)->angle*180/M_PI)
+                      << std::to_string((*v)->angle*180/M_PI)
                       << ","
                       << (*v)->pos_x
                       << ","
@@ -909,7 +909,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                        <<  cl.symbol
                        << "\"  x=\"" << (int32_t)(symb_x) << "\"  y=\"" << (int32_t)(symb_y)
                        << "\" transform=\"rotate("
-                       << (int32_t)(symb_angle*180/M_PI)
+                       << std::to_string((symb_angle*180/M_PI))
                        << ","
                        << (int32_t)(symb_x)
                        << ","

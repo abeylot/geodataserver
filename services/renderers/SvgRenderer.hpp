@@ -55,10 +55,10 @@ inline double projectX(const Projection& p, const uint64_t size, const uint32_t 
   );
 }
 
-inline double projectY(const Projection& p, const uint64_t size, const uint32_t lower_bound, const uint32_t upper_bound, const uint32_t yt, std::unordered_map<uint32_t, int32_t>& yProjectionCache )
+inline double projectY(const Projection& p, const uint64_t size, const uint32_t lower_bound, const uint32_t upper_bound, const uint32_t yt, std::unordered_map<uint32_t, double>& yProjectionCache )
 {
     uint32_t y = yt | 0b111111;
-    int32_t result;
+    double result;
     auto it = yProjectionCache.find(y);
     if(it == yProjectionCache.end())
     {
@@ -85,7 +85,7 @@ inline double projectY(const Projection& p, const uint64_t size, const uint32_t 
 class SvgRenderer
 {
 private:
-    std::unordered_map<uint32_t, int32_t> yProjectionCache;
+    std::unordered_map<uint32_t, double> yProjectionCache;
     CompiledDataManager* mger;
     short zoomLevel;
     short zoom;
