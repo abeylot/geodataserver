@@ -19,7 +19,7 @@ a light SVG tile map renderer and server that uses openstreetmap data and shp fi
 High disk usage, using an usb key to store map datas may damage it !
 
 ### data extraction
-can be awfull slow, up to one week on my old laptop for full world data processing, with a ssd external drive.
+can be awfull slow, up to 3 days on my old laptop for full world data processing, with a ssd external drive.
 
 ### map tile generation
 Processor use is not the problem, file access is.
