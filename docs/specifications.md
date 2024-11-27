@@ -93,7 +93,7 @@ masklength is 62
 ![image](world6.jpg)
 
 ## interesting properties of this order
-all geoboxes contained in one bigger geobox are in the range beginning with the this geobox and ending whith the geobox representing the point of ths geobox whith maximum x and maximum y. for instance, all geoboxes contained in geobox
+all geoboxes contained in one bigger geobox are in the range beginning with this geobox and ending whith the geobox representing the point of ths geobox whith maximum x and maximum y. for instance, all geoboxes contained in geobox
 
 geobox : { z =0b11101111 00000000 00000000 00000000 00000000 00000000 00000000 00000000, masklength = 56 }
 
