@@ -486,6 +486,28 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
 
 
     result << "<defs>";
+    
+    std::set<std::string> symbols_set;
+
+    for (auto idxDesc : *(mger->indexes))
+    {
+        for (auto cd : idxDesc->conditions)
+        {
+            for(auto cl : cd->classes)
+            {
+                if( cssClasses.find("sym#"+cl->symbol) != cssClasses.end())
+                {
+                    if (cl->symbol != "")
+                    {
+                        if(mger->symbols->find(cl->symbol) != mger->symbols->end())
+                        {
+                            symbols_set.insert(cl->symbol);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     for( auto pattern : *(mger->symbols))
     {
@@ -510,6 +532,17 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
             }
             if(found) break;
         }
+        if(!found)
+        {
+             for(auto s : symbols_set)
+             {
+                 if((*(mger->symbols))[s].find("url(#"+pattern.first) != std::string::npos)
+                 {
+                     found = true;
+                     break;
+                 }
+             }
+        }
         if(found) result << pattern.second;
     }
 
@@ -533,28 +566,13 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
     }
     result << "</style>\n";
 
-    for (auto idxDesc : *(mger->indexes))
+    for( auto symbols : *(mger->symbols))
     {
-        for (auto cd : idxDesc->conditions)
+        if(symbols_set.find(symbols.first) != symbols_set.end())
         {
-            for(auto cl : cd->classes)
-            {
-                if( cssClasses.find("sym#"+cl->symbol) != cssClasses.end())
-                {
-                    if (cl->symbol != "")
-                    {
-                        if(mger->symbols->find(cl->symbol) != mger->symbols->end())
-                        {
-                            result << (*(mger->symbols))[cl->symbol];
-                            cssClasses.erase("sym#"+cl->symbol);
-
-                        }
-                    }
-                }
-            }
+            result << symbols.second;
         }
     }
-
 
 
     result << "<rect width=\"" << (sizex + 1) << "\" height=\"" << (sizey + 1) << "\" fill=\""+_defaultColor+"\" opacity=\"0.5\"/>\n";

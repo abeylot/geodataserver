@@ -49,10 +49,10 @@
     </pattern>
 
     <pattern id="forestPattern" width="16" height="16" patternUnits="userSpaceOnUse" >
-             <rect x="0" y="0" width="16" height="16" fill="#EFEFEF"/>
-             <circle cx="4" cy="7" r="3" stroke-width="0" fill="#DEDEDE" />
-             <circle cx="8" cy="8" r="5" stroke-width="0" fill="#DEDEDE" />
-             <circle cx="12" cy="10" r="4" stroke-width="0" fill="#DEDEDE" />
+             <rect x="0" y="0" width="16" height="16" fill="#D5D5D5"/>
+             <circle cx="4" cy="7" r="3" stroke-width="0" fill="#CECECE" />
+             <circle cx="8" cy="8" r="5" stroke-width="0" fill="#CECECE" />
+             <circle cx="12" cy="10" r="4" stroke-width="0" fill="#CFCFCF" />
     </pattern>
 
     <pattern id="waterPattern" width="4" height="8" patternUnits="userSpaceOnUse">
@@ -106,13 +106,13 @@
 
     <!-- areas -->
     <style id="water"            value="fill:url(#waterPattern); fill-rule:evenodd;"/>
-    <style id="grass"            value="fill:#CDCDCD; fill-rule:evenodd"/>
+    <style id="grass"            value="fill:#DDDDDD; fill-rule:evenodd"/>
     <style id="forest"           value="fill:url(#forestPattern); fill-rule:evenodd"/>
     <style id="ice"              value="fill:lightgrey;; fill-rule:evenodd"/>
-    <style id="concrete"         value="fill:#DDDDDD;; fill-rule:evenodd"/>
+    <style id="concrete"         value="fill:#D0D0D0;; fill-rule:evenodd"/>
     <style id="stone"            value="fill:url(#reefPattern); fill-rule:evenodd; opacity:0.4"/>
     <style id="reef"             value="fill:url(#reefPattern); fill-rule:evenodd;opacity:0.4"/>
-    <style id="sand"             value="fill:#DDDDDD; fill-rule:evenodd; opacity:0.4"/>
+    <style id="sand"             value="fill:#DFDFDF; fill-rule:evenodd; opacity:0.4"/>
     <style id="mud"              value="fill:url(#mudPattern); fill-rule:evenodd"/>
     <style id="building"         value="fill:url(#hashed);stroke:#BBBBBB ;stroke-width:1; fill-rule:evenodd; filter: url(#shadow)"/>
     <style id="historicBuilding" value="fill:url(#hashed2);stroke:#B1B1B1 ;stroke-width:1; fill-rule:evenodd; filter: url(#shadow)"/>
@@ -176,15 +176,15 @@
     </symbol>
 
     <symbol id="treeS" width="12" height="12" transform="translate(-6 -6)">
-        <circle  cx="6"  cy="6"  r="4"  style="fill:#999999;opacity:0.7; filter: url(#shadow)" />
+        <circle  cx="6"  cy="6"  r="4"  style="fill:url(#forestPattern); opacity:0.7" />
     </symbol>
 
     <symbol id="treeM" width="20" height="20" transform="translate(-10 -10)">
-        <circle  cx="10"  cy="10"  r="8"  style="fill:#999999;opacity:0.7; filter: url(#shadow)" />
+        <circle  cx="10"  cy="10"  r="8"  style="fill:url(#forestPattern); opacity:0.7" />
     </symbol>
 
     <symbol id="treeB" width="36" height="36" transform="translate(-18 -18)">
-        <circle  cx="18"  cy="18"  r="16"  style="fill:#999999;opacity:0.7; filter: url(#shadow)" />
+        <circle  cx="18"  cy="18"  r="16"  style="fill:url(#forestPattern); opacity:0.7" />
     </symbol>
 
     <symbol id="parking" width="16" height="16" transform="translate(-8 -8)" >
