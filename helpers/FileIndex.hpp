@@ -986,7 +986,7 @@ bool get_range(KEY key_min, KEY key_max, std::vector<ITEM>& items, bool include_
 {
     //keys.clear();
     items.clear();
-    uint64_t iMin;
+    uint64_t iMin = 0;
     if(!findLastLesser(key_min, iMin)) return false;
     uint64_t iMax = iMin;
     uint64_t iMaxMax = getSize() - 1;
@@ -996,7 +996,7 @@ bool get_range(KEY key_min, KEY key_max, std::vector<ITEM>& items, bool include_
     for(;;)
     {
         if (iMaxRead > iMaxMax) iMaxRead = iMaxMax;
-        bool rres = getKeys(iMax, iMax + 99, keysTab);
+        bool rres = getKeys(iMax, iMaxRead, keysTab);
         if(!rres) break;// shouldn't happen
         uint64_t cur = 0;
         for(iMax = iMinRead; iMax <= iMaxRead; iMax++)

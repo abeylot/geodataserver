@@ -79,6 +79,7 @@ std::string cutString(std::string text, int x, int y, int dy)
         {
             pos = MAX_TEXT_LEN;
         }
+        else pos++;
         txt = txt.substr(pos);
     }
 
@@ -103,7 +104,7 @@ std::string cutString(std::string text, int x, int y, int dy)
         if(pos != std::string::npos)
         {
             result += text.substr(0,pos);
-            text = text.substr(pos);
+            text = text.substr(pos+1);
         }
         else
         {
@@ -137,6 +138,7 @@ size_t cutString(std::string txt, int& ilines)
             pos = MAX_TEXT_LEN;
         }
         if((pos) > result) result = pos;
+        if(pos != MAX_TEXT_LEN) pos++;
         txt = txt.substr(pos);
     }
     return result;
@@ -151,7 +153,8 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
     Shape myShape;
     hh::THashIntegerTable hash(10000);
 
-    std::map <uint64_t, std::pair<std::shared_ptr<CssClass>, std::shared_ptr<ITEM>>> itemsToDraw;
+    //std::map <uint64_t, std::pair<std::shared_ptr<CssClass>, std::shared_ptr<ITEM>>> itemsToDraw;
+    std::vector <std::pair<std::shared_ptr<CssClass>, std::shared_ptr<ITEM>>> itemsToDraw;
 
     Rectangle rect2;
 
@@ -171,8 +174,8 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
     }
     if constexpr(std::is_same<ITEM,Point>())
     {
-         gSet = makeGeoBoxSet(rect*2);
-         rect2 = rect*2;
+         gSet = makeGeoBoxSet(rect*3);
+         rect2 = rect*3;
     }
 
     std::set<uint64_t> done_geoboxes;
@@ -207,14 +210,15 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                     std::shared_ptr<ITEM> item = nullptr;
                     item = mger->load<ITEM>(indexEntry[i].id, true);
                     std::shared_ptr<CssClass> cl = getCssClass(idxDesc, *item, zoom, indexEntry[i].zmMask & 0X100000LL);
-                    label_s lbl;
+                    //label_s lbl;
                     if(cl)
                     {
                         if constexpr(! std::is_same<ITEM, Point>())
                         {
                             item->rect = indexEntry[i].r;
                         }
-                        itemsToDraw[indexEntry[i].id] = std::make_pair(cl, item);
+                        //itemsToDraw[indexEntry[i].id] = std::make_pair(cl, item);
+                        itemsToDraw.push_back(std::make_pair(cl, item));
                     }
                 }
             }
@@ -251,14 +255,15 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                             {
                                 item->rect = indexEntry[i].r;
                             }
-                            itemsToDraw[indexEntry[i].id] = std::make_pair(cl, item);
+                            //itemsToDraw[indexEntry[i].id] = std::make_pair(cl, item);
+                            itemsToDraw.push_back(std::make_pair(cl, item));
                         }
                     }
                 }
             }
         }
     }
-    for (auto[key, value] : itemsToDraw)
+    for (auto value : itemsToDraw)
     {
         std::shared_ptr<label_s> lbl = std::make_shared<label_s>();
         std::shared_ptr<CssClass> cl = value.first;
@@ -382,7 +387,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
         //double xc,xd,yc,yd;
         int ilines;
         int ilt = cutString((*t)->text, ilines);
-        double lt = (*t)->fontsize*0.8*ilt;
+        double lt = (*t)->fontsize*1.0*ilt;
         double ht = (*t)->fontsize*1.0*ilines;
 
         /*xc = t->pos_x + lt*(cos(t->angle)) - ht*(sin(t->angle));;
@@ -390,7 +395,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
         xd = t->pos_x - lt*(cos(t->angle)) + ht*(sin(t->angle));;
         yd = t->pos_y - lt*(sin(t->angle)) - ht*(cos(t->angle));;*/
 
-        for(auto v = label_vector.begin(); v!=t; ++v)
+        for(auto v = to_print.begin(); v != to_print.end(); ++v)
         {
             //if ((*v)->to_show == false) continue;
             int ilv = cutString((*v)->text, ilines);
@@ -399,7 +404,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
             //double xa,ya,xb,yb;
 
 
-            double lv = (*v)->fontsize*0.8*ilv;
+            double lv = (*v)->fontsize*1.0*ilv;
             double hv = (*v)->fontsize*1.0*ilines;
 
             /*xa = v->pos_x + lv*(cos(v->angle)) - hv*(sin(v->angle));
@@ -407,8 +412,9 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
             xb = v->pos_x - lv*(cos(v->angle)) + hv*(sin(v->angle));
             yb = v->pos_y - lv*(sin(v->angle)) - hv*(cos(v->angle));*/
 
-
-            if((lt*lt + ht*ht + lv*lv + hv*hv) > 4*(((double)((*t)->pos_x) - (double)((*v)->pos_x))*((double)((*t)->pos_x) - (double)((*v)->pos_x)) + ((double)((*t)->pos_y) - (double)((*v)->pos_y))*((double)((*t)->pos_y) - (double)((*v)->pos_y))))
+            double dx = (double)((*t)->pos_x) - (double)((*v)->pos_x);
+            double dy = (double)((*t)->pos_y) - (double)((*v)->pos_y);
+            if((lt*lt + ht*ht + lv*lv + hv*hv) > 4*(dx*dx + dy*dy))
             {
                     to_show = false;
                     break;
@@ -992,7 +998,8 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                 if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
                 keep = true;
                 result << render(*lbl2,*myWay, rect, szx, szy, cl, s);
-                if(lbl2->text != "void" && lbl2->text != "") label_vector.push_back(lbl2);
+                if((lbl2->text.length() > 0) && (lbl2->fontsize > 5))
+                    label_vector.push_back(lbl2);
             }
         }
         else
@@ -1261,7 +1268,12 @@ template<class ITEM> std::shared_ptr<CssClass> SvgRenderer::getCssClass(const In
                 if(cl->mask & mask)
                     if (cl->tagValue == item.tags[cd->tagKey])
                     {
-                        myCl = cl;
+                        if(myCl && ((myCl->zIndex < cl->zIndex)||((myCl->zIndex == cl->zIndex)&&(myCl->textZIndex < cl->textZIndex)))) 
+                        {
+                            myCl = cl;
+                        } else if(!myCl){
+                            myCl = cl;
+                        }
                     }
             }
         }
