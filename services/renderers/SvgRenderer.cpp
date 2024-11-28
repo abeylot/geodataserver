@@ -453,6 +453,10 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
 
     for(auto v=to_print.begin(); v!=to_print.end(); ++v)
     {
+        if((*v)->pos_x < -0.5*size_x) continue;
+        if((*v)->pos_x > 1.5*size_x) continue;
+        if((*v)->pos_y < -0.5* size_y) continue;
+        if((*v)->pos_y > 1.5*size_y) continue;
         {
 
                if((*v)->angle ==0)
@@ -492,7 +496,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
 
 
     result << "<defs>";
-    
+
     std::set<std::string> symbols_set;
 
     for (auto idxDesc : *(mger->indexes))
@@ -1268,7 +1272,7 @@ template<class ITEM> std::shared_ptr<CssClass> SvgRenderer::getCssClass(const In
                 if(cl->mask & mask)
                     if (cl->tagValue == item.tags[cd->tagKey])
                     {
-                        if(myCl && ((myCl->zIndex < cl->zIndex)||((myCl->zIndex == cl->zIndex)&&(myCl->textZIndex < cl->textZIndex)))) 
+                        if(myCl && ((myCl->zIndex < cl->zIndex)||((myCl->zIndex == cl->zIndex)&&(myCl->textZIndex < cl->textZIndex))))
                         {
                             myCl = cl;
                         } else if(!myCl){
