@@ -997,7 +997,11 @@ bool get_range(KEY key_min, KEY key_max, std::vector<ITEM>& items, bool include_
     {
         if (iMaxRead > iMaxMax) iMaxRead = iMaxMax;
         bool rres = getKeys(iMax, iMaxRead, keysTab);
-        if(!rres) break;// shouldn't happen
+        if(!rres)
+        {
+             std::cout << "Range ERROR !!!" << "\n";
+             break;// shouldn't happen
+        }
         uint64_t cur = 0;
         for(iMax = iMinRead; iMax <= iMaxRead; iMax++)
         {
@@ -1015,10 +1019,12 @@ bool get_range(KEY key_min, KEY key_max, std::vector<ITEM>& items, bool include_
         iMinRead += 100;
         iMaxRead += 100;
     }
+    if (iMax > iMaxMax) iMax = iMaxMax;
     ITEM* itemsTab = new ITEM[1+iMax -iMin];
     bool iRes = getItems(iMin, iMax,itemsTab);
     if (!iRes)
     {
+        std::cout << "Range ERROR2 !!!" << "\n";
         delete[] itemsTab;
         return false;
     }
