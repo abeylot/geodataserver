@@ -76,7 +76,9 @@ struct __attribute__((packed)) GeoPoint
 inline bool operator==(GeoPoint const& a, GeoPoint const& b)
 {
     //return ((a.x==b.x) && (a.y == b.y));
-    return (!memcmp(&a,&b,sizeof(GeoPoint)));
+    //return (!memcmp(&a,&b,sizeof(GeoPoint)));
+    //Dangerous, ugly, but very efficient and fast !
+    return *((uint64_t*)(&a)) == *((uint64_t*)(&b));
 }
 
 /**
