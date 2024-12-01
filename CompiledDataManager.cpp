@@ -462,9 +462,9 @@ void Way::reduce(uint32_t dx, uint32_t dy)
     uint64_t newPointsCount = 1;
     for(uint64_t i = 1; i < pointsCount; i++)
     {
-        if(i == pointsCount - 1) points[newPointsCount++ - 1] = points[i];
-        else if(points[i].x % dx != points[newPointsCount -1].x % dx)  points[newPointsCount++ -1] = points[i];
-        else if(points[i].y % dy != points[newPointsCount -1].y % dy)  points[newPointsCount++ -1] = points[i];
+        if(i == pointsCount - 1) points[newPointsCount++] = points[i];
+        else if(points[i].x/dx  != points[newPointsCount -1].x/dx)  points[newPointsCount++] = points[i];
+        else if(points[i].y/dy  != points[newPointsCount -1].y/dy)  points[newPointsCount++] = points[i];
     }
     pointsCount = newPointsCount;
 }
