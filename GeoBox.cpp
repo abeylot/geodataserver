@@ -317,27 +317,35 @@ bool geoBoxContains(GeoBox* a, GeoBox* b)
 
 bool operator<(GeoBox const& a, GeoBox const& b)
 {
-    return (compareGeoBox(&a, &b) < 0);
+    if (a.get_pos() <  b.get_pos()) return true;
+    else if (a.get_pos() ==  b.get_pos() && a.get_maskLength() >  b.get_maskLength()) return true;
+    return false;
 }
 
 bool operator>(GeoBox const& a, GeoBox const& b)
 {
-    return (compareGeoBox(&a, &b) >0);
+    if (a.get_pos() >  b.get_pos()) return true;
+    else if (a.get_pos() ==  b.get_pos() && a.get_maskLength() <  b.get_maskLength()) return true;
+    return false;
 }
 
 bool operator == (GeoBox const& a, GeoBox const& b)
 {
-    return (compareGeoBox(&a, &b)  == 0);
+    return a.get_data() == b.get_data();
 }
 
 bool operator>=(GeoBox const& a, GeoBox const& b)
 {
-    return (compareGeoBox(&a, &b) >=0);
+    if (a.get_pos() >  b.get_pos()) return true;
+    else if (a.get_pos() ==  b.get_pos() && a.get_maskLength() <  b.get_maskLength()) return true;
+    return a.get_data() == b.get_data();
 }
 
 bool operator<=(GeoBox const& a, GeoBox const& b)
 {
-    return (compareGeoBox(&a, &b) <=0);
+    if (a.get_pos() <  b.get_pos()) return true;
+    else if (a.get_pos() ==  b.get_pos () && a.get_maskLength() >  b.get_maskLength()) return true;
+    return a.get_data() == b.get_data();
 }
 
 short compareGeoBox(GeoBox const* a, GeoBox const* b)
