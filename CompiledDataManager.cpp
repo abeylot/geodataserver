@@ -459,13 +459,12 @@ void Way::crop(Rectangle& r)
 
 void Way::reduce(uint32_t dx, uint32_t dy)
 {
-    uint64_t newPointsCount = 0;
-    for(uint64_t i = 0; i < pointsCount; i++)
+    uint64_t newPointsCount = 1;
+    for(uint64_t i = 1; i < pointsCount; i++)
     {
-        if(i==0) points[newPointsCount++] = points[i];
-        else if(i == pointsCount - 1) points[newPointsCount++] = points[i];
-        else if(points[i].x % dx != points[newPointsCount -1].x % dx)  points[newPointsCount++] = points[i];
-        else if(points[i].y % dy != points[newPointsCount -1].y % dy)  points[newPointsCount++] = points[i];
+        if(i == pointsCount - 1) points[newPointsCount++ - 1] = points[i];
+        else if(points[i].x % dx != points[newPointsCount -1].x % dx)  points[newPointsCount++ -1] = points[i];
+        else if(points[i].y % dy != points[newPointsCount -1].y % dy)  points[newPointsCount++ -1] = points[i];
     }
     pointsCount = newPointsCount;
 }
