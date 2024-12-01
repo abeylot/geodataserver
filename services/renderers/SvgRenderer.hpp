@@ -45,9 +45,9 @@ struct myShape
 
 inline double projectX(const Projection& p, const uint64_t size, const uint32_t left_bound, const uint32_t right_bound, const uint32_t x)
 {
-  double x_  = Coordinates::fromNormalizedLat(x);
-  double x0_ = Coordinates::fromNormalizedLat(left_bound);
-  double x1_ = Coordinates::fromNormalizedLat(right_bound);
+  double x_  = Coordinates::fromNormalizedLon(x);
+  double x0_ = Coordinates::fromNormalizedLon(left_bound);
+  double x1_ = Coordinates::fromNormalizedLon(right_bound);
 
   return size*(
      (p.lon2x(x_) - p.lon2x(x0_))/

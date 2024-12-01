@@ -435,6 +435,7 @@ void Line::crop(Rectangle& r)
     do_crop(points, pointsCount, r);
 }
 
+
 void Way::fillrec()
 {
     if (!pointsCount) return;
@@ -454,6 +455,19 @@ void Way::fillrec()
 void Way::crop(Rectangle& r)
 {
     do_crop(points, pointsCount, r);
+}
+
+void Way::reduce(uint32_t dx, uint32_t dy)
+{
+    uint64_t newPointsCount = 0;
+    for(uint64_t i = 0; i < pointsCount; i++)
+    {
+        if(i==0) points[newPointsCount++] = points[i];
+        else if(i == pointsCount - 1) points[newPointsCount++] = points[i];
+        else if(points[i].x % dx != points[newPointsCount -1].x % dx)  points[newPointsCount++] = points[i];
+        else if(points[i].y % dy != points[newPointsCount -1].y % dy)  points[newPointsCount++] = points[i];
+    }
+    pointsCount = newPointsCount;
 }
 
 

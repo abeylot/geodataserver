@@ -221,7 +221,7 @@ double tilex2long(int x, int z)
 {
     int div = 1 << z;
     double result =  (double)x / (double)div * 360.0 - 180;
-    if (result >= 179.999) result = 179.999;
+    if (result >= 179.99999999) result = 179.99999999;
     return result;
 }
 
