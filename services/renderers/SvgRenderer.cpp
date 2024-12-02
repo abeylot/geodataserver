@@ -621,6 +621,7 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
     result << "<path  d=\"";
     for(Line* l : s.openedLines)
     {
+        if(l->pointsCount < 2) continue;
         bool first = true;
         double x=0;
         double y=0;
@@ -641,7 +642,7 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
                 }
                 else
                 {
-                    if((round(x) != round(oldx)) || (round(y) != round(oldy))|| i == (l->pointsCount - 1))
+                    if((round(x) != round(oldx)) || (round(y) != round(oldy))/*|| i == (l->pointsCount - 1)*/)
                         result << "L" << (int32_t)(x) << " " << (int32_t)(y) ;
                 }
             }
@@ -653,6 +654,7 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
         double x=0;
         double y=0;
         x=0; y=0;
+        if(l->pointsCount <= 3) continue;
         for(unsigned int i = 0 ; i < l->pointsCount; i++)
         {
             int64_t xx = l->points[i].x;
@@ -846,7 +848,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     if(draw)
     {
         myWay.crop(r1);
-        myWay.reduce((rect.x1 - rect.x0)/size_x, (rect.y1 - rect.y0)/size_y); 
+        myWay.reduce((rect.x1 - rect.x0)/size_x, (rect.y1 - rect.y0)/size_y);
         if(myWay.pointsCount > 1) s.mergePoints(myWay.points, myWay.pointsCount, myWay.points[0] == myWay.points[myWay.pointsCount - 1]);
     }
     lbl.fontsize = 12;
@@ -964,6 +966,8 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
     lbl.zindex = cl.textZIndex;
     std::string resultString = "";
     StringBuffer result(resultString);
+    std::string resultStringTmp = "";
+    StringBuffer resultTmp(resultStringTmp);
     std::string textField = "name";
     if(!(cl.textField == "")) textField = cl.textField;
     bool draw = ((myRelation.rect)*(rect*1.25)).isValid();
@@ -1011,7 +1015,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
         {
             if(draw)
             {
-                result << "<path  d=\"";
+                bool started = false;
                 for(Line* l: myRelation.shape.openedLines)
                 {
                     Rectangle r1 = rect*1.25;
@@ -1022,6 +1026,8 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                     bool first = true;
                     int x=0;
                     int y=0;
+                    bool good = false;
+                    resultTmp.clear();
                     for(unsigned int i = 0 ; i < l->pointsCount; i++)
                     {
                         keep = true;
@@ -1034,17 +1040,28 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                         x = projectX(_proj, szx, rect.x0, rect.x1, xx);
                         y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
 
-                        if((x != oldx) || (y != oldy) || i == (l->pointsCount - 1))
+                        if((x != oldx) || (y != oldy) /*|| i == (l->pointsCount - 1)*/)
                         {
                             if(first)
                             {
-                                result << "M" << (int32_t)(x) << " " << (int32_t)(y);
+                                resultTmp << "M" << (int32_t)(x) << " " << (int32_t)(y);
                                 first = false;
                             }
                             else
                             {
-                                result << "L" << (int32_t)(x) << " " << (int32_t)(y);
+                                resultTmp << "L" << (int32_t)(x) << " " << (int32_t)(y);
+                                good = true;
                             }
+                        }
+                    }
+                    if(good)
+                    {
+                        resultTmp.flush();
+                        result << resultStringTmp;
+                        if(!started)
+                        {
+                            started = true;
+                           result << "<path  d=\"";
                         }
                     }
                 }
@@ -1054,10 +1071,12 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                     //l->crop(r1);
                     //s.mergePoints(l->points, l->pointsCount);
                     l->crop(r1);
-                    if(l->pointsCount < 2) continue;
+                    if(l->pointsCount <= 3) continue; // shape is 'flat'
                     bool first = true;
                     int x=0;
                     int y=0;
+                    bool good = false;
+                    resultTmp.clear();
                     for(unsigned int i = 0 ; i < l->pointsCount; i++)
                     {
                         keep = true;
@@ -1070,21 +1089,32 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                         x = projectX(_proj, szx, rect.x0, rect.x1, xx);
                         y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
 
-                        if((x != oldx) || (y != oldy) || i == (l->pointsCount - 1))
+                        if((x != oldx) || (y != oldy) /*|| i == (l->pointsCount - 1)*/)
                         {
                             if(first)
                             {
-                                result << "M" << (int32_t)(x) << " " << (int32_t)(y);
+                                resultTmp << "M" << (int32_t)(x) << " " << (int32_t)(y);
                                 first = false;
                             }
                             else
                             {
-                                result << "L" << (int32_t)(x) << " " << (int32_t)(y);
+                                resultTmp << "L" << (int32_t)(x) << " " << (int32_t)(y);
+                                good = true;
                             }
                         }
                     }
+                    if(good)
+                    {
+                        if(!started)
+                        {
+                            started = true;
+                           result << "<path  d=\"";
+                        }
+                        resultTmp.flush();
+                        result << resultStringTmp;
+                    }
                 }
-                result << " \" class=\"c" << cl.rank <<"\" />\n";
+                if (started) result << " \" class=\"c" << cl.rank <<"\" />\n";
             }
             cssClasses.insert("c"+std::to_string(cl.rank));
             if(cl.textStyle != "")

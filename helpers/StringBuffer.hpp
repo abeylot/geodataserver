@@ -21,6 +21,11 @@ public:
         bytesLeft_ = CONCATENATOR_LENGTH;
     }
 
+    void clear() {
+        pOut_->clear();
+        bytesLeft_ = CONCATENATOR_LENGTH;
+    }
+
     StringBuffer& concat(const char* toConcat, size_t sizeToCopy);
 
     StringBuffer& concat(const std::string& strToConcat);
