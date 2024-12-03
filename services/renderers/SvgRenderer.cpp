@@ -685,7 +685,7 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
             }
         }
     }
-    result << " \" class=\"c" << cl.rank << "\" />\n";
+    result << "\" class=\"c" << cl.rank << "\" />\n";
     cssClasses.insert("c"+std::to_string(cl.rank));
     result.flush();
     return resultString;
