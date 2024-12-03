@@ -643,7 +643,11 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
                 else
                 {
                     if((round(x) != round(oldx)) || (round(y) != round(oldy))/*|| i == (l->pointsCount - 1)*/)
-                        result << "L" << (int32_t)(x) << " " << (int32_t)(y) ;
+                    {
+                        if((int32_t)(x) == (int32_t)(oldx)) result << "V" << (int32_t)(y) ;
+                        else if((int32_t)(y) == (int32_t)(oldy)) result << "H" << (int32_t)(x) ;
+                        else result << "L" << (int32_t)(x) << " " << (int32_t)(y) ;
+                    }
                 }
             }
         }
@@ -671,8 +675,12 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
                 }
                 else
                 {
-                    if((round(x) != round(oldx)) || (round(y) != round(oldy))|| i == (l->pointsCount - 1))
-                        result << "L" << (int32_t)(x) << " " << (int32_t)(y) ;
+                    if((round(x) != round(oldx)) || (round(y) != round(oldy))/*|| i == (l->pointsCount - 1)*/)
+                    {
+                        if((int32_t)(x) == (int32_t)(oldx)) result << "V" << (int32_t)(y) ;
+                        else if((int32_t)(y) == (int32_t)(oldy)) result << "H" << (int32_t)(x) ;
+                        else result << "L" << (int32_t)(x) << " " << (int32_t)(y) ;
+                    }
                 }
             }
         }
@@ -1049,7 +1057,9 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                             }
                             else
                             {
-                                resultTmp << "L" << (int32_t)(x) << " " << (int32_t)(y);
+                                if(x== oldx)  resultTmp << "V" << (int32_t)(y);
+                                else if(y== oldy)  resultTmp << "H" << (int32_t)(x);
+                                else resultTmp << "L" << (int32_t)(x) << " " << (int32_t)(y);
                                 good = true;
                             }
                         }
@@ -1098,7 +1108,9 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                             }
                             else
                             {
-                                resultTmp << "L" << (int32_t)(x) << " " << (int32_t)(y);
+                                if(x== oldx)  resultTmp << "V" << (int32_t)(y);
+                                else if(y== oldy)  resultTmp << "H" << (int32_t)(x);
+                                else resultTmp << "L" << (int32_t)(x) << " " << (int32_t)(y);
                                 good = true;
                             }
                         }
