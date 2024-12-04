@@ -87,6 +87,7 @@ std::shared_ptr<Relation> CompiledDataManager::loadRelation(uint64_t id, short r
             r->isPyramidal = true;
         }
         fillLinkedItems(*r,record.mstart,record.msize, recurs, fast);
+        //std::cout << r->tags["name"] << ":" << record.msize << "\n";
         return r;
     }
     else return nullptr;

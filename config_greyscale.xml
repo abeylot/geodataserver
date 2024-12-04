@@ -503,10 +503,10 @@
             <condition tagKey="type" closed="yes">
                 <class value="waterway"                  zIndex="101" textZIndex="25" style="#water" />
             </condition>
-            <condition tagKey="route" closed="both">
+            <!--condition tagKey="route" closed="both">
                 <class value="bus"      textWidth="4" textStyle="fill:grey;font-family:monospace"      zIndex="25000000" style="fill:none; stroke:#888888;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
                 <class value="ferry"       textWidth="4" textStyle="#ferryLineName"      zIndex="1000" textZIndex="2000" style="#ferryLine"/>
-            </condition>
+            </condition-->
         </restriction>
         <restriction zLevels="17">
             <condition tagKey="natural" closed="both">
