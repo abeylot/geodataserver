@@ -87,7 +87,7 @@ struct Way
         if(tags.data != nullptr) free(tags.data);
     }
     void crop (Rectangle& r);
-    void reduce (uint32_t dx, uint32_t dy); 
+    void reduce (uint32_t dx, uint32_t dy);
     void fillrec();
 };
 
