@@ -22,7 +22,13 @@ helpers/hash.hpp \
 helpers/Sequence.hpp \
 Coordinates.hpp \
 common/Projections.hpp \
-GeoBox.hpp
+GeoBox.hpp \
+CompiledDataManager.hpp
+
+headersServer=messaging/HttpEncoder.hpp \
+messaging/Msg.hpp \
+services/renderers/SvgRenderer.hpp \
+services/renderers/PngRenderer.hpp
 
 #objects used by all executables
 objectsCommon = $(BUILD)/GeoBox.o \
@@ -62,7 +68,7 @@ all: $(BUILD) $(BUILD)/renumber $(BUILD)/compile $(BUILD)/index $(BUILD)/geoserv
 $(objectsCommon): $(BUILD)/%.o: %.cpp %.hpp $(headersCommon)
 	$(cc) -c $<  -o $@
 
-$(objectsServer): $(BUILD)/%.o: %.cpp %.hpp $(headersCommon) messaging/HttpEncoder.hpp messaging/Msg.hpp services/renderers/SvgRenderer.hpp services/renderers/PngRenderer.hpp
+$(objectsServer): $(BUILD)/%.o: %.cpp %.hpp $(headersCommon) $(headersServer)
 	$(cc) -c $<  -o $@
 
 
@@ -87,7 +93,7 @@ $(BUILD)/index: index.cpp $(headersCommon) $(BUILD)/Coordinates.o $(BUILD)/Compi
 $(BUILD)/compile: $(BUILD)/Coordinates.o compile.cpp $(headersCommon)
 	$(cc) compile.cpp $(BUILD)/Coordinates.o -o $(BUILD)/compile
 
-$(BUILD)/geoserver: server.cpp $(headersCommon) $(objectsCommon) $(objectsServer)
+$(BUILD)/geoserver: server.cpp $(headersCommon) $(headersServer) $(objectsCommon) $(objectsServer)
 	$(cc) server.cpp $(objectsCommon) $(objectsServer) -o $(BUILD)/geoserver $(libs)
 
 clean:

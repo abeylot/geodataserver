@@ -223,22 +223,6 @@ public :
     std::shared_ptr<Relation> loadRelationFast(uint64_t id);
     std::shared_ptr<Relation> loadRelation(uint64_t id, short recurs = 2, bool fast = false);
 
-    /*
-    inline void load(std::shared_ptr<Relation> r, uint64_t id, bool fast)
-    {
-        r = loadRelation(id, 3, fast);
-    }
-
-    inline void load(std::shared_ptr<Way> w, uint64_t id, bool fast)
-    {
-        w = loadWay(id, fast);
-    }
-
-    inline void load(std::shared_ptr<Point> p, uint64_t id, [[maybe_unused]] bool fast)
-    {
-        p =  loadPoint(id);
-    }
-*/
     void fillPoints(GeoPoint ** points, uint64_t& pointsCount, uint64_t start, uint64_t size);
 
     void fillTags(Tags& tags, uint64_t start, uint64_t size);
