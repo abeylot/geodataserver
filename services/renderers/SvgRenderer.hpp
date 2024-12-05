@@ -19,7 +19,8 @@ struct label_s
     double angle;
     unsigned int fontsize;
     bool to_show;
-    label_s():id{0},zindex{0},text{""},ref{""},style{0},pos_x{0},pos_y{0},angle{0},fontsize{0}, to_show(true)
+    bool sizeFromStyle;
+    label_s():id{0},zindex{0},text{""},ref{""},style{0},pos_x{0},pos_y{0},angle{0},fontsize{0}, to_show(true), sizeFromStyle(false)
     {}
     void clear()
     {
@@ -33,6 +34,7 @@ struct label_s
         angle = 0;
         fontsize = 0;
         to_show = true;
+        sizeFromStyle = false;
     }
 };
 

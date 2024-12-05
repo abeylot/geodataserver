@@ -462,33 +462,65 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
 
                if((*v)->angle ==0)
                {
-                   texts << "<text  class=\"c"
-                      << (*v)->style
-                      << "\" style=\"font-size:"
-                      << (*v)->fontsize
-                      << "px\" x=\"" << (*v)->pos_x
-                      << "\" y=\"" << (*v)->pos_y
-                      << "\">"
-                      << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
-                      << "</text>\n";
+                   if((*v)->sizeFromStyle)
+                   {
+                       texts << "<text  class=\"c"
+                          << (*v)->style
+                          << "\" x=\"" << (*v)->pos_x
+                          << "\" y=\"" << (*v)->pos_y
+                          << "\">"
+                          << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
+                          << "</text>\n";
+                   }
+                   else
+                   {
+                       texts << "<text  class=\"c"
+                          << (*v)->style
+                          << "\" style=\"font-size:"
+                          << (*v)->fontsize
+                          << "px\" x=\"" << (*v)->pos_x
+                          << "\" y=\"" << (*v)->pos_y
+                          << "\">"
+                          << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
+                          << "</text>\n";
+                    }
                }
                else
                {
-                   texts << "<text  class=\"c"
-                      << (*v)->style
-                      << "\" style=\"font-size:"
-                      << (*v)->fontsize
-                      << "px\" x=\"" << (*v)->pos_x
-                      << "\" y=\"" << (*v)->pos_y
-                      << "\" transform=\"rotate("
-                      << std::to_string((*v)->angle*180/M_PI)
-                      << ","
-                      << (*v)->pos_x
-                      << ","
-                      << (*v)->pos_y
-                      << ")\">"
-                      << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
-                      << "</text>\n";
+                   if((*v)->sizeFromStyle)
+                   {
+                       texts << "<text  class=\"c"
+                          << (*v)->style
+                          << "\" x=\"" << (*v)->pos_x
+                          << "\" y=\"" << (*v)->pos_y
+                          << "\" transform=\"rotate("
+                          << std::to_string((*v)->angle*180/M_PI)
+                          << ","
+                          << (*v)->pos_x
+                          << ","
+                          << (*v)->pos_y
+                          << ")\">"
+                          << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
+                          << "</text>\n";
+                   }
+                   else
+                   {
+                       texts << "<text  class=\"c"
+                          << (*v)->style
+                          << "\" style=\"font-size:"
+                          << (*v)->fontsize
+                          << "px\" x=\"" << (*v)->pos_x
+                          << "\" y=\"" << (*v)->pos_y
+                          << "\" transform=\"rotate("
+                          << std::to_string((*v)->angle*180/M_PI)
+                          << ","
+                          << (*v)->pos_x
+                          << ","
+                          << (*v)->pos_y
+                          << ")\">"
+                          << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
+                          << "</text>\n";
+                   }
                }
                cssClasses.insert("c"+std::to_string((*v)->style));
 
@@ -861,6 +893,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     if(found != std::string::npos)
     {
         lbl.fontsize = atoi(cl.textStyle.c_str() + found + 10);
+        lbl.sizeFromStyle = true;
     }
     else
     {
@@ -1223,6 +1256,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         if(found != std::string::npos)
         {
             lbl.fontsize = atoi(cl.textStyle.c_str() + found + 10);
+            lbl.sizeFromStyle = true;
         }
 
 
