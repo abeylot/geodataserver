@@ -90,8 +90,8 @@ $(BUILD)/renumber: renumber.cpp $(headersCommon) $(BUILD)/Coordinates.o
 $(BUILD)/index: index.cpp $(headersCommon) $(BUILD)/Coordinates.o $(BUILD)/CompiledDataManager.o $(BUILD)/helpers/Rectangle.o $(BUILD)/GeoBox.o
 	$(cc) index.cpp $(BUILD)/Coordinates.o $(BUILD)/CompiledDataManager.o $(BUILD)/helpers/Rectangle.o $(BUILD)/GeoBox.o -o $(BUILD)/index
 
-$(BUILD)/compile: $(BUILD)/Coordinates.o compile.cpp $(headersCommon)
-	$(cc) compile.cpp $(BUILD)/Coordinates.o -o $(BUILD)/compile
+$(BUILD)/compile: $(BUILD)/Coordinates.o $(BUILD)/helpers/Rectangle.o compile.cpp $(headersCommon)
+	$(cc) compile.cpp $(BUILD)/Coordinates.o $(BUILD)/helpers/Rectangle.o -o $(BUILD)/compile
 
 $(BUILD)/geoserver: server.cpp $(headersCommon) $(headersServer) $(objectsCommon) $(objectsServer)
 	$(cc) server.cpp $(objectsCommon) $(objectsServer) -o $(BUILD)/geoserver $(libs)

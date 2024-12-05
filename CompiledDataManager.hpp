@@ -217,20 +217,20 @@ public :
         delete textIndexRelationRange;
     }
 
-    std::shared_ptr<Way> loadWay(uint64_t id, bool fast = false);
+    std::shared_ptr<Way> loadWay(uint64_t id, Rectangle* r = nullptr);
     std::shared_ptr<Point> loadPoint(uint64_t id);
     //Relation* loadRelation(uint64_t id);
     std::shared_ptr<Relation> loadRelationFast(uint64_t id);
-    std::shared_ptr<Relation> loadRelation(uint64_t id, short recurs = 2, bool fast = false);
+    std::shared_ptr<Relation> loadRelation(uint64_t id, short recurs = 2, bool computeShape = true, Rectangle* rect = nullptr);
 
     void fillPoints(GeoPoint ** points, uint64_t& pointsCount, uint64_t start, uint64_t size);
 
     void fillTags(Tags& tags, uint64_t start, uint64_t size);
 
-    void fillLinkedItems(Relation& r, uint64_t start, uint64_t size, short recurs, bool fast);
+    void fillLinkedItems(Relation& r, uint64_t start, uint64_t size, short recurs, bool computeShape, Rectangle* rect);
         template<typename ITEM>
 
-    std::shared_ptr<ITEM> load(uint64_t id, [[maybe_unused]] bool fast)
+    std::shared_ptr<ITEM> load(uint64_t id)
     {
         if constexpr(std::is_same<ITEM,Point>())
         {
@@ -238,11 +238,11 @@ public :
         }
         if constexpr(std::is_same<ITEM,Way>())
         {
-            return loadWay(id, fast);
+            return loadWay(id);
         }
         if constexpr(std::is_same<ITEM,Relation>())
         {
-            return loadRelation(id, 3, fast);
+            return loadRelation(id, 3);
         }
         return nullptr;
     }

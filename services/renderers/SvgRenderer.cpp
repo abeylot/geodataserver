@@ -208,8 +208,27 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                 if( hash.addIfUnique(indexEntry[i].id))
                 {
                     std::shared_ptr<ITEM> item = nullptr;
-                    item = mger->load<ITEM>(indexEntry[i].id, true);
+                    if constexpr(std::is_same<ITEM,Relation>())
+                    {
+                        item = mger->loadRelationFast(indexEntry[i].id);
+                    }
+                    else
+                    {
+                        item = mger->load<ITEM>(indexEntry[i].id);
+                    }
                     std::shared_ptr<CssClass> cl = getCssClass(idxDesc, *item, zoom, indexEntry[i].zmMask & 0X100000LL);
+
+                    if constexpr(std::is_same<ITEM,Relation>())
+                    {
+                        if(cl && cl->opened) // not a filled area
+                        {
+                            item = mger->loadRelation(indexEntry[i].id, 2, false, &rect2);
+                        }
+                        else
+                        {
+                            item = mger->loadRelation(indexEntry[i].id, 2, true);
+                        }
+                    }
                     //label_s lbl;
                     if(cl)
                     {
@@ -246,9 +265,27 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                     if( hash.addIfUnique(indexEntry[i].id))
                     {
                         std::shared_ptr<ITEM> item = nullptr;
-                        item = mger->load<ITEM>(indexEntry[i].id, true);
+                        if constexpr(std::is_same<ITEM,Relation>())
+                        {
+                           item = mger->loadRelationFast(indexEntry[i].id);
+                        }
+                        else
+                        {
+                            item = mger->load<ITEM>(indexEntry[i].id);
+                        }
                         std::shared_ptr<CssClass> cl = getCssClass(idxDesc, *item, zoom, indexEntry[i].zmMask & 0X100000LL);
                         //std::shared_ptr<label_s> lbl;
+                        if constexpr(std::is_same<ITEM,Relation>())
+                        {
+                            if(cl && cl->opened) // not a filled area
+                            {
+                                item = mger->loadRelation(indexEntry[i].id, 2, false, &rect2);
+                            }
+                            else
+                            {
+                                item = mger->loadRelation(indexEntry[i].id, 2, true);
+                            }
+                        }
                         if(cl)
                         {
                             if constexpr(! std::is_same<ITEM, Point>())
@@ -969,7 +1006,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
             if(lbl2->text == "") lbl2->text = "void";
             for(auto myWay : myRelation.ways)
             {
-                myWay->fillrec();
+                //myWay->fillrec();
                 if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
                 keep = true;
                 result << render(*lbl2,*myWay, rect, szx, szy, cl, s);
