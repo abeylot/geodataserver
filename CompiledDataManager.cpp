@@ -95,32 +95,6 @@ std::shared_ptr<Relation> CompiledDataManager::loadRelation(uint64_t id, short r
     else return nullptr;
 }
 
-std::shared_ptr<Relation> CompiledDataManager::loadRelationForIndexing(uint64_t id, short recurs)
-{
-    recurs --;
-    if (recurs < 1) return nullptr;
-    GeoIndex record;
-    bool found = relationIndex->get(id,&record);
-    if(found)
-    {
-        auto r = std::make_shared<Relation>();
-        r->id = id;
-        r->isPyramidal = false;
-        r->rect.x0 = r->rect.x1 = UINT32_C(0xFFFFFFFF);
-        r->rect.y0 = r->rect.y1 = UINT32_C(0xFFFFFFFF);
-        fillTags(r->tags,record.tstart,record.tsize);
-        r->layer = 6;
-        if(r->tags["layer"] != "")
-        {
-            r->layer += atoiSW( r->tags["layer"]);
-        }
-        fillLinkedItemsForIndexing(*r,record.mstart,record.msize, recurs);
-        //std::cout << r->tags["name"] << ":" << record.msize << "\n";
-        return r;
-    }
-    else return nullptr;
-}
-
 std::shared_ptr<Relation> CompiledDataManager::loadRelationFast(uint64_t id)
 {
     GeoIndex record;
@@ -181,65 +155,6 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
                 r.relations.push_back(newRel);
                 r.rect = r.rect + newRel->rect;
                 if(computeShape)
-                {
-                    for(Line* l : newRel->shape.closedLines)
-                    {
-                        r.shape.mergePoints(l->points, l->pointsCount, true);
-                    }
-                    for(Line* l : newRel->shape.openedLines)
-                    {
-                        r.shape.mergePoints(l->points, l->pointsCount, false);
-                    }
-                }
-            }
-            break;
-        default:
-            break;
-        }
-    }
-    r.isClosed = true;
-
-    r.isClosed = r.shape.openedLines.empty();
-
-    free(buffer);
-}
-void CompiledDataManager::fillLinkedItemsForIndexing(Relation& r, uint64_t start, uint64_t size, short recurs)
-{
-    GeoMember* buffer = relMembers->getData(start,size);
-    std::shared_ptr<Way> newWay = nullptr;
-    std::shared_ptr<Point> newPoint = nullptr;
-    std::shared_ptr<Relation> newRel = nullptr;
-    GeoPoint pbuf[3];
-
-    for(uint64_t i = 0; i < size; i++)
-    {
-        switch(buffer[i].type)
-        {
-        /*case BaliseType::point:
-            newPoint = loadPoint(buffer[i].id);
-            if(newPoint)
-            {
-                r.points.push_back(newPoint);
-            }
-            break;*/
-        case BaliseType::way:
-            newWay = loadWay(buffer[i].id, nullptr);
-            if(newWay)
-            {
-                pbuf[0] = newWay->points[0];
-                pbuf[1] = newWay->points[newWay->pointsCount - 1];
-                r.shape.mergePoints(pbuf, 2, pbuf[0] == pbuf[1] );
-                //r.ways.push_back(newWay);
-                r.rect = r.rect + newWay->rect;
-            }
-            break;
-        case BaliseType::relation:
-            newRel = loadRelationForIndexing(buffer[i].id, recurs);
-            if(newRel)
-            {
-                //r.relations.push_back(newRel);
-                r.rect = r.rect + newRel->rect;
-
                 {
                     for(Line* l : newRel->shape.closedLines)
                     {

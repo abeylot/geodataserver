@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 
     for(uint64_t i=0; i < mger.relationIndex->getSize(); i++)
     {
-        r = mger.loadRelationForIndexing(i);
+        r = mger.loadRelation(i);
         if(!r) continue;
 
         if(r->tags.data == nullptr) {
