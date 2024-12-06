@@ -217,7 +217,7 @@ public :
         delete textIndexRelationRange;
     }
 
-    std::shared_ptr<Way> loadWay(uint64_t id, Rectangle* r = nullptr);
+    std::shared_ptr<Way> loadWay(uint64_t id, Rectangle* r = nullptr, bool loadPoints = true);
     std::shared_ptr<Point> loadPoint(uint64_t id);
     //Relation* loadRelation(uint64_t id);
     std::shared_ptr<Relation> loadRelationFast(uint64_t id);
