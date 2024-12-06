@@ -1,7 +1,7 @@
 #include "CompiledDataManager.hpp"
 #include <math.h>
 
-std::shared_ptr<Way> CompiledDataManager::loadWay(uint64_t id, Rectangle* rect, bool loadPoints)
+std::shared_ptr<Way> CompiledDataManager::loadWay(uint64_t id, Rectangle* rect)
 {
     GeoWayIndex record;
     bool found = wayIndex->get(id,&record);
@@ -10,7 +10,7 @@ std::shared_ptr<Way> CompiledDataManager::loadWay(uint64_t id, Rectangle* rect, 
     {
         auto w = std::make_shared<Way>();
         w->id = id;
-        if(loadPoints) fillPoints(&(w->points), w->pointsCount,record.pstart,record.psize);
+        fillPoints(&(w->points), w->pointsCount,record.pstart,record.psize);
         /*if(w->pointsCount > 0 && ! fast)
         {
             GeoPoint *curpoint = nullptr;

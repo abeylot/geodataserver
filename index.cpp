@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
 
     for(uint64_t i=0; i < mger.wayIndex->getSize(); i++)
     {
-        w = mger.loadWay(i, nullptr, false);
+        w = mger.loadWay(i);
         if(!w) continue;
         bool closed = false;
         if(w->pointsCount > 0)  closed = (w->points[0] == w->points[w->pointsCount -1]);
