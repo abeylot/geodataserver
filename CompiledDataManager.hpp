@@ -221,6 +221,7 @@ public :
     std::shared_ptr<Point> loadPoint(uint64_t id);
     //Relation* loadRelation(uint64_t id);
     std::shared_ptr<Relation> loadRelationFast(uint64_t id);
+    std::shared_ptr<Relation> loadRelationForIndexing(uint64_t id, short recurs = 2);
     std::shared_ptr<Relation> loadRelation(uint64_t id, short recurs = 2, bool computeShape = true, Rectangle* rect = nullptr);
 
     void fillPoints(GeoPoint ** points, uint64_t& pointsCount, uint64_t start, uint64_t size);
@@ -228,8 +229,9 @@ public :
     void fillTags(Tags& tags, uint64_t start, uint64_t size);
 
     void fillLinkedItems(Relation& r, uint64_t start, uint64_t size, short recurs, bool computeShape, Rectangle* rect);
-        template<typename ITEM>
+    void fillLinkedItemsForIndexing(Relation& r, uint64_t start, uint64_t size, short recurs);
 
+    template<typename ITEM>
     std::shared_ptr<ITEM> load(uint64_t id)
     {
         if constexpr(std::is_same<ITEM,Point>())
