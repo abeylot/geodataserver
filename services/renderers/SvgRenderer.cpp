@@ -164,13 +164,13 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
 
     if constexpr(std::is_same<ITEM,Relation>())
     {
-         gSet = makeGeoBoxSet(rect*1.25);
-         rect2 = rect*1.25;
+         gSet = makeGeoBoxSet(rect*1.3);
+         rect2 = rect*1.3;
     }
     if constexpr(std::is_same<ITEM,Way>())
     {
-         gSet = makeGeoBoxSet(rect*1.25);
-         rect2 = rect*1.25;
+         gSet = makeGeoBoxSet(rect*1.3);
+         rect2 = rect*1.3;
     }
     if constexpr(std::is_same<ITEM,Point>())
     {
@@ -208,8 +208,27 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                 if( hash.addIfUnique(indexEntry[i].id))
                 {
                     std::shared_ptr<ITEM> item = nullptr;
-                    item = mger->load<ITEM>(indexEntry[i].id, true);
+                    if constexpr(std::is_same<ITEM,Relation>())
+                    {
+                        item = mger->loadRelationFast(indexEntry[i].id);
+                    }
+                    else
+                    {
+                        item = mger->load<ITEM>(indexEntry[i].id);
+                    }
                     std::shared_ptr<CssClass> cl = getCssClass(idxDesc, *item, zoom, indexEntry[i].zmMask & 0X100000LL);
+
+                    if constexpr(std::is_same<ITEM,Relation>())
+                    {
+                        if(cl && cl->opened) // not a filled area
+                        {
+                            item = mger->loadRelation(indexEntry[i].id, 2, false, &rect2);
+                        }
+                        else
+                        {
+                            item = mger->loadRelation(indexEntry[i].id, 2, true);
+                        }
+                    }
                     //label_s lbl;
                     if(cl)
                     {
@@ -246,9 +265,27 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                     if( hash.addIfUnique(indexEntry[i].id))
                     {
                         std::shared_ptr<ITEM> item = nullptr;
-                        item = mger->load<ITEM>(indexEntry[i].id, true);
+                        if constexpr(std::is_same<ITEM,Relation>())
+                        {
+                           item = mger->loadRelationFast(indexEntry[i].id);
+                        }
+                        else
+                        {
+                            item = mger->load<ITEM>(indexEntry[i].id);
+                        }
                         std::shared_ptr<CssClass> cl = getCssClass(idxDesc, *item, zoom, indexEntry[i].zmMask & 0X100000LL);
                         //std::shared_ptr<label_s> lbl;
+                        if constexpr(std::is_same<ITEM,Relation>())
+                        {
+                            if(cl && cl->opened) // not a filled area
+                            {
+                                item = mger->loadRelation(indexEntry[i].id, 2, false, &rect2);
+                            }
+                            else
+                            {
+                                item = mger->loadRelation(indexEntry[i].id, 2, true);
+                            }
+                        }
                         if(cl)
                         {
                             if constexpr(! std::is_same<ITEM, Point>())
@@ -390,60 +427,24 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
         double lt = (*t)->fontsize*1.0*ilt;
         double ht = (*t)->fontsize*1.0*ilines;
 
-        /*xc = t->pos_x + lt*(cos(t->angle)) - ht*(sin(t->angle));;
-        yc = t->pos_y + lt*(sin(t->angle)) + ht*(cos(t->angle));;
-        xd = t->pos_x - lt*(cos(t->angle)) + ht*(sin(t->angle));;
-        yd = t->pos_y - lt*(sin(t->angle)) - ht*(cos(t->angle));;*/
 
         for(auto v = to_print.begin(); v != to_print.end(); ++v)
         {
-            //if ((*v)->to_show == false) continue;
             int ilv = cutString((*v)->text, ilines);
-
-
-            //double xa,ya,xb,yb;
-
 
             double lv = (*v)->fontsize*1.0*ilv;
             double hv = (*v)->fontsize*1.0*ilines;
 
-            /*xa = v->pos_x + lv*(cos(v->angle)) - hv*(sin(v->angle));
-            ya = v->pos_y + lv*(sin(v->angle)) + hv*(cos(v->angle));
-            xb = v->pos_x - lv*(cos(v->angle)) + hv*(sin(v->angle));
-            yb = v->pos_y - lv*(sin(v->angle)) - hv*(cos(v->angle));*/
-
             double dx = (double)((*t)->pos_x) - (double)((*v)->pos_x);
             double dy = (double)((*t)->pos_y) - (double)((*v)->pos_y);
+
             if((lt*lt + ht*ht + lv*lv + hv*hv) > 4*(dx*dx + dy*dy))
             {
                     to_show = false;
                     break;
             }
-
-
         }
-
-        /*double lbl_max_x = xd;
-        if (xc > xd) lbl_max_x = xc;
-
-        double lbl_min_x = xd;
-        if (xc < xd) lbl_min_x = xc;
-
-        double lbl_max_y = yd;
-        if (yc > yd) lbl_max_y = yc;
-
-        double lbl_min_y = yd;
-        if (yc < yd) lbl_min_y = yc;
-*/
-        /*bool in_map_square = (
-                             ( lbl_max_x >= 0 )
-                             &&(lbl_min_x <= size_x)
-                             &&(lbl_max_y >= 0)
-                             &&(lbl_min_y <= size_y)
-                             );
-
-*/
-        if(to_show /*&& in_map_square*/ )
+        if(to_show )
         {
             to_print.push_back(*t);
             (*t)->to_show = true;
@@ -453,37 +454,73 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
 
     for(auto v=to_print.begin(); v!=to_print.end(); ++v)
     {
+        if((*v)->pos_x < -0.5*size_x) continue;
+        if((*v)->pos_x > 1.5*size_x) continue;
+        if((*v)->pos_y < -0.5* size_y) continue;
+        if((*v)->pos_y > 1.5*size_y) continue;
         {
 
                if((*v)->angle ==0)
                {
-                   texts << "<text  class=\"c"
-                      << (*v)->style
-                      << "\" style=\"font-size:"
-                      << (*v)->fontsize
-                      << "px\" x=\"" << (*v)->pos_x
-                      << "\" y=\"" << (*v)->pos_y
-                      << "\">"
-                      << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
-                      << "</text>\n";
+                   if((*v)->sizeFromStyle)
+                   {
+                       texts << "<text  class=\"c"
+                          << (*v)->style
+                          << "\" x=\"" << (*v)->pos_x
+                          << "\" y=\"" << (*v)->pos_y
+                          << "\">"
+                          << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
+                          << "</text>\n";
+                   }
+                   else
+                   {
+                       texts << "<text  class=\"c"
+                          << (*v)->style
+                          << "\" style=\"font-size:"
+                          << (*v)->fontsize
+                          << "px\" x=\"" << (*v)->pos_x
+                          << "\" y=\"" << (*v)->pos_y
+                          << "\">"
+                          << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
+                          << "</text>\n";
+                    }
                }
                else
                {
-                   texts << "<text  class=\"c"
-                      << (*v)->style
-                      << "\" style=\"font-size:"
-                      << (*v)->fontsize
-                      << "px\" x=\"" << (*v)->pos_x
-                      << "\" y=\"" << (*v)->pos_y
-                      << "\" transform=\"rotate("
-                      << std::to_string((*v)->angle*180/M_PI)
-                      << ","
-                      << (*v)->pos_x
-                      << ","
-                      << (*v)->pos_y
-                      << ")\">"
-                      << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
-                      << "</text>\n";
+                   if((*v)->sizeFromStyle)
+                   {
+                       texts << "<text  class=\"c"
+                          << (*v)->style
+                          << "\" x=\"" << (*v)->pos_x
+                          << "\" y=\"" << (*v)->pos_y
+                          << "\" transform=\"rotate("
+                          << std::to_string((*v)->angle*180/M_PI)
+                          << ","
+                          << (*v)->pos_x
+                          << ","
+                          << (*v)->pos_y
+                          << ")\">"
+                          << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
+                          << "</text>\n";
+                   }
+                   else
+                   {
+                       texts << "<text  class=\"c"
+                          << (*v)->style
+                          << "\" style=\"font-size:"
+                          << (*v)->fontsize
+                          << "px\" x=\"" << (*v)->pos_x
+                          << "\" y=\"" << (*v)->pos_y
+                          << "\" transform=\"rotate("
+                          << std::to_string((*v)->angle*180/M_PI)
+                          << ","
+                          << (*v)->pos_x
+                          << ","
+                          << (*v)->pos_y
+                          << ")\">"
+                          << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
+                          << "</text>\n";
+                   }
                }
                cssClasses.insert("c"+std::to_string((*v)->style));
 
@@ -492,7 +529,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
 
 
     result << "<defs>";
-    
+
     std::set<std::string> symbols_set;
 
     for (auto idxDesc : *(mger->indexes))
@@ -617,9 +654,10 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
     result << "<path  d=\"";
     for(Line* l : s.openedLines)
     {
+        if(l->pointsCount < 2) continue;
         bool first = true;
-        double x=0;
-        double y=0;
+        int32_t x=0;
+        int32_t y=0;
         x=0; y=0;
         for(unsigned int i = 0 ; i < l->pointsCount; i++)
         {
@@ -627,18 +665,22 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
             int64_t yy = l->points[i].y;
             oldx = x;
             oldy = y;
-            x = projectX(_proj, szx, rect.x0, rect.x1, xx);
-            y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
+            x = round(projectX(_proj, szx, rect.x0, rect.x1, xx));
+            y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
             {
                 if(first)
                 {
-                    result << "M" << (int32_t)(x) << " " << (int32_t)(y);
+                    result << "M" << x << " " << y;
                     first = false;
                 }
                 else
                 {
-                    if((trunc(x) != trunc(oldx)) || (trunc(y) != trunc(oldy))|| i == (l->pointsCount - 1))
-                        result << "L" << (int32_t)(x) << " " << (int32_t)(y) ;
+                    if((x != oldx) || (y != oldy))
+                    {
+                        if(x == oldx)  result << "V" << y ;
+                        else if(y == oldy) result << "H" << x ;
+                        else result << "L" << x << " " << y;
+                    }
                 }
             }
         }
@@ -646,32 +688,37 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
     for(Line* l : s.closedLines)
     {
         bool first = true;
-        double x=0;
-        double y=0;
+        int32_t x=0;
+        int32_t y=0;
         x=0; y=0;
+        if(l->pointsCount <= 3) continue;
         for(unsigned int i = 0 ; i < l->pointsCount; i++)
         {
             int64_t xx = l->points[i].x;
             int64_t yy = l->points[i].y;
             oldx = x;
             oldy = y;
-            x = projectX(_proj, szx, rect.x0, rect.x1, xx);
-            y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
+            x = round(projectX(_proj, szx, rect.x0, rect.x1, xx));
+            y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
             {
                 if(first)
                 {
-                    result << "M" << (int32_t)(x) << " " << (int32_t)(y);
+                    result << "M" << x << " " << y;
                     first = false;
                 }
                 else
                 {
-                    if((trunc(x) != trunc(oldx)) || (trunc(y) != trunc(oldy))|| i == (l->pointsCount - 1))
-                        result << "L" << (int32_t)(x) << " " << (int32_t)(y) ;
+                    if((x != oldx) || (y != oldy))
+                    {
+                        if(x == oldx) result << "V" << y ;
+                        else if(y == oldy) result << "H" << x ;
+                        else result << "L" << x << " " << y ;
+                    }
                 }
             }
         }
     }
-    result << " \" class=\"c" << cl.rank << "\" />\n";
+    result << "\" class=\"c" << cl.rank << "\"/>\n";
     cssClasses.insert("c"+std::to_string(cl.rank));
     result.flush();
     return resultString;
@@ -702,10 +749,10 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     int64_t symb_x = 0;
     int64_t symb_y = 0;
 
-    double oldx = -1;
-    double oldy = -1;
-    double x=0;
-    double y=0;
+    int32_t oldx = -1;
+    int32_t oldy = -1;
+    int32_t x=0;
+    int32_t y=0;
     std::string color = "red";
 
     int width=0;
@@ -752,10 +799,8 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         int64_t yy = myWay.points[i].y;
         oldx = x;
         oldy = y;
-        //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-        //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        x = projectX(_proj, szx, rect.x0, rect.x1, xx);
-        y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
+        x = round(projectX(_proj, szx, rect.x0, rect.x1, xx));
+        y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
         {
             if(first)
             {
@@ -793,8 +838,8 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 if(curLength > halfLength)
                 {
                     ratio = (halfLength - oldLength)/(curLength - oldLength);
-                    lbl.pos_x = std::trunc(x * ratio + oldx * (1 - ratio));
-                    lbl.pos_y = std::trunc(y * ratio + oldy * (1 - ratio));
+                    lbl.pos_x = round(x * ratio + oldx * (1 - ratio));
+                    lbl.pos_y = round(y * ratio + oldy * (1 - ratio));
                     double dfx = x - oldx;
                     double dfy = y - oldy;
                     if(dfx == 0) lbl.angle = M_PI / 2;
@@ -818,8 +863,6 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         int64_t yy = myWay.points[i].y;
         oldx = x;
         oldy = y;
-        //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-        //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
         x = projectX(_proj, szx, rect.x0, rect.x1, xx);
         y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
         {
@@ -842,6 +885,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     if(draw)
     {
         myWay.crop(r1);
+        myWay.reduce((rect.x1 - rect.x0)/size_x, (rect.y1 - rect.y0)/size_y);
         if(myWay.pointsCount > 1) s.mergePoints(myWay.points, myWay.pointsCount, myWay.points[0] == myWay.points[myWay.pointsCount - 1]);
     }
     lbl.fontsize = 12;
@@ -849,6 +893,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     if(found != std::string::npos)
     {
         lbl.fontsize = atoi(cl.textStyle.c_str() + found + 10);
+        lbl.sizeFromStyle = true;
     }
     else
     {
@@ -893,13 +938,11 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 int64_t yyy = myWay.rect.y0/2 + myWay.rect.y1/2;
 
                 lbl.zindex = cl.textZIndex;
-                //int32_t xi = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-                //int32_t yi = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-                 int32_t xi = projectX(_proj, szx, rect.x0, rect.x1, xxx);
-                 int32_t yi = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
+                 double xi = projectX(_proj, szx, rect.x0, rect.x1, xxx);
+                 double yi = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
 
-                lbl.pos_x = std::trunc(xi);
-                lbl.pos_y = std::trunc(yi);
+                lbl.pos_x = round(xi);
+                lbl.pos_y = round(yi);
                 lbl.style = cl.rank;
                 lbl.text = name;
                 lbl.angle = 0;
@@ -917,7 +960,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
           x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
           y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
 
-        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t) x  << "\"  y=\"" << (int32_t) y << "\" />";
+        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t) x  << "\"  y=\"" << (int32_t) y << "\"/>";
         cssClasses.insert("sym#"+cl.symbol);
     } else {
             if(cl.symbol != "")
@@ -959,6 +1002,8 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
     lbl.zindex = cl.textZIndex;
     std::string resultString = "";
     StringBuffer result(resultString);
+    std::string resultStringTmp = "";
+    StringBuffer resultTmp(resultStringTmp);
     std::string textField = "name";
     if(!(cl.textField == "")) textField = cl.textField;
     bool draw = ((myRelation.rect)*(rect*1.25)).isValid();
@@ -994,7 +1039,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
             if(lbl2->text == "") lbl2->text = "void";
             for(auto myWay : myRelation.ways)
             {
-                myWay->fillrec();
+                //myWay->fillrec();
                 if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
                 keep = true;
                 result << render(*lbl2,*myWay, rect, szx, szy, cl, s);
@@ -1006,7 +1051,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
         {
             if(draw)
             {
-                result << "<path  d=\"";
+                bool started = false;
                 for(Line* l: myRelation.shape.openedLines)
                 {
                     Rectangle r1 = rect*1.25;
@@ -1015,71 +1060,95 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                     l->crop(r1);
                     if(l->pointsCount < 2) continue;
                     bool first = true;
-                    int x=0;
-                    int y=0;
+                    int32_t x=0;
+                    int32_t y=0;
+                    bool good = false;
+                    resultTmp.clear();
                     for(unsigned int i = 0 ; i < l->pointsCount; i++)
                     {
                         keep = true;
                         int64_t xx = l->points[i].x;
                         int64_t yy = l->points[i].y;
-                        int oldx = x;
-                        int oldy = y;
-                        //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-                        //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-                        x = projectX(_proj, szx, rect.x0, rect.x1, xx);
-                        y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
+                        int32_t oldx = x;
+                        int32_t oldy = y;
+                        x = round(projectX(_proj, szx, rect.x0, rect.x1, xx));
+                        y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
 
-                        if((x != oldx) || (y != oldy) || i == (l->pointsCount - 1))
+                        if((x != oldx) || (y != oldy))
                         {
                             if(first)
                             {
-                                result << "M" << (int32_t)(x) << " " << (int32_t)(y);
+                                resultTmp << "M" << x << " " << y;
                                 first = false;
                             }
                             else
                             {
-                                result << "L" << (int32_t)(x) << " " << (int32_t)(y);
+                                if(x== oldx)  resultTmp << "V" << y;
+                                else if(y== oldy)  resultTmp << "H" << x;
+                                else resultTmp << "L" << x << " " << y;
+                                good = true;
                             }
+                        }
+                    }
+                    if(good)
+                    {
+                        resultTmp.flush();
+                        result << resultStringTmp;
+                        if(!started)
+                        {
+                            started = true;
+                           result << "<path  d=\"";
                         }
                     }
                 }
                 for(Line* l: myRelation.shape.closedLines)
                 {
                     Rectangle r1 = rect*1.25;
-                    //l->crop(r1);
-                    //s.mergePoints(l->points, l->pointsCount);
                     l->crop(r1);
-                    if(l->pointsCount < 2) continue;
+                    if(l->pointsCount <= 3) continue; // shape is 'flat'
                     bool first = true;
-                    int x=0;
-                    int y=0;
+                    int32_t x=0;
+                    int32_t y=0;
+                    bool good = false;
+                    resultTmp.clear();
                     for(unsigned int i = 0 ; i < l->pointsCount; i++)
                     {
                         keep = true;
                         int64_t xx = l->points[i].x;
                         int64_t yy = l->points[i].y;
-                        int oldx = x;
-                        int oldy = y;
-                        //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-                        //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-                        x = projectX(_proj, szx, rect.x0, rect.x1, xx);
-                        y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
+                        int32_t oldx = x;
+                        int32_t oldy = y;
+                        x = round(projectX(_proj, szx, rect.x0, rect.x1, xx));
+                        y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
 
-                        if((x != oldx) || (y != oldy) || i == (l->pointsCount - 1))
+                        if((x != oldx) || (y != oldy))
                         {
                             if(first)
                             {
-                                result << "M" << (int32_t)(x) << " " << (int32_t)(y);
+                                resultTmp << "M" << x << " " << y;
                                 first = false;
                             }
                             else
                             {
-                                result << "L" << (int32_t)(x) << " " << (int32_t)(y);
+                                if(x== oldx)  resultTmp << "V" << y;
+                                else if(y== oldy)  resultTmp << "H" << x;
+                                else resultTmp << "L" << x << " " << y;
+                                good = true;
                             }
                         }
                     }
+                    if(good)
+                    {
+                        if(!started)
+                        {
+                            started = true;
+                           result << "<path  d=\"";
+                        }
+                        resultTmp.flush();
+                        result << resultStringTmp;
+                    }
                 }
-                result << " \" class=\"c" << cl.rank <<"\" />\n";
+                if (started) result << "\" class=\"c" << cl.rank <<"\"/>\n";
             }
             cssClasses.insert("c"+std::to_string(cl.rank));
             if(cl.textStyle != "")
@@ -1109,11 +1178,11 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                         int64_t yyy = (myRelation.rect.y0/2 + myRelation.rect.y1/2);
                         //int32_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
                         //int32_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-                        int32_t x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
-                        int32_t y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
+                        double x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
+                        double y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
 
-                        lbl.pos_x = std::trunc(x);
-                        lbl.pos_y = std::trunc(y);
+                        lbl.pos_x = round(x);
+                        lbl.pos_y = round(y);
                         lbl.zindex = cl.textZIndex;
                         lbl.style = cl.rank;
                         lbl.text = name;
@@ -1129,11 +1198,11 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
     {
         int64_t xxx = (myRelation.rect.x0 + myRelation.rect.x1) / 2;
         int64_t yyy = (myRelation.rect.y0 + myRelation.rect.y1) /2;
-        int32_t x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
-        int32_t y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
+        double x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
+        double y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
         //int64_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         //int64_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\" />";
+        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\"/>";
         cssClasses.insert("sym#"+cl.symbol);
     }
     result.flush();
@@ -1155,7 +1224,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
     lbl.zindex = cl.textZIndex;
     std::string resultString = "";
     StringBuffer result(resultString);
-    int x,y;
+    double x,y;
     double ppm = 107 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
     std::string name = "";
 
@@ -1187,6 +1256,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         if(found != std::string::npos)
         {
             lbl.fontsize = atoi(cl.textStyle.c_str() + found + 10);
+            lbl.sizeFromStyle = true;
         }
 
 
@@ -1208,8 +1278,8 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
             //y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
             x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
             y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
-            lbl.pos_x = std::trunc(x);
-            lbl.pos_y = std::trunc(y);
+            lbl.pos_x = round(x);
+            lbl.pos_y = round(y);
             lbl.style = cl.rank;
             lbl.angle = 0;
         }
@@ -1222,7 +1292,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         //y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
         x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
         y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
-        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\" />";
+        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\"/>";
         cssClasses.insert("sym#"+cl.symbol);
     }
     result.flush();
@@ -1268,7 +1338,7 @@ template<class ITEM> std::shared_ptr<CssClass> SvgRenderer::getCssClass(const In
                 if(cl->mask & mask)
                     if (cl->tagValue == item.tags[cd->tagKey])
                     {
-                        if(myCl && ((myCl->zIndex < cl->zIndex)||((myCl->zIndex == cl->zIndex)&&(myCl->textZIndex < cl->textZIndex)))) 
+                        if(myCl && ((myCl->zIndex < cl->zIndex)||((myCl->zIndex == cl->zIndex)&&(myCl->textZIndex < cl->textZIndex))))
                         {
                             myCl = cl;
                         } else if(!myCl){

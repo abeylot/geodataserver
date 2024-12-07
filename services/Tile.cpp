@@ -221,7 +221,7 @@ double tilex2long(int x, int z)
 {
     int div = 1 << z;
     double result =  (double)x / (double)div * 360.0 - 180;
-    if (result >= 179.999) result = 179.999;
+    if (result >= 179.99999999) result = 179.99999999;
     return result;
 }
 
@@ -275,7 +275,7 @@ std::shared_ptr<Msg> Tile::processRequest([[maybe_unused]] std::shared_ptr<Msg> 
     FILE* in;
     if(_z <= _cachelevel)
     {
-        snprintf(filename,250,"%s/cache/%ld/%ld/%ld.gz",mger.path.c_str(),_z,_x,_y);
+        snprintf(filename,250,"%s/cache/%ld/%ld/%ld.svgz",mger.path.c_str(),_z,_x,_y);
         in = fopen(filename, "r");
         if(in != NULL)
         {
@@ -329,7 +329,7 @@ std::shared_ptr<Msg> Tile::processRequest([[maybe_unused]] std::shared_ptr<Msg> 
         rep->getRecord(0)->addBlock(sEtag);
         encoder.addContent(rep,smallRes);
         //std::cout << "cache level " << _cachelevel << "\n";
-        if(_z <= _cachelevel && res.length() > 2048)
+        if(_z <= _cachelevel && res.length() > 4096)
         {
             std::filesystem::path p1(dir1);
             std::filesystem::path p2(dir2);

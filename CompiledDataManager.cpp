@@ -1,16 +1,17 @@
 #include "CompiledDataManager.hpp"
+#include <math.h>
 
-
-std::shared_ptr<Way> CompiledDataManager::loadWay(uint64_t id, bool fast)
+std::shared_ptr<Way> CompiledDataManager::loadWay(uint64_t id, Rectangle* rect)
 {
     GeoWayIndex record;
     bool found = wayIndex->get(id,&record);
+    if(found && rect && !((*rect) * record.rect).isValid()) return nullptr;
     if(found && record.psize != 0)
     {
         auto w = std::make_shared<Way>();
         w->id = id;
         fillPoints(&(w->points), w->pointsCount,record.pstart,record.psize);
-        if(w->pointsCount > 0 && ! fast)
+        /*if(w->pointsCount > 0 && ! fast)
         {
             GeoPoint *curpoint = nullptr;
             GeoPoint *lastpoint = nullptr;
@@ -24,7 +25,8 @@ std::shared_ptr<Way> CompiledDataManager::loadWay(uint64_t id, bool fast)
                 if(curpoint->y < w->rect.y0) w->rect.y0 = curpoint->y;
                 else if(curpoint->y > w->rect.y1) w->rect.y1 = curpoint->y;
             }
-        }
+        }*/
+        w->rect = record.rect;
         fillTags(w->tags,record.tstart,record.tsize);
         w->layer=6;
         if(w->tags["layer"] != "")
@@ -63,7 +65,7 @@ Relation* CompiledDataManager::loadRelation(uint64_t id)
     return loadRelation(id, 2);
 }*/
 
-std::shared_ptr<Relation> CompiledDataManager::loadRelation(uint64_t id, short recurs, bool fast)
+std::shared_ptr<Relation> CompiledDataManager::loadRelation(uint64_t id, short recurs, bool computeShape, Rectangle* rect)
 {
     recurs --;
     if (recurs < 1) return nullptr;
@@ -86,7 +88,7 @@ std::shared_ptr<Relation> CompiledDataManager::loadRelation(uint64_t id, short r
         {
             r->isPyramidal = true;
         }
-        fillLinkedItems(*r,record.mstart,record.msize, recurs, fast);
+        fillLinkedItems(*r,record.mstart,record.msize, recurs, computeShape, rect);
         return r;
     }
     else return nullptr;
@@ -119,7 +121,7 @@ void CompiledDataManager::fillTags(Tags& tags, uint64_t start, uint64_t size)
     tags.data_size = size;
 }
 
-void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t size, short recurs, bool fast)
+void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t size, short recurs, bool computeShape, Rectangle* rect)
 {
     GeoMember* buffer = relMembers->getData(start,size);
     std::shared_ptr<Way> newWay = nullptr;
@@ -137,40 +139,29 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
             }
             break;
         case BaliseType::way:
-            newWay = loadWay(buffer[i].id, fast);
+            newWay = loadWay(buffer[i].id, rect);
             if(newWay)
             {
-                r.shape.mergePoints(newWay->points, newWay->pointsCount, newWay->points[0] == newWay->points[newWay->pointsCount - 1] );
+                if(computeShape) r.shape.mergePoints(newWay->points, newWay->pointsCount, newWay->points[0] == newWay->points[newWay->pointsCount - 1] );
                 r.ways.push_back(newWay);
                 r.rect = r.rect + newWay->rect;
             }
             break;
         case BaliseType::relation:
-            newRel = loadRelation(buffer[i].id, recurs, fast);
+            newRel = loadRelation(buffer[i].id, recurs, rect);
             if(newRel)
             {
                 r.relations.push_back(newRel);
                 r.rect = r.rect + newRel->rect;
-                if(r.isPyramidal)
+                if(computeShape)
                 {
                     for(Line* l : newRel->shape.closedLines)
                     {
-                        if(!fast)r.shape.mergePoints(l->points, l->pointsCount, true);
+                        r.shape.mergePoints(l->points, l->pointsCount, true);
                     }
                     for(Line* l : newRel->shape.openedLines)
                     {
-                        if(!fast)r.shape.mergePoints(l->points, l->pointsCount, false);
-                    }
-                    for(auto rel : newRel->relations)
-                    {
-                        for(Line* l : rel->shape.closedLines)
-                        {
-                            if(!fast) r.shape.mergePoints(l->points, l->pointsCount, true);
-                        }
-                        for(Line* l : rel->shape.openedLines)
-                        {
-                            if(!fast) r.shape.mergePoints(l->points, l->pointsCount, false);
-                        }
+                        r.shape.mergePoints(l->points, l->pointsCount, false);
                     }
                 }
             }
@@ -180,23 +171,6 @@ void CompiledDataManager::fillLinkedItems(Relation& r, uint64_t start, uint64_t 
         }
     }
     r.isClosed = true;
-
-    if (r.isPyramidal )
-    {
-        /*for(unsigned int i = 0; i < r.shape.lines.size(); i++)
-        {
-            if (! r.shape.lines[i]->isClosed())
-            {
-                delete r.shape.lines[i];
-                r.shape.lines.erase(r.shape.lines.begin() + i);
-            }
-        }*/
-        for (auto it = r.shape.openedLines.begin(); it != r.shape.openedLines.end(); )
-        {
-                delete (*it);
-                it = r.shape.openedLines.erase(it);
-        }
-    }
 
     r.isClosed = r.shape.openedLines.empty();
 
@@ -435,6 +409,7 @@ void Line::crop(Rectangle& r)
     do_crop(points, pointsCount, r);
 }
 
+
 void Way::fillrec()
 {
     if (!pointsCount) return;
@@ -454,6 +429,18 @@ void Way::fillrec()
 void Way::crop(Rectangle& r)
 {
     do_crop(points, pointsCount, r);
+}
+
+void Way::reduce(uint32_t dx, uint32_t dy)
+{
+    uint64_t newPointsCount = 1;
+    for(uint64_t i = 1; i < pointsCount; i++)
+    {
+        if(i == pointsCount - 1) points[newPointsCount++] = points[i];
+        else if(round(points[i].x/(dx*1.0))  != round(points[newPointsCount -1].x/(dx*1.0)))  points[newPointsCount++] = points[i];
+        else if(round(points[i].y/(dy*1.0))  != round(points[newPointsCount -1].y/(dy*1.0)))  points[newPointsCount++] = points[i];
+    }
+    pointsCount = newPointsCount;
 }
 
 

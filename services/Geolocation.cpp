@@ -300,7 +300,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     weightedArea area;
                     area.pin.x = area.pin.y = 0;
                     std::shared_ptr<Point> item;
-                    item = mger.load<Point>(indexEntry[i].id, true);
+                    item = mger.load<Point>(indexEntry[i].id);
                     area.r.x0 = area.r.x1 = item->x;
                     area.r.y0 = area.r.y1 = item->y;
 
@@ -360,7 +360,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     weightedArea area;
                     area.pin.x = area.pin.y = 0;
                     std::shared_ptr<Way> item;
-                    item = mger.load<Way>(indexEntry[i].id, true);
+                    item = mger.load<Way>(indexEntry[i].id);
                     area.r =  indexEntry[i].r;
                     if(area.r.isValid()) area.score = calcMatchScore(item, queryWordsVector, mger);
                     else area.score = WORST_SCORE;
@@ -400,7 +400,7 @@ void fillPin(CompiledDataManager& mger, weightedArea& a, int street_number)
     for( auto relid : a.relations)
     {
         std::shared_ptr<Relation> item;
-        item = mger.load<Relation>(relid, true);
+        item = mger.load<Relation>(relid);
         GeoPoint pin = {0,0};
 
         std::string_view sType = item->tags["type"];
@@ -705,7 +705,7 @@ bool weightedArea::checkIntersect(CompiledDataManager& mger)
     {
         bool result = true;
         std::shared_ptr<Relation> item = nullptr;
-        item = mger.load<Relation>(id, false);
+        item = mger.load<Relation>(id);
         if(item != nullptr)
         {
             result = false;
@@ -727,7 +727,7 @@ bool weightedArea::checkIntersect(CompiledDataManager& mger)
     {
         bool result = true;
         std::shared_ptr<Way> item = nullptr;
-        item = mger.load<Way>(id, false);
+        item = mger.load<Way>(id);
         if(item != nullptr){
             item->crop(r);
             if(item->pointsCount == 0) result = false;
@@ -739,7 +739,7 @@ bool weightedArea::checkIntersect(CompiledDataManager& mger)
     {
         bool result =  true;
         std::shared_ptr<Point> item = nullptr;
-        item = mger.load<Point>(id, false);
+        item = mger.load<Point>(id);
         if(item != nullptr)
         {
             if(item->x < r.x0) result = false;

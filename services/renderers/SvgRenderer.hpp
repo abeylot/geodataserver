@@ -19,7 +19,8 @@ struct label_s
     double angle;
     unsigned int fontsize;
     bool to_show;
-    label_s():id{0},zindex{0},text{""},ref{""},style{0},pos_x{0},pos_y{0},angle{0},fontsize{0}, to_show(true)
+    bool sizeFromStyle;
+    label_s():id{0},zindex{0},text{""},ref{""},style{0},pos_x{0},pos_y{0},angle{0},fontsize{0}, to_show(true), sizeFromStyle(false)
     {}
     void clear()
     {
@@ -33,6 +34,7 @@ struct label_s
         angle = 0;
         fontsize = 0;
         to_show = true;
+        sizeFromStyle = false;
     }
 };
 
@@ -45,9 +47,9 @@ struct myShape
 
 inline double projectX(const Projection& p, const uint64_t size, const uint32_t left_bound, const uint32_t right_bound, const uint32_t x)
 {
-  double x_  = Coordinates::fromNormalizedLat(x);
-  double x0_ = Coordinates::fromNormalizedLat(left_bound);
-  double x1_ = Coordinates::fromNormalizedLat(right_bound);
+  double x_  = Coordinates::fromNormalizedLon(x);
+  double x0_ = Coordinates::fromNormalizedLon(left_bound);
+  double x1_ = Coordinates::fromNormalizedLon(right_bound);
 
   return size*(
      (p.lon2x(x_) - p.lon2x(x0_))/

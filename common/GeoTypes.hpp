@@ -1,7 +1,7 @@
 #ifndef GEOTYPES_HPP
 #define GEOTYPES_HPP
 
-
+#include "../helpers/Rectangle.hpp"
 
 
 enum __attribute__((packed)) BaliseType {relation, point, way, unknown };
@@ -42,6 +42,7 @@ struct __attribute__((packed)) GeoPointIndex
  */
 struct __attribute__((packed)) GeoWayIndex
 {
+    Rectangle rect;
     // start position of points data in point data file
     uint64_t pstart;
     // size of points data in point data file
@@ -76,7 +77,9 @@ struct __attribute__((packed)) GeoPoint
 inline bool operator==(GeoPoint const& a, GeoPoint const& b)
 {
     //return ((a.x==b.x) && (a.y == b.y));
-    return (!memcmp(&a,&b,sizeof(GeoPoint)));
+    //return (!memcmp(&a,&b,sizeof(GeoPoint)));
+    //Dangerous, ugly, but very efficient and fast !
+    return *((uint64_t*)(&a)) == *((uint64_t*)(&b));
 }
 
 /**

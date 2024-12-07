@@ -12,6 +12,7 @@
 #include "Coordinates.hpp"
 #include <math.h>
 
+
 // this program isn't multithreaded
 
 using namespace fidx;
@@ -213,6 +214,8 @@ private:
     bool isRel = false;
     bool isWay = false;
     bool isNod = false;
+    bool isFirstNd = true;
+    Rectangle rect;
 
     uint64_t nodes_found = 0;
 
@@ -329,6 +332,7 @@ public:
             way_points_rank.clear();
             curBalise = BaliseType::way;
             wayPoints->startBatch();
+            isFirstNd = true;
             baliseTags->startBatch();
             isWay = true;
         }
@@ -436,6 +440,15 @@ public:
                     GeoPoint recp;
                     nodeIdIndex->getItem(i, &recp);
                     wayPoints->append(recp);
+                    if(isFirstNd)
+                    {
+                        rect = {recp.x, recp.y, recp.x, recp.y};
+                        isFirstNd = false;
+                    }
+                    else
+                    {
+                        rect.addPoint(recp.x,recp.y);
+                    }
                 }
             }
             /*GeoPointNumberIndex recp;
@@ -446,6 +459,7 @@ public:
             }*/
             isWay = false;
             GeoWayIndex wayRecord;
+            wayRecord.rect = rect;
             wayRecord.pstart = wayPoints->startCount;
 
             if((wayPoints->itemCount  - wayPoints->startCount) > 0xFFFF){
@@ -574,13 +588,14 @@ public:
                 baliseTags->append(s);
 
                 if(dbfheader.read_record(dbf, baliseTags) != 0) std::cout << "error while reading dbf file !\n";;
-
                 uint64_t numparts  = getUnsignedInteger32(recordcontent + 36, false);
                 uint64_t numpoints = getUnsignedInteger32(recordcontent + 40, false);
+                Rectangle rect;
                 for(uint64_t i = 0; i < numparts; i++)
                 {
 
                     wayPoints->startBatch();
+                    bool isFirstNd = true;
 
                     uint64_t firstindex = getUnsignedInteger32(recordcontent + (44 + 4*i), false);
                     uint64_t lastindex = numpoints;
@@ -605,6 +620,15 @@ public:
                         p.x = Coordinates::toNormalizedLon(std::to_string(x));
                         p.y = Coordinates::toNormalizedLat(std::to_string(y));
                         wayPoints->append(p);
+                        if(isFirstNd)
+                        {
+                            rect = {p.x, p.y, p.x, p.y};
+                            isFirstNd = false;
+                        }
+                        else
+                        {
+                            rect.addPoint(p.x,p.y);
+                        }
                         //dont allow way to be too big
                         if ((wayPoints->itemCount  - wayPoints->startCount) > 0xFFFD)
                         {
@@ -614,6 +638,7 @@ public:
                             wayRecord.psize = wayPoints->itemCount  - wayPoints->startCount;
                             wayRecord.tstart = 0;
                             wayRecord.tsize = 0;
+                            wayRecord.rect = rect;
                             wayIndex->append(wayRecord);
                             GeoMember m;
                             m.type = way;
@@ -621,12 +646,15 @@ public:
                             relMembers->append(m);
                             wayPoints->startBatch();
                             wayPoints->append(p); // glue the last point of the way to the first one of next way.
+                            rect = {p.x, p.y, p.x, p.y};
+                            isFirstNd = false;
                         }
                     }
 
                     GeoWayIndex wayRecord;
                     wayRecord.pstart = wayPoints->startCount;
                     wayRecord.psize = wayPoints->itemCount  - wayPoints->startCount;
+                    wayRecord.rect = rect;
                     wayRecord.tstart = 0;
                     wayRecord.tsize = 0;
                     wayIndex->append(wayRecord);
@@ -634,7 +662,7 @@ public:
                     m.type = way;
                     m.id = wayIndex->itemCount - 1;
                     relMembers->append(m);
-
+                    isFirstNd = true;
                 }
 
                 GeoIndex relationRecord;

@@ -18,7 +18,8 @@ class GeoBox
     uint8_t get_maskLength() const {return _data & MAS_MASKING_;}
     void set_pos(uint64_t pos){_data = (_data & MAS_MASKING_) + (pos & POS_MASKING_);}
     void set_maskLength(uint8_t m){_data = m + (_data & POS_MASKING_);}
-    uint64_t get_hash(){return _data;};
+    uint64_t get_data() const{return _data;};
+    uint64_t get_hash() const{return _data;};
 };
 
 struct GeoBoxSet
