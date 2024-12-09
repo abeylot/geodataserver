@@ -43,9 +43,9 @@
 
     <pattern id="reefPattern" width="16" height="16" patternUnits="userSpaceOnUse" >
              <rect x="0" y="0" width="16" height="16" fill="#DDDDDD"/>
-             <circle cx="4" cy="7" r="5" stroke-width="0" fill="#D6D6D6" />
-             <circle cx="8" cy="8" r="7" stroke-width="0" fill="#DADADA" />
-             <circle cx="12" cy="10" r="3" stroke-width="0" fill="#DCDCDC" />
+             <circle cx="4" cy="7" r="5" stroke-width="0" fill="#D3D3D3" />
+             <circle cx="8" cy="8" r="7" stroke-width="0" fill="#D9D9DA" />
+             <circle cx="12" cy="10" r="3" stroke-width="0" fill="#D3D9Da" />
     </pattern>
 
     <pattern id="forestPattern" width="16" height="16" patternUnits="userSpaceOnUse" >
@@ -483,7 +483,7 @@
                 <class value="glacier"                   zIndex="100" style="#ice"      textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="fell"                      zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="stone"                     zIndex="100" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="water"                     zIndex="101" style="#water"/>
+                <class value="water"                     zIndex="102" style="#water"/>
             </condition>
             <condition tagKey="waterway" closed="yes">
                 <class value="default"                  zIndex="101" style="#water" textZIndex="25" textStyle="#riverName"/>
@@ -600,7 +600,7 @@
                 <class value="glacier"                  zIndex="100" style="#ice"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="fell"                     zIndex="100" style="#grass"  textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="stone"                    zIndex="100" style="#stone"  textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="water"                    zIndex="101" style="#water"  textZIndex="20" textStyle="#riverName"/>
+                <class value="water"                    zIndex="102" style="#water"  textZIndex="20" textStyle="#riverName"/>
             </condition>
             <condition tagKey="waterway" closed="no">
                 <class value="default"                  zIndex="101" style="#waterLine" textZIndex="20" textStyle="#riverName"/>
