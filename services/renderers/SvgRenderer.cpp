@@ -695,7 +695,7 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
         int32_t x=0;
         int32_t y=0;
         x=0; y=0;
-        if(l->pointsCount <= 3) continue;
+        if(l->pointsCount < 2) continue;
         result << "<path  d=\"";
         for(unsigned int i = 0 ; i < l->pointsCount; i++)
         {
@@ -1110,7 +1110,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                 {
                     Rectangle r1 = rect*1.25;
                     l->crop(r1);
-                    if(l->pointsCount <= 3) continue; // shape is 'flat'
+                    if(l->pointsCount < 2) continue; // shape is 'flat'
                     bool first = true;
                     int32_t x=0;
                     int32_t y=0;
