@@ -213,6 +213,14 @@
         <path d="M1 11 L14 11 14 13 1 13 1 10 M23 9 L16 9 16 15 23 15 M16 12 L23 12" stroke="darkgrey" stroke-width="1" fill="none"/>
     </symbol>
 
+    <symbol id="bus_stop" width="24" height="24" transform="translate(-12 -24)" >
+        <circle  cx="12"  cy="12"  r="12"  style="fill:green;opacity:0.3" />
+        <path d="M6 4 H18V18H6V4M7 19V21H8V19 M16 19V21H17V19M8 7H16V13H8V7" stroke="white" stroke-width="1" fill="none"/>
+        <circle  cx="9"  cy="16"  r="1"  style="fill:white;" />
+        <circle  cx="15"  cy="16"  r="1"  style="fill:white;" />
+        <path d="M9 5.5 H15" stroke-width="1" stroke="white"/>
+    </symbol>
+
     <symbol id="bar" width="24" height="24" transform="translate(-12 -36)" >
         <circle  cx="12"  cy="12"  r="15"  style="fill:#FFFFFF;opacity:0.4;" />
         <path d="M6 24 L18 24 18 22 6 22 6 24 M12 24 L12 12 M18 1 A 6 12 0 0 1 6 1 M6 1 L18 1" stroke="darkgrey" stroke-width="1" fill="none"/>
@@ -351,7 +359,7 @@
                 <class value="square"          zIndex="5006" style="fill:none" textZIndex="30" textStyle="#roadName"/>
             </condition>
             <condition tagKey="highway" closed="both">
-                <class value="bus_stop"       zIndex="5006" style="fill:none" textZIndex="30" textStyle="#greenAreaName"/>
+                <class value="bus_stop"  symbol="bus_stop"  zIndex="5006" style="fill:none" textZIndex="30" textStyle="#greenAreaName"/>
             </condition>
         </restriction>
     </index>
