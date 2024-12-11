@@ -651,8 +651,6 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
 
 
     if (s.openedLines.empty() && s.closedLines.empty() ) return "";
-    if (!s.openedLines.empty())
-    {
     result << "<path  d=\"";
     for(Line* l : s.openedLines)
     {
@@ -687,8 +685,6 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
             }
         }
     }
-    result << "\" class=\"c" << cl.rank << "\"/>\n";
-    }
     for(Line* l : s.closedLines)
     {
         bool first = true;
@@ -696,7 +692,6 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
         int32_t y=0;
         x=0; y=0;
         if(l->pointsCount < 2) continue;
-        result << "<path  d=\"";
         for(unsigned int i = 0 ; i < l->pointsCount; i++)
         {
             int64_t xx = l->points[i].x;
@@ -722,8 +717,8 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
                 }
             }
         }
-        result << "\" class=\"c" << cl.rank << "\"/>\n";
     }
+    result << "\" class=\"c" << cl.rank << "\"/>\n";
     cssClasses.insert("c"+std::to_string(cl.rank));
     result.flush();
     return resultString;
@@ -1110,7 +1105,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                 {
                     Rectangle r1 = rect*1.25;
                     l->crop(r1);
-                    if(l->pointsCount < 2) continue; // shape is 'flat'
+                    if(l->pointsCount <= 3) continue; // shape is 'flat'
                     bool first = true;
                     int32_t x=0;
                     int32_t y=0;
