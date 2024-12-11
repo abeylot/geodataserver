@@ -69,9 +69,9 @@
     </pattern>
 
     <pattern id="fieldPattern" width="8" height="8" patternUnits="userSpaceOnUse" >
-             <rect x="0" y="0" width="8" height="8" fill="#AAFFAA"/>
-             <circle cx="0" cy="0" r="3" stroke-width="1" fill="none" stroke="#C8DC7F" />
-             <circle cx="6" cy="0" r="3" stroke-width="1" fill="none" stroke="#C8DC7F"/>
+             <rect x="0" y="0" width="8" height="8" fill="#CCFFAA"/>
+             <circle cx="0" cy="0" r="3" stroke-width="0.5" fill="none" stroke="#99FF99" />
+             <circle cx="6" cy="0" r="3" stroke-width="0.5" fill="none" stroke="#99FF99"/>
     </pattern>
 
 
@@ -133,6 +133,7 @@
     <style id="sketch"    value="fill:none;stroke:lightgrey; stroke-width:2;opacity:0.7"/>
     <style id="ferryLine" value="fill:none;stroke:blue; stroke-width:1;opacity:0.1"/>
     <style id="waterLine" value="fill:none;stroke:skyblue; stroke-width:1"/>
+    <style id="waterLineH" value="fill:none;stroke:skyblue; stroke-width:2"/>
     <style id="hedge"      value="fill:none;stroke:url(#forestPattern); stroke-width:4;stroke-linecap:round;opacity:0.7;"/>
     <style id="treeLineS"  value="fill:none;stroke:url(#forestPattern); stroke-width:8;stroke-linecap:round;opacity:0.7;"/>
     <style id="treeLineM"  value="fill:none;stroke:url(#forestPattern); stroke-width:16;stroke-linecap:round;opacity:0.7;"/>
@@ -473,7 +474,7 @@
                 <class value="conservation"              zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="construction"              zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="depot"                     zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="farmland"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="farmland"                  zIndex="100" style="#field"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="farmyard"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="forest"                    zIndex="100" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="garages"                   zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
@@ -528,7 +529,7 @@
                 <class value="default"                  zIndex="101" style="#water" textZIndex="25" textStyle="#riverName"/>
             </condition>
             <condition tagKey="waterway" closed="no">
-                <class value="default"                  zIndex="101" style="#waterLine" textZIndex="25" textStyle="#riverName"/>
+                <class value="default"                  zIndex="101" style="#waterLineH" textZIndex="25" textStyle="#riverName"/>
             </condition>
             <condition tagKey="type" closed="yes">
                 <class value="waterway"                  zIndex="101" textZIndex="25" style="#water" />
@@ -585,7 +586,7 @@
                 <class value="conservation"              zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="construction"              zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="depot"                     zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="farmland"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="farmland"                  zIndex="100" style="#field"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="farmyard"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="forest"                    zIndex="100" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="garages"                   zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
@@ -642,7 +643,7 @@
                 <class value="water"                    zIndex="102" style="#water"  textZIndex="20" textStyle="#riverName"/>
             </condition>
             <condition tagKey="waterway" closed="no">
-                <class value="default"                  zIndex="101" style="#waterLine" textZIndex="20" textStyle="#riverName"/>
+                <class value="default"                  zIndex="101" style="#waterLineH" textZIndex="20" textStyle="#riverName"/>
             </condition>
             <condition tagKey="waterway" closed="yes">
                     <class value="default"                  zIndex="101" style="#water" />
