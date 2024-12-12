@@ -816,7 +816,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
 
     halfLength = length / 2;
     double curLength = 0;
-    double ratio = 0;
+    //double ratio = 0;
     first = true;
 
     for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
@@ -827,19 +827,19 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         oldy = y;
         //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
         //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        x = projectX(_proj, szx, rect.x0, rect.x1, xx);
-        y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
+        x = round(projectX(_proj, szx, rect.x0, rect.x1, xx));
+        y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
 
         {
             if(!first)
             {
-                double oldLength = curLength;
+                //double oldLength = curLength;
                 curLength += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
                 if(curLength > halfLength)
                 {
-                    ratio = (halfLength - oldLength)/(curLength - oldLength);
-                    lbl.pos_x = round(x * ratio + oldx * (1 - ratio));
-                    lbl.pos_y = round(y * ratio + oldy * (1 - ratio));
+                    //ratio = (halfLength - oldLength)/(curLength - oldLength);
+                    lbl.pos_x = (x + oldx) / 2;
+                    lbl.pos_y = (y + oldy) / 2;;
                     double dfx = x - oldx;
                     double dfy = y - oldy;
                     if(dfx == 0) lbl.angle = M_PI / 2;
