@@ -49,15 +49,15 @@ struct CssClass
         }
         return result;
     }
-    std::string makeClass(const std::string& clName, double ppm)
+    std::string makeClass(const std::string& clName, double ppm, bool evenOdd)
     {
         std::string result = "";
         //std::string result = "/*" + tagValue + "*/\n";
         std::string tStyle = makeTextStyle(ppm);
         std::string oStyle = makeStyle(ppm);
         std::string fillRule="fill-rule:";
-        /*if(evenOdd) fillRule +="evenodd;";
-        else*/ fillRule += "nonzero;";
+        if(evenOdd) fillRule +="evenodd;";
+        else fillRule += "nonzero;";
         if(tStyle != "") result += "text." + clName +  "{" + tStyle + "}\n";
         if(oStyle != "") result += "path." + clName +  "{" +fillRule + oStyle + "}\n";
         return result;

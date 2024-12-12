@@ -563,7 +563,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
                 {
                     if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
                     {
-                        std::string style = cl->makeClass("c" + std::to_string(cl->rank), ppm);
+                        std::string style = cl->makeClass("c" + std::to_string(cl->rank), ppm, idxDesc->type == "relation");
                         if(style.find("url(#"+pattern.first) != std::string::npos)
                         {
                             found = true;
@@ -602,7 +602,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
             {
                 if( cssClasses.find("c"+std::to_string(cl->rank)) !=  cssClasses.end() )
                 {
-                    result << cl->makeClass("c" + std::to_string(cl->rank), ppm);
+                    result << cl->makeClass("c" + std::to_string(cl->rank), ppm, idxDesc->type == "relation");
                 }
             }
         }
@@ -790,6 +790,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         else name = inherited_name;
         //std::cout << inherited_name << "\n";
     }
+
     bool first = true;
     double length = 0;
     double halfLength = 0;
@@ -813,77 +814,78 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
             }
         }
     }
-
-    halfLength = length / 2;
-    double curLength = 0;
-    //double ratio = 0;
-    first = true;
-
-    for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
+    if(cl.opened)
     {
-        int64_t xx = myWay.points[i].x;
-        int64_t yy = myWay.points[i].y;
-        oldx = x;
-        oldy = y;
-        //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-        //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-        x = round(projectX(_proj, szx, rect.x0, rect.x1, xx));
-        y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
 
+        halfLength = length / 2;
+        double curLength = 0;
+        //double ratio = 0;
+        first = true;
+
+        for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
         {
-            if(!first)
+            int64_t xx = myWay.points[i].x;
+            int64_t yy = myWay.points[i].y;
+            oldx = x;
+            oldy = y;
+            //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
+            //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
+            x = round(projectX(_proj, szx, rect.x0, rect.x1, xx));
+            y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
+
             {
-                //double oldLength = curLength;
-                curLength += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
-                if(curLength > halfLength)
+                if(!first)
                 {
-                    //ratio = (halfLength - oldLength)/(curLength - oldLength);
-                    lbl.pos_x = (x + oldx) / 2;
-                    lbl.pos_y = (y + oldy) / 2;;
+                    //double oldLength = curLength;
+                    curLength += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
+                    if(curLength > halfLength)
+                    {
+                        //ratio = (halfLength - oldLength)/(curLength - oldLength);
+                        lbl.pos_x = (x + oldx) / 2;
+                        lbl.pos_y = (y + oldy) / 2;;
+                        double dfx = x - oldx;
+                        double dfy = y - oldy;
+                        if(dfx == 0) lbl.angle = M_PI / 2;
+                        else lbl.angle = atan2(dfy , dfx);
+                        if(lbl.angle > M_PI / 2) lbl.angle -= M_PI;
+                        if(lbl.angle < -1 * M_PI / 2) lbl.angle += M_PI;
+                        break;
+                    }
+                }
+                first = false;
+            }
+        }
+
+        first = true;
+        unsigned int  start = ( (myWay.pointsCount - 1) * 2 ) / 3;
+        if(start > (myWay.pointsCount - 2)) start = myWay.pointsCount - 2;
+
+        for(unsigned int i = start ; i < myWay.pointsCount; i++)
+        {
+            int64_t xx = myWay.points[i].x;
+            int64_t yy = myWay.points[i].y;
+            oldx = x;
+            oldy = y;
+            x = projectX(_proj, szx, rect.x0, rect.x1, xx);
+            y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
+            {
+                if(!first)
+                {
+                    symb_x = oldx;
+                    symb_y = oldy;
                     double dfx = x - oldx;
                     double dfy = y - oldy;
-                    if(dfx == 0) lbl.angle = M_PI / 2;
-                    else lbl.angle = atan2(dfy , dfx);
-                    if(lbl.angle > M_PI / 2) lbl.angle -= M_PI;
-                    if(lbl.angle < -1 * M_PI / 2) lbl.angle += M_PI;
+                    if((dfx == 0) && (dfy > 0)) symb_angle = M_PI / 2;
+                    else if((dfx == 0) && (dfy <= 0)) symb_angle = - M_PI / 2;
+                    else symb_angle = atan2(dfy , dfx);
                     break;
                 }
+                first = false;
             }
-            first = false;
-        }
-    }
-
-    first = true;
-    unsigned int  start = ( (myWay.pointsCount - 1) * 2 ) / 3;
-    if(start > (myWay.pointsCount - 2)) start = myWay.pointsCount - 2;
-
-    for(unsigned int i = start ; i < myWay.pointsCount; i++)
-    {
-        int64_t xx = myWay.points[i].x;
-        int64_t yy = myWay.points[i].y;
-        oldx = x;
-        oldy = y;
-        x = projectX(_proj, szx, rect.x0, rect.x1, xx);
-        y = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
-        {
-            if(!first)
-            {
-                symb_x = oldx;
-                symb_y = oldy;
-                double dfx = x - oldx;
-                double dfy = y - oldy;
-                if((dfx == 0) && (dfy > 0)) symb_angle = M_PI / 2;
-                else if((dfx == 0) && (dfy <= 0)) symb_angle = - M_PI / 2;
-                else symb_angle = atan2(dfy , dfx);
-
-
-                break;
-            }
-            first = false;
         }
     }
     if(draw)
-    {
+        {
         myWay.crop(r1);
         myWay.reduce((rect.x1 - rect.x0)/size_x, (rect.y1 - rect.y0)/size_y);
         if(myWay.pointsCount > 1) s.mergePoints(myWay.points, myWay.pointsCount, myWay.points[0] == myWay.points[myWay.pointsCount - 1]);
@@ -1092,13 +1094,13 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                     }
                     if(good)
                     {
-                        resultTmp.flush();
-                        result << resultStringTmp;
                         if(!started)
                         {
                             started = true;
                            result << "<path  d=\"";
                         }
+                        resultTmp.flush();
+                        result << resultStringTmp;
                     }
                 }
                 for(Line* l: myRelation.shape.closedLines)

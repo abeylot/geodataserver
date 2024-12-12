@@ -34,6 +34,7 @@ std::string WayDetail::printWay(Way& r)
             res += std::string(value, value_size);
             res += "<br/>";
         }
+        res += "points : " + std::to_string(r.pointsCount);
     }
 
     return res;

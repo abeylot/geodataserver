@@ -109,22 +109,22 @@
 
 
     <!-- areas -->
-    <style id="water"            value="fill:url(#waterPattern); fill-rule:evenodd;"/>
-    <style id="grass"            value="fill:#AAFFAA; fill-rule:evenodd"/>
-    <style id="field"            value="fill:url(#fieldPattern); fill-rule:evenodd"/>
-    <style id="forest"           value="fill:url(#forestPattern); fill-rule:evenodd"/>
-    <style id="bush"             value="fill:url(#bushPattern); fill-rule:evenodd"/>
-    <style id="ice"              value="fill:lightgrey;; fill-rule:evenodd"/>
-    <style id="concrete"         value="fill:whitesmoke;; fill-rule:evenodd"/>
-    <style id="stone"            value="fill:url(#reefPattern); fill-rule:evenodd; opacity:0.4"/>
-    <style id="reef"             value="fill:url(#reefPattern); fill-rule:evenodd;opacity:0.4"/>
-    <style id="sand"             value="fill:moccasin; fill-rule:evenodd; opacity:0.4"/>
-    <style id="mud"              value="fill:url(#mudPattern); fill-rule:evenodd"/>
-    <style id="building"         value="fill:linen;opacity:0.9;stroke:BurlyWood ;stroke-width:1; fill-rule:evenodd; filter: url(#shadow)"/>
-    <style id="historicBuilding" value="fill:mistyrose;opacity:0.7;stroke:#B13014 ;stroke-width:1; fill-rule:evenodd; filter: url(#shadow)"/>
-    <style id="zone"             value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:5,5; fill-rule:evenodd"/>
-    <style id="parking"          value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:1,5; fill-rule:evenodd"/>
-    <style id="bridge"           value="fill:#999999;stroke:grey; stroke-width:1; fill-rule:evenodd;opacity:0.7"/>
+    <style id="water"            value="fill:url(#waterPattern);"/>
+    <style id="grass"            value="fill:#AAFFAA;"/>
+    <style id="field"            value="fill:url(#fieldPattern);"/>
+    <style id="forest"           value="fill:url(#forestPattern);"/>
+    <style id="bush"             value="fill:url(#bushPattern);"/>
+    <style id="ice"              value="fill:lightgrey;"/>
+    <style id="concrete"         value="fill:whitesmoke;;"/>
+    <style id="stone"            value="fill:url(#reefPattern); opacity:0.4"/>
+    <style id="reef"             value="fill:url(#reefPattern);opacity:0.4"/>
+    <style id="sand"             value="fill:moccasin; opacity:0.4"/>
+    <style id="mud"              value="fill:url(#mudPattern);"/>
+    <style id="building"         value="fill:linen;opacity:0.9;stroke:BurlyWood ;stroke-width:1; filter: url(#shadow)"/>
+    <style id="historicBuilding" value="fill:mistyrose;opacity:0.7;stroke:#B13014 ;stroke-width:1; filter: url(#shadow)"/>
+    <style id="zone"             value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:5,5;"/>
+    <style id="parking"          value="fill:none;stroke:grey; stroke-width:1; stroke-dasharray:1,5;"/>
+    <style id="bridge"           value="fill:#999999;stroke:grey; stroke-width:1;opacity:0.7"/>
 
 
 

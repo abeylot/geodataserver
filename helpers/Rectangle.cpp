@@ -4,11 +4,11 @@ bool Rectangle::isValid() const
 {
     return (
                (x0 <= x1) &&
-               (y0 <= y1) &&
-               (x0 != UINT32_C(0xFFFFFFFF)) &&
-               (x1 != UINT32_C(0xFFFFFFFF)) &&
-               (y0 != UINT32_C(0xFFFFFFFF)) &&
-               (y1 != UINT32_C(0xFFFFFFFF))
+               (y0 <= y1)
+               //(x0 != UINT32_C(0xFFFFFFFF)) &&
+               //(x1 != UINT32_C(0xFFFFFFFF)) &&
+               //(y0 != UINT32_C(0xFFFFFFFF)) &&
+               //(y1 != UINT32_C(0xFFFFFFFF))
            );
 }
 
@@ -43,30 +43,30 @@ Rectangle operator*(Rectangle const& a, double const& b)
 
     difx *= coef;
     dify *= coef;
-    
+
     int64_t x0 = meanx;
     int64_t x1 = meanx;
     int64_t y0 = meany;
     int64_t y1 = meany;
-    
+
     x0 -= difx;
     x1 += difx;
     y0 -= dify;
     y1 += dify;
-    
-    if (x0 < 0) x0 = 0; 
-    if (y0 < 0) y0 = 0; 
 
-    if (x1 > 0xFFFFFFFF) x1 = 0xFFFFFFFF; 
-    if (y1 > 0xFFFFFFFF) y1 = 0xFFFFFFFF; 
+    if (x0 < 0) x0 = 0;
+    if (y0 < 0) y0 = 0;
+
+    if (x1 > 0xFFFFFFFF) x1 = 0xFFFFFFFF;
+    if (y1 > 0xFFFFFFFF) y1 = 0xFFFFFFFF;
 
 
     result.x0 = x0;
     result.x1 = x1;
     result.y0 = y0;
     result.y1 = y1;
-    
-    
+
+
     return result;
 }
 
