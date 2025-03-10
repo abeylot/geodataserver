@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
         if(!r) continue;
 
         if(r->tags.data == nullptr) {
-            if ((i &  0xF) == 0)
+            if ((i &  0xFFF) == 0)
                 std::cout << "\rrelation " << i * 100.0 / mger.relationIndex->getSize() << "%  " << std::flush;
             continue;
         }
@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
                 }
             }
         }
-        if ((i &  0xF) == 0)
+        if ((i &  0xFF) == 0)
             std::cout << "\rrelation " << i * 100.0 / mger.relationIndex->getSize() << "%  " << std::flush;
     }
 
@@ -255,7 +255,7 @@ int main(int argc, char *argv[])
                 }
             }
         }
-        if ((i &  0xFFF) == 0)
+        if ((i &  0xFFFF) == 0)
             std::cout << "\rway " << i * 100.0 / mger.wayIndex->getSize() << "%  " << std::flush;
     }
     for(uint64_t i=0; i < mger.nodeIndex->getSize(); i++)
