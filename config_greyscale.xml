@@ -445,7 +445,7 @@
                 <class value="depot"                     zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="farmland"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="farmyard"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="forest"                    zIndex="100" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="forest"                    zIndex="105" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="garages"                   zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="grass"                     zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="greenfield"                zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
@@ -473,12 +473,12 @@
             </condition>
             <condition tagKey="natural" closed="yes">
                 <class value="reef"                      zIndex="100" style="#reef"     textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="wood"                      zIndex="100" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="wood"                      zIndex="105" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="scrub"                     zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="wetland"                   zIndex="101" style="#mud"      textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="grassland"                 zIndex="100" style="#grass"      textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="grass"                     zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="tree_row"                  zIndex="50001" style="#forest" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="tree_row"                  zIndex="105" style="#forest" textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="rock"                      zIndex="101" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="bare_rock"                 zIndex="100" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="quarry"                    zIndex="100" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>
@@ -486,7 +486,7 @@
                 <class value="heath"                     zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="sand"                      zIndex="100" style="#sand"     textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="beach"                     zIndex="100" style="#sand"     textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="tree"                      zIndex="100" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="tree"                      zIndex="105" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="scree"                     zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="land"                      zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="glacier"                   zIndex="100" style="#ice"      textZIndex="20" textStyle="#maroonAreaName"/>
@@ -557,7 +557,7 @@
                 <class value="depot"                     zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="farmland"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="farmyard"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="forest"                    zIndex="100" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="forest"                    zIndex="105" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="garages"                   zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="grass"                     zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="greenfield"                zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
@@ -566,7 +566,7 @@
                 <class value="landfill"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="meadow"                    zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="military"                  zIndex="101" style="#zone"     textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="orchard"                   zIndex="100" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="orchard"                   zIndex="105" style="#forest"   textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="pasture"                   zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="peat_cutting"              zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="plant_nursery"             zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
@@ -590,12 +590,12 @@
 
             <condition tagKey="natural" closed="yes">
                 <class value="reef"                     zIndex="100" style="#reef"   textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="wood"                     zIndex="100" style="#forest" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="wood"                     zIndex="105" style="#forest" textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="scrub"                    zIndex="100" style="#grass"  textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="wetland"                  zIndex="101" style="#mud"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="grassland"                zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="grass"                    zIndex="100" style="#grass"  textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="tree_row"                 zIndex="50001" style="#forest" textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="tree_row"                 zIndex="105" style="#forest" textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="rock"                     zIndex="101" style="#stone"  textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="bare_rock"                zIndex="100" style="#stone"  textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="quarry"                   zIndex="100" style="#stone"  textZIndex="20" textStyle="#maroonAreaName"/>
