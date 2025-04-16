@@ -15,6 +15,7 @@
 #include "helpers/NonGrowableQueue.hpp"
 #include <csignal>
 #include "helpers/ExtThread.hpp"
+#include "helpers/Statistics.hpp"
 
 #define MAX_PENDING_REQUESTS 100
 using namespace std::literals;
@@ -23,6 +24,8 @@ using namespace std::literals;
 /**************************************************************************************************************************/
 
 ParmsXmlVisitor params;
+Statistics stats;
+
 volatile bool sigstop;
 void sig_handler([[maybe_unused]]int sig)
 {
@@ -81,18 +84,21 @@ template<typename MSG> struct Reader
                     int64_t len = p.getMessage(m,s);
                     if(len > 0)
                     {
+                        stats.start_request(s->getFileDescr());
                         std::cout << "[" << s->getFileDescr() << "]";
                         std::shared_ptr<Msg> msg = encoder.encode(&m);
                         msg->setConnection(s);
                         if(!queue->push(msg))
                         {
                              std::cerr << "too much pending requests, message rejected !\n";
+                             stats.abort_request(s->getFileDescr(), "Too much pending requests.");
                              //delete msg;
                         }
                     }
                 }
                 catch (const std::exception& e)
                 {
+                    stats.abort_request(s->getFileDescr(), e.what());
                     std::cerr << e.what() << "\n";
                 }
             }
@@ -123,15 +129,17 @@ template<typename MSG> struct Writer
                 std::cout <<"[" << m->getConnection()->getFileDescr() << "]";
                 std::string* s = encoder.decode(m);
                 p.putMessage(*s,m->getConnection());
-                //usleep(10000);
+                stats.end_request(m->getConnection()->getFileDescr());
                 delete s;
-                //delete m;
                 // see if connection still used
                 if(m->getConnection()->isAlive())
+                    // try to reuse connection by pushing it in queue,
+                    // it will be closed and deleted in case of falilure
                     queue_s->push(m->getConnection());
             }
             catch (const std::exception& e)
             {
+                stats.abort_request(m->getConnection()->getFileDescr(), e.what());
                 std::cerr << e.what() << "\n";
             }
         }
@@ -217,6 +225,7 @@ template<typename MSG> struct Exec
                             rep = std::make_shared<Msg>();
                             encoder.build404Header(rep);
                             encoder.addContent(rep,"<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>Page "+url+" NOT FOUND </body></html>");
+                            stats.abort_request(m->getConnection()->getFileDescr(), "404");
                         }
                     }
                     else
@@ -224,16 +233,19 @@ template<typename MSG> struct Exec
                         rep = std::make_shared<Msg>();
                         encoder.build500Header(rep);
                         encoder.addContent(rep,"<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>Page SERVER ERROR </body></html>");
+                        stats.abort_request(m->getConnection()->getFileDescr(), "500");
                     }
                     rep->setConnection(m->getConnection());
                     if(!outqueue->push(rep))
                     {
                          std::cerr << "too much pending responses, response rejected !\n";
+                         stats.abort_request(m->getConnection()->getFileDescr(), "Too much pending responses.");
                     }
                 }
                 catch (const std::exception& e)
                 {
                     std::cerr << e.what() << "\n";
+                    stats.abort_request(m->getConnection()->getFileDescr(), e.what());
                 }
             }
         }

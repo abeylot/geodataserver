@@ -26,6 +26,7 @@ GeoBox.hpp \
 CompiledDataManager.hpp
 
 headersServer=messaging/HttpEncoder.hpp \
+helpers/Statistics.hpp \
 messaging/Msg.hpp \
 services/renderers/SvgRenderer.hpp \
 services/renderers/PngRenderer.hpp
@@ -40,6 +41,7 @@ $(BUILD)/common/Projections.o
 
 #objects used by server.cpp only
 objectsServer = $(BUILD)/services/Ping.o \
+$(BUILD)/helpers/Statistics.o \
 $(BUILD)/services/RasterImage.o \
 $(BUILD)/services/Geolocation.o \
 $(BUILD)/services/RelationList.o \
