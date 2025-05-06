@@ -189,6 +189,7 @@ template<typename MSG> struct Exec
                         auto s = ServicesFactory::getService(url);
                         if(s)
                         {
+                            stats.set_request_tag(m->getConnection()->getFileDescr(), s->get_name());
                             rep = s->processRequest(m,mger);
                             auto new_rep = std::make_shared<Msg>();
                             Record* rcd = new Record;
@@ -219,6 +220,13 @@ template<typename MSG> struct Exec
                                     }
                                 }
                             }
+                        }
+                        else if(url == "/stats")
+                        {
+                            rep = std::make_shared<Msg>();
+                            encoder.build200Header(rep, "text/html");
+                            encoder.addContent(rep,stats.build_html_report());
+                            
                         }
                         else
                         {

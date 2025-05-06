@@ -16,6 +16,7 @@ public:
     explicit MapDisplay(bool RasterImageService_enabled);
     ~MapDisplay();
     std::shared_ptr<Msg> processRequest(std::shared_ptr<Msg> request, CompiledDataManager& mger) override;
+    const std::string get_name() override { return "MapDisplay";}
 
 };
 
