@@ -37,5 +37,6 @@ private:
     std::list<weightedArea> findExpression(std::string expr, CompiledDataManager& mger);
 public:
     std::shared_ptr<Msg> processRequest(std::shared_ptr<Msg> request, CompiledDataManager& mger) override;
+    const std::string get_name() override { return "Geolocation";}
 };
 #endif

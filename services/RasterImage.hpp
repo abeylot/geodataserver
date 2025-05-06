@@ -21,5 +21,6 @@ public:
     _imageList(imageList)
     {
     }
+    const std::string get_name() override { return "RasterImage";}
 };
 #endif

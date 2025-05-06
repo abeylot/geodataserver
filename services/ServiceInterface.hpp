@@ -9,5 +9,6 @@ class ServiceInterface
 public:
     virtual std::shared_ptr<Msg> processRequest(std::shared_ptr<Msg> request,CompiledDataManager& mger) = 0;
     virtual ~ServiceInterface() {};
+    virtual const std::string get_name() = 0;
 };
 #endif

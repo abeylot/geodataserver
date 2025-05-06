@@ -14,5 +14,6 @@ private:
     std::string printRelation(Relation& r);
 public:
     std::shared_ptr<Msg> processRequest(std::shared_ptr<Msg> request, CompiledDataManager& mger) override;
+    const std::string get_name() override { return "RelationDetail";}
 };
 #endif
