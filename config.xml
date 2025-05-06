@@ -137,8 +137,8 @@
 
     <!-- lines -->
     <style id="frontier"  value="fill:none;stroke:grey; stroke-width:1;"/>
-    <style id="sketch"    value="fill:none;stroke:grey; stroke-width:2;opacity:0.7"/>
-    <style id="wall"      value="fill:none;stroke:grey; stroke-width:4;opacity:0.7"/>
+    <style id="sketch"    value="fill:none;stroke:grey; stroke-width:1;opacity:0.7"/>
+    <style id="wall"      value="fill:none;stroke:BurlyWood; stroke-width:2;opacity:0.7"/>
     <style id="ferryLine" value="fill:none;stroke:blue; stroke-width:1;opacity:0.1"/>
     <style id="waterLine" value="fill:none;stroke:skyblue; stroke-width:1"/>
     <style id="waterLineH" value="fill:none;stroke:skyblue; stroke-width:2"/>
@@ -443,7 +443,7 @@
                 <class value="pitch"          zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
                 <class value="sport_center"   zIndex="100" style="#grass" textZIndex="20" textStyle="#greyAreaName"/>
                 <class value="stadium"        zIndex="100" style="#grass" textZIndex="20" textStyle="#greyAreaName"/>
-                <class value="swinmming_pool" zIndex="100" style="#water" textZIndex="20" textStyle="#blueAreaName"/>
+                <class value="swinmming_pool" zIndex="106" style="#water" textZIndex="20" textStyle="#blueAreaName"/>
                 <class value="track"          zIndex="100" style="#grass" textZIndex="20" textStyle="#greyAreaName"/>
             </condition>
         </restriction>
@@ -464,7 +464,7 @@
                 <class value="pitch"          zIndex="100" style="#grass" textZIndex="20" textStyle="#greenAreaName"/>
                 <class value="sport_center"   zIndex="100" style="#grass" textZIndex="20" textStyle="#greyAreaName"/>
                 <class value="stadium"        zIndex="100" style="#grass" textZIndex="20" textStyle="#greyAreaName"/>
-                <class value="swinmming_pool" zIndex="100" style="#water" textZIndex="20" textStyle="#blueAreaName"/>
+                <class value="swinmming_pool" zIndex="106" style="#water" textZIndex="20" textStyle="#blueAreaName"/>
                 <class value="track"          zIndex="100" style="#grass" textZIndex="20" textStyle="#greyAreaName"/>
             </condition>
         </restriction>    </index>
@@ -475,7 +475,7 @@
             <condition tagKey="landuse" closed="yes">
                 <class value="residential"               zIndex="99"  style="#concrete" textZIndex="20" textStyle="#maroonAreaName" />
                 <class value="allotments"                zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="basin"                     zIndex="100" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="basin"                     zIndex="106" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="brownfield"                zIndex="100" style="#wasteland" textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="cemetery"                  zIndex="100" style="#grass"    textZIndex="21" textStyle="#maroonAreaName"/>
                 <class value="commercial"                zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
@@ -497,12 +497,12 @@
                 <class value="pasture"                   zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="peat_cutting"              zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="plant_nursery"             zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="port"                      zIndex="100" style="#water"    textZIndex="21" textStyle="#maroonAreaName"/>
+                <class value="port"                      zIndex="106" style="#water"    textZIndex="21" textStyle="#maroonAreaName"/>
                 <class value="quary"                     zIndex="100" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="railway"                   zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="recreation_ground"         zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="religious"                 zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="reservoir"                 zIndex="101" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="reservoir"                 zIndex="106" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="retail"                    zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="salt_pond"                 zIndex="101" style="#mud"      textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="village_green"             zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
@@ -531,16 +531,16 @@
                 <class value="glacier"                   zIndex="100" style="#ice"      textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="fell"                      zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="stone"                     zIndex="100" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="water"                     zIndex="102" style="#water"/>
+                <class value="water"                     zIndex="106" style="#water"/>
             </condition>
             <condition tagKey="waterway" closed="yes">
-                <class value="default"                  zIndex="101" style="#water" textZIndex="25" textStyle="#riverName"/>
+                <class value="default"                  zIndex="106" style="#water" textZIndex="25" textStyle="#riverName"/>
             </condition>
             <condition tagKey="waterway" closed="no">
-                <class value="default"                  zIndex="101" style="#waterLineH" textZIndex="25" textStyle="#riverName"/>
+                <class value="default"                  zIndex="106" style="#waterLineH" textZIndex="25" textStyle="#riverName"/>
             </condition>
             <condition tagKey="type" closed="yes">
-                <class value="waterway"                  zIndex="101" textZIndex="25" style="#water" />
+                <class value="waterway"                  zIndex="106" textZIndex="25" style="#water" />
             </condition>
             <condition tagKey="route" closed="both">
                 <class value="bus"      textWidth="4" textStyle="fill:green;font-family:sans-serif"      zIndex="25000000" style="fill:none; stroke:green;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
@@ -567,15 +567,15 @@
     <index type="relation" name="relationLandUseIdxMedRes">
         <restriction zLevels="8,9,10,11,12">
             <condition tagKey="waterway" closed="yes">
-                <class value="default"                  zIndex="101" style="#water" />
+                <class value="default"                  zIndex="106" style="#water" />
             </condition>
             <condition tagKey="natural" closed="yes">
-                <class value="water"                      zIndex="101" style="#water"/>
+                <class value="water"                      zIndex="106" style="#water"/>
             </condition>
         </restriction>
         <restriction zLevels="11,12">
             <condition tagKey="waterway" closed="no">
-                <class value="default"                  zIndex="101" style="#waterLine" />
+                <class value="default"                  zIndex="106" style="#waterLine" />
             </condition>
         </restriction>
     </index>
@@ -587,7 +587,7 @@
             <condition tagKey="landuse" closed="yes">
                 <class value="residential"               zIndex="99"  style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="allotments"                zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="basin"                     zIndex="100" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="basin"                     zIndex="106" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="brownfield"                zIndex="100" style="#field"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="cemetery"                  zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="commercial"                zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
@@ -609,12 +609,12 @@
                 <class value="pasture"                   zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="peat_cutting"              zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="plant_nursery"             zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="port"                      zIndex="100" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="port"                      zIndex="106" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="quary"                     zIndex="100" style="#stone"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="railway"                   zIndex="100" style="#sand"     textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="recreation_ground"         zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="religious"                 zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="reservoir"                 zIndex="101" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
+                <class value="reservoir"                 zIndex="106" style="#water"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="retail"                    zIndex="100" style="#concrete" textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="salt_pond"                 zIndex="101" style="#mud"      textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="village_green"             zIndex="100" style="#grass"    textZIndex="20" textStyle="#maroonAreaName"/>
@@ -648,13 +648,13 @@
                 <class value="glacier"                  zIndex="100" style="#ice"    textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="fell"                     zIndex="100" style="#grass"  textZIndex="20" textStyle="#maroonAreaName"/>
                 <class value="stone"                    zIndex="100" style="#stone"  textZIndex="20" textStyle="#maroonAreaName"/>
-                <class value="water"                    zIndex="102" style="#water"  textZIndex="20" textStyle="#riverName"/>
+                <class value="water"                    zIndex="106" style="#water"  textZIndex="20" textStyle="#riverName"/>
             </condition>
             <condition tagKey="waterway" closed="no">
-                <class value="default"                  zIndex="101" style="#waterLineH" textZIndex="20" textStyle="#riverName"/>
+                <class value="default"                  zIndex="106" style="#waterLineH" textZIndex="20" textStyle="#riverName"/>
             </condition>
             <condition tagKey="waterway" closed="yes">
-                    <class value="default"                  zIndex="101" style="#water" />
+                    <class value="default"                  zIndex="106" style="#water" />
             </condition>
             <condition tagKey="route" closed="both">
                 <class value="bus"       textWidth="4" textZIndex="21" textStyle="fill:maroon;;opacity:0.3;font-family:sans-serif"      zIndex="2500" style="fill:none; stroke:maroon;stroke-linecap:round;stroke-width:0.5;opacity:0.5"/>
@@ -681,15 +681,15 @@
     <index type="way" name="wayLandUseIdxMedRes">
         <restriction zLevels="8,9,10,11,12">
             <condition tagKey="waterway" closed="yes">
-                    <class value="default"                  zIndex="101" style="#water" />
+                    <class value="default"                  zIndex="106" style="#water" />
             </condition>
             <condition tagKey="natural" closed="yes">
-                <class value="water"                      zIndex="101" style="#water" />
+                <class value="water"                      zIndex="106" style="#water" />
             </condition>
         </restriction>
         <restriction zLevels="11,12">
             <condition tagKey="waterway" closed="no">
-                <class value="default"                  zIndex="101" style="#waterLine" />
+                <class value="default"                  zIndex="106" style="#waterLine" />
             </condition>
             <condition tagKey="natural" closed="no">
                 <class value="coastline"               zIndex="101"  style="#coast"/>
