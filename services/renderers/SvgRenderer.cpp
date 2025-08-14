@@ -30,16 +30,11 @@ Shape& SvgRenderer::getShape(std::shared_ptr<CssClass> c, unsigned char layer)
 
 }
 
+// labels ordering by priority
 bool compare(const std::shared_ptr<label_s>& l2, const std::shared_ptr<label_s>& l1)
 {
     if(l1->zindex > l2->zindex) return false;
     if(l2->zindex > l1->zindex) return true;
-
-    if(l1->style > l2->style) return true;
-    if(l2->style > l1->style) return false;
-
-    //if (l1.text.length() < l2.text.length()) return true;
-    //if (l1.text.length() > l2.text.length()) return false;
 
     if (l1->pos_x > l2->pos_x) return true;
     if (l1->pos_x < l2->pos_x) return false;
@@ -47,8 +42,18 @@ bool compare(const std::shared_ptr<label_s>& l2, const std::shared_ptr<label_s>&
     if (l1->pos_y > l2->pos_y) return true;
     if (l1->pos_y < l2->pos_y) return false;
 
+    if (l1->text.length() < l2->text.length()) return false;
+    if (l1->text.length() > l2->text.length()) return true;
+
     if (l1->text > l2->text) return true;
     if (l1->text < l2->text) return false;
+
+    if(l1->id > l2->id) return true;
+    if(l1->id < l2->id) return false;
+
+    if(l1->style > l2->style) return true;
+    if(l1->style < l2->style) return false;
+
     return false;
 }
 
@@ -175,7 +180,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
     if constexpr(std::is_same<ITEM,Point>())
     {
          gSet = makeGeoBoxSet(rect*3);
-         rect2 = rect*3;
+         rect2 = rect*1.3;
     }
 
     std::set<uint64_t> done_geoboxes;
@@ -333,8 +338,8 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
         {
             resMap[value.first->zIndex + value.second->layer * LAYER_MULT] = tmp;
         }
-           if((lbl->text.length() > 0) && (lbl->fontsize > 5))
-               label_vector.push_back(lbl);
+        if((lbl->text.length() > 0) && (lbl->fontsize > 5))
+            label_vector.push_back(lbl);
     }
     if constexpr(! std::is_same<ITEM, Point>())
     {
@@ -419,6 +424,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
 
     for(auto t=label_vector.begin(); t!=label_vector.end(); ++t)
     {
+        //std::cout << (*t)->text << " " << (*t)->id << " " << (*t)->angle << "\n";
         bool to_show = true;
 
         //double xc,xd,yc,yd;
@@ -438,95 +444,96 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
             double dx = (double)((*t)->pos_x) - (double)((*v)->pos_x);
             double dy = (double)((*t)->pos_y) - (double)((*v)->pos_y);
 
-            if((lt*lt + ht*ht + lv*lv + hv*hv) > 4*(dx*dx + dy*dy))
+            if((lt*lt + ht*ht + lv*lv + hv*hv) > 6*(dx*dx + dy*dy))
             {
                     to_show = false;
+                    //std::cout << (*t)->id << "-" << (*t)->style  << " discarded by " << (*v)->id  << "-" << (*v)->style<< "\n";
                     break;
             }
         }
         if(to_show )
         {
             to_print.push_back(*t);
-            (*t)->to_show = true;
         }
-        else (*t)->to_show = false;
     }
 
     for(auto v=to_print.begin(); v!=to_print.end(); ++v)
     {
-        if((*v)->pos_x < -0.5*size_x) continue;
-        if((*v)->pos_x > 1.5*size_x) continue;
-        if((*v)->pos_y < -0.5* size_y) continue;
-        if((*v)->pos_y > 1.5*size_y) continue;
+        int ilines;
+        int ilv = cutString((*v)->text, ilines);
+        double lv = (*v)->fontsize*1.0*ilv;
+        double hv = (*v)->fontsize*1.0*ilines;
+        double radius = sqrt(hv*hv + lv*lv);
+
+        if((*v)->pos_x < -1.5*radius) continue;
+        if(((*v)->pos_x - size_x) > 1.5*radius) continue;
+        if((*v)->pos_y < -1.5* size_y) continue;
+        if(((*v)->pos_y - size_y) > 1.5*size_y) continue;
+
+        if((*v)->angle ==0)
         {
-
-               if((*v)->angle ==0)
-               {
-                   if((*v)->sizeFromStyle)
-                   {
-                       texts << "<text  class=\"c"
-                          << (*v)->style
-                          << "\" x=\"" << (*v)->pos_x
-                          << "\" y=\"" << (*v)->pos_y
-                          << "\">"
-                          << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
-                          << "</text>\n";
-                   }
-                   else
-                   {
-                       texts << "<text  class=\"c"
-                          << (*v)->style
-                          << "\" style=\"font-size:"
-                          << (*v)->fontsize
-                          << "px\" x=\"" << (*v)->pos_x
-                          << "\" y=\"" << (*v)->pos_y
-                          << "\">"
-                          << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
-                          << "</text>\n";
-                    }
-               }
-               else
-               {
-                   if((*v)->sizeFromStyle)
-                   {
-                       texts << "<text  class=\"c"
-                          << (*v)->style
-                          << "\" x=\"" << (*v)->pos_x
-                          << "\" y=\"" << (*v)->pos_y
-                          << "\" transform=\"rotate("
-                          << std::to_string((*v)->angle*180/M_PI)
-                          << ","
-                          << (*v)->pos_x
-                          << ","
-                          << (*v)->pos_y
-                          << ")\">"
-                          << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
-                          << "</text>\n";
-                   }
-                   else
-                   {
-                       texts << "<text  class=\"c"
-                          << (*v)->style
-                          << "\" style=\"font-size:"
-                          << (*v)->fontsize
-                          << "px\" x=\"" << (*v)->pos_x
-                          << "\" y=\"" << (*v)->pos_y
-                          << "\" transform=\"rotate("
-                          << std::to_string((*v)->angle*180/M_PI)
-                          << ","
-                          << (*v)->pos_x
-                          << ","
-                          << (*v)->pos_y
-                          << ")\">"
-                          << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
-                          << "</text>\n";
-                   }
-               }
-               cssClasses.insert("c"+std::to_string((*v)->style));
-
+            if((*v)->sizeFromStyle)
+            {
+                texts << "<text  class=\"c"
+                      << (*v)->style
+                      << "\" x=\"" << (*v)->pos_x
+                      << "\" y=\"" << (*v)->pos_y
+                      << "\">"
+                      << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
+                      << "</text>\n";
+            }
+            else
+            {
+                texts << "<text  class=\"c"
+                      << (*v)->style
+                      << "\" style=\"font-size:"
+                      << (*v)->fontsize
+                      << "px\" x=\"" << (*v)->pos_x
+                      << "\" y=\"" << (*v)->pos_y
+                      << "\">"
+                      << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
+                      << "</text>\n";
+             }
         }
+        else
+        {
+            if((*v)->sizeFromStyle)
+            {
+                texts << "<text  class=\"c"
+                  << (*v)->style
+                  << "\" x=\"" << (*v)->pos_x
+                  << "\" y=\"" << (*v)->pos_y
+                  << "\" transform=\"rotate("
+                  << std::to_string((*v)->angle*180/M_PI)
+                  << ","
+                  << (*v)->pos_x
+                  << ","
+                  << (*v)->pos_y
+                  << ")\">"
+                  << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
+                  << "</text>\n";
+            }
+            else
+            {
+                texts << "<text  class=\"c"
+                  << (*v)->style
+                  << "\" style=\"font-size:"
+                  << (*v)->fontsize
+                  << "px\" x=\"" << (*v)->pos_x
+                  << "\" y=\"" << (*v)->pos_y
+                  << "\" transform=\"rotate("
+                  << std::to_string((*v)->angle*180/M_PI)
+                  << ","
+                  << (*v)->pos_x
+                  << ","
+                  << (*v)->pos_y
+                  << ")\">"
+                  << cutString((*v)->text, (*v)->pos_x, (*v)->pos_y, (*v)->fontsize)
+                  << "</text>\n";
+            }
+        }
+        cssClasses.insert("c"+std::to_string((*v)->style));   
     }
-
 
     result << "<defs>";
 
@@ -766,7 +773,6 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     if(cl.width.length()) width = std::stoi(cl.width);
     if(cl.textWidth.length()) textWidth = std::stoi(cl.textWidth);
     if(textWidth) textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
-    if(width && ((width*ppm) <  0.25)) return "";
     if(width) style ="stroke-width:"+ std::to_string(width*ppm)+";" + cl.style;
     std::string textField = "name";
     if(cl.textField != "") textField = cl.textField;
@@ -940,8 +946,8 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 int64_t yyy = myWay.rect.y0/2 + myWay.rect.y1/2;
 
                 lbl.zindex = cl.textZIndex;
-                 double xi = projectX(_proj, szx, rect.x0, rect.x1, xxx);
-                 double yi = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
+                double xi = projectX(_proj, szx, rect.x0, rect.x1, xxx);
+                double yi = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
 
                 lbl.pos_x = round(xi);
                 lbl.pos_y = round(yi);
@@ -1041,12 +1047,9 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
             if(lbl2->text == "") lbl2->text = "void";
             for(auto myWay : myRelation.ways)
             {
-                //myWay->fillrec();
                 if(!(((myWay->rect)*(rect*1.5)).isValid())) continue;
                 keep = true;
                 result << render(*lbl2,*myWay, rect, szx, szy, cl, s);
-                if((lbl2->text.length() > 0) && (lbl2->fontsize > 5))
-                    label_vector.push_back(lbl2);
             }
         }
         else
