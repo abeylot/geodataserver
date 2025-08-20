@@ -67,7 +67,7 @@ const std::string Statistics::build_html_report()
     std::map<std::string, my_stats> stats_map;
     
     std::unique_lock lk(stats_mtx);
-    std::string result = "<html><body>";
+    std::string result = "<!DOCTYPE html>\n<html><body>";
     for (auto it = _performed_requests.begin(); it != _performed_requests.end(); it++)
     {
         //result += it->tag + " " + std::to_string(it->elapsed_time);
@@ -90,13 +90,17 @@ const std::string Statistics::build_html_report()
             if(it->elapsed_time > it2->second.max_elapsed_ms) it2->second.max_elapsed_ms = it->elapsed_time;
         }
     }
-    result += "<table style=\"border-width:1;border:solid;\">";
+    result +="<p>statistics for last 10000 requests</p>";
+    result += "<table style=\"border:solid;border-color:grey;border-width:2px\">";
     result += "<tr><th> Service </th> <th> count </th> <th> Average duration ms</th> <th> Max duration ms</th> <th> Failure rate %</th></tr>";
+    bool is_odd = true;
     for(const auto& [tag, line] : stats_map)
     {
-        result += "<tr>";
+        if(is_odd) result += "<tr style=\"background-color:#E0E0E0; text-align:right\">";
+        else  result +=      "<tr style=\"background-color:#F0F0F0; text-align:right\">";
         result += "<td>" + line.tag+ "</td> <td>"+ std::to_string(line.count)+ "</td> <td>"+ std::to_string(line.total_elapsed_ms / line.count)+ "</td> <td>"+ std::to_string(line.max_elapsed_ms)+ "</td> <td>" + std::to_string(100*line.failed_count/line.count) + "</td>";
         result += "</tr>";
+        is_odd = is_odd ^ true;
     }
     result += "</table>";
     result += "</body></html>";

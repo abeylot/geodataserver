@@ -186,6 +186,7 @@ template<typename MSG> struct Exec
                     {
                         std::string url = m->getRecord(0)->getNamedValue("URL");
                         std::string etag = m->getRecord(0)->getNamedValue("If-None-Match");
+                        stats.set_request_tag(m->getConnection()->getFileDescr(), url);
                         auto s = ServicesFactory::getService(url);
                         if(s)
                         {
