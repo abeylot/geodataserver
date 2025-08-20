@@ -167,21 +167,8 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                   std::is_same<ITEM,Way>() ||
                   std::is_same<ITEM,Point>(), " Type unsuported for template method");
 
-    if constexpr(std::is_same<ITEM,Relation>())
-    {
-         gSet = makeGeoBoxSet(rect*1.3);
-         rect2 = rect*1.3;
-    }
-    if constexpr(std::is_same<ITEM,Way>())
-    {
-         gSet = makeGeoBoxSet(rect*1.3);
-         rect2 = rect*1.3;
-    }
-    if constexpr(std::is_same<ITEM,Point>())
-    {
-         gSet = makeGeoBoxSet(rect*3);
-         rect2 = rect*1.3;
-    }
+    rect2 = rect*2;
+    gSet = makeGeoBoxSet(rect2);
 
     std::set<uint64_t> done_geoboxes;
     //bool get_range(KEY key_min, KEY key_max, std::vector<KEY>& keys, std::vector<ITEM>& items)
@@ -433,23 +420,49 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
         double lt = (*t)->fontsize*1.0*ilt;
         double ht = (*t)->fontsize*1.0*ilines;
 
+        // compute a "rectangle" from first label
+        unsigned int offset = 2500;//ensure all values are positive and then can be stored in an uint32_t
+        Rectangle lbl_rect = { (uint32_t) ((*t)->pos_x + offset - (lt/2.0)),
+                               (uint32_t) ((*t)->pos_y + offset - (ht/2.0)),
+                               (uint32_t) ((*t)->pos_x + offset + (lt/2.0)),
+                               (uint32_t) ((*t)->pos_y + offset +(ht/2.0))};
 
-        for(auto v = to_print.begin(); v != to_print.end(); ++v)
+        for(auto v = label_vector.begin(); v != t; ++v)
         {
             int ilv = cutString((*v)->text, ilines);
 
             double lv = (*v)->fontsize*1.0*ilv;
             double hv = (*v)->fontsize*1.0*ilines;
 
+            /*
             double dx = (double)((*t)->pos_x) - (double)((*v)->pos_x);
             double dy = (double)((*t)->pos_y) - (double)((*v)->pos_y);
 
-            if((lt*lt + ht*ht + lv*lv + hv*hv) > 6*(dx*dx + dy*dy))
+            if((lt*lt + ht*ht + lv*lv + hv*hv) > 4*(dx*dx + dy*dy))
             {
                     to_show = false;
-                    //std::cout << (*t)->id << "-" << (*t)->style  << " discarded by " << (*v)->id  << "-" << (*v)->style<< "\n";
                     break;
             }
+            */
+            // rotate second text center
+            double x1 = (*t)->pos_x + offset + ((*v)->pos_x - (*t)->pos_x) * cos((*t)->angle) + ((*v)->pos_y - (*t)->pos_y) * sin((*t)->angle);
+            double y1 = (*t)->pos_y + offset + ((*v)->pos_y - (*t)->pos_y) * cos((*t)->angle) - ((*v)->pos_x - (*t)->pos_x) * sin((*t)->angle);
+            // make shape
+            Line l;
+            double dx = lv / 2;;
+            double dy = hv / 2;
+            double my_cos = cos ((*v)->angle - (*t)->angle);
+            double my_sin = sin ((*v)->angle - (*t)->angle);
+            GeoPoint* pts = (GeoPoint*)malloc(5*sizeof(GeoPoint));
+            pts[0] = {(uint32_t) (x1 + dx*my_cos + dy*my_sin), (uint32_t)(y1 + dy*my_cos - dx*my_sin)};
+            pts[1] = {(uint32_t) (x1 + dx*my_cos - dy*my_sin), (uint32_t)(y1 - dy*my_cos - dx*my_sin)};
+            pts[2] = {(uint32_t) (x1 - dx*my_cos - dy*my_sin), (uint32_t)(y1 - dy*my_cos + dx*my_sin)};
+            pts[3] = {(uint32_t) (x1 - dx*my_cos + dy*my_sin), (uint32_t)(y1 + dy*my_cos + dx*my_sin)};        
+            pts[4] = pts[0]; // close line
+            l.points = pts;
+            l.pointsCount = 5;
+            l.crop(lbl_rect);
+            if(l.pointsCount > 2) to_show = false; 
         }
         if(to_show )
         {
