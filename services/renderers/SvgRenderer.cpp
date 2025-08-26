@@ -855,13 +855,13 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
             {
                 if(!first)
                 {
-                    //double oldLength = curLength;
+                    double oldLength = curLength;
                     curLength += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
                     if(curLength > halfLength)
                     {
-                        //ratio = (halfLength - oldLength)/(curLength - oldLength);
-                        lbl.pos_x = (x + oldx) / 2;
-                        lbl.pos_y = (y + oldy) / 2;;
+                        double ratio = (halfLength - oldLength)/(curLength - oldLength);
+                        lbl.pos_x = x*ratio + (1.0 - ratio) * oldx;
+                        lbl.pos_y = y*ratio + (1.0 - ratio) * oldy;
                         double dfx = x - oldx;
                         double dfy = y - oldy;
                         if(dfx == 0) lbl.angle = M_PI / 2;
@@ -1346,15 +1346,7 @@ template<class ITEM> std::shared_ptr<CssClass> SvgRenderer::getCssClass(const In
             for(auto cl : cd->classes)
             {
                 if(cl->mask & mask)
-                    if (cl->tagValue=="default")
-                    {
-                        myCl = cl;
-                    }
-            }
-            for(auto cl : cd->classes)
-            {
-                if(cl->mask & mask)
-                    if (cl->tagValue == item.tags[cd->tagKey])
+                    if (cl->tagValue == "default" || cl->tagValue == item.tags[cd->tagKey])
                     {
                         if(myCl && ((myCl->zIndex < cl->zIndex)||((myCl->zIndex == cl->zIndex)&&(myCl->textZIndex < cl->textZIndex))))
                         {
