@@ -4,7 +4,7 @@ echo "set environment variable to geodataserver binaries path"
 export GEOBIN=/$HOME/geodataserver/build
 
 echo "set environment variable to openstreet map file to download"
-export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.bz2
+export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.pbf
 #below, entire world, test with a smaller file first
 #planet.openstreetmap.org/planet/planet-latest.osm.bz2
 
@@ -49,7 +49,10 @@ fi
 #wget www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_lakes.zip
 
 echo "extract data from openstreetmap file"
-wget -O - $OSMFILE | tee osm.bz2 | lbzcat | $GEOBIN/renumber .
+
+wget -O - $OSMFILE > osm.pbf
+
+osmium cat -f xml osm.pbf | $GEOBIN/renumber .
 if [ $? -ne 0 ]
   then
   echo " first data extraction step failed"
@@ -57,13 +60,13 @@ if [ $? -ne 0 ]
 fi
 
 echo "compile data from openstreetmap file and other shp files from natural earth"
-lbzcat osm.bz2 | $GEOBIN/compile .
+osmium cat -f xml osm.pbf | $GEOBIN/compile .
 if [ $? -ne 0 ]
   then
   echo " failed to compile data"
   exit 1
 fi
-rm osm.bz2
+rm osm.pbf
 
 echo "remove indexes that are no longer useful"
 rm nodeIdIndex
