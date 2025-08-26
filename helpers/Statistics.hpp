@@ -21,6 +21,7 @@ struct PerformedRequest
     uint64_t elapsed_time;
     bool is_success;
     std::string failure_reason;
+    size_t payload_size;
 };
 
 
@@ -33,7 +34,7 @@ class Statistics
     std::deque<PerformedRequest> _performed_requests;
     public:
     void start_request(int socket_id); 
-    void end_request(int socket_id);
+    void end_request(int socket_id, size_t payload_size);
     void set_request_tag(int socket_id, const std::string& tag);
     void abort_request(int socket_id, const std::string& reason);
     const std::string build_html_report(); 

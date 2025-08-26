@@ -129,7 +129,7 @@ template<typename MSG> struct Writer
                 std::cout <<"[" << m->getConnection()->getFileDescr() << "]";
                 std::string* s = encoder.decode(m);
                 p.putMessage(*s,m->getConnection());
-                stats.end_request(m->getConnection()->getFileDescr());
+                stats.end_request(m->getConnection()->getFileDescr(), s->size());
                 delete s;
                 // see if connection still used
                 if(m->getConnection()->isAlive())

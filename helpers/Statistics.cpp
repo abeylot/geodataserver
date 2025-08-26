@@ -9,7 +9,7 @@ void Statistics::start_request(int socket_id)
     _pending_requests[socket_id] = {"",ts};
 } 
 
-void Statistics::end_request(int socket_id)
+void Statistics::end_request(int socket_id, size_t payload_size)
 {
     struct timeval tp;
     gettimeofday(&tp, NULL);
@@ -19,7 +19,7 @@ void Statistics::end_request(int socket_id)
     auto it = _pending_requests.find(socket_id);
     if(it != _pending_requests.end())
     {
-        PerformedRequest r = {it->second.tag, ts - it->second.start_timestamp, true, ""};
+        PerformedRequest r = {it->second.tag, ts - it->second.start_timestamp, true, "", payload_size};
         _performed_requests.push_back(r);
         while(_performed_requests.size() > MAX_RETAINED_MEASURES) _performed_requests.pop_front();
         _pending_requests.erase(it);
@@ -36,7 +36,7 @@ void Statistics::abort_request(int socket_id, const std::string& reason)
     auto it = _pending_requests.find(socket_id);
     if(it != _pending_requests.end())
     {
-        PerformedRequest r = {it->second.tag, ts - it->second.start_timestamp, false, reason};
+        PerformedRequest r = {it->second.tag, ts - it->second.start_timestamp, false, reason, 0};
         _performed_requests.push_back(r);
         while(_performed_requests.size() > MAX_RETAINED_MEASURES) _performed_requests.pop_front();
         _pending_requests.erase(it);
@@ -62,6 +62,8 @@ const std::string Statistics::build_html_report()
         uint64_t max_elapsed_ms;
         uint64_t count;
         uint64_t failed_count;
+        uint64_t total_payload_size;
+        uint64_t max_payload_size;
     };
 
     std::map<std::string, my_stats> stats_map;
@@ -78,27 +80,29 @@ const std::string Statistics::build_html_report()
         if(it2 == stats_map.end())
         {
             if(it->is_success)
-                stats_map[tag] = {tag, it->elapsed_time, it->elapsed_time, 1, 0};
+                stats_map[tag] = {tag, it->elapsed_time, it->elapsed_time, 1, 0, it->payload_size, it->payload_size};
             else
-                stats_map[tag] = {tag, it->elapsed_time, it->elapsed_time, 1, 1};
+                stats_map[tag] = {tag, it->elapsed_time, it->elapsed_time, 1, 1, it->payload_size, it->payload_size};
         }
         else
         {
             it2->second.count++;
             it2->second.total_elapsed_ms += it->elapsed_time;
+            it2->second.total_payload_size += it->payload_size;
             if(!(it->is_success)) it2->second.failed_count++;
             if(it->elapsed_time > it2->second.max_elapsed_ms) it2->second.max_elapsed_ms = it->elapsed_time;
+            if(it->payload_size > it2->second.max_payload_size) it2->second.max_payload_size = it->payload_size;
         }
     }
     result +="<p>statistics for last 10000 requests</p>";
     result += "<table style=\"border:solid;border-color:grey;border-width:2px\">";
-    result += "<tr><th> Service </th> <th> count </th> <th> Average duration ms</th> <th> Max duration ms</th> <th> Failure rate %</th></tr>";
+    result += "<tr><th> Service </th> <th> count </th> <th> Average duration ms</th> <th> Max duration ms</th> <th> Failure rate %</th><th> Average payload size</th><th> Max payload size</th></tr>";
     bool is_odd = true;
     for(const auto& [tag, line] : stats_map)
     {
         if(is_odd) result += "<tr style=\"background-color:#E0E0E0; text-align:right\">";
         else  result +=      "<tr style=\"background-color:#F0F0F0; text-align:right\">";
-        result += "<td>" + line.tag+ "</td> <td>"+ std::to_string(line.count)+ "</td> <td>"+ std::to_string(line.total_elapsed_ms / line.count)+ "</td> <td>"+ std::to_string(line.max_elapsed_ms)+ "</td> <td>" + std::to_string(100*line.failed_count/line.count) + "</td>";
+        result += "<td>" + line.tag+ "</td> <td>"+ std::to_string(line.count)+ "</td> <td>"+ std::to_string(line.total_elapsed_ms / line.count)+ "</td> <td>"+ std::to_string(line.max_elapsed_ms)+ "</td> <td>" + std::to_string(100*line.failed_count/line.count) + "</td> <td>" + std::to_string(line.total_payload_size / line.count) + " bytes</td> <td>" + std::to_string(line.max_payload_size) + " bytes</td>";
         result += "</tr>";
         is_odd = is_odd ^ true;
     }
