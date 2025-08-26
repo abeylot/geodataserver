@@ -44,6 +44,7 @@ Fast for small scales ( high zoom levels ) but can take 10 or 20 seconds for lar
 #### download and compile map data :
 ( the example puts data dir in your home directory, but you can put it where you want, changing followings commands to follow your choice )
 
+    sudo apt install osmium-tool
     mkdir data
     cp prepare.sh data
     cd data
