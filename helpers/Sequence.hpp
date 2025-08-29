@@ -111,6 +111,7 @@ template<class VISITOR> class XmlFileParser
 public:
     static void parseXmlFile(FILE* file, VISITOR& visitor)
     {
+        rewind(file);
         ParseContext p;
         unsigned char buffer[BUFFLEN];
         FILE* fIn  = file;

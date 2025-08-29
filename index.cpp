@@ -15,7 +15,24 @@
 using namespace std;
 using namespace fidx;
 
-
+inline bool isName(const char* tag, const unsigned char tag_size, const char locales[32][2], const unsigned char nb_locales)
+{
+    if(tag_size == 4 && (strncmp(tag, "name", tag_size) == 0)) return true;
+    else if(tag_size == 7)
+    {
+        if(tag[4] == ':')
+        {
+            char comp[7] = "name:";
+            for(int i = 0; i < nb_locales; i++)
+            {
+                comp[5]=locales[i][0];
+                comp[6]=locales[i][1];
+                if(strncmp(tag, comp, 7) == 0) return true;
+            } 
+        }
+    }
+    return false;
+}
 
 int main(int argc, char *argv[])
 {
@@ -30,6 +47,7 @@ int main(int argc, char *argv[])
     std::vector<std::shared_ptr<IndexDesc>> indexes;
 
     XmlVisitor v(indexes, true, argv[1]);
+    ParmsXmlVisitor params;
 
     std::string fileRoot = std::string(argv[1]) + "/";
 
@@ -52,6 +70,7 @@ int main(int argc, char *argv[])
     }
 
     XmlFileParser<XmlVisitor>::parseXmlFile(config,v);
+    XmlFileParser<ParmsXmlVisitor>::parseXmlFile(config,params);
     fclose(config);
     CompiledDataManager mger(argv[1], &indexes);
 
@@ -59,6 +78,16 @@ int main(int argc, char *argv[])
     std::shared_ptr<Point> p = nullptr;
     std::shared_ptr<Relation> r = nullptr;
 
+    std::string locales_string  = params.getParam("locale");
+    char locales[32][2];
+    unsigned char nb_locales = 0;
+    while(3*nb_locales < locales_string.size() && nb_locales < 32)
+    {
+        locales[nb_locales][0] = locales_string[3*nb_locales];
+        locales[nb_locales][1] = locales_string[3*nb_locales + 1];
+        nb_locales ++ ;
+    }
+    std::cout << "indexing names with locales : "<< locales_string <<"\n";
     for(uint64_t i=0; i < mger.relationIndex->getSize(); i++)
     {
         r = mger.loadRelation(i);
@@ -92,7 +121,7 @@ int main(int argc, char *argv[])
             value = r->tags.data+used;
             used += value_size;
 
-            if(tag_size == 4 && (strncmp(tag, "name", tag_size) == 0) && value_size)
+            if(isName(tag,tag_size,locales,nb_locales))
             {
                 std::string my_string(value, value_size);
                 std::replace( my_string.begin(), my_string.end(), '-', ' ');
@@ -189,7 +218,7 @@ int main(int argc, char *argv[])
             value = w->tags.data+used;
             used += value_size;
 
-            if(tag_size == 4 && (strncmp(tag, "name", tag_size) == 0) && value_size)
+            if(isName(tag,tag_size,locales,nb_locales))
             {
                 std::string my_string(value, value_size);
                 std::replace( my_string.begin(), my_string.end(), '-', ' ');
@@ -287,7 +316,7 @@ int main(int argc, char *argv[])
             value = p->tags.data+used;
             used += value_size;
 
-            if(tag_size == 4 && (strncmp(tag, "name", tag_size) == 0) && value_size)
+            if(isName(tag,tag_size,locales,nb_locales))
             {
                 std::string my_string(value, value_size);
                 std::replace( my_string.begin(), my_string.end(), '-', ' ');
