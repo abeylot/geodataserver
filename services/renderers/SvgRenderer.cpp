@@ -12,6 +12,11 @@
 
 #define LAYER_MULT 100000
 
+inline double get_ppm(const uint64_t szx, const Rectangle rect)
+{
+    return 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
+}
+
 Shape& SvgRenderer::getShape(std::shared_ptr<CssClass> c, unsigned char layer)
 {
     uint64_t id = (c->rank << 8) + layer;
@@ -149,16 +154,12 @@ size_t cutString(std::string txt, int& ilines)
     return result;
 }
 
-
-
-
 template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const Rectangle& rect)
 {
     GeoBoxSet gSet;
     Shape myShape;
     hh::THashIntegerTable hash(10000);
 
-    //std::map <uint64_t, std::pair<std::shared_ptr<CssClass>, std::shared_ptr<ITEM>>> itemsToDraw;
     std::vector <std::pair<std::shared_ptr<CssClass>, std::shared_ptr<ITEM>>> itemsToDraw;
 
     Rectangle rect2;
@@ -171,7 +172,6 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
     gSet = makeGeoBoxSet(rect2);
 
     std::set<uint64_t> done_geoboxes;
-    //bool get_range(KEY key_min, KEY key_max, std::vector<KEY>& keys, std::vector<ITEM>& items)
     for(short i = 0; i < gSet.count; i++)
     {
         std::vector<IndexEntryMasked> indexEntry;
@@ -188,10 +188,6 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
         } else {
             maxGeoBox.set_pos(0xFFFFFFFFFFFFFFFF);
         }
-
-        //fidx::Record<IndexEntryMasked, GeoBox> record;
-        //uint64_t start;
-        //if(idxDesc.idx->findLastLesser(g, start))
         if(idxDesc.idx->get_range(g, maxGeoBox, indexEntry))
         for(size_t i = 0; i < indexEntry.size(); i++)
         {
@@ -221,19 +217,16 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                             item = mger->loadRelation(indexEntry[i].id, 2, true);
                         }
                     }
-                    //label_s lbl;
                     if(cl)
                     {
                         if constexpr(! std::is_same<ITEM, Point>())
                         {
                             item->rect = indexEntry[i].r;
                         }
-                        //itemsToDraw[indexEntry[i].id] = std::make_pair(cl, item);
                         itemsToDraw.push_back(std::make_pair(cl, item));
                     }
                 }
             }
-            //start++;
         }
         mask = g.get_maskLength();
         short max = 64;
@@ -248,7 +241,6 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                 continue; // dont do twice the same job
             }
             done_geoboxes.insert(maxGeoBox2.get_hash());
-    //        if(idxDesc.idx->findLastLesser(maxGeoBox2, start))
             if(idxDesc.idx->get_range(maxGeoBox2, maxGeoBox2, indexEntry))
             for(size_t i = 0; i < indexEntry.size(); i++)
             {
@@ -266,7 +258,6 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                             item = mger->load<ITEM>(indexEntry[i].id);
                         }
                         std::shared_ptr<CssClass> cl = getCssClass(idxDesc, *item, zoom, indexEntry[i].zmMask & 0X100000LL);
-                        //std::shared_ptr<label_s> lbl;
                         if constexpr(std::is_same<ITEM,Relation>())
                         {
                             if(cl && cl->opened) // not a filled area
@@ -284,7 +275,6 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                             {
                                 item->rect = indexEntry[i].r;
                             }
-                            //itemsToDraw[indexEntry[i].id] = std::make_pair(cl, item);
                             itemsToDraw.push_back(std::make_pair(cl, item));
                         }
                     }
@@ -360,7 +350,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
     size_x = sizex;
     size_y = sizey;
     std::string libs = "";
-    double ppm = 50 * ((sizex * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
+    double ppm = get_ppm(sizex, rect);
     uint32_t msz = rect.x1 - rect.x0;
     zoom = 31;
     msz = msz >> 1;
@@ -411,10 +401,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
 
     for(auto t=label_vector.begin(); t!=label_vector.end(); ++t)
     {
-        //std::cout << (*t)->text << " " << (*t)->id << " " << (*t)->angle << "\n";
         bool to_show = true;
-
-        //double xc,xd,yc,yd;
         int ilines;
         int ilt = cutString((*t)->text, ilines);
         double lt = (*t)->fontsize*1.0*ilt;
@@ -434,16 +421,6 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
             double lv = (*v)->fontsize*1.0*ilv;
             double hv = (*v)->fontsize*1.0*ilines;
 
-            /*
-            double dx = (double)((*t)->pos_x) - (double)((*v)->pos_x);
-            double dy = (double)((*t)->pos_y) - (double)((*v)->pos_y);
-
-            if((lt*lt + ht*ht + lv*lv + hv*hv) > 4*(dx*dx + dy*dy))
-            {
-                    to_show = false;
-                    break;
-            }
-            */
             // rotate second text center
             double x1 = (*t)->pos_x + offset + ((*v)->pos_x - (*t)->pos_x) * cos((*t)->angle) + ((*v)->pos_y - (*t)->pos_y) * sin((*t)->angle);
             double y1 = (*t)->pos_y + offset + ((*v)->pos_y - (*t)->pos_y) * cos((*t)->angle) - ((*v)->pos_x - (*t)->pos_x) * sin((*t)->angle);
@@ -664,7 +641,7 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
 
     int width=0;
 
-    double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
+    double ppm = get_ppm(szx, rect);
 
     if(cl.width.length()) width = std::stoi(cl.width);
     if(width && ((width*ppm) <  0.25)) return "";
@@ -747,20 +724,16 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
 
 std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_t szx, uint32_t szy, CssClass& cl, Shape& s)
 {
-    Rectangle r1 = rect*1.25;
-    lbl.id = myWay.id + UINT64_C(0xA000000000000000);
-    lbl.fontsize = 12;
-    std::string name = "";
     std::string inherited_name = "";
+    std::string name = "";
     if(!lbl.text.empty())
     {
         inherited_name = lbl.text;//when called by relation render
-        //std::cout << inherited_name << "\n";
     }
-    lbl.text = "";
-    lbl.ref = "";
-    lbl.pos_x = lbl.angle = lbl.pos_y=0;
-    lbl.style = 0;
+    lbl.clear();
+    Rectangle r1 = rect*1.25;
+    lbl.id = myWay.id + UINT64_C(0xA000000000000000);
+    lbl.fontsize = 12;
     lbl.zindex = cl.textZIndex;
     std::string resultString;
     StringBuffer result(resultString);
@@ -777,8 +750,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
 
     int width=0;
     int textWidth=0;
-    double ppm = 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
-
+    double ppm = get_ppm(szx, rect);
     bool draw = ((myWay.rect)*r1).isValid();
     std::string style = cl.style;
     std::string textStyle2;
@@ -804,15 +776,16 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         }
         if(name == "") name = std::string(myWay.tags["name"]);
     }
+    
     if(inherited_name != "") {
         if(inherited_name == "void") name ="";
         else name = inherited_name;
-        //std::cout << inherited_name << "\n";
     }
 
     bool first = true;
     double length = 0;
     double halfLength = 0;
+    //compute way length in order to be able to find it's middle.
     for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
     {
         int64_t xx = myWay.points[i].x;
@@ -828,7 +801,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
             }
             else
             {
-                if((x != oldx) || (y != oldy)|| i == (myWay.pointsCount - 1)/*&&(x > -1*szx)&&(x < 2*szx)&&(y > -1*szy)&&(y < 2*szy)*/)
+                if((x != oldx) || (y != oldy)|| i == (myWay.pointsCount - 1))
                 length += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
             }
         }
@@ -838,7 +811,6 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
 
         halfLength = length / 2;
         double curLength = 0;
-        //double ratio = 0;
         first = true;
 
         for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
@@ -847,8 +819,6 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
             int64_t yy = myWay.points[i].y;
             oldx = x;
             oldy = y;
-            //x = (xx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-            //y = (yy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
             x = round(projectX(_proj, szx, rect.x0, rect.x1, xx));
             y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
 
@@ -859,6 +829,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                     curLength += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
                     if(curLength > halfLength)
                     {
+                        // fill label caraceristics when middle is reached
                         double ratio = (halfLength - oldLength)/(curLength - oldLength);
                         lbl.pos_x = x*ratio + (1.0 - ratio) * oldx;
                         lbl.pos_y = y*ratio + (1.0 - ratio) * oldy;
@@ -868,6 +839,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                         else lbl.angle = atan2(dfy , dfx);
                         if(lbl.angle > M_PI / 2) lbl.angle -= M_PI;
                         if(lbl.angle < -1 * M_PI / 2) lbl.angle += M_PI;
+
                         break;
                     }
                 }
@@ -909,7 +881,6 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         myWay.reduce((rect.x1 - rect.x0)/size_x, (rect.y1 - rect.y0)/size_y);
         if(myWay.pointsCount > 1) s.mergePoints(myWay.points, myWay.pointsCount, myWay.points[0] == myWay.points[myWay.pointsCount - 1]);
     }
-    lbl.fontsize = 12;
     std::size_t found = cl.textStyle.find("font-size:");
     if(found != std::string::npos)
     {
@@ -918,50 +889,37 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     }
     else
     {
-       lbl.fontsize = 0;
+       lbl.fontsize = textWidth*ppm;
     }
 
-    if((textWidth*ppm >= 6) || (lbl.fontsize >= 6))
+    if(lbl.fontsize >= 6)
     {
         if((name != "" ) && (textStyle != "") && cl.opened)
         {
             {
-                 if(cl.textWidth != "")
-                 {
-                     textWidth = atoi(cl.textWidth.c_str());
-                     lbl.fontsize = textWidth*ppm;
-                 }
-                 unsigned int chars = 1.4*length / (lbl.fontsize);
-                 if(name.length() < chars)
-                 {
-                       lbl.zindex = cl.textZIndex;
-                       lbl.style = cl.rank;
-                       lbl.text=name;
-
-                       lbl.ref = std::to_string(myWay.id);
-                       lbl.style = cl.rank;
-                       lbl.text=name;
+                unsigned int chars = 1.4*length / (lbl.fontsize);
+                if(name.length() <= chars || MAX_TEXT_LEN <= chars)
+                {
+                      lbl.zindex = cl.textZIndex;
+                      lbl.style = cl.rank;
+                      lbl.text=name;
+                      lbl.ref = std::to_string(myWay.id);
+                      lbl.style = cl.rank;
+                      lbl.text=name;
                  }
             }
         }
         else if((name != "" ) && (textStyle != "") && !cl.opened)
         {
-            if(cl.textWidth != "")
-            {
-                textWidth = atoi(cl.textWidth.c_str());
-                lbl.fontsize = textWidth*ppm;
-            }
-            unsigned int chars = 1.0*szx*(myWay.rect.x1 - myWay.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
-            if(name.length() < chars)
+            unsigned int chars = 1.4*szx*(myWay.rect.x1 - myWay.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
+            if(name.length() <= chars || MAX_TEXT_LEN <= chars)
             {
                 style += ";stroke-width:" + std::to_string(atoi(cl.width.c_str())*ppm);
                 int64_t xxx = myWay.rect.x0/2 + myWay.rect.x1/2;
                 int64_t yyy = myWay.rect.y0/2 + myWay.rect.y1/2;
-
                 lbl.zindex = cl.textZIndex;
                 double xi = projectX(_proj, szx, rect.x0, rect.x1, xxx);
                 double yi = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
-
                 lbl.pos_x = round(xi);
                 lbl.pos_y = round(yi);
                 lbl.style = cl.rank;
@@ -976,10 +934,8 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     {
         int64_t xxx = (myWay.rect.x0 + myWay.rect.x1) / 2;
         int64_t yyy = (myWay.rect.y0 + myWay.rect.y1) /2;
-        //x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-        //y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
-          x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
-          y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
+        x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
+        y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
 
         result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t) x  << "\"  y=\"" << (int32_t) y << "\"/>";
         cssClasses.insert("sym#"+cl.symbol);
@@ -1073,8 +1029,6 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                 for(Line* l: myRelation.shape.openedLines)
                 {
                     Rectangle r1 = rect*1.25;
-                    //l->crop(r1);
-                    //s.mergePoints(l->points, l->pointsCount);
                     l->crop(r1);
                     if(l->pointsCount < 2) continue;
                     bool first = true;
@@ -1194,8 +1148,6 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                     {
                         int64_t xxx = (myRelation.rect.x0/2 + myRelation.rect.x1/2);
                         int64_t yyy = (myRelation.rect.y0/2 + myRelation.rect.y1/2);
-                        //int32_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-                        //int32_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
                         double x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
                         double y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
 
@@ -1218,8 +1170,6 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
         int64_t yyy = (myRelation.rect.y0 + myRelation.rect.y1) /2;
         double x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
         double y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
-        //int64_t x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-        //int64_t y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
         result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\"/>";
         cssClasses.insert("sym#"+cl.symbol);
     }
@@ -1232,18 +1182,14 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
 std::string SvgRenderer::render(label_s& lbl, Point& myNode,
                                     Rectangle rect, uint32_t szx, uint32_t szy, CssClass& cl )
 {
-
+    lbl.clear();
     lbl.id = myNode.id  + UINT64_C(0xC000000000000000);
     lbl.fontsize = 12;
-    lbl.text = "";
-    lbl.ref = "";
-    lbl.pos_x = lbl.pos_y = lbl.angle = 0;
-    lbl.style = 0;
     lbl.zindex = cl.textZIndex;
     std::string resultString = "";
     StringBuffer result(resultString);
     double x,y;
-    double ppm = 107 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
+    double ppm = get_ppm(szx, rect);
     std::string name = "";
 
     if(cl.textStyle != "")
@@ -1267,33 +1213,22 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
             }
             if(name == "") name = std::string(myNode.tags["name"]);
         }
-
         lbl.text = name;
-
         std::size_t found = cl.textStyle.find("font-size:");
         if(found != std::string::npos)
         {
             lbl.fontsize = atoi(cl.textStyle.c_str() + found + 10);
             lbl.sizeFromStyle = true;
         }
-
-
         if(cl.textWidth != "")
         {
             int textWidth = atoi(cl.textWidth.c_str());
             lbl.fontsize = textWidth*ppm;
         }
-        else
-        {
-        }
-
-
         if(name != "" )
         {
             int64_t xxx = myNode.x;
             int64_t yyy = myNode.y;
-            //x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-            //y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
             x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
             y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
             lbl.pos_x = round(x);
@@ -1306,8 +1241,6 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
     {
         int64_t xxx = myNode.x;
         int64_t yyy = myNode.y;
-        //x = (xxx - rect.x0)*(szx*1.0) /(1.0*(rect.x1 - rect.x0));
-        //y = (yyy - rect.y0)*(szy*1.0) /(1.0*(rect.y1 - rect.y0));
         x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
         y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
         result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\"/>";
@@ -1316,9 +1249,6 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
     result.flush();
     return resultString;
 }
-
-
-
 
 template<class ITEM> std::shared_ptr<CssClass> SvgRenderer::getCssClass(const IndexDesc& idx, ITEM& item,      short zoom, bool closed)
 {
@@ -1360,7 +1290,3 @@ template<class ITEM> std::shared_ptr<CssClass> SvgRenderer::getCssClass(const In
     }
     return myCl;
 }
-
-
-
-
