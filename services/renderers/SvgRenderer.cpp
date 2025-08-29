@@ -537,7 +537,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
             {
                 if( cssClasses.find("sym#"+cl->symbol) != cssClasses.end())
                 {
-                    if (cl->symbol != "")
+                    if (!cl->symbol.empty())
                     {
                         if(mger->symbols->find(cl->symbol) != mger->symbols->end())
                         {
@@ -624,7 +624,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
     }
     texts.flush();
     result << textsString;
-    if(tag != "") result << "<text style=\"font-size:10px\" x=\"0\" y=\"15\" >"
+    if(!tag.empty()) result << "<text style=\"font-size:10px\" x=\"0\" y=\"15\" >"
                          << tag
                          << "</text>\n";
     result << "</svg>";
@@ -760,7 +760,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     if(textWidth) textStyle ="font-size:"+ std::to_string((int)(textWidth*ppm))+ "px;" + cl.textStyle;
     if(width) style ="stroke-width:"+ std::to_string(width*ppm)+";" + cl.style;
     std::string textField = "name";
-    if(cl.textField != "") textField = cl.textField;
+    if(!cl.textField.empty()) textField = cl.textField;
     if(textField != "name" && name.empty())
     {
         name = std::string(myWay.tags[textField]);
@@ -771,13 +771,13 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         {
             std::string tmp = std::string("name:") + std::string(_locales[i],2);
             name = std::string(myWay.tags[tmp]);
-            if (name != "") break;
+            if (!name.empty()) break;
 
         }
         if(name == "") name = std::string(myWay.tags["name"]);
     }
     
-    if(inherited_name != "") {
+    if(!inherited_name.empty()) {
         if(inherited_name == "void") name ="";
         else name = inherited_name;
     }
@@ -894,7 +894,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
 
     if(lbl.fontsize >= 6)
     {
-        if((name != "" ) && (textStyle != "") && cl.opened)
+        if((!name.empty()) && (!textStyle.empty()) && cl.opened)
         {
             {
                 unsigned int chars = 1.4*length / (lbl.fontsize);
@@ -909,7 +909,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                  }
             }
         }
-        else if((name != "" ) && (textStyle != "") && !cl.opened)
+        else if((!name.empty()) && (!textStyle.empty()) && !cl.opened)
         {
             unsigned int chars = 1.4*szx*(myWay.rect.x1 - myWay.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
             if(name.length() <= chars || MAX_TEXT_LEN <= chars)
@@ -930,7 +930,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     }
 
 
-    if((cl.symbol != "") && !cl.opened)
+    if((!cl.symbol.empty()) && !cl.opened)
     {
         int64_t xxx = (myWay.rect.x0 + myWay.rect.x1) / 2;
         int64_t yyy = (myWay.rect.y0 + myWay.rect.y1) /2;
@@ -940,7 +940,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t) x  << "\"  y=\"" << (int32_t) y << "\"/>";
         cssClasses.insert("sym#"+cl.symbol);
     } else {
-            if(cl.symbol != "")
+            if(!cl.symbol.empty())
             {
                 if(symb_angle == 0)
                 {
@@ -986,13 +986,13 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
     bool draw = ((myRelation.rect)*(rect*1.25)).isValid();
     bool keep = false;
 
-    if(cl.style != "")
+    if(!cl.style.empty())
     {
 
         if(cl.opened)
         {
             std::string name = "";
-            if(cl.textStyle != "")
+            if(!cl.textStyle.empty())
             {
                 if(textField != "name")
                 {
@@ -1004,7 +1004,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                     {
                         std::string tmp = std::string("name:") + std::string(_locales[i],2);
                         name = std::string(myRelation.tags[tmp]);
-                        if (name != "") break;
+                        if (!name.empty()) break;
 
                     }
                     if(name == "") name = std::string(myRelation.tags["name"]);
@@ -1123,7 +1123,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                 if (started) result << "\" class=\"c" << cl.rank <<"\"/>\n";
             }
             cssClasses.insert("c"+std::to_string(cl.rank));
-            if(cl.textStyle != "")
+            if(!cl.textStyle.empty())
             {
                 std::string name = "";
                 if(textField != "name")
@@ -1136,12 +1136,12 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                     {
                         std::string tmp = std::string("name:") + std::string(_locales[i],2);
                         name = std::string(myRelation.tags[tmp]);
-                        if (name != "") break;
+                        if (!name.empty()) break;
 
                     }
                     if(name == "") name = std::string(myRelation.tags["name"]);
                 }
-                if(name != "")
+                if(!name.empty())
                 {
                     unsigned int chars = 1.4*szx*(myRelation.rect.x1 - myRelation.rect.x0) / (lbl.fontsize * (rect.x1 - rect.x0));
                     if(name.length() < chars)
@@ -1164,7 +1164,7 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
         }
     }
 
-    if(cl.symbol != "")
+    if(!cl.symbol.empty())
     {
         int64_t xxx = (myRelation.rect.x0 + myRelation.rect.x1) / 2;
         int64_t yyy = (myRelation.rect.y0 + myRelation.rect.y1) /2;
@@ -1192,10 +1192,10 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
     double ppm = get_ppm(szx, rect);
     std::string name = "";
 
-    if(cl.textStyle != "")
+    if(!cl.textStyle.empty())
     {
         std::string fieldName = "name";
-        if (cl.textField != "") fieldName = cl.textField;
+        if (!cl.textField.empty()) fieldName = cl.textField;
         name = std::string(myNode.tags[fieldName]);
 
         if(fieldName != "name")
@@ -1208,7 +1208,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
             {
                 std::string tmp = std::string("name:") + std::string(_locales[i],2);
                 name = std::string(myNode.tags[tmp]);
-                if (name != "") break;
+                if (!name.empty()) break;
 
             }
             if(name == "") name = std::string(myNode.tags["name"]);
@@ -1220,12 +1220,12 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
             lbl.fontsize = atoi(cl.textStyle.c_str() + found + 10);
             lbl.sizeFromStyle = true;
         }
-        if(cl.textWidth != "")
+        if(!cl.textWidth.empty())
         {
             int textWidth = atoi(cl.textWidth.c_str());
             lbl.fontsize = textWidth*ppm;
         }
-        if(name != "" )
+        if(!name.empty())
         {
             int64_t xxx = myNode.x;
             int64_t yyy = myNode.y;
@@ -1237,7 +1237,7 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
             lbl.angle = 0;
         }
     }
-    if(cl.symbol != "")
+    if(!cl.symbol.empty())
     {
         int64_t xxx = myNode.x;
         int64_t yyy = myNode.y;
@@ -1261,13 +1261,13 @@ template<class ITEM> std::shared_ptr<CssClass> SvgRenderer::getCssClass(const In
 
         if constexpr(std::is_same<ITEM,Relation>() || std::is_same<ITEM,Way>())
         {
-            cond = ((closed && cd->closed)||(!closed && cd->opened)) && (item.tags[cd->tagKey] != "");
+            cond = ((closed && cd->closed)||(!closed && cd->opened)) && (!item.tags[cd->tagKey].empty());
         }
 
 
         if constexpr(std::is_same<ITEM,Point>())
         {
-            cond = (item.tags[cd->tagKey] != "");
+            cond = (!item.tags[cd->tagKey].empty());
         }
 
 
