@@ -113,11 +113,11 @@ public:
         zoomLevel = -1;
         zmMask = 0;
         indexId = 0;
-        unsigned int i = 0;
-        while(2*i < _locale.size())
+        _nb_locales = 0;
+        while(3*_nb_locales < _locale.size())
         {
-            _locales[i][0] = _locale[2*i];
-            _locales[i][1] = _locale[2*i + 1];
+            _locales[_nb_locales][0] = _locale[_nb_locales*3];
+            _locales[_nb_locales][1] = _locale[_nb_locales*3 + 1];
             _nb_locales ++ ;
         }
     }
@@ -131,13 +131,12 @@ public:
 
         mger = m;
         zoomLevel = z;
-        unsigned int i = 0;
-        while(3*i < _locale.size())
+        _nb_locales = 0;
+        while(3*_nb_locales < _locale.size())
         {
-            _locales[i][0] = _locale[3*i];
-            _locales[i][1] = _locale[1*i + 1];
+            _locales[_nb_locales][0] = _locale[_nb_locales*3];
+            _locales[_nb_locales][1] = _locale[_nb_locales*3 + 1];
             _nb_locales ++ ;
-            i++;
         }
     }
 

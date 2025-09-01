@@ -184,11 +184,11 @@ bool compare_weight (const weightedArea& first, const weightedArea& second)
   return ( first.score > second.score || ((first.score == second.score )&&(first.r.area() > second.r.area())));
 }
 
-
-template <class ITEM> int64_t calcMatchScore(const ITEM& item, const std::vector<uint64_t>& searched_words, CompiledDataManager& mger)
+int64_t calcScore(const std::string& name, const std::vector<uint64_t>& searched_words, CompiledDataManager& mger)
 {
     std::vector<uint64_t> nameWordVector;
-    std::string my_string = std::string(item->tags["name"]);
+    
+    std::string my_string = name;
     std::replace( my_string.begin(), my_string.end(), '-', ' ');
     std::stringstream my_stream(my_string);
     std::string word;
@@ -205,6 +205,23 @@ template <class ITEM> int64_t calcMatchScore(const ITEM& item, const std::vector
         nameWordVector.push_back(k);
     }
     return calcMatchScore(searched_words, nameWordVector);
+}
+
+template <class ITEM> int64_t Geolocation::calcMatchScore(const ITEM& item, const std::vector<uint64_t>& searched_words, CompiledDataManager& mger)
+{
+    std::string my_string = std::string(item->tags["name"]);
+    int64_t best_score = calcScore("name", searched_words, mger);
+    for ( unsigned int i = 0 ; i < _nb_locales; i++)
+    {
+        std::string tmp = std::string("name:") + std::string(_locales[i],2);
+        my_string = std::string(item->tags[tmp]);
+        if (!my_string.empty())
+        {
+            int64_t new_score = calcScore(my_string, searched_words, mger);
+            if(new_score > best_score) best_score = new_score;
+        }
+     }
+     return best_score;   
 }
 
 std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDataManager& mger)

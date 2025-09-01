@@ -65,7 +65,7 @@ void ServicesFactory::init(const ParmsXmlVisitor& params, const std::vector<PngI
 std::shared_ptr<ServiceInterface>  ServicesFactory::getService(std::string service)
 {
     if(_enabledPingService && service == "/ping")                                        return std::make_shared<Ping>();
-    else if(_enabledGeoLocationService && service == "/geoloc")                          return std::make_shared<Geolocation>();
+    else if(_enabledGeoLocationService && service == "/geoloc")                          return std::make_shared<Geolocation>(_locale);
     else if (_enabledRelationListService && service == "/relation/list")                 return std::make_shared<RelationList>();
     else if (_enabledIdxListService && service == "/index/list")                         return std::make_shared<IdxList>();
     else if (_enabledIdxDetailService && service == "/index/get")                        return std::make_shared<IdxDetail>();
