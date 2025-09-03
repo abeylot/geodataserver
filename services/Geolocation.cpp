@@ -210,7 +210,7 @@ int64_t calcScore(const std::string& name, const std::vector<uint64_t>& searched
 template <class ITEM> int64_t Geolocation::calcMatchScore(const ITEM& item, const std::vector<uint64_t>& searched_words, CompiledDataManager& mger)
 {
     std::string my_string = std::string(item->tags["name"]);
-    int64_t best_score = calcScore("name", searched_words, mger);
+    int64_t best_score = calcScore(my_string, searched_words, mger);
     for ( unsigned int i = 0 ; i < _nb_locales; i++)
     {
         std::string tmp = std::string("name:") + std::string(_locales[i],2);
