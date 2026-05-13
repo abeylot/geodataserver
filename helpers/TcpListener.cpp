@@ -80,7 +80,7 @@ int TcpListener::init(int portNumber, int timeOut)
 
     struct timeval tv;
     tv.tv_sec = _TimeOut / 1000;
-    tv.tv_usec = _TimeOut % 1000;
+    tv.tv_usec = (_TimeOut % 1000) * 1000;
     setsockopt(_FileDescr, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv,sizeof(struct timeval));
 
 
@@ -96,10 +96,11 @@ std::shared_ptr<TcpConnection> TcpListener::waitForClient(void)
      */
     if ((iClientSock = accept(_FileDescr, nullptr, nullptr)) < 0)
     {
-        //printf("accept error %d \n",iClientSock);
         return nullptr;
     }
-    printf("[%d]<--- accept \n",iClientSock);
+
+    int flag = 1;
+    setsockopt(iClientSock, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(flag));
 
     auto cnx =  std::make_shared<TcpConnection>(iClientSock);
     cnx->setTimeoutValue(_TimeOut);

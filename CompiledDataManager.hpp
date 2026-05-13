@@ -3,6 +3,9 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <list>
+#include <unordered_map>
+#include <shared_mutex>
 #include <stdio.h>
 #include <string.h>
 #include "helpers/FileIndex.hpp"
@@ -145,6 +148,38 @@ struct Relation
     }
 };
 
+template<typename K, typename V>
+class LruCache {
+    size_t _max_size;
+    std::list<K> _order;
+    std::unordered_map<K, std::pair<V, typename std::list<K>::iterator>> _map;
+    mutable std::shared_mutex _mutex;
+public:
+    explicit LruCache(size_t max_size = 10000) : _max_size(max_size) {}
+
+    V get(const K& key) const {
+        std::shared_lock<std::shared_mutex> lock(_mutex);
+        auto it = _map.find(key);
+        return it != _map.end() ? it->second.first : V{};
+    }
+
+    void put(const K& key, V value) {
+        std::unique_lock<std::shared_mutex> lock(_mutex);
+        if (_map.count(key)) return;
+        if (_map.size() >= _max_size) {
+            _map.erase(_order.back());
+            _order.pop_back();
+        }
+        _order.push_front(key);
+        _map.emplace(key, std::make_pair(std::move(value), _order.begin()));
+    }
+
+    void resize(size_t n) {
+        std::unique_lock<std::shared_mutex> lock(_mutex);
+        _max_size = n;
+    }
+};
+
 class CompiledDataManager
 {
 private:
@@ -174,6 +209,9 @@ public :
     //std::map<std::string, std::string>* patterns;
 
     std::string path;
+    LruCache<uint64_t, std::shared_ptr<Point>> pointCache;
+
+    void setCacheSize(size_t n) { pointCache.resize(n); }
 
     CompiledDataManager(const std::string& name,std::vector<std::shared_ptr<IndexDesc>>* conf,std::map<std::string, std::string>* symbs = nullptr, std::map<std::string, std::string>* convs = nullptr):path(name)
     {

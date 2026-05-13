@@ -57,7 +57,7 @@ void ServicesFactory::init(const ParmsXmlVisitor& params, const std::vector<PngI
     if(_enabledGeoLocationService) std::cout << "geolocation service enabled \n";
 
     _enabledRasterImageService = (params.getParam("RasterImageService") == "enabled");
-    if(_enabledGeoLocationService) std::cout << "raster image service enabled \n";
+    if(_enabledRasterImageService) std::cout << "raster image service enabled \n";
 
 }
 

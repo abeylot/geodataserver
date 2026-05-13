@@ -40,6 +40,9 @@ std::shared_ptr<Way> CompiledDataManager::loadWay(uint64_t id, Rectangle* rect)
 
 std::shared_ptr<Point> CompiledDataManager::loadPoint(uint64_t id)
 {
+    auto cached = pointCache.get(id);
+    if (cached) return cached;
+
     GeoPointIndex record;
     bool found = nodeIndex->get(id,&record);
     if(found)
@@ -54,6 +57,7 @@ std::shared_ptr<Point> CompiledDataManager::loadPoint(uint64_t id)
         {
             p->layer += atoiSW( p->tags["layer"]);
         }
+        pointCache.put(id, p);
         return p;
     }
     else return nullptr;

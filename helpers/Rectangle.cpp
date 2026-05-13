@@ -17,7 +17,7 @@ void Rectangle::addPoint(uint32_t x, uint32_t y)
     if( ! isValid())
     {
         x0=x1=x;
-        y0=y1=x;
+        y0=y1=y;
     }
     else
     {

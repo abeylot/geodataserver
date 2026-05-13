@@ -35,7 +35,7 @@ int64_t HttpProtocol::getMessage(std::string& message,std::shared_ptr<TcpConnect
             rc = s->read(buff,64000);
             if(rc>0)
             {
-                message += std::string(buff,rc);
+                message.append(buff, rc);
                 rcv += rc;
             }
             if (rc <= 0) return -1;

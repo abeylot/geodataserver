@@ -21,12 +21,16 @@
 #include <assert.h>
 #include <thread>
 #include <mutex>
+#include <shared_mutex>
+#include <sys/mman.h>
 #include <sys/sysinfo.h>
 #include <memory>
 
 struct GeoFile
 {
     int fh = -1;
+    void* mapped = nullptr;
+    size_t mapped_length = 0;
     std::string name;
     void open(const std::string& fname, bool create)
     {
@@ -42,6 +46,17 @@ struct GeoFile
                 exit(1);
             }
             posix_fadvise(fh, 0, 0, POSIX_FADV_RANDOM | POSIX_FADV_NOREUSE);
+            uint64_t len = length();
+            if (len > 0)
+            {
+                void* m = mmap(nullptr, len, PROT_READ, MAP_SHARED, fh, 0);
+                if (m != MAP_FAILED)
+                {
+                    mapped = m;
+                    mapped_length = len;
+                    madvise(mapped, mapped_length, MADV_RANDOM);
+                }
+            }
         }
         if (fh < 0)
         {
@@ -49,7 +64,11 @@ struct GeoFile
         }
     }
 
-    virtual ~GeoFile(){if(fh >=0) close(fh);}
+    virtual ~GeoFile()
+    {
+        if (mapped) munmap(mapped, mapped_length);
+        if(fh >=0) close(fh);
+    }
 
     void owrite(char* buffer, uint64_t offset, uint64_t length)
     {
@@ -69,6 +88,11 @@ struct GeoFile
 
     void oread(char* buffer, uint64_t offset, uint64_t length)
     {
+        if (mapped)
+        {
+            memcpy(buffer, static_cast<char*>(mapped) + offset, length);
+            return;
+        }
         uint64_t got = 0;
         while(length)
         {
@@ -317,7 +341,7 @@ template<class ITEM, class KEY> class FileIndex
     //std::unordered_map<uint64_t, Record<ITEM, KEY>> cache;
     KEY* cacheKey;
     uint64_t* cacheKeyB;
-    std::mutex cache_mutex;
+    std::shared_mutex cache_mutex;
     FileIndex(const FileIndex&);
     FileIndex& operator = (const FileIndex&);
 public:
@@ -733,24 +757,27 @@ public:
 
     bool  getAndCacheKey(const uint64_t cPos, const uint64_t pos, KEY* result)
     {
-#ifndef DISCARD_MUTEX
-        std::lock_guard<std::mutex> guard(cache_mutex);
-#endif
-        if (!(cacheKeyB[cPos/64] &  (1ULL <<  (cPos % 64))))
         {
-            if(getKey(pos, result))
+            std::shared_lock<std::shared_mutex> guard(cache_mutex);
+            if (cacheKeyB[cPos/64] & (1ULL << (cPos % 64)))
             {
-                cacheKey[cPos] = *result;
-                cacheKeyB[cPos/64] |=  1ULL <<  (cPos % 64);
+                *result = cacheKey[cPos];
                 return true;
             }
-            else return false;
         }
-        else
+        std::unique_lock<std::shared_mutex> guard(cache_mutex);
+        if (cacheKeyB[cPos/64] & (1ULL << (cPos % 64)))
         {
             *result = cacheKey[cPos];
             return true;
         }
+        if(getKey(pos, result))
+        {
+            cacheKey[cPos] = *result;
+            cacheKeyB[cPos/64] |= 1ULL << (cPos % 64);
+            return true;
+        }
+        return false;
     }
 
 /**
@@ -881,6 +908,11 @@ public:
             }
             level++;
             uint64_t iPivot = (iMin + iMax) >> 1;
+            if (!cache)
+            {
+                posix_fadvise(keyFile.fh, ((iMin + iPivot) >> 1) * keySize, keySize, POSIX_FADV_WILLNEED);
+                posix_fadvise(keyFile.fh, ((iPivot + iMax) >> 1) * keySize, keySize, POSIX_FADV_WILLNEED);
+            }
             uint64_t iCPivot = (iCMin + iCMax) /2;
             if(cache)
             {
@@ -1498,7 +1530,7 @@ template<class KEY> class KeyIndex
     uint64_t cacheSize;
     KEY* cacheKey;
     uint64_t* cacheKeyB;
-    std::mutex cache_mutex;
+    std::shared_mutex cache_mutex;
     KeyIndex(const KeyIndex&);
     KeyIndex& operator = (const KeyIndex&);
 public:
@@ -1859,24 +1891,27 @@ public:
 
     bool  getAndCacheKey(const uint64_t cPos, const uint64_t pos, KEY* result)
     {
-#ifndef DISCARD_MUTEX
-        std::lock_guard<std::mutex> guard(cache_mutex);
-#endif
-        if (!(cacheKeyB[cPos/64] &  (1ULL <<  (cPos % 64))))
         {
-            if(getKey(pos, result))
+            std::shared_lock<std::shared_mutex> guard(cache_mutex);
+            if (cacheKeyB[cPos/64] & (1ULL << (cPos % 64)))
             {
-                cacheKey[cPos] = *result;
-                cacheKeyB[cPos/64] |=  1ULL <<  (cPos % 64);
+                *result = cacheKey[cPos];
                 return true;
             }
-            else return false;
         }
-        else
+        std::unique_lock<std::shared_mutex> guard(cache_mutex);
+        if (cacheKeyB[cPos/64] & (1ULL << (cPos % 64)))
         {
             *result = cacheKey[cPos];
             return true;
         }
+        if(getKey(pos, result))
+        {
+            cacheKey[cPos] = *result;
+            cacheKeyB[cPos/64] |= 1ULL << (cPos % 64);
+            return true;
+        }
+        return false;
     }
 
 
@@ -1966,6 +2001,11 @@ public:
                 getKeys(iMin,iMax, cache->k);
             }             level++;
             uint64_t iPivot = (iMin + iMax) >> 1;
+            if (!cache)
+            {
+                posix_fadvise(keyFile.fh, ((iMin + iPivot) >> 1) * keySize, keySize, POSIX_FADV_WILLNEED);
+                posix_fadvise(keyFile.fh, ((iPivot + iMax) >> 1) * keySize, keySize, POSIX_FADV_WILLNEED);
+            }
             uint64_t iCPivot = (iCMin + iCMax) >> 1;
             if(cache) myKey = cache->k[iPivot - cache->offset];
             else if((iCMax - iCMin) > 1) getAndCacheKey(iCPivot, iPivot,&myKey);

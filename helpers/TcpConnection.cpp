@@ -56,7 +56,7 @@ int64_t TcpConnection::write( const char* buff, uint64_t length )
     //std::cout << "write : " << length << "\n";
     while( (iWritten < toWrite) &&(_IsAlive) )
     {
-        int64_t i = send( _FileDescr, buff + iWritten, toWrite, MSG_NOSIGNAL );
+        int64_t i = send( _FileDescr, buff + iWritten, toWrite - iWritten, MSG_NOSIGNAL );
         iWritten += i;
 
         if(i < 0)
@@ -95,6 +95,6 @@ void TcpConnection::setTimeoutValue(const unsigned int iSec)
 {
     struct timeval tv;
     tv.tv_sec = iSec / 1000;
-    tv.tv_usec = iSec % 1000;
+    tv.tv_usec = (iSec % 1000) * 1000;
     setsockopt(_FileDescr, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv,sizeof(struct timeval));
 }

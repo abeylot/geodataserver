@@ -318,6 +318,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     area.pin.x = area.pin.y = 0;
                     std::shared_ptr<Point> item;
                     item = mger.load<Point>(indexEntry[i].id);
+                    if (!item) continue;
                     area.r.x0 = area.r.x1 = item->x;
                     area.r.y0 = area.r.y1 = item->y;
 
@@ -351,6 +352,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     area.pin.x = area.pin.y = 0;
                     std::shared_ptr<Relation> item;
                     item = mger.loadRelationFast(indexEntry[i].id);
+                    if (!item) continue;
                     area.r =  indexEntry[i].r;
                     if(area.r.isValid()) area.score = calcMatchScore(item, queryWordsVector, mger);
                     else area.score = WORST_SCORE;
@@ -378,6 +380,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
                     area.pin.x = area.pin.y = 0;
                     std::shared_ptr<Way> item;
                     item = mger.load<Way>(indexEntry[i].id);
+                    if (!item) continue;
                     area.r =  indexEntry[i].r;
                     if(area.r.isValid()) area.score = calcMatchScore(item, queryWordsVector, mger);
                     else area.score = WORST_SCORE;
