@@ -636,8 +636,6 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
 {
     std::string resultString;
     StringBuffer result(resultString);
-    double oldx = -1;
-    double oldy = -1;
 
     int width=0;
 
@@ -646,75 +644,60 @@ std::string SvgRenderer::renderShape(Rectangle rect,uint32_t szx, uint32_t szy, 
     if(cl.width.length()) width = std::stoi(cl.width);
     if(width && ((width*ppm) <  0.25)) return "";
 
-
     if (s.openedLines.empty() && s.closedLines.empty() ) return "";
-    result << "<path  d=\"";
+
+    bool started = false;
+
     for(Line* l : s.openedLines)
     {
         if(l->pointsCount < 2) continue;
+        int32_t x = 0, y = 0;
         bool first = true;
-        int32_t x=0;
-        int32_t y=0;
-        x=0; y=0;
-        for(unsigned int i = 0 ; i < l->pointsCount; i++)
+        bool m_emitted = false;
+        for(unsigned int i = 0; i < l->pointsCount; i++)
         {
-            int64_t xx = l->points[i].x;
-            int64_t yy = l->points[i].y;
-            oldx = x;
-            oldy = y;
-            x = round(projectX(_proj, szx, rect.x0, rect.x1, xx));
-            y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
-            {
-                if(first)
-                {
-                    result << "M" << x << " " << y;
-                    first = false;
-                }
-                else
-                {
-                    if((x != oldx) || (y != oldy))
-                    {
-                        if(x == oldx)  result << "V" << y ;
-                        else if(y == oldy) result << "H" << x ;
-                        else result << "L" << x << " " << y;
-                    }
-                }
+            int32_t nx = (int32_t)round(projectX(_proj, szx, rect.x0, rect.x1, l->points[i].x));
+            int32_t ny = (int32_t)round(projectY(_proj, szy, rect.y0, rect.y1, l->points[i].y, yProjectionCache));
+            if(first) { x = nx; y = ny; first = false; continue; }
+            if(nx == x && ny == y) continue;
+            if(!m_emitted) {
+                if(!started) { result << "<path d=\""; started = true; }
+                result << "M" << x << " " << y;
+                m_emitted = true;
             }
+            int32_t dx = nx - x, dy = ny - y;
+            if(dx == 0)      result << "v" << dy;
+            else if(dy == 0) result << "h" << dx;
+            else             result << "l" << dx << " " << dy;
+            x = nx; y = ny;
         }
     }
     for(Line* l : s.closedLines)
     {
-        bool first = true;
-        int32_t x=0;
-        int32_t y=0;
-        x=0; y=0;
         if(l->pointsCount < 2) continue;
-        for(unsigned int i = 0 ; i < l->pointsCount; i++)
+        int32_t x = 0, y = 0;
+        bool first = true;
+        bool m_emitted = false;
+        for(unsigned int i = 0; i < l->pointsCount; i++)
         {
-            int64_t xx = l->points[i].x;
-            int64_t yy = l->points[i].y;
-            oldx = x;
-            oldy = y;
-            x = round(projectX(_proj, szx, rect.x0, rect.x1, xx));
-            y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
-            {
-                if(first)
-                {
-                    result << "M" << x << " " << y;
-                    first = false;
-                }
-                else
-                {
-                    if((x != oldx) || (y != oldy))
-                    {
-                        if(x == oldx) result << "V" << y ;
-                        else if(y == oldy) result << "H" << x ;
-                        else result << "L" << x << " " << y ;
-                    }
-                }
+            int32_t nx = (int32_t)round(projectX(_proj, szx, rect.x0, rect.x1, l->points[i].x));
+            int32_t ny = (int32_t)round(projectY(_proj, szy, rect.y0, rect.y1, l->points[i].y, yProjectionCache));
+            if(first) { x = nx; y = ny; first = false; continue; }
+            if(nx == x && ny == y) continue;
+            if(!m_emitted) {
+                if(!started) { result << "<path d=\""; started = true; }
+                result << "M" << x << " " << y;
+                m_emitted = true;
             }
+            int32_t dx = nx - x, dy = ny - y;
+            if(dx == 0)      result << "v" << dy;
+            else if(dy == 0) result << "h" << dx;
+            else             result << "l" << dx << " " << dy;
+            x = nx; y = ny;
         }
+        if(m_emitted) result << "Z";
     }
+    if(!started) return "";
     result << "\" class=\"c" << cl.rank << "\"/>\n";
     cssClasses.insert("c"+std::to_string(cl.rank));
     result.flush();
@@ -1031,44 +1014,31 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                     Rectangle r1 = rect*1.25;
                     l->crop(r1);
                     if(l->pointsCount < 2) continue;
+                    int32_t x = 0, y = 0;
                     bool first = true;
-                    int32_t x=0;
-                    int32_t y=0;
                     bool good = false;
                     resultTmp.clear();
-                    for(unsigned int i = 0 ; i < l->pointsCount; i++)
+                    for(unsigned int i = 0; i < l->pointsCount; i++)
                     {
                         keep = true;
-                        int64_t xx = l->points[i].x;
-                        int64_t yy = l->points[i].y;
-                        int32_t oldx = x;
-                        int32_t oldy = y;
-                        x = round(projectX(_proj, szx, rect.x0, rect.x1, xx));
-                        y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
-
+                        int32_t oldx = x, oldy = y;
+                        x = (int32_t)round(projectX(_proj, szx, rect.x0, rect.x1, l->points[i].x));
+                        y = (int32_t)round(projectY(_proj, szy, rect.y0, rect.y1, l->points[i].y, yProjectionCache));
                         if((x != oldx) || (y != oldy))
                         {
-                            if(first)
-                            {
-                                resultTmp << "M" << x << " " << y;
-                                first = false;
-                            }
-                            else
-                            {
-                                if(x== oldx)  resultTmp << "V" << y;
-                                else if(y== oldy)  resultTmp << "H" << x;
-                                else resultTmp << "L" << x << " " << y;
+                            if(first) { resultTmp << "M" << x << " " << y; first = false; }
+                            else {
+                                int32_t dx = x - oldx, dy = y - oldy;
+                                if(dx == 0)      resultTmp << "v" << dy;
+                                else if(dy == 0) resultTmp << "h" << dx;
+                                else             resultTmp << "l" << dx << " " << dy;
                                 good = true;
                             }
                         }
                     }
                     if(good)
                     {
-                        if(!started)
-                        {
-                            started = true;
-                           result << "<path  d=\"";
-                        }
+                        if(!started) { started = true; result << "<path d=\""; }
                         resultTmp.flush();
                         result << resultStringTmp;
                     }
@@ -1078,44 +1048,32 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
                     Rectangle r1 = rect*1.25;
                     l->crop(r1);
                     if(l->pointsCount <= 3) continue; // shape is 'flat'
+                    int32_t x = 0, y = 0;
                     bool first = true;
-                    int32_t x=0;
-                    int32_t y=0;
                     bool good = false;
                     resultTmp.clear();
-                    for(unsigned int i = 0 ; i < l->pointsCount; i++)
+                    for(unsigned int i = 0; i < l->pointsCount; i++)
                     {
                         keep = true;
-                        int64_t xx = l->points[i].x;
-                        int64_t yy = l->points[i].y;
-                        int32_t oldx = x;
-                        int32_t oldy = y;
-                        x = round(projectX(_proj, szx, rect.x0, rect.x1, xx));
-                        y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
-
+                        int32_t oldx = x, oldy = y;
+                        x = (int32_t)round(projectX(_proj, szx, rect.x0, rect.x1, l->points[i].x));
+                        y = (int32_t)round(projectY(_proj, szy, rect.y0, rect.y1, l->points[i].y, yProjectionCache));
                         if((x != oldx) || (y != oldy))
                         {
-                            if(first)
-                            {
-                                resultTmp << "M" << x << " " << y;
-                                first = false;
-                            }
-                            else
-                            {
-                                if(x== oldx)  resultTmp << "V" << y;
-                                else if(y== oldy)  resultTmp << "H" << x;
-                                else resultTmp << "L" << x << " " << y;
+                            if(first) { resultTmp << "M" << x << " " << y; first = false; }
+                            else {
+                                int32_t dx = x - oldx, dy = y - oldy;
+                                if(dx == 0)      resultTmp << "v" << dy;
+                                else if(dy == 0) resultTmp << "h" << dx;
+                                else             resultTmp << "l" << dx << " " << dy;
                                 good = true;
                             }
                         }
                     }
                     if(good)
                     {
-                        if(!started)
-                        {
-                            started = true;
-                           result << "<path  d=\"";
-                        }
+                        resultTmp << "Z";
+                        if(!started) { started = true; result << "<path d=\""; }
                         resultTmp.flush();
                         result << resultStringTmp;
                     }
