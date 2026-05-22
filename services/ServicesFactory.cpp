@@ -86,7 +86,12 @@ std::shared_ptr<ServiceInterface>  ServicesFactory::getService(std::string servi
         pos++;
         while(pos < service.length() && (*(c+pos) != '/')) pos++;
         if(pos < service.length()) y =  atoll(c+pos+1);
-        //std::cout << x <<":" << y << ";" << z << "\n";
+        std::cout << x <<":" << y << ";" << z << "\n";
+        if (z < 0 || z > 25) return nullptr;
+        long tiles_max = 1 << z;
+        if( x < 0 || x >= tiles_max) return nullptr;
+        if( y < 0 || y >= tiles_max) return nullptr;
+        std::cout << "max " << tiles_max << "\n";
         return std::make_shared<Tile>(z, x, y, _cacheLevel, _locale, _defaultColor);
 
     }

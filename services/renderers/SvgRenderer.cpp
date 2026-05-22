@@ -455,10 +455,12 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
         double hv = (*v)->fontsize*1.0*ilines;
         double radius = sqrt(hv*hv + lv*lv);
 
-        if((*v)->pos_x < -1.5*radius) continue;
-        if(((*v)->pos_x - size_x) > 1.5*radius) continue;
-        if((*v)->pos_y < -1.5* size_y) continue;
-        if(((*v)->pos_y - size_y) > 1.5*size_y) continue;
+        double hw = ((*v)->angle == 0) ? lv / 2.0 : radius;
+        double hh = ((*v)->angle == 0) ? hv / 2.0 : radius;
+        if((*v)->pos_x + hw <= 0) continue;
+        if((*v)->pos_x - hw >= (double)size_x) continue;
+        if((*v)->pos_y + hh <= 0) continue;
+        if((*v)->pos_y - hh >= (double)size_y) continue;
 
         if((*v)->angle ==0)
         {
