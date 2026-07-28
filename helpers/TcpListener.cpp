@@ -81,7 +81,8 @@ int TcpListener::init(int portNumber, int timeOut)
     struct timeval tv;
     tv.tv_sec = _TimeOut / 1000;
     tv.tv_usec = (_TimeOut % 1000) * 1000;
-    setsockopt(_FileDescr, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv,sizeof(struct timeval));
+    setsockopt(_FileDescr, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval));
+    setsockopt(_FileDescr, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(struct timeval));
 
 
     return 0;
