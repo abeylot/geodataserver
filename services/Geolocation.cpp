@@ -224,15 +224,15 @@ template <class ITEM> int64_t Geolocation::calcMatchScore(const ITEM& item, cons
      return best_score;   
 }
 
-std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDataManager& mger)
+std::vector<weightedArea> Geolocation::findExpression(std::string expr, CompiledDataManager& mger)
 {
     std::cout << "Search : [" << expr << "]\n";
     std::stringstream my_strm(expr);
 
-    std::list<textSearchIds> foundWords;
+    std::vector<textSearchIds> foundWords;
     std::vector<uint64_t> queryWordsVector;
-    std::list<uint64_t> words;
-    std::list<uint64_t> wordsToMatch;
+    std::vector<uint64_t> words;
+    std::vector<uint64_t> wordsToMatch;
     std::string wrd;
     while(std::getline(my_strm,wrd,' '))
     {
@@ -244,8 +244,8 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
          }
     }
 
-    words.sort();
-    words.unique();
+    std::sort(words.begin(), words.end());
+    words.erase(std::unique(words.begin(), words.end()), words.end());
 
 
     for(auto myword : words)
@@ -298,11 +298,11 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
             wordsToMatch.push_back(myword);
         }
     }
-    foundWords.sort();
+    std::sort(foundWords.begin(), foundWords.end());
 
 
-    std::list<weightedArea> areas;
-    std::list<weightedArea> best_areas;
+    std::vector<weightedArea> areas;
+    std::vector<weightedArea> best_areas;
 
     for(auto searchIds : foundWords)
     {
@@ -399,7 +399,7 @@ std::list<weightedArea> Geolocation::findExpression(std::string expr, CompiledDa
         }
         if(best_areas.empty())
         {
-            areas.sort(compare_weight);
+            std::sort(areas.begin(), areas.end(), compare_weight);
             unsigned int i = 0;
             for(auto a : areas)
             {
@@ -548,9 +548,9 @@ std::shared_ptr<Msg> Geolocation::processRequest(std::shared_ptr<Msg> request, C
 
     std::stringstream my_stream(name);
 
-    std::list<weightedArea> areas;
-    std::list<weightedArea> best_areas;
-    std::list<weightedArea> new_areas;
+    std::vector<weightedArea> areas;
+    std::vector<weightedArea> best_areas;
+    std::vector<weightedArea> new_areas;
 
     areas.clear();
     best_areas.clear();
@@ -588,7 +588,7 @@ std::shared_ptr<Msg> Geolocation::processRequest(std::shared_ptr<Msg> request, C
         {
             areas = findExpression(word, mger);
             new_areas.clear();
-            areas.sort(compare_weight);
+            std::sort(areas.begin(), areas.end(), compare_weight);
             if(areas.size() > 250) areas.resize(250);
             if(!areas.empty())
             {
@@ -610,7 +610,7 @@ std::shared_ptr<Msg> Geolocation::processRequest(std::shared_ptr<Msg> request, C
                     }
                 }
                 best_areas = new_areas;
-                best_areas.sort(compare_weight);
+                std::sort(best_areas.begin(), best_areas.end(), compare_weight);
                 if(best_areas.size() > 250) best_areas.resize(250);
             }
         }
@@ -618,7 +618,7 @@ std::shared_ptr<Msg> Geolocation::processRequest(std::shared_ptr<Msg> request, C
     }
 
 
-    best_areas.sort(compare_weight);
+    std::sort(best_areas.begin(), best_areas.end(), compare_weight);
     if(best_areas.size() > 250) best_areas.resize(250);
 
 
