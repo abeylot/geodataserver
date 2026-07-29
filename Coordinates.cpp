@@ -2,6 +2,34 @@
 #include <iostream>
 #include <stdlib.h>
 #include <math.h>
+
+uint32_t Coordinates::encode(uint64_t intCoord, uint32_t maxRange)
+{
+    uint32_t normalized = 1;
+    uint32_t toCompare = maxRange;
+    for (int i = 0; i < 32; i++)
+    {
+        normalized <<= 1;
+        if (intCoord > toCompare)
+        {
+            normalized |= 1;
+            intCoord -= toCompare;
+        }
+        toCompare >>= 1;
+    }
+    return normalized;
+}
+
+uint32_t Coordinates::toNormalizedLon(double lon)
+{
+    return encode((uint64_t)round((lon + 180.0) * 10000000.0), 3600000000ULL);
+}
+
+uint32_t Coordinates::toNormalizedLat(double lat)
+{
+    return encode((uint64_t)round((90.0 - lat) * 10000000.0), 1800000000ULL);
+}
+
 uint32_t Coordinates::toNormalizedLon(const std::string& coord)
 {
     size_t pos = coord.find(".");
@@ -24,25 +52,10 @@ uint32_t Coordinates::toNormalizedLon(const std::string& coord)
     if(signe == -1)
         intCoord = (integerPart) * 10000000 - decimalPart;
     else
-        intCoord = ( integerPart) * 10000000 + decimalPart;
+        intCoord = (integerPart) * 10000000 + decimalPart;
 
-    uint32_t normalized = 0;
-
-    uint32_t toCompare = 3600000000ULL;
-    normalized = 1;
-    for (int i = 0; i < 32; i++ )
-    {
-        normalized <<= 1;
-        if (intCoord > toCompare)
-        {
-            normalized |= 1;
-            intCoord = intCoord - toCompare;
-        }
-        toCompare >>= 1;
-    }
-    return normalized;
+    return encode(intCoord, 3600000000ULL);
 }
-
 
 uint32_t Coordinates::toNormalizedLat(const std::string& coord)
 {
@@ -62,26 +75,13 @@ uint32_t Coordinates::toNormalizedLat(const std::string& coord)
 
     while(sDecimalPart.size() < 7) sDecimalPart += '0';
     uint32_t decimalPart = atol(sDecimalPart.c_str());
-    uint32_t intCoord;
+    uint64_t intCoord;
     if(signe == 1)
         intCoord = (integerPart) * 10000000 - decimalPart;
     else
-        intCoord = (integerPart)* 10000000 + decimalPart;
+        intCoord = (integerPart) * 10000000 + decimalPart;
 
-    uint32_t normalized = 0;
-    uint32_t toCompare = 1800000000ULL;
-    normalized = 1;
-    for (int i = 0; i < 32; i++ )
-    {
-        normalized <<= 1;
-        if (intCoord > toCompare)
-        {
-            normalized |= 1;
-            intCoord = intCoord - toCompare;
-        }
-        toCompare >>= 1;
-    }
-    return normalized;
+    return encode(intCoord, 1800000000ULL);
 }
 
 double Coordinates::fromNormalizedLon(const uint32_t coord)

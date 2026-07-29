@@ -16,6 +16,7 @@ public :
      * @return uint32_t  internal integer;
      */
     static uint32_t toNormalizedLon(const std::string& coord);
+    static uint32_t toNormalizedLon(double coord);
 
     static double fromNormalizedLon(const uint32_t coord);
     /**
@@ -25,6 +26,7 @@ public :
      * @return uint32_t internal integer.
      */
     static uint32_t toNormalizedLat(const std::string& coord);
+    static uint32_t toNormalizedLat(double coord);
 
     static double fromNormalizedLat(const uint32_t coord);
     /**
@@ -40,5 +42,8 @@ public :
      * @return uint32_t the result.
      */
     static uint32_t fromHex(const std::string&);
+
+private:
+    static uint32_t encode(uint64_t intCoord, uint32_t maxRange);
 };
 #endif

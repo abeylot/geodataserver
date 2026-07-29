@@ -45,6 +45,7 @@ public:
         relationIdIndex->flush();
         wayIdIndex->flush();
         nodeIdIndex->flush();
+        nodeRefIndex->flush();
         if(!relationIdIndex->isSorted()) relationIdIndex->sort();
         if(!wayIdIndex->isSorted()) wayIdIndex->sort();
         if(!nodeIdIndex->isSorted()) nodeIdIndex->sort();
@@ -52,6 +53,7 @@ public:
         delete relationIdIndex;
         delete wayIdIndex;
         delete nodeIdIndex;
+        delete nodeRefIndex;
     }
 
 

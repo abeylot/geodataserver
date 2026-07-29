@@ -570,8 +570,8 @@ public:
                     y = getDouble(recordcontent + 4 + 8);
                 }
                 GeoPointIndex pointRecord;
-                pointRecord.x = Coordinates::toNormalizedLon(std::to_string(x));
-                pointRecord.y = Coordinates::toNormalizedLat(std::to_string(y));
+                pointRecord.x = Coordinates::toNormalizedLon(x);
+                pointRecord.y = Coordinates::toNormalizedLat(y);
                 pointRecord.tstart = baliseTags->startCount;
                 pointRecord.tsize = baliseTags->itemCount - baliseTags->startCount;
                 nodeIndex->append(pointRecord);
@@ -617,8 +617,8 @@ public:
                         }
                         GeoPoint p;
 
-                        p.x = Coordinates::toNormalizedLon(std::to_string(x));
-                        p.y = Coordinates::toNormalizedLat(std::to_string(y));
+                        p.x = Coordinates::toNormalizedLon(x);
+                        p.y = Coordinates::toNormalizedLat(y);
                         wayPoints->append(p);
                         if(isFirstNd)
                         {
