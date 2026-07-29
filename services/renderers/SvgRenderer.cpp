@@ -7,6 +7,7 @@
 #include "../../helpers/StringBuffer.hpp"
 #include <map>
 #include <set>
+#include <unordered_set>
 #include <math.h>
 #include <sstream>
 
@@ -17,7 +18,7 @@ inline double get_ppm(const uint64_t szx, const Rectangle rect)
     return 50 * ((szx * 1.0) / ((1.0)*(rect.x1 - rect.x0)));
 }
 
-Shape& SvgRenderer::getShape(std::shared_ptr<CssClass> c, unsigned char layer)
+Shape& SvgRenderer::getShape(CssClass* c, unsigned char layer)
 {
     uint64_t id = (c->rank << 8) + layer;
     auto it = shapes.find(id);
@@ -160,7 +161,8 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
     Shape myShape;
     hh::THashIntegerTable hash(10000);
 
-    std::vector <std::pair<std::shared_ptr<CssClass>, std::shared_ptr<ITEM>>> itemsToDraw;
+    std::vector<std::shared_ptr<ITEM>> ownedItems;
+    std::vector<std::pair<CssClass*, ITEM*>> itemsToDraw;
 
     Rectangle rect2;
 
@@ -171,7 +173,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
     rect2 = rect*2;
     gSet = makeGeoBoxSet(rect2);
 
-    std::set<uint64_t> done_geoboxes;
+    std::unordered_set<uint64_t> done_geoboxes;
     for(short i = 0; i < gSet.count; i++)
     {
         std::vector<IndexEntryMasked> indexEntry;
@@ -223,7 +225,8 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                         {
                             item->rect = indexEntry[i].r;
                         }
-                        itemsToDraw.push_back(std::make_pair(cl, item));
+                        ownedItems.push_back(item);
+                        itemsToDraw.emplace_back(cl.get(), item.get());
                     }
                 }
             }
@@ -236,7 +239,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
             maxGeoBox2.set_maskLength(mask);
             uint64_t myMask = UINT64_C(0xFFFFFFFFFFFFFFFF) << mask;
             maxGeoBox2.set_pos(maxGeoBox2.get_pos() & myMask);
-            if(std::find(done_geoboxes.begin(), done_geoboxes.end(), maxGeoBox2.get_hash()) != done_geoboxes.end())
+            if(done_geoboxes.find(maxGeoBox2.get_hash()) != done_geoboxes.end())
             {
                 continue; // dont do twice the same job
             }
@@ -275,18 +278,17 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                             {
                                 item->rect = indexEntry[i].r;
                             }
-                            itemsToDraw.push_back(std::make_pair(cl, item));
+                            ownedItems.push_back(item);
+                            itemsToDraw.emplace_back(cl.get(), item.get());
                         }
                     }
                 }
             }
         }
     }
-    for (auto value : itemsToDraw)
+    for (const auto& [cl, item] : itemsToDraw)
     {
         std::shared_ptr<label_s> lbl = std::make_shared<label_s>();
-        std::shared_ptr<CssClass> cl = value.first;
-        std::shared_ptr<ITEM> item = value.second;
         if constexpr(! std::is_same<ITEM, Point>())
         {
             tmp = render(*lbl, *item,
@@ -306,21 +308,21 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                          *cl
                          );
         }
-        auto it = resMap.find(value.first->zIndex + value.second->layer * LAYER_MULT);
+        auto it = resMap.find(cl->zIndex + item->layer * LAYER_MULT);
         if(it != resMap.end())
         {
             it->second += tmp;
         }
         else
         {
-            resMap[value.first->zIndex + value.second->layer * LAYER_MULT] = tmp;
+            resMap[cl->zIndex + item->layer * LAYER_MULT] = tmp;
         }
         if((lbl->text.length() > 0) && (lbl->fontsize > 5))
             label_vector.push_back(lbl);
     }
     if constexpr(! std::is_same<ITEM, Point>())
     {
-        for(auto it : shapes)
+        for(const auto& it : shapes)
         {
             tmp = renderShape(
             rect,

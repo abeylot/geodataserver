@@ -115,6 +115,7 @@ struct Shape
 {
     std::vector<Line*> openedLines;
     std::vector<Line*> closedLines;
+    std::unordered_multimap<uint64_t, Line*> _ep; // packed endpoint → open line
     void mergePoints(GeoPoint* points, uint64_t pointsCount, bool closed);
     virtual ~Shape()
     {

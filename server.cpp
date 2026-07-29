@@ -319,13 +319,14 @@ int main(int argc, char *argv[])
     Listener listener(&mySessionQueue);
     Reader<Msg> reader1(&myInQueue, &mySessionQueue);
     Reader<Msg> reader2(&myInQueue, &mySessionQueue);
-    std::cout << "launching " << params.getNumParam("ExecThreads", 5) << " Exec threads \n";
+    int defaultExecThreads = std::max(5, (int)std::thread::hardware_concurrency());
+    std::cout << "launching " << params.getNumParam("ExecThreads", defaultExecThreads) << " Exec threads \n";
 
     CompiledDataManager mger(std::string(argv[1]), &indexes, &symbols, &charconvs);
     ServicesFactory::init(params, v.imageList);
 
 
-    for(int i=0; i < params.getNumParam("ExecThreads", 5); i++)
+    for(int i=0; i < params.getNumParam("ExecThreads", defaultExecThreads); i++)
     {
         Exec<Msg> exec(&myInQueue,
                        &myOutQueue,
