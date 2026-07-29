@@ -349,6 +349,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
 std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint32_t sizey, const std::string& tag)
 {
     cssClasses.clear();
+    symbolsString.clear();
     size_x = sizex;
     size_y = sizey;
     std::string libs = "";
@@ -626,6 +627,7 @@ std::string SvgRenderer::renderItems(const Rectangle& rect, uint32_t sizex, uint
     {
         result << tmp.second;
     }
+    result << symbolsString;
     texts.flush();
     result << textsString;
     if(!tag.empty()) result << "<text style=\"font-size:10px\" x=\"0\" y=\"15\" >"
@@ -917,6 +919,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     }
 
 
+    StringBuffer symbols(symbolsString);
     if((!cl.symbol.empty()) && !cl.opened)
     {
         int64_t xxx = (myWay.rect.x0 + myWay.rect.x1) / 2;
@@ -924,19 +927,19 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
         y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
 
-        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t) x  << "\"  y=\"" << (int32_t) y << "\"/>";
+        symbols << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t) x  << "\"  y=\"" << (int32_t) y << "\"/>";
         cssClasses.insert("sym#"+cl.symbol);
     } else {
             if(!cl.symbol.empty())
             {
                 if(symb_angle == 0)
                 {
-                    result << "<use xlink:href=\"#"
+                    symbols << "<use xlink:href=\"#"
                        <<  cl.symbol
                        << "\"  x=\"" << (int32_t)(symb_x) << "\"  y=\"" << (int32_t)(symb_y)
                        << "\"/>";
                 } else {
-                    result << "<use xlink:href=\"#"
+                    symbols << "<use xlink:href=\"#"
                        <<  cl.symbol
                        << "\"  x=\"" << (int32_t)(symb_x) << "\"  y=\"" << (int32_t)(symb_y)
                        << "\" transform=\"rotate("
@@ -950,6 +953,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
                 cssClasses.insert("sym#"+cl.symbol);
             }
     }
+    symbols.flush();
     result.flush();
     return resultString;
 }
@@ -1132,7 +1136,9 @@ std::string SvgRenderer::render(label_s& lbl, Relation& myRelation,Rectangle rec
         int64_t yyy = (myRelation.rect.y0 + myRelation.rect.y1) /2;
         double x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
         double y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
-        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\"/>";
+        StringBuffer symbols(symbolsString);
+        symbols << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\"/>";
+        symbols.flush();
         cssClasses.insert("sym#"+cl.symbol);
     }
     result.flush();
@@ -1205,7 +1211,9 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         int64_t yyy = myNode.y;
         x = projectX(_proj, szx, rect.x0, rect.x1, xxx);
         y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
-        result << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\"/>";
+        StringBuffer symbols(symbolsString);
+        symbols << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\"/>";
+        symbols.flush();
         cssClasses.insert("sym#"+cl.symbol);
     }
     result.flush();

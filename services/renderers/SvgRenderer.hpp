@@ -100,6 +100,7 @@ private:
     std::vector<std::shared_ptr<label_s>> label_vector;
     std::map<uint64_t, std::shared_ptr<myShape>> shapes;
     std::unordered_set<std::string> cssClasses;
+    std::string symbolsString;
     std::string _locale, _defaultColor;
     char _locales[32][2];
     unsigned char _nb_locales = 0;
