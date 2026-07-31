@@ -3,7 +3,6 @@
 #include "../messaging/HttpEncoder.hpp"
 #include "../messaging/Msg.hpp"
 #include "ServiceInterface.hpp"
-#include <list>
 #include <vector>
 //#include "ServicesFactory.hpp"
 
@@ -37,7 +36,7 @@ private:
     std::string _locale;
     char _locales[32][2];
     unsigned char _nb_locales = 0;
-    std::list<weightedArea> findExpression(std::string expr, CompiledDataManager& mger);
+    std::vector<weightedArea> findExpression(std::string expr, CompiledDataManager& mger);
     template <class ITEM> int64_t calcMatchScore(const ITEM& item, const std::vector<uint64_t>& searched_words, CompiledDataManager& mger);
 public:
     Geolocation(const std::string locale):_locale(locale){

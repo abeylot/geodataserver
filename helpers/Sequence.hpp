@@ -162,7 +162,11 @@ public:
         std::vector<SeqBalise*> tagStack;
         unsigned char* c;
         //len = fread(buffer,1,BUFFLEN,fIn);
-        my_stream.read((char*)(seq.c),3);
+        unsigned char pre[3];
+        my_stream.read((char*)pre, 3);
+        seq.append(pre[0]);
+        seq.append(pre[1]);
+        seq.append(pre[2]);
         my_stream.read((char*)buffer,BUFFLEN);
         len = my_stream.gcount();
         while(len)

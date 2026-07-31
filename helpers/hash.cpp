@@ -109,6 +109,19 @@ THashIntegerTable::THashIntegerTable(int aCellsCount)
     collisions = 0;
 }
 
+void THashIntegerTable::reset()
+{
+    uint64_t** current = cells;
+    uint64_t** last    = cells + cellsCount;
+    for (; current < last; current++)
+    {
+        if (*current) { free(*current); *current = nullptr; }
+    }
+    memset(cellsCounter, 0, cellsCount * sizeof(uint64_t));
+    itemCount  = 0;
+    collisions = 0;
+}
+
 THashIntegerTable::~THashIntegerTable()
 {
         uint64_t ** current  = cells;

@@ -531,51 +531,44 @@ public:
         memcpy(b, &c, keySize);
     }
 
-    void memsort(int64_t begin, int64_t end, KEY* key_sort_buffer, ITEM* item_sort_buffer)
+    void memsort(int64_t begin, int64_t end, KEY* keys, ITEM* items)
     {
-        //std::cout << "memsort " << begin <<" "<< end <<"\n";
-        if((end - begin) < 1) return;
-        if((end - begin) == 1)
+        while (end - begin >= 1)
         {
-            if ( key_sort_buffer[end] < key_sort_buffer[begin] )
+            if (end - begin == 1)
             {
-                swapKey(key_sort_buffer + end, key_sort_buffer + begin);
-                swapItem(item_sort_buffer + end, item_sort_buffer + begin);
+                if (keys[end] < keys[begin]) { swapKey(&keys[end], &keys[begin]); swapItem(&items[end], &items[begin]); }
+                return;
             }
-            return;
-        }
-        else
-        {
-            int64_t lessers = 0;
-            int64_t biggers = 0;
-            int64_t total = end - begin;
-            int64_t ipivot = begin;
-            while(total > (biggers + lessers))
+
+            // median-of-three pivot → put median at keys[end]
+            int64_t mid = begin + (end - begin) / 2;
+            if (keys[mid] < keys[begin]) { swapKey(&keys[mid], &keys[begin]); swapItem(&items[mid], &items[begin]); }
+            if (keys[end] < keys[begin]) { swapKey(&keys[end], &keys[begin]); swapItem(&items[end], &items[begin]); }
+            if (keys[mid] < keys[end])   { swapKey(&keys[mid], &keys[end]);   swapItem(&items[mid], &items[end]); }
+            KEY pivot; memcpy(&pivot, &keys[end], keySize);
+
+            int64_t i = begin - 1, j = end;
+            while (true)
             {
-                while((total > (biggers + lessers))
-                && (begin + 1 + lessers <= end)
-                && (key_sort_buffer[begin + 1 + lessers] < key_sort_buffer[begin])) lessers++;
-                while((total > (biggers + lessers))
-                && (end - biggers >= begin + 1)
-                && (key_sort_buffer[end - biggers ] > key_sort_buffer[begin])) biggers++;
-                if(total > (biggers + lessers + 1))
-                {
-                    swapKey(key_sort_buffer + (begin+1+lessers), key_sort_buffer + (end - biggers));
-                    swapItem(item_sort_buffer + (begin+1+lessers), item_sort_buffer + (end - biggers));
-
-                    biggers++;
-                    lessers++;
-                } else if (total == (biggers + lessers + 1)) {
-                    if(key_sort_buffer[begin + 1 + lessers] < key_sort_buffer[begin]) lessers++;
-                    else biggers++;
-                }
+                while (keys[++i] < pivot);
+                while (j > begin && keys[--j] > pivot);
+                if (i >= j) break;
+                swapKey(&keys[i], &keys[j]); swapItem(&items[i], &items[j]);
             }
-            ipivot = begin + lessers;
-            swapKey(key_sort_buffer + ipivot, key_sort_buffer + begin);
-            swapItem(item_sort_buffer + ipivot, item_sort_buffer + begin);
+            swapKey(&keys[i], &keys[end]); swapItem(&items[i], &items[end]);
 
-            if((ipivot + 1)< end) memsort(ipivot + 1, end, key_sort_buffer, item_sort_buffer);
-            if(ipivot > (begin + 1)) memsort(begin, ipivot - 1, key_sort_buffer, item_sort_buffer);
+            // recurse on smaller partition, iterate on larger to bound stack depth
+            if (i - begin < end - i)
+            {
+                memsort(begin, i - 1, keys, items);
+                begin = i + 1;
+            }
+            else
+            {
+                memsort(i + 1, end, keys, items);
+                end = i - 1;
+            }
         }
     }
 
@@ -1689,48 +1682,44 @@ public:
         memcpy(b, &c, keySize);
     }
 
-    void memsort(int64_t begin, int64_t end, KEY* key_sort_buffer)
+    void memsort(int64_t begin, int64_t end, KEY* keys)
     {
-        //std::cout << "memsort " << begin <<" "<< end <<"\n";
-        if((end - begin) < 1) return;
-        if((end - begin) == 1)
+        while (end - begin >= 1)
         {
-            if ( key_sort_buffer[end] < key_sort_buffer[begin] )
+            if (end - begin == 1)
             {
-                swapKey(key_sort_buffer + end, key_sort_buffer + begin);
+                if (keys[end] < keys[begin]) swapKey(&keys[end], &keys[begin]);
+                return;
             }
-            return;
-        }
-        else
-        {
-            int64_t lessers = 0;
-            int64_t biggers = 0;
-            int64_t total = end - begin;
-            int64_t ipivot = begin;
-            while(total > (biggers + lessers))
+
+            // median-of-three pivot → put median at keys[end]
+            int64_t mid = begin + (end - begin) / 2;
+            if (keys[mid] < keys[begin]) swapKey(&keys[mid], &keys[begin]);
+            if (keys[end] < keys[begin]) swapKey(&keys[end], &keys[begin]);
+            if (keys[mid] < keys[end])   swapKey(&keys[mid], &keys[end]);
+            KEY pivot; memcpy(&pivot, &keys[end], keySize);
+
+            int64_t i = begin - 1, j = end;
+            while (true)
             {
-                while((total > (biggers + lessers))
-                && (begin + 1 + lessers <= end)
-                && (key_sort_buffer[begin + 1 + lessers] < key_sort_buffer[begin])) lessers++;
-                while((total > (biggers + lessers))
-                && (end - biggers >= begin + 1)
-                && (key_sort_buffer[end - biggers ] > key_sort_buffer[begin])) biggers++;
-                if(total > (biggers + lessers + 1))
-                {
-                    swapKey(key_sort_buffer + (begin+1+lessers), key_sort_buffer + (end - biggers));
-
-                    biggers++;
-                    lessers++;
-                } else if (total == (biggers + lessers + 1)) {
-                    if(key_sort_buffer[begin + 1 + lessers] < key_sort_buffer[begin]) lessers++;
-                    else biggers++;
-                }
+                while (keys[++i] < pivot);
+                while (j > begin && keys[--j] > pivot);
+                if (i >= j) break;
+                swapKey(&keys[i], &keys[j]);
             }
-            ipivot = begin + lessers;
-            swapKey(key_sort_buffer + ipivot, key_sort_buffer + begin);
+            swapKey(&keys[i], &keys[end]);
 
-            if((ipivot + 1)< end) memsort(ipivot + 1, end, key_sort_buffer);
-            if(ipivot > (begin + 1)) memsort(begin, ipivot - 1,  key_sort_buffer);
+            // recurse on smaller partition, iterate on larger to bound stack depth
+            if (i - begin < end - i)
+            {
+                memsort(begin, i - 1, keys);
+                begin = i + 1;
+            }
+            else
+            {
+                memsort(i + 1, end, keys);
+                end = i - 1;
+            }
         }
     }
 

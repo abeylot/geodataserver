@@ -2,8 +2,10 @@
 #define SVGRENDERER_HPP
 #include <string>
 #include <set>
+#include <unordered_set>
 #include <deque>
 #include <memory>
+#include <unordered_map>
 #include "../../helpers/hash.hpp"
 #include "../../common/Projections.hpp"
 #include "../../CompiledDataManager.hpp"
@@ -38,7 +40,7 @@ struct label_s
 
 struct myShape
 {
-    std::shared_ptr<CssClass> c;
+    CssClass* c;
     char      layer;
     Shape     s;
 };
@@ -95,16 +97,20 @@ private:
     std::map<long ,std::string> resMap;
     std::map<int,std::string>::iterator it;
     std::string tmp = "";
-    std::vector<std::shared_ptr<label_s>> label_vector;
+    std::vector<label_s> label_vector;
     std::map<uint64_t, std::shared_ptr<myShape>> shapes;
-    std::set<std::string> cssClasses;
+    std::unordered_set<std::string> cssClasses;
+    std::string symbolsString;
     std::string _locale, _defaultColor;
     char _locales[32][2];
     unsigned char _nb_locales = 0;
     WebMercatorProj _proj;
+    double _xBase  = 0.0;
+    double _xScale = 1.0;
+    hh::THashIntegerTable _iterHash;
 
 public:
-    SvgRenderer(CompiledDataManager* m, const std::string& locale, const std::string& defaultColor) :  _locale(locale), _defaultColor(defaultColor)
+    SvgRenderer(CompiledDataManager* m, const std::string& locale, const std::string& defaultColor) :  _locale(locale), _defaultColor(defaultColor), _iterHash(10000)
     {
         mger = m;
         zoom = 0;
@@ -121,7 +127,7 @@ public:
             _nb_locales ++ ;
         }
     }
-    SvgRenderer(CompiledDataManager* m, short z, const std::string& locale, const std::string& defaultColor) : _locale(locale), _defaultColor(defaultColor)
+    SvgRenderer(CompiledDataManager* m, short z, const std::string& locale, const std::string& defaultColor) : _locale(locale), _defaultColor(defaultColor), _iterHash(10000)
     {
         zoom = 0;
         size_x = 0;
@@ -145,7 +151,7 @@ public:
     std::string render(label_s& lbl, Relation& myRel,Rectangle rect, uint32_t sizex, uint32_t sizey, CssClass& cl, Shape& s);
     std::string render(label_s& lbl, Point& myNode,  Rectangle rect,uint32_t  sizex, uint32_t sizey, CssClass& cl);
     std::string renderShape(Rectangle rect,uint32_t  sizex, uint32_t sizey, CssClass& cl, Shape& s);
-    Shape& getShape(std::shared_ptr<CssClass> c, unsigned char layer);
+    Shape& getShape(CssClass* c, unsigned char layer);
     template<class ITEM> void iterate(const IndexDesc& idxDesc, const Rectangle& r);
     template<class ITEM> std::shared_ptr<CssClass> getCssClass(const IndexDesc& idx, ITEM& b, short zoom, bool closed);
 };
