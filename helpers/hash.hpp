@@ -16,6 +16,7 @@ public :
     bool removeIfExists(uint64_t key);
     bool get(uint64_t key);
     explicit THashIntegerTable(int aCellsCount);
+    void reset();
     virtual ~THashIntegerTable();
     uint64_t** cells;
     uint64_t* cellsCounter;

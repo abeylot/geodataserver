@@ -97,7 +97,7 @@ private:
     std::map<long ,std::string> resMap;
     std::map<int,std::string>::iterator it;
     std::string tmp = "";
-    std::vector<std::shared_ptr<label_s>> label_vector;
+    std::vector<label_s> label_vector;
     std::map<uint64_t, std::shared_ptr<myShape>> shapes;
     std::unordered_set<std::string> cssClasses;
     std::string symbolsString;
@@ -105,9 +105,12 @@ private:
     char _locales[32][2];
     unsigned char _nb_locales = 0;
     WebMercatorProj _proj;
+    double _xBase  = 0.0;
+    double _xScale = 1.0;
+    hh::THashIntegerTable _iterHash;
 
 public:
-    SvgRenderer(CompiledDataManager* m, const std::string& locale, const std::string& defaultColor) :  _locale(locale), _defaultColor(defaultColor)
+    SvgRenderer(CompiledDataManager* m, const std::string& locale, const std::string& defaultColor) :  _locale(locale), _defaultColor(defaultColor), _iterHash(10000)
     {
         mger = m;
         zoom = 0;
@@ -124,7 +127,7 @@ public:
             _nb_locales ++ ;
         }
     }
-    SvgRenderer(CompiledDataManager* m, short z, const std::string& locale, const std::string& defaultColor) : _locale(locale), _defaultColor(defaultColor)
+    SvgRenderer(CompiledDataManager* m, short z, const std::string& locale, const std::string& defaultColor) : _locale(locale), _defaultColor(defaultColor), _iterHash(10000)
     {
         zoom = 0;
         size_x = 0;

@@ -38,6 +38,11 @@ inline bool operator < (Rectangle const& a, Rectangle const& b)
     if (a.y1 < b.y1) return true;
         return false;
 }
+inline bool overlaps(const Rectangle& a, const Rectangle& b)
+{
+    return (a.x0 <= b.x1) && (b.x0 <= a.x1) && (a.y0 <= b.y1) && (b.y0 <= a.y1);
+}
+
 inline bool operator == (Rectangle const& a, Rectangle const& b)
 {
     if (a.x0 != b.x0) return false;

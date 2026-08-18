@@ -226,7 +226,7 @@ template<typename MSG> struct Exec
                         {
                             rep = std::make_shared<Msg>();
                             encoder.build200Header(rep, "text/html");
-                            encoder.addContent(rep,stats.build_html_report());
+                            encoder.addContent(rep, stats.build_html_report(VERSION));
                             
                         }
                         else

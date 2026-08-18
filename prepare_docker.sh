@@ -37,12 +37,8 @@ if [ ! -d "cache" ]; then
     unzip ne_10m_lakes.zip -d ne_10m_lakes
     rm  ne_10m_lakes.zip
 
-    echo "extract data from openstreetmap file"
-    wget -O - $OSMFILE | tee osm.bz2 | lbzcat | $GEOBIN/renumber .
-
-    echo "compile data from openstreetmap file and other shp files from natural earth"
-    lbzcat osm.bz2 | $GEOBIN/compile .
-    rm osm.bz2
+    echo "extract and compile data from openstreetmap file"
+    wget -O - $OSMFILE | lbzcat | $GEOBIN/compile .
 
     echo "remove indexes that are no longer useful"
     rm nodeIdIndex

@@ -37,6 +37,6 @@ class Statistics
     void end_request(int socket_id, size_t payload_size);
     void set_request_tag(int socket_id, const std::string& tag);
     void abort_request(int socket_id, const std::string& reason);
-    const std::string build_html_report(); 
+    const std::string build_html_report(const std::string& version);
 };
 #endif

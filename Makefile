@@ -65,7 +65,7 @@ $(BUILD)/helpers/StringBuffer.o
 #libs=-lpthread  -lz -latomic -lstdc++fs -fsanitize=address -static-libsan
 libs=-lpthread  -lz -latomic -lstdc++fs -lpng
 
-all: $(BUILD) $(BUILD)/renumber $(BUILD)/compile $(BUILD)/index $(BUILD)/geoserver
+all: $(BUILD) $(BUILD)/compile $(BUILD)/index $(BUILD)/geoserver
 
 $(objectsCommon): $(BUILD)/%.o: %.cpp %.hpp $(headersCommon)
 	$(cc) -c $<  -o $@
@@ -83,11 +83,8 @@ $(BUILD):
 	mkdir -p $(BUILD)/common
 
 debug: cc=$(CC) -g -Wall -std=c++17 -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(GIT_VERSION)\"
-debug: $(BUILD) $(BUILD)/renumber $(BUILD)/compile $(BUILD)/index $(BUILD)/geoserver
+debug: $(BUILD) $(BUILD)/compile $(BUILD)/index $(BUILD)/geoserver
 
-
-$(BUILD)/renumber: renumber.cpp $(headersCommon) $(BUILD)/Coordinates.o
-	$(cc) renumber.cpp $(BUILD)/Coordinates.o -o $(BUILD)/renumber
 
 $(BUILD)/index: index.cpp $(headersCommon) $(BUILD)/Coordinates.o $(BUILD)/CompiledDataManager.o $(BUILD)/helpers/Rectangle.o $(BUILD)/GeoBox.o
 	$(cc) index.cpp $(BUILD)/Coordinates.o $(BUILD)/CompiledDataManager.o $(BUILD)/helpers/Rectangle.o $(BUILD)/GeoBox.o -o $(BUILD)/index

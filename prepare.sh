@@ -48,18 +48,10 @@ else
 fi
 #wget www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_lakes.zip
 
-echo "extract data from openstreetmap file"
+echo "extract and compile data from openstreetmap file"
 
 wget -O - $OSMFILE > osm.pbf
 
-osmium cat -f xml osm.pbf | $GEOBIN/renumber .
-if [ $? -ne 0 ]
-  then
-  echo " first data extraction step failed"
-  exit 1
-fi
-
-echo "compile data from openstreetmap file and other shp files from natural earth"
 osmium cat -f xml osm.pbf | $GEOBIN/compile .
 if [ $? -ne 0 ]
   then

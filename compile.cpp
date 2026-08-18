@@ -211,6 +211,9 @@ private:
     uint64_t wayid{0};
     uint64_t nodid{0};
 
+    bool waysStarted{false};
+    bool relsStarted{false};
+
     bool isRel = false;
     bool isWay = false;
     bool isNod = false;
@@ -246,10 +249,10 @@ public:
     explicit XmlVisitor(const std::string& rep)
     {
 
-        relationIdIndex = new FileIndex<uint64_t,uint64_t>(rep + "/relationIdIndex", false);
-        wayIdIndex      = new FileIndex<uint64_t,uint64_t>(rep + "/wayIdIndex",      false);
-        nodeIdIndex     = new FileIndex<GeoPoint,uint64_t>(rep + "/nodeIdIndex",     false);
-        nodeRefIndex    = new KeyIndex<uint64_t>(rep + "/nodeRefIndex",     false);
+        relationIdIndex = new FileIndex<uint64_t,uint64_t>(rep + "/relationIdIndex", true);
+        wayIdIndex      = new FileIndex<uint64_t,uint64_t>(rep + "/wayIdIndex",      true);
+        nodeIdIndex     = new FileIndex<GeoPoint,uint64_t>(rep + "/nodeIdIndex",     true);
+        nodeRefIndex    = new KeyIndex<uint64_t>(rep + "/nodeRefIndex",               true);
 
         relationIndex   = new FileRawIndex<GeoIndex>(rep + "/relationIndex",  true);
         wayIndex        = new FileRawIndex<GeoWayIndex>(rep + "/wayIndex",       true);
@@ -262,7 +265,6 @@ public:
 
     ~XmlVisitor()
     {
-
         relationIndex->flush();
         wayIndex->flush();
         nodeIndex->flush();
@@ -270,6 +272,9 @@ public:
         wayPoints->flush();
         relMembers->flush();
         baliseTags->flush();
+
+        relationIdIndex->flush();
+        if (!relationIdIndex->isSorted()) relationIdIndex->sort();
 
         delete relationIndex;
         delete wayIndex;
@@ -287,11 +292,11 @@ public:
 
     void log(uint64_t done)
     {
-        std::cerr << " done " << (done >> UINT64_C(20)) ;
-        std::cerr << "Mio.\t relations " << (int)(100 * relationIndex->itemCount / relationIdIndex->getSize());
-        std::cerr  << "%\tways " << (int)(100 * wayIndex->itemCount / wayIdIndex->getSize());
-        std::cerr  << "%\tnodes " << (int)(100 * nodes_found / nodeIdIndex->getSize());
-        std::cerr <<  "%\n" << std::flush;
+        std::cerr << " done " << (done >> UINT64_C(20))
+                  << "Mio.\t nodes " << nodes_found
+                  << "\tways " << wayIndex->itemCount
+                  << "\trelations " << relationIndex->itemCount
+                  << "\n" << std::flush;
     }
 
     void stringNode([[maybe_unused]] const std::vector<SeqBalise*>& tagStack, [[maybe_unused]] std::string& s)
@@ -328,6 +333,14 @@ public:
         }
         else if (b->baliseName == BALISENAME_WAY)
         {
+            if (!waysStarted)
+            {
+                waysStarted = true;
+                nodeIdIndex->flush();
+                nodeRefIndex->flush();
+                if (!nodeIdIndex->isSorted()) nodeIdIndex->sort();
+                if (!nodeRefIndex->isSorted()) nodeRefIndex->sort();
+            }
             way_points_ids.clear();
             way_points_rank.clear();
             curBalise = BaliseType::way;
@@ -393,6 +406,12 @@ public:
         }
         else if (b->baliseName == BALISENAME_RELATION)
         {
+            if (!relsStarted)
+            {
+                relsStarted = true;
+                wayIdIndex->flush();
+                if (!wayIdIndex->isSorted()) wayIdIndex->sort();
+            }
             isRel = true;
             curBalise = BaliseType::relation;
             baliseTags->startBatch();
@@ -408,8 +427,12 @@ public:
         else if (b->baliseName == BALISENAME_NODE)
         {
             isNod = false;
-            size_t tsize = 0;
+            uint32_t nx = Coordinates::toNormalizedLon(b->keyValues["lon"]);
+            uint32_t ny = Coordinates::toNormalizedLat(b->keyValues["lat"]);
+            uint64_t ref = atoll(b->keyValues["id"].c_str());
+            nodeIdIndex->append(ref, {nx, ny});
 
+            size_t tsize = 0;
             if((baliseTags->itemCount  - baliseTags->startCount) > 0xFFFF){
                 std::cerr << "too much tags for node \n";
                 tsize = 0xFFFF;
@@ -419,10 +442,11 @@ public:
 
             if(tsize)
             {
+                nodeRefIndex->append(ref);
                 GeoPointIndex nodeRecord;
                 nodeRecord.tsize = tsize;
-                nodeRecord.x = Coordinates::toNormalizedLon(b->keyValues["lon"]);
-                nodeRecord.y = Coordinates::toNormalizedLat(b->keyValues["lat"]);
+                nodeRecord.x = nx;
+                nodeRecord.y = ny;
                 nodeRecord.tstart = baliseTags->startCount;
                 nodeIndex->append(nodeRecord);
             }
@@ -479,6 +503,7 @@ public:
             }
 
             wayIndex->append(wayRecord);
+            wayIdIndex->append(atoll(b->keyValues["id"].c_str()), wayid++);
         }
         else if (b->baliseName == BALISENAME_MEMBER)
         {
@@ -505,6 +530,7 @@ public:
                 relationRecord.msize = relMembers->itemCount  - relMembers->startCount;
             }
             relationIndex->append(relationRecord);
+            relationIdIndex->append(atoll(b->keyValues["id"].c_str()), relid++);
         }
     }
 
@@ -570,8 +596,8 @@ public:
                     y = getDouble(recordcontent + 4 + 8);
                 }
                 GeoPointIndex pointRecord;
-                pointRecord.x = Coordinates::toNormalizedLon(std::to_string(x));
-                pointRecord.y = Coordinates::toNormalizedLat(std::to_string(y));
+                pointRecord.x = Coordinates::toNormalizedLon(x);
+                pointRecord.y = Coordinates::toNormalizedLat(y);
                 pointRecord.tstart = baliseTags->startCount;
                 pointRecord.tsize = baliseTags->itemCount - baliseTags->startCount;
                 nodeIndex->append(pointRecord);
@@ -617,8 +643,8 @@ public:
                         }
                         GeoPoint p;
 
-                        p.x = Coordinates::toNormalizedLon(std::to_string(x));
-                        p.y = Coordinates::toNormalizedLat(std::to_string(y));
+                        p.x = Coordinates::toNormalizedLon(x);
+                        p.y = Coordinates::toNormalizedLat(y);
                         wayPoints->append(p);
                         if(isFirstNd)
                         {
