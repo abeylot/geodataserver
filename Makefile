@@ -18,6 +18,7 @@ helpers/ExtThread.hpp \
 helpers/NonGrowableQueue.hpp\
 services/ServiceInterface.hpp\
 helpers/Rectangle.hpp \
+helpers/sanitize.hpp \
 helpers/hash.hpp \
 helpers/Sequence.hpp \
 Coordinates.hpp \

@@ -1,5 +1,5 @@
 #include "MapDisplay.hpp"
-
+#include "../helpers/sanitize.hpp"
 MapDisplay::MapDisplay(bool rasterImage_enabled) : _enabledRasterImageService(rasterImage_enabled)
 {
 }
@@ -94,29 +94,29 @@ std::shared_ptr<Msg> MapDisplay::processRequest(std::shared_ptr<Msg> request, [[
 
     if (request->getRecord(2)->getNamedValue("lattitude") != "")
     {
-        latitude = request->getRecord(2)->getNamedValue("lattitude");
+        latitude = sanitize_number(request->getRecord(2)->getNamedValue("lattitude"));
     }
     else if(request->getRecord(1)->getNamedValue("lattitude") != "")
     {
-        latitude = request->getRecord(1)->getNamedValue("lattitude");
+        latitude = sanitize_number(request->getRecord(1)->getNamedValue("lattitude"));
     }
 
     if (request->getRecord(2)->getNamedValue("longitude") != "")
     {
-        longitude = request->getRecord(2)->getNamedValue("longitude");
+        longitude = sanitize_number(request->getRecord(2)->getNamedValue("longitude"));
     }
     else if(request->getRecord(1)->getNamedValue("longitude") != "")
     {
-        longitude = request->getRecord(1)->getNamedValue("longitude");
+        longitude = sanitize_number(request->getRecord(1)->getNamedValue("longitude"));
     }
 
     if (request->getRecord(2)->getNamedValue("zoom") != "")
     {
-        zoom = request->getRecord(2)->getNamedValue("zoom");
+        zoom = sanitize_number(request->getRecord(2)->getNamedValue("zoom"));
     }
     else if(request->getRecord(1)->getNamedValue("zoom") != "")
     {
-        zoom = request->getRecord(1)->getNamedValue("zoom");
+        zoom = sanitize_number(request->getRecord(1)->getNamedValue("zoom"));
     }
 
     if (request->getRecord(2)->getNamedValue("pin") != "")
