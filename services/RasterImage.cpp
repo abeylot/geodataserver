@@ -4,6 +4,7 @@
 #include <sstream>
 #include <png++/png.hpp>
 #include <filesystem>
+#include <malloc.h>
 
 
 inline double tilex2long(int x, int z)
@@ -109,6 +110,10 @@ std::shared_ptr<Msg> RasterImage::processRequest([[maybe_unused]] std::shared_pt
                 }
             }
         }
+        // a fresh render can allocate large temporary buffers; give the freed
+        // heap back to the OS instead of letting glibc hoard it in this
+        // thread's arena.
+        malloc_trim(0);
     }
     encoder.addContent(rep,res);
     return rep;

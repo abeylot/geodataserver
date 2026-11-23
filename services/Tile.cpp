@@ -9,6 +9,7 @@
 #include "assert.h"
 #include <filesystem>
 #include <mutex>
+#include <malloc.h>
 //using namespace std::filesystem;
 #define CHUNK 0x4000
 
@@ -357,6 +358,10 @@ std::shared_ptr<Msg> Tile::processRequest([[maybe_unused]] std::shared_ptr<Msg> 
                 }
             }
         }
+        // a fresh render can allocate large temporary buffers (esp. at low zoom,
+        // over huge areas); give the freed heap back to the OS instead of letting
+        // glibc hoard it in this thread's arena.
+        malloc_trim(0);
     }
     return rep;
 
