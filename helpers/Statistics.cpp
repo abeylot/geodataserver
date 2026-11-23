@@ -1,5 +1,6 @@
 #include "Statistics.hpp"
 #include <ctime>
+#include "htmlescape.hpp"
 void Statistics::start_request(int socket_id)
 {
     struct timeval tp;
@@ -169,7 +170,7 @@ td:first-child{text-align:left;font-weight:500;color:#1a1a2e;font-family:monospa
     for (const auto& [tag, line] : stats_map)
     {
         uint64_t fail_rate = 100 * line.failed_count / line.count;
-        result += "      <tr><td>" + line.tag
+        result += "      <tr><td>" + html_escape(line.tag)
                 + "</td><td>" + std::to_string(line.count)
                 + "</td><td>" + std::to_string(line.total_elapsed_ms / line.count) + " ms"
                 + "</td><td>" + std::to_string(line.max_elapsed_ms) + " ms"

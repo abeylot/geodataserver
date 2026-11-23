@@ -16,6 +16,7 @@
 #include <csignal>
 #include "helpers/ExtThread.hpp"
 #include "helpers/Statistics.hpp"
+#include "helpers/htmlescape.hpp"
 
 #define MAX_PENDING_REQUESTS 100
 using namespace std::literals;
@@ -233,7 +234,7 @@ template<typename MSG> struct Exec
                         {
                             rep = std::make_shared<Msg>();
                             encoder.build404Header(rep);
-                            encoder.addContent(rep,"<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>Page "+url+" NOT FOUND </body></html>");
+                            encoder.addContent(rep,"<!DOCTYPE html><html> <head>  <meta charset=\"UTF-8\"></head> <body>Page "+html_escape(url)+" NOT FOUND </body></html>");
                             stats.abort_request(m->getConnection()->getFileDescr(), "404");
                         }
                     }

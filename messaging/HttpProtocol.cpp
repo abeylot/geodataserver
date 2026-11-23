@@ -39,6 +39,9 @@ int64_t HttpProtocol::getMessage(std::string& message,std::shared_ptr<TcpConnect
                 rcv += rc;
             }
             if (rc <= 0) return -1;
+            // refuse oversized requests (headers never terminated, or too much data)
+            if (rcv > MAX_REQUEST_SIZE) return -1;
+            if (message.size() > MAX_HEADER_SIZE && message.find("\r\n\r\n") == std::string::npos) return -1;
             if (iFound == std::string::npos) iFound = message.find(std::string("\r\n\r\n"));
             if ((iFound != std::string::npos) && (iContentLength == 0))
             {
