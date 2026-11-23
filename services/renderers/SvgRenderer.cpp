@@ -152,6 +152,8 @@ size_t cutString(std::string txt, int& ilines)
         if(pos != MAX_TEXT_LEN) pos++;
         txt = txt.substr(pos);
     }
+    // the last line may be the widest one
+    if(txt.length() > result) result = txt.length();
     return result;
 }
 
@@ -171,7 +173,12 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
                   std::is_same<ITEM,Point>(), " Type unsuported for template method");
 
     rect2 = rect*2;
-    gSet = makeGeoBoxSet(rect2);
+    // Labels are laid out per tile, so every tile must see the same labels as its
+    // neighbours around its edges. Points are cheap (no geometry): look one full tile
+    // further so that wide labels near the border are resolved identically in both tiles.
+    Rectangle searchRect = rect2;
+    if constexpr(std::is_same<ITEM,Point>()) searchRect = rect*3;
+    gSet = makeGeoBoxSet(searchRect);
 
     std::unordered_set<uint64_t> done_geoboxes;
     for(short i = 0; i < gSet.count; i++)
@@ -193,7 +200,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
         if(idxDesc.idx->get_range(g, maxGeoBox, indexEntry))
         for(size_t i = 0; i < indexEntry.size(); i++)
         {
-            if((indexEntry[i].zmMask &  zmMask ) && overlaps(indexEntry[i].r, rect2))
+            if((indexEntry[i].zmMask &  zmMask ) && overlaps(indexEntry[i].r, searchRect))
             {
                 if( _iterHash.addIfUnique(indexEntry[i].id))
                 {
@@ -247,7 +254,7 @@ template<class ITEM> void SvgRenderer::iterate(const IndexDesc& idxDesc, const R
             if(idxDesc.idx->get_range(maxGeoBox2, maxGeoBox2, indexEntry))
             for(size_t i = 0; i < indexEntry.size(); i++)
             {
-                if((indexEntry[i].zmMask &  zmMask ) && overlaps(indexEntry[i].r, rect2))
+                if((indexEntry[i].zmMask &  zmMask ) && overlaps(indexEntry[i].r, searchRect))
                 {
                     if( _iterHash.addIfUnique(indexEntry[i].id))
                     {
@@ -777,14 +784,18 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
     double length = 0;
     double halfLength = 0;
     //compute way length in order to be able to find it's middle.
+    // Unrounded coordinates are used on purpose: rounding is relative to the tile, and a
+    // length slightly different from one tile to the next could make a label appear in a
+    // tile and not in its neighbour (text fit test below).
+    double fx = 0, fy = 0, ofx = 0, ofy = 0;
     for(unsigned int i = 0 ; i < myWay.pointsCount; i++)
     {
         int64_t xx = myWay.points[i].x;
         int64_t yy = myWay.points[i].y;
-        oldx = x;
-        oldy = y;
-        x = round((xx - _xBase) * _xScale);
-        y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
+        ofx = fx;
+        ofy = fy;
+        fx = (xx - _xBase) * _xScale;
+        fy = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
         {
             if(first)
             {
@@ -792,8 +803,7 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
             }
             else
             {
-                if((x != oldx) || (y != oldy)|| i == (myWay.pointsCount - 1))
-                length += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
+                length += sqrt((fx-ofx)*(fx-ofx) + (fy-ofy)*(fy-ofy));
             }
         }
     }
@@ -808,24 +818,24 @@ std::string SvgRenderer::render(label_s& lbl, Way& myWay, Rectangle rect,uint32_
         {
             int64_t xx = myWay.points[i].x;
             int64_t yy = myWay.points[i].y;
-            oldx = x;
-            oldy = y;
-            x = round((xx - _xBase) * _xScale);
-            y = round(projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache));
+            ofx = fx;
+            ofy = fy;
+            fx = (xx - _xBase) * _xScale;
+            fy = projectY(_proj, szy, rect.y0, rect.y1, yy, yProjectionCache);
 
             {
                 if(!first)
                 {
                     double oldLength = curLength;
-                    curLength += sqrt((x-oldx)*(x-oldx) + (y-oldy)*(y-oldy));
+                    curLength += sqrt((fx-ofx)*(fx-ofx) + (fy-ofy)*(fy-ofy));
                     if(curLength > halfLength)
                     {
                         // fill label caraceristics when middle is reached
                         double ratio = (halfLength - oldLength)/(curLength - oldLength);
-                        lbl.pos_x = x*ratio + (1.0 - ratio) * oldx;
-                        lbl.pos_y = y*ratio + (1.0 - ratio) * oldy;
-                        double dfx = x - oldx;
-                        double dfy = y - oldy;
+                        lbl.pos_x = round(fx*ratio + (1.0 - ratio) * ofx);
+                        lbl.pos_y = round(fy*ratio + (1.0 - ratio) * ofy);
+                        double dfx = fx - ofx;
+                        double dfy = fy - ofy;
                         if(dfx == 0) lbl.angle = M_PI / 2;
                         else lbl.angle = atan2(dfy , dfx);
                         if(lbl.angle > M_PI / 2) lbl.angle -= M_PI;
@@ -1213,10 +1223,15 @@ std::string SvgRenderer::render(label_s& lbl, Point& myNode,
         int64_t yyy = myNode.y;
         x = (xxx - _xBase) * _xScale;
         y = projectY(_proj, szy, rect.y0, rect.y1, yyy, yProjectionCache);
-        StringBuffer symbols(symbolsString);
-        symbols << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\"/>";
-        symbols.flush();
-        cssClasses.insert("sym#"+cl.symbol);
+        // points are searched far beyond the tile for their labels only: don't draw symbols
+        // farther outside than the previous half tile margin
+        if(x >= -0.5*szx && x <= 1.5*szx && y >= -0.5*szy && y <= 1.5*szy)
+        {
+            StringBuffer symbols(symbolsString);
+            symbols << "<use xlink:href=\"#" << cl.symbol << "\"  x=\"" << (int32_t)(x) << "\"  y=\"" << (int32_t)(y) << "\"/>";
+            symbols.flush();
+            cssClasses.insert("sym#"+cl.symbol);
+        }
     }
     result.flush();
     return resultString;
