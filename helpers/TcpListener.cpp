@@ -19,6 +19,7 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
 #include <netinet/tcp.h>
 
 #include <string.h>
@@ -26,17 +27,22 @@
 
 int TcpListener::init(int portNumber, int timeOut)
 {
-    struct sockaddr_in addr; /* Local socket strust */
     struct linger linger; /* Linger struct       */
     int iSock; /* Socket file desccriptor */
     int iSocketReuseFlag;
     int iRC;
+    bool useV6 = true;
 
     _TimeOut = timeOut;
 
-    if ((iSock = socket(PF_INET, SOCK_STREAM, 0)) < 0)
+    /* Prefer a dual-stack IPv6 socket, fall back to IPv4 only. */
+    if ((iSock = socket(AF_INET6, SOCK_STREAM, 0)) < 0)
     {
-        return -1;
+        useV6 = false;
+        if ((iSock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+        {
+            return -1;
+        }
     }
 
     /*
@@ -50,18 +56,33 @@ int TcpListener::init(int portNumber, int timeOut)
 
     if ((iRC = setsockopt(iSock, SOL_SOCKET, SO_REUSEADDR, &iSocketReuseFlag, sizeof ( iSocketReuseFlag))) < 0)
     {
+        close(iSock);
         return iRC;
     }
 
-    memset((char *) &addr, 0, sizeof ( struct sockaddr_in));
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = INADDR_ANY;
-    addr.sin_port = htons(portNumber);
+    if (useV6)
+    {
+        /* accept IPv4 clients too (as ::ffff:a.b.c.d) */
+        int v6only = 0;
+        setsockopt(iSock, IPPROTO_IPV6, IPV6_V6ONLY, &v6only, sizeof(v6only));
 
-    /*
-     * Bind socket.
-     */
-    if ((iRC = bind(iSock, (struct sockaddr *) &addr, sizeof ( addr))) < 0)
+        struct sockaddr_in6 addr6;
+        memset(&addr6, 0, sizeof(addr6));
+        addr6.sin6_family = AF_INET6;
+        addr6.sin6_addr = in6addr_any;
+        addr6.sin6_port = htons(portNumber);
+        iRC = bind(iSock, (struct sockaddr *) &addr6, sizeof(addr6));
+    }
+    else
+    {
+        struct sockaddr_in addr;
+        memset(&addr, 0, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_addr.s_addr = INADDR_ANY;
+        addr.sin_port = htons(portNumber);
+        iRC = bind(iSock, (struct sockaddr *) &addr, sizeof(addr));
+    }
+    if (iRC < 0)
     {
         close(iSock);
         return iRC;
