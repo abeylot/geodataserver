@@ -5,7 +5,7 @@ echo "set environment variable to geodataserver binaries path"
 export GEOBIN="../geodataserver/build"
 
 echo "set environment variable to openstreet map file to download"
-export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.bz2
+export OSMFILE=https://download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.pbf
 #below, entire world, test with a smaller file first
 #planet.openstreetmap.org/planet/planet-latest.osm.bz2
 
@@ -38,7 +38,9 @@ if [ ! -d "cache" ]; then
     rm  ne_10m_lakes.zip
 
     echo "extract and compile data from openstreetmap file"
-    wget -O - $OSMFILE | lbzcat | $GEOBIN/compile .
+    wget -O osm.pbf $OSMFILE || exit 1
+    osmium cat -f xml osm.pbf | $GEOBIN/compile . || exit 1
+    rm osm.pbf
 
     echo "remove indexes that are no longer useful"
     rm nodeIdIndex
