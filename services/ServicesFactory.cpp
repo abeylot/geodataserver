@@ -1,5 +1,6 @@
 #include "ServicesFactory.hpp"
 #include <stdlib.h>
+#include <stdio.h>
 
 bool ServicesFactory::_enabledPingService{false};
 bool ServicesFactory::_enabledRelationListService{false};
@@ -17,6 +18,20 @@ int  ServicesFactory::_cacheLevel;
 std::string ServicesFactory::_defaultColor;
 std::string ServicesFactory::_locale;
 std::vector<PngImage> ServicesFactory::_imageList;
+
+// Parses "/z/x/y.ext"; false when out of range.
+static bool parseTileCoordinates(const std::string& service, long& z, long& x, long& y)
+{
+    if (sscanf(service.c_str(), "/%ld/%ld/%ld", &z, &x, &y) != 3) return false;
+    if (z < 0 || z > 25) return false;
+    long tilesMax = 1L << z;
+    return x >= 0 && x < tilesMax && y >= 0 && y < tilesMax;
+}
+
+static bool endsWith(const std::string& s, const std::string& suffix)
+{
+    return s.size() >= suffix.size() && s.compare(s.size() - suffix.size(), suffix.size(), suffix) == 0;
+}
 
 void ServicesFactory::init(const ParmsXmlVisitor& params, const std::vector<PngImage>& imageList )
 {
@@ -73,44 +88,18 @@ std::shared_ptr<ServiceInterface>  ServicesFactory::getService(std::string servi
     else if (_enabledWayDetailService && service == "/way/get")                          return std::make_shared<WayDetail>();
     else if (_enabledSvgService && service == "/svgMap.svg")                             return std::make_shared<Svg>();
     else if (_enabledMapDisplayService && ((service == "/MapDisplay")||(service =="/"))) return std::make_shared<MapDisplay>(_enabledRasterImageService);
-    else if(_enabledTileService && service.find(".svg") != std::string::npos)
+    else if(_enabledTileService && (endsWith(service, ".svg") || endsWith(service, ".png")))
     {
-        unsigned int pos = 0;
-        const char* c = service.c_str();
-        long x=0;
-        long y=0;
-        long z = atoll(c+1);
-        pos=1;
-        while(pos < service.length() && (*(c+pos) != '/')) pos++;
-        if(pos < service.length()) x =  atoll(c+pos+1);
-        pos++;
-        while(pos < service.length() && (*(c+pos) != '/')) pos++;
-        if(pos < service.length()) y =  atoll(c+pos+1);
-        std::cout << x <<":" << y << ";" << z << "\n";
-        if (z < 0 || z > 25) return nullptr;
-        long tiles_max = 1 << z;
-        if( x < 0 || x >= tiles_max) return nullptr;
-        if( y < 0 || y >= tiles_max) return nullptr;
-        std::cout << "max " << tiles_max << "\n";
-        return std::make_shared<Tile>(z, x, y, _cacheLevel, _locale, _defaultColor);
-
+        long z, x, y;
+        if (!parseTileCoordinates(service, z, x, y)) return nullptr;
+        TileFormat format = endsWith(service, ".png") ? TileFormat::Png : TileFormat::Svg;
+        return std::make_shared<Tile>(z, x, y, _cacheLevel, _locale, _defaultColor, format);
     }
-    else if(_enabledRasterImageService && service.find(".png") != std::string::npos)
+    else if(_enabledRasterImageService && service.compare(0, 5, "/img/") == 0 && endsWith(service, ".png"))
     {
-        unsigned int pos = 0;
-        const char* c = service.c_str();
-        long x=0;
-        long y=0;
-        long z = atoll(c+1);
-        pos=1;
-        while(pos < service.length() && (*(c+pos) != '/')) pos++;
-        if(pos < service.length()) x =  atoll(c+pos+1);
-        pos++;
-        while(pos < service.length() && (*(c+pos) != '/')) pos++;
-        if(pos < service.length()) y =  atoll(c+pos+1);
-        //std::cout << x <<":" << y << ";" << z << "\n";
+        long z, x, y;
+        if (!parseTileCoordinates(service.substr(4), z, x, y)) return nullptr;
         return std::make_shared<RasterImage>(z, x, y, _cacheLevel, _imageList);
-
     }
     else return nullptr;
 }

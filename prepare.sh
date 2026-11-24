@@ -10,6 +10,7 @@ export OSMFILE=download.geofabrik.de/europe/france/pays-de-la-loire-latest.osm.p
 
 
 # install dependancies
+# sudo apt install g++ lbzip2 libbz2-dev git libpng++-dev librsvg2-dev libcairo2-dev pkg-config
 
 
 

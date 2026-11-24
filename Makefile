@@ -31,7 +31,8 @@ headersServer=messaging/HttpEncoder.hpp \
 helpers/Statistics.hpp \
 messaging/Msg.hpp \
 services/renderers/SvgRenderer.hpp \
-services/renderers/PngRenderer.hpp
+services/renderers/PngRenderer.hpp \
+services/renderers/PngRasterizer.hpp
 
 #objects used by all executables
 objectsCommon = $(BUILD)/GeoBox.o \
@@ -58,14 +59,16 @@ $(BUILD)/services/Svg.o \
 $(BUILD)/services/Tile.o \
 $(BUILD)/services/renderers/SvgRenderer.o \
 $(BUILD)/services/renderers/PngRenderer.o \
+$(BUILD)/services/renderers/PngRasterizer.o \
 $(BUILD)/messaging/Msg.o \
 $(BUILD)/helpers/TcpListener.o \
 $(BUILD)/helpers/TcpConnection.o \
 $(BUILD)/services/MapDisplay.o \
 $(BUILD)/helpers/StringBuffer.o
 
-#libs=-lpthread  -lz -latomic -lstdc++fs -fsanitize=address -static-libsan
-libs=-lpthread  -lz -latomic -lstdc++fs -lpng
+svgLibsFlags=$(shell pkg-config --cflags librsvg-2.0 cairo)
+libs=-lpthread  -lz -latomic -lstdc++fs -fsanitize=address -static-libsan
+libs=-lpthread  -lz -latomic -lstdc++fs -lpng $(shell pkg-config --libs librsvg-2.0 cairo)
 
 all: $(BUILD) $(BUILD)/compile $(BUILD)/index $(BUILD)/geoserver
 
@@ -73,7 +76,7 @@ $(objectsCommon): $(BUILD)/%.o: %.cpp %.hpp $(headersCommon)
 	$(cc) -c $<  -o $@
 
 $(objectsServer): $(BUILD)/%.o: %.cpp %.hpp $(headersCommon) $(headersServer)
-	$(cc) -c $<  -o $@
+	$(cc) $(svgLibsFlags) -c $<  -o $@
 
 
 $(BUILD):

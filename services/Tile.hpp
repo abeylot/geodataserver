@@ -7,15 +7,19 @@
 #include "../GeoBox.hpp"
 //#include "ServicesFactory.hpp"
 
+enum class TileFormat { Svg, Png };
+
 class Tile : public ServiceInterface
 {
 private:
     long _x, _y, _z;
     unsigned int _cachelevel;
     std::string _locale, _defaultColor;
+    TileFormat _format;
 public:
-    Tile(long z, long x, long y, unsigned int cachelevel, const std::string& locale, const std::string& defaultColor):_locale(locale),
-    _defaultColor(defaultColor)
+    Tile(long z, long x, long y, unsigned int cachelevel, const std::string& locale, const std::string& defaultColor,
+         TileFormat format = TileFormat::Svg):_locale(locale),
+    _defaultColor(defaultColor), _format(format)
     {
         _x = x;
         _y = y;

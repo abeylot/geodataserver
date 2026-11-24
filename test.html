@@ -23,6 +23,7 @@
         </label>
       <button>Send</button>
     </form>
+    <button id="fmt" type="button">switch to PNG</button>
     <div id="map"></div>
     <script type="text/javascript">
         var map = L.map('map', {zoomControl: false}).setView([47.218371, -1.553621], 12);
@@ -30,10 +31,20 @@
         //map.touchZoom.disable();
         //map.doubleClickZoom.disable();
         //map.scrollWheelZoom.disable();
-        L.tileLayer('http://127.0.0.1:8081/{z}/{x}/{y}.svg', {
-            attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>)',
-            maxZoom: 19
-        }).addTo(map);
+        function makeLayer(format) {
+            return L.tileLayer('http://127.0.0.1:8081/{z}/{x}/{y}.' + format, {
+                attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>)',
+                maxZoom: 19
+            });
+        }
+        var format = 'svg';
+        var layer = makeLayer(format).addTo(map);
+        document.getElementById('fmt').onclick = function () {
+            map.removeLayer(layer);
+            format = (format === 'svg') ? 'png' : 'svg';
+            layer = makeLayer(format).addTo(map);
+            this.textContent = 'switch to ' + (format === 'svg' ? 'PNG' : 'SVG');
+        };
         //var marker = L.marker([48.804128, 7.776792]).addTo(map).bindPopup("<b>LIJE Creative</b>");
     </script>
 </body>

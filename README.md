@@ -1,7 +1,7 @@
 # geodataserver
 ![sample](/docs/sample.jpg)
 ##
-A light SVG tile map renderer and server that uses openstreetmap data and shp files.
+A light SVG ( and PNG ) tile map renderer and server that uses openstreetmap data and shp files.
 An experimental geolocation service is also provided.
 Works on raspberry pi 4 for world extracts, you will need a bigger computer for whole world.
 ## documentation
@@ -14,5 +14,6 @@ see [here](/docs/index.md).
 1. ~~boost-threads~~
 2. libzlib
 3. libpng++
+4. librsvg and cairo (PNG tiles)
 ##
 ![sample](/docs/sample2.jpg)

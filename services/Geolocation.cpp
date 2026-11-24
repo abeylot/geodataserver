@@ -714,6 +714,7 @@ std::shared_ptr<Msg> Geolocation::processRequest(std::shared_ptr<Msg> request, C
         }
         if(mag == "X2") URL += "&mag=X2";
         else if (mag == "X05") URL += "&mag=X05";
+        if(HttpEncoder::urlDecode(request->getRecord(1)->getNamedValue("format")) == "png") URL += "&format=png";
         encoder.build303Header(rep,URL);
         encoder.addContent(rep,"redirect!!!");
         return rep;

@@ -60,16 +60,25 @@ std::shared_ptr<Msg> MapDisplay::processRequest(std::shared_ptr<Msg> request, [[
         "<option value=\"X1\" #mag1#>&#x1F50D; X1</option>"
         "<option value=\"X2\" #mag2#>&#x1F50D; X2</option>"
         "</select>"
+        "<input type=\"hidden\" id=\"format\" name=\"format\" value=\"#fmt#\">"
+        "<button type=\"button\" id=\"fmt\">Tiles: #FMT#</button>"
         "<button><b>Send</b></button>"
         "</form></div>"
         "<div id=\"map\"></div>"
         "<script type=\"text/javascript\">"
         "var map = L.map('map', {zoomControl: false}).setView([#lat#, #lon#], #zoom#);"
-        "var osm = L.tileLayer('/{z}/{x}/{y}.svg', {"
+        "var osm = L.tileLayer('/{z}/{x}/{y}.#fmt#', {"
         "    attribution: 'Map data: &copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>',"
         "    maxZoom: 19, tileSize:#tsz#, zoomOffset:#zofs#"
         "}); osm.addTo(map);#pin#"
-        "var raster = L.tileLayer('/{z}/{x}/{y}.png', {"
+        "var format = '#fmt#';"
+        "document.getElementById('fmt').onclick = function () {"
+        "    format = (format === 'svg') ? 'png' : 'svg';"
+        "    osm.setUrl('/{z}/{x}/{y}.' + format);"
+        "    this.textContent = 'Tiles: ' + format.toUpperCase();"
+        "    document.getElementById('format').value = format;"
+        "};"
+        "var raster = L.tileLayer('/img/{z}/{x}/{y}.png', {"
         "    attribution: 'Map data: &copy; srtm', transparent:'true', opacity:0.3,"
         "    maxZoom: 19"
         "});"
@@ -144,6 +153,19 @@ std::shared_ptr<Msg> MapDisplay::processRequest(std::shared_ptr<Msg> request, [[
         resp.replace(resp.find("#mag2#"),6,"");
     }
 
+
+    // only png is accepted, anything else keeps svg
+    std::string format = "svg";
+    if (request->getRecord(2)->getNamedValue("format") == "png" ||
+        request->getRecord(1)->getNamedValue("format") == "png")
+    {
+        format = "png";
+    }
+    // each placeholder appears several times
+    for (size_t pos = resp.find("#fmt#"); pos != std::string::npos; pos = resp.find("#fmt#"))
+        resp.replace(pos, 5, format);
+    for (size_t pos = resp.find("#FMT#"); pos != std::string::npos; pos = resp.find("#FMT#"))
+        resp.replace(pos, 5, format == "png" ? "PNG" : "SVG");
 
     resp.replace(resp.find("#lon#"),5,longitude);
     resp.replace(resp.find("#lat#"),5,latitude);

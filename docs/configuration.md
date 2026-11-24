@@ -22,9 +22,17 @@ default language for labels : french if exist or english if exists, or default o
 
     `<parameter name="locale"        value="fr;en"/>`
     
-default color of land    
+default color of land, also used as background of PNG tiles (format `#rrggbb`, white if invalid)
 
     `<parameter name="DefaultColor"  value="#EEFFEE"/>`
+
+service that serves tiles, both `/{z}/{x}/{y}.svg` and `/{z}/{x}/{y}.png` (there is no separate PNG switch)
+
+    `<parameter name="TileService"   value="enabled"/>`
+
+service that serves georeferenced image overlays declared with `PngImage` entries, at `/img/{z}/{x}/{y}.png`
+
+    `<parameter name="RasterImageService" value="enabled"/>`
 
 # input data configuration    
 ## *shp_file* tag

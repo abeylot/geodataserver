@@ -1,5 +1,6 @@
 #include "Tile.hpp"
 #include "renderers/SvgRenderer.hpp"
+#include "renderers/PngRasterizer.hpp"
 #include "../Coordinates.hpp"
 #include "../common/constants.hpp"
 #include <string>
@@ -232,6 +233,17 @@ double tiley2lat(int y, int z)
     return 180.0 / M_PI * atan(0.5 * (exp(n) - exp(-n)));
 }
 
+static std::string buildEtagBlock(const std::string& content)
+{
+    uint64_t key = 0;
+    char* key_c = (char*) &key;
+    for(unsigned int i = 0; i < content.size(); i++)
+    {
+        key_c[i%8] = key_c[i%8] ^ content[i];
+    }
+    return "HTTPEtag=\"" + std::to_string(key) + "\"";
+}
+
 std::shared_ptr<Msg> Tile::processRequest([[maybe_unused]] std::shared_ptr<Msg> request, CompiledDataManager& mger)
 {
     char filename[250];
@@ -270,19 +282,20 @@ std::shared_ptr<Msg> Tile::processRequest([[maybe_unused]] std::shared_ptr<Msg> 
 
     auto rep = std::make_shared<Msg>();
     HttpEncoder encoder;
-    encoder.build200Header(rep, "image/svg+xml");
+    const bool isPng = (_format == TileFormat::Png);
+    encoder.build200Header(rep, isPng ? "image/png" : "image/svg+xml");
     std::string res = "";
     bool filefound = false;
     FILE* in;
     if(_z <= _cachelevel)
     {
-        snprintf(filename,250,"%s/cache/%ld/%ld/%ld.svgz",mger.path.c_str(),_z,_x,_y);
+        snprintf(filename,250,"%s/cache/%ld/%ld/%ld.%s",mger.path.c_str(),_z,_x,_y,isPng ? "png" : "svgz");
         in = fopen(filename, "r");
         if(in != NULL)
         {
             filefound=true;
-            rep->getRecord(0)->addBlock("HTTPEncoding=gzip");
-            //inf(in, res);
+            // PNG is already compressed
+            if(!isPng) rep->getRecord(0)->addBlock("HTTPEncoding=gzip");
         char buffer[4097];
         size_t len = 0;
         while( (len = fread(buffer,1,4096,in)) )
@@ -296,16 +309,7 @@ std::shared_ptr<Msg> Tile::processRequest([[maybe_unused]] std::shared_ptr<Msg> 
     {
     //printf("USING CACHE !\n");
         fclose(in);
-        std::string sEtag = "HTTPEtag=\"";
-        uint64_t key = 0;
-        char* key_c = (char*) &key;
-        for(unsigned int i = 0; i < res.size(); i++)
-        {
-            key_c[i%8] = key_c[i%8] ^ res[i];
-        }
-        sEtag += std::to_string(key);
-        sEtag += "\"";
-        rep->getRecord(0)->addBlock(sEtag);
+        rep->getRecord(0)->addBlock(buildEtagBlock(res));
         encoder.addContent(rep,res);
     }else{
         std::string dir1 = mger.path + "/cache/" + std::to_string(_z);
@@ -315,22 +319,26 @@ std::shared_ptr<Msg> Tile::processRequest([[maybe_unused]] std::shared_ptr<Msg> 
         SvgRenderer rdr(&mger,_z, _locale, _defaultColor);
         std::string tag = "";
         res = rdr.renderItems(rect,szx,szy,tag);
-        rep->getRecord(0)->addBlock("HTTPEncoding=gzip");
-        std::string smallRes;
-        def(res, smallRes);
-        std::string sEtag = "HTTPEtag=\"";
-        uint64_t key = 0;
-        char* key_c = (char*) &key;
-        for(unsigned int i = 0; i < smallRes.size(); i++)
+        std::string body;
+        if(isPng)
         {
-            key_c[i%8] = key_c[i%8] ^ smallRes[i];
+            if(!rasterizeSvgToPng(res, szx, szy, _defaultColor, body))
+            {
+                auto err = std::make_shared<Msg>();
+                HttpEncoder::build500Header(err);
+                return err;
+            }
         }
-        sEtag += std::to_string(key);
-        sEtag += "\"";
-        rep->getRecord(0)->addBlock(sEtag);
-        encoder.addContent(rep,smallRes);
+        else
+        {
+            rep->getRecord(0)->addBlock("HTTPEncoding=gzip");
+            def(res, body);
+        }
+        rep->getRecord(0)->addBlock(buildEtagBlock(body));
+        encoder.addContent(rep,body);
         //std::cout << "cache level " << _cachelevel << "\n";
-        if(_z <= _cachelevel && res.length() > 4096)
+        const size_t cacheMinSize = isPng ? 0 : 4096;
+        if(_z <= _cachelevel && res.length() > cacheMinSize)
         {
             std::filesystem::path p1(dir1);
             std::filesystem::path p2(dir2);
@@ -349,7 +357,8 @@ std::shared_ptr<Msg> Tile::processRequest([[maybe_unused]] std::shared_ptr<Msg> 
                 FILE* out = fopen(filename, "w");
                 if(out != nullptr)
                 {
-                    def(res, out);
+                    if(isPng) fwrite(body.data(), 1, body.size(), out);
+                    else def(res, out);
                     fclose(out);
                 }
                 else

@@ -12,6 +12,8 @@ a light SVG tile map renderer and server that uses openstreetmap data and shp fi
 ## dependencies
 1. ~~boost-threads~~
 2. libzlib
+3. libpng++
+4. librsvg and cairo ( PNG tiles )
 
 ## performances
 
@@ -31,7 +33,7 @@ Fast for small scales ( high zoom levels ) but can take 10 or 20 seconds for lar
 #### first install some dependancies
     sudo apt update
     sudo apt upgrade
-    sudo apt install g++ lbzip2 libbz2-dev git libpng++-dev
+    sudo apt install g++ lbzip2 libbz2-dev git libpng++-dev librsvg2-dev libcairo2-dev pkg-config
     
 #### clone c++ code :
     cd $HOME
@@ -60,6 +62,20 @@ example data file is pays-de-la-loire-latest.osm.bz2 ( part from france ) which 
 server is listening on port 8081<br/>
 test page is available at : http://localhost:8081
 tiles are available at : http://localhost:8081/{z}/{x}/{y}.svg
+
+the same tiles rasterized to 256x256 PNG are available at : http://localhost:8081/{z}/{x}/{y}.png
+
+PNG tiles are the SVG tiles rasterized with librsvg and cairo, so they show the same data, styles and labels.
+They are served by the same `TileService` and use the same cache policy, stored as `cache/{z}/{x}/{y}.png`
+( next to the `.svgz` files ). Out of range tiles return 404.
+
+The test page has a `Tiles: SVG / PNG` button that switches the tile format and keeps the map position.
+The choice is kept when the form is sent, and can be forced with `http://localhost:8081/MapDisplay?format=png`.
+
+The georeferenced image overlay ( `RasterImageService` ) is available at : http://localhost:8081/img/{z}/{x}/{y}.png
+( it used to be at `/{z}/{x}/{y}.png` ).
+
+To check a running server : `tests/png_tiles.sh [base_url]`
 
 
 ### Try in a docker :
